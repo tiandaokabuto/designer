@@ -1,0 +1,135 @@
+.designergraph {
+  &-header {
+    background-color: #ccc;
+    color: rgba(0, 0, 0, 0.5);
+    height: 48px;
+    padding: 6px;
+  }
+  &-body {
+    display: flex;
+    padding: 8px;
+    height: calc(100vh - 50px);
+    .editor-spin {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+    &-editor {
+      flex: 1;
+      margin-right: 8px;
+
+      .editor {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        color: #000;
+        &-Hd {
+          padding: 8px;
+          border: 1px solid #e6e9ed;
+        }
+        &-Bd {
+          flex: 1;
+        }
+        &-sidebar,
+        &-content {
+          display: flex;
+          flex-direction: column;
+        }
+        &-sidebar {
+          height: calc(100vh - 111px);
+        }
+        &-flow {
+          flex: 1;
+          height: 0;
+        }
+        &-detailPanel {
+          flex: 1;
+          background: #fafafa;
+          .ant-card {
+            background: #fafafa;
+          }
+        }
+        &-contextMenu {
+          display: none;
+          overflow: hidden;
+          background: #fff;
+          border-radius: 4px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+          .item {
+            display: flex;
+            align-items: center;
+            padding: 5px 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+
+            &:hover {
+              background: #e6f7ff;
+            }
+
+            i {
+              margin-right: 8px;
+            }
+          }
+
+          .disable {
+            .item {
+              color: rgba(0, 0, 0, 0.25);
+              cursor: auto;
+
+              &:hover {
+                background: #fff;
+              }
+            }
+          }
+        }
+      }
+
+      .editor-toolbar {
+        display: flex;
+        align-items: center;
+        .command i {
+          display: inline-block;
+          width: 27px;
+          height: 27px;
+          margin: 0 6px;
+          padding-top: 6px;
+          text-align: center;
+          border: 1px solid #fff;
+          cursor: pointer;
+
+          &:hover {
+            border: 1px solid #e6e9ed;
+          }
+        }
+
+        .disable i {
+          color: rgba(0, 0, 0, 0.25);
+          cursor: auto;
+
+          &:hover {
+            border: 1px solid #fff;
+          }
+        }
+
+        &-tooltip {
+          .ant-tooltip-inner {
+            font-size: 12px;
+            border-radius: 0;
+          }
+        }
+      }
+    }
+    &-menu {
+      flex-basis: 250px;
+      background-color: turquoise;
+    }
+  }
+}

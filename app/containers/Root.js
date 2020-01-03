@@ -8,7 +8,7 @@ import Routes from '../Routes';
 
 type Props = {
   store: Store,
-  history: {}
+  history: {},
 };
 
 const Root = ({ store, history }: Props) => (

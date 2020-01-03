@@ -52,20 +52,20 @@ const createWindow = async () => {
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
   ) {
-    await installExtensions();
+    // await installExtensions();
   }
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
+    width: 1350,
     height: 728,
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+      devTools: false,
+    },
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
-
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
