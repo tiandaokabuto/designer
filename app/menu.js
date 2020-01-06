@@ -45,10 +45,10 @@ export default class MenuBuilder {
 
   buildDarwinTemplate() {
     const subMenuAbout = {
-      label: 'Electron',
+      label: app.name,
       submenu: [
         {
-          label: 'About ElectronReact',
+          label: '关于流程易',
           selector: 'orderFrontStandardAboutPanel:',
         },
         { type: 'separator' },
@@ -76,7 +76,7 @@ export default class MenuBuilder {
       ],
     };
     const subMenuEdit = {
-      label: 'Edit',
+      label: '编辑',
       submenu: [
         { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
         { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
@@ -92,7 +92,7 @@ export default class MenuBuilder {
       ],
     };
     const subMenuViewDev = {
-      label: 'View',
+      label: '视图',
       submenu: [
         {
           label: 'Reload',
@@ -118,7 +118,7 @@ export default class MenuBuilder {
       ],
     };
     const subMenuViewProd = {
-      label: 'View',
+      label: '视图',
       submenu: [
         {
           label: 'Toggle Full Screen',
@@ -130,7 +130,7 @@ export default class MenuBuilder {
       ],
     };
     const subMenuWindow = {
-      label: 'Window',
+      label: '窗口',
       submenu: [
         {
           label: 'Minimize',
@@ -143,7 +143,7 @@ export default class MenuBuilder {
       ],
     };
     const subMenuHelp = {
-      label: 'Help',
+      label: '帮助',
       submenu: [
         {
           label: 'Learn More',
