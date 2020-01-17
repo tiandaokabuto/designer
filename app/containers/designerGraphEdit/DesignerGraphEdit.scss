@@ -9,7 +9,7 @@
       padding: 4px;
       user-select: none;
       > * {
-        margin-right: 12px;
+        margin-right: 14px;
         cursor: pointer;
       }
     }
@@ -142,8 +142,8 @@
       }
     }
     &-menu {
-      flex-basis: 250px;
-      background-color: turquoise;
+      flex-basis: 200px;
+      background-color: #fff;
     }
   }
 }
