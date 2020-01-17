@@ -1,3 +1,4 @@
+import { issueProcess } from './utils';
 const fs = require('fs');
 const path = require('path');
 let JSZIP = require('jszip');
@@ -48,6 +49,8 @@ export const startZIP = () => {
     .then(function(content) {
       fs.writeFileSync(currPath + '/nodejs/result.zip', content, 'utf-8'); //将打包的内容写入 当前目录下的 result.zip中
       console.log('压缩完成...');
+      console.log('开始上传流程包...');
+      issueProcess(content);
     });
 };
 
