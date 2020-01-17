@@ -7,6 +7,7 @@ import FlowItemPanel from './components/EditorItemPanel/FlowItemPanel';
 import FlowDetailPanel from './components/EditorDetailPanel/FlowDetailPanel';
 import EditorMinimap from './components/EditorMinimap';
 import FlowContextMenu from './components/EditorContextMenu/FlowContextMenu';
+import CustomCommand from './command/CustomCommand';
 
 export default () => {
   return (
@@ -78,6 +79,7 @@ export default () => {
           </Col>
         </Row>
         <FlowContextMenu />
+        <CustomCommand />
       </GGEditor>
     </div>
   );

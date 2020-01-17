@@ -13,6 +13,7 @@ const FlowContextMenu = () => {
   return (
     <ContextMenu className="editor-contextMenu">
       <NodeMenu>
+        <MenuItem command="customCommand" />
         <MenuItem command="copy" />
         <MenuItem command="delete" />
       </NodeMenu>

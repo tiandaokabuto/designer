@@ -4,6 +4,7 @@ import DesignerHeader from './components/DesignerHeader/DesignerHeader';
 import DesignerBody from './components/DesignerBody';
 
 import './DesignerGraphEdit.scss';
+import { history } from '../../store/configureStore';
 
 export default () => {
   return (
