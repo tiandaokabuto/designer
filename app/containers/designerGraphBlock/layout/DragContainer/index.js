@@ -191,6 +191,7 @@ const DragContainer = ({ transformToPython }) => {
             // 包含循环语句的占位符和普通语句的情况
             currentLevel = findNodeLevelById(cards, findId, isTail);
           }
+          console.log(card);
           /* eslint-disable */
           const newNode = useNode(card, uniqueId(PREFIX_ID));
           if (!currentLevel) {

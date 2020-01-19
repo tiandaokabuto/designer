@@ -15,6 +15,7 @@ import './index.scss';
 export default useInjectContext(({ history }) => {
   const transformToPython = data => {
     const result = transformBlockToCode(data);
+    console.log(result);
     writeFile(
       __dirname + '/containers/designerGraphBlock/python/test.py',
       result.output

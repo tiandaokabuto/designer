@@ -1,4 +1,2 @@
-基本语句块1
-基本语句块2
-基本语句块2
-基本语句块2
+from selenium import webdriver
+hWeb = webdriver.Chrome()

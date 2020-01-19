@@ -6,6 +6,7 @@ export default ({ item }) => {
   const ref = useRef(null);
   const [{ isDragging }, drag] = useDrag({
     item: {
+      ...item,
       type: ItemTypes.CARD,
       effectTag: 'new',
       $$typeof: item.$$typeof,

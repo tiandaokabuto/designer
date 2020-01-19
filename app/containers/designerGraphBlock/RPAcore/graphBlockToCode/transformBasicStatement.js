@@ -56,9 +56,31 @@ const fake = {
   },
 };
 
+const fake1 = {
+  module: 'selenium',
+  pkg: 'webdriver',
+  cmdName: '启动新的浏览器',
+  visible: '启动" chrome"浏览器，并将此浏览器作为控对象，赋值给hWeb',
+  main: 'Chrome',
+  output: 'hWeb',
+  outputDesc: '输出说明：返回是否启动成功',
+  cmdDesc: '命令说明、描述',
+  properties: {
+    required: [
+      {
+        cnName: '输出到',
+        enName: 'outPut',
+        value: 'hWeb',
+        default: 'hWeb',
+      },
+    ],
+    optional: [],
+  },
+};
+
 const handleModuleImport = (dataStructure, result) => {
   if (dataStructure.module) {
-    result.output += `from ${dataStructure.pkg} import ${dataStructure.module}\n`;
+    result.output += `from ${dataStructure.module} import ${dataStructure.pkg}\n`;
   }
 };
 
@@ -71,10 +93,8 @@ const handleMainFnGeneration = (dataStructure, params, result) => {
   result.output += `${dataStructure.pkg}.${dataStructure.main}(${params})\n`;
 };
 
-const transformBasicStatement = dataStructure => {
-  const result = {
-    output: '',
-  };
+const transformBasicStatement = (dataStructure, result) => {
+  console.log(dataStructure);
   handleModuleImport(dataStructure, result);
   let params = ''; // 生成参数类型
   dataStructure.properties.required.forEach((item, index) => {
@@ -88,9 +108,11 @@ const transformBasicStatement = dataStructure => {
     }
   });
   handleMainFnGeneration(dataStructure, params, result);
-  console.log(result.output);
-  fs.writeFileSync('./test.py', result.output);
-  return '213';
+
+  // fs.writeFileSync('./test.py', result.output);
+  // return '213';
 };
 
-transformBasicStatement(fake);
+export default transformBasicStatement;
+
+// transformBasicStatement(fake1);

@@ -19,6 +19,6 @@ export const issueProcess = content => {
     })
     .then(res => res.data)
     .then(json => {
-      console.log(json, 'hhhhh');
+      console.log(json, '流程包上传成功');
     });
 };

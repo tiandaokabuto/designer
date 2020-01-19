@@ -1,3 +1,5 @@
+import transformBasicStatement from './transformBasicStatement';
+
 const fake = [
   {
     $$typeof: 1,
@@ -66,19 +68,20 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
   dataStructure.forEach((statement, index) => {
     switch (statement.$$typeof) {
       case 1: // 基础语句
-        result.output += `${padding}${statement.text}\n`;
+        // result.output += `${padding}${statement.text}\n`;
+        transformBasicStatement(statement, result);
         break;
-      case 2: // while
-        result.output += `${padding}while ( a < 0 ):\n`;
-        transformBlockToCodeImpl(statement.children, depth + 1);
-        break;
-      case 4: // 条件语句
-        result.output += `${padding}if ( b > 0 ):\n`;
-        transformBlockToCodeImpl(statement.ifChildren, depth + 1);
+      // case 2: // while
+      //   result.output += `${padding}while ( a < 0 ):\n`;
+      //   transformBlockToCodeImpl(statement.children, depth + 1);
+      //   break;
+      // case 4: // 条件语句
+      //   result.output += `${padding}if ( b > 0 ):\n`;
+      //   transformBlockToCodeImpl(statement.ifChildren, depth + 1);
 
-        result.output += `${padding}else:\n`;
-        transformBlockToCodeImpl(statement.elseChildren, depth + 1);
-        break;
+      //   result.output += `${padding}else:\n`;
+      //   transformBlockToCodeImpl(statement.elseChildren, depth + 1);
+      //   break;
       default:
       // do nothing
     }
