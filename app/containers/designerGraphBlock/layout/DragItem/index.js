@@ -53,6 +53,41 @@ const initialState = [
   },
   {
     $$typeof: BasicStatementTag,
+    text: '鼠标双击-截图',
+    module: 'clickImage',
+    pkg: 'MouseControl',
+    cmdName: '鼠标双击-截图',
+    visible: '查找图片在屏幕中的位置并双击',
+    main: 'scshot_match',
+    output: '',
+    outputDesc: '没有输出',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          enName: 'ImagePath',
+          cnName: '图片路径',
+          desc: '图片路径',
+          paramType: '参数类型：0:变量，',
+          componentType: '组件类型:0：输入框',
+          value: `"C:\\\\Users\\\\Administrator.SC-201902012149\\\\Desktop\\\\template.jpg"`,
+          default: `"C:\\\\Users\\\\Administrator.SC-201902012149\\\\Desktop\\\\template.jpg"`,
+        },
+      ],
+      optional: [
+        {
+          enName: '英文名称',
+          cnName: '显示的名称',
+          desc: '属性说明',
+          paramType: '参数类型：0:变量，1：',
+          componentType: '组件类型:0：输入框',
+          default: '默认值',
+        },
+      ],
+    },
+  },
+  {
+    $$typeof: BasicStatementTag,
     text: '基本语句块2',
   },
   {
@@ -72,7 +107,7 @@ export default () => {
   return (
     <div className="dragger-editor-item">
       {dragCard.map((item, index) => (
-        <DragCard item={item} />
+        <DragCard item={item} key={index} />
       ))}
     </div>
   );

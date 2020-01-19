@@ -34,7 +34,7 @@ class CustomCommand extends React.Component {
       shortcutCodes: [['ctrlKey', 'j']],
     };
 
-    return <RegisterCommand name="customCommand" config={config} />;
+    return <RegisterCommand name="跳转到代码块编辑区" config={config} />;
   }
 }
 

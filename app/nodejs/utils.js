@@ -7,8 +7,8 @@ export const issueProcess = content => {
   console.log(file);
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('processId', '12312321');
-  formData.append('processName', '测试流程上传');
+  formData.append('processId', '35345435435');
+  formData.append('processName', '测试打开浏览器');
   formData.append('desc', '这是一个压缩后的zip包');
   formData.append('mainFile', 'test.py');
   axios
