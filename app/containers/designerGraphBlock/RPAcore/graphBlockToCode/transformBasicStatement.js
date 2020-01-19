@@ -111,6 +111,7 @@ const transformBasicStatement = (dataStructure, result) => {
 
   // fs.writeFileSync('./test.py', result.output);
   // return '213';
+  console.log(result.output);
 };
 
 export default transformBasicStatement;
