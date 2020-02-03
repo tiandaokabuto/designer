@@ -59,9 +59,11 @@ const createWindow = async () => {
     show: false,
     width: 1350,
     height: 728,
+    frame: false,
+    // movable: false, //可否移动
     webPreferences: {
       nodeIntegration: true,
-      devTools: true,
+      devTools: false,
     },
   });
 

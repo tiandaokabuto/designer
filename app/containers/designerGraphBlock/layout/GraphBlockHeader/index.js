@@ -7,7 +7,12 @@ const TOOLS_DESCRIPTION = ['文件', '编辑', '运行', '调试', '工具', '�
 
 export default () => {
   return (
-    <div className="graphblock-header">
+    <div
+      className="graphblock-header"
+      style={{
+        '-webkitAppRegion': 'drag',
+      }}
+    >
       <div className="graphblock-header-tools">
         {TOOLS_DESCRIPTION.map((tool, index) => (
           <span key={index}>{tool}</span>
