@@ -14,9 +14,13 @@
       margin: 6px 0;
     }
   }
+  &-container {
+    flex: 1;
+  }
   &-parampanel {
     padding-top: 10px;
-    flex: 1;
+    flex-basis: 200px;
+    // flex: 1;
     background: antiquewhite;
   }
   .cursor__after {

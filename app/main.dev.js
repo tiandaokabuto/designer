@@ -63,7 +63,7 @@ const createWindow = async () => {
     // movable: false, //可否移动
     webPreferences: {
       nodeIntegration: true,
-      devTools: false,
+      devTools: true,
     },
   });
 

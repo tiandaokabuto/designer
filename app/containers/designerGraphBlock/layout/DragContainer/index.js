@@ -38,7 +38,7 @@ import {
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper';
 const style = {
-  width: 900,
+  //width: 900,
   padding: 10,
 };
 
