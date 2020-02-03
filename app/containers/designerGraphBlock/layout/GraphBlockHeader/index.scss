@@ -3,10 +3,12 @@
   justify-content: space-between;
   height: 32px;
   line-height: 32px;
-  background: rgba(107, 153, 153, 1);
+  background: rgba(51, 165, 138, 1);
   &-tools {
     span {
       margin: 0 12px;
+      user-select: none;
+      cursor: pointer;
     }
   }
   &-title {
