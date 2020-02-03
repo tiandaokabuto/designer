@@ -264,14 +264,14 @@ const DragContainer = ({ transformToPython }) => {
 
     return (
       <div className="dragger-editor-container">
-        <div
+        {/* <div
           style={{ position: 'absolute', top: 0 }}
           onClick={() => {
             transformToPython(cards);
           }}
         >
           转为python代码
-        </div>
+        </div> */}
         <InjectProvider
           value={{
             renderStatement,

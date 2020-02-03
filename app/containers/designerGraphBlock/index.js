@@ -3,6 +3,7 @@ import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
+import GraphBlockHeader from './layout/GraphBlockHeader';
 import DragContainer from './layout/DragContainer';
 import DragItem from './layout/DragItem';
 import DragParamPanel from './layout/DragParamPanel';
@@ -23,8 +24,9 @@ export default useInjectContext(({ history }) => {
   };
   return (
     <DndProvider backend={Backend}>
+      <GraphBlockHeader />
       <div className="dragger-editor">
-        <div
+        {/* <div
           style={{
             position: 'absolute',
             top: 0,
@@ -34,7 +36,7 @@ export default useInjectContext(({ history }) => {
           }}
         >
           返回
-        </div>
+        </div> */}
         <DragItem />
         <DragContainer transformToPython={transformToPython} />
         <DragParamPanel />

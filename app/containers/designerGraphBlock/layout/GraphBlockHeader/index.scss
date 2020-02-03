@@ -1,0 +1,34 @@
+.graphblock-header {
+  display: flex;
+  justify-content: space-between;
+  height: 32px;
+  line-height: 32px;
+  background: rgba(107, 153, 153, 1);
+  &-tools {
+    span {
+      margin: 0 12px;
+    }
+  }
+  &-title {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 1);
+    height: 18px;
+    font-size: 18px;
+  }
+  &-user {
+    span:nth-of-type(1) {
+      font-weight: 400;
+      width: 98px;
+      display: inline-block;
+      margin-left: 9px;
+    }
+    &-sign-out {
+      margin: 0 24px 0 16px;
+    }
+    .graphblock-header-operation {
+      color: black;
+      width: 32px;
+      height: 16px;
+    }
+  }
+}
