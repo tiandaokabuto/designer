@@ -29,9 +29,26 @@
       box-shadow: 0px 1px 0px 0px rgba(238, 238, 238, 1);
     }
     &-statement {
-      line-height: 37px;
-      text-align: center;
-      margin: 6px 0;
+      line-height: 32px;
+      padding-left: 24px;
+      // text-align: center;
+      // margin: 6px 0;
+    }
+    &-tree {
+      .ant-tree-switcher_open {
+        position: absolute !important;
+        right: 0;
+      }
+      .ant-tree-switcher_close {
+        position: absolute !important;
+        right: 0;
+      }
+      .ant-tree-switcher-noop {
+        display: none !important;
+      }
+    }
+    .ant-tree-show-line li:not(:last-child)::before {
+      display: none;
     }
   }
   &-container {

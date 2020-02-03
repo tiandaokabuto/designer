@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+// import { Tree, Icon } from 'antd';
+import { useDrag, useDrop } from 'react-dnd';
 // import { useSelector } from 'react-redux';
 
+import atomicCList from './atomicCList';
 import DragCard from './components/DragCard';
+import Tree from './components/CustomeTreeNode';
 import {
   BasicStatementTag,
   LoopStatementTag,
   ConditionalStatementTag,
 } from '../statementTags';
+
+const { TreeNode } = Tree;
 
 const initialState = [
   {
@@ -103,10 +109,36 @@ const initialState = [
 export default () => {
   // const state = useSelector(state => state.dragItem);
 
+  const renderTreeNodes = data =>
+    data.map(item => {
+      if (item.children) {
+        return (
+          <TreeNode
+            title={item.title}
+            key={item.key}
+            icon={item.icon}
+            dataRef={item}
+          >
+            {renderTreeNodes(item.children)}
+          </TreeNode>
+        );
+      }
+      return <TreeNode key={item.key} {...item} />;
+    });
+
   const [dragCard, setDragCard] = useState(initialState);
+  console.log(TreeNode);
   return (
     <div className="dragger-editor-item">
       <div className="dragger-editor-item-title">组件库</div>
+      {/* <Tree
+        showLine={true}
+        showIcon={true}
+        className="dragger-editor-item-tree"
+      >
+        {renderTreeNodes(atomicCList)}
+      </Tree> */}
+      <Tree>{renderTreeNodes(atomicCList)}</Tree>
       {dragCard.map((item, index) => (
         <DragCard item={item} key={index} />
       ))}

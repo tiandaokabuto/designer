@@ -10,7 +10,7 @@ export default () => {
     <div
       className="graphblock-header"
       style={{
-        '-webkitAppRegion': 'drag',
+        WebkitAppRegion: 'drag',
       }}
     >
       <div className="graphblock-header-tools">
