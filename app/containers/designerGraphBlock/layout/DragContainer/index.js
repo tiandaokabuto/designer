@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { Tabs } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import { InjectProvider } from 'react-hook-easier/lib/useInjectContext';
 // import { useStore, useSelector, useDispatch } from 'react-redux';
@@ -37,6 +38,8 @@ import {
 } from '../useHooks';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper';
+
+const { TabPane } = Tabs;
 const style = {
   //width: 900,
   padding: 10,
@@ -272,33 +275,43 @@ const DragContainer = ({ transformToPython }) => {
         >
           转为python代码
         </div> */}
-        <InjectProvider
-          value={{
-            renderStatement,
-            renderTailStatement,
-            addCard,
-            moveCard,
-            isDraggingNode,
-            setIsDraggingNode,
-            PLACEHOLDER_STATEMENT,
-            useToggleOpacity,
-            useSetClassName,
-            useDragSource,
-          }}
+        <Tabs
+          defaultActiveKey="codeblock"
+          className="dragger-editor-container-tabs"
         >
-          <div style={style}>
-            {cards.map((card, i) => renderStatement(card, i))}
-            {renderTailStatement({
-              id: PLACEHOLDER_MAINPROCESS,
-              text: '添加代码块',
-              index: PLACEHOLDER_STATEMENT,
-              moveCard,
-              addCard,
-              isDraggingNode,
-              setIsDraggingNode,
-            })}
-          </div>
-        </InjectProvider>
+          <TabPane tab="可视化" key="codeblock">
+            <InjectProvider
+              value={{
+                renderStatement,
+                renderTailStatement,
+                addCard,
+                moveCard,
+                isDraggingNode,
+                setIsDraggingNode,
+                PLACEHOLDER_STATEMENT,
+                useToggleOpacity,
+                useSetClassName,
+                useDragSource,
+              }}
+            >
+              <div style={style}>
+                {cards.map((card, i) => renderStatement(card, i))}
+                {renderTailStatement({
+                  id: PLACEHOLDER_MAINPROCESS,
+                  text: '添加代码块',
+                  index: PLACEHOLDER_STATEMENT,
+                  moveCard,
+                  addCard,
+                  isDraggingNode,
+                  setIsDraggingNode,
+                })}
+              </div>
+            </InjectProvider>
+          </TabPane>
+          <TabPane tab="源代码" key="codesource">
+            312
+          </TabPane>
+        </Tabs>
         <ContextMenu id={MENU_TYPE}>
           <MenuItem onClick={handleClick} data={{ action: 'Added' }}>
             Add 1 count

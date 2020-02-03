@@ -106,6 +106,7 @@ export default () => {
   const [dragCard, setDragCard] = useState(initialState);
   return (
     <div className="dragger-editor-item">
+      <div className="dragger-editor-item-title">组件库</div>
       {dragCard.map((item, index) => (
         <DragCard item={item} key={index} />
       ))}
