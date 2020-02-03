@@ -30,7 +30,10 @@
     }
     &-statement {
       line-height: 32px;
+      display: inline-block;
       padding-left: 24px;
+      padding-right: 24px;
+      // padding-left: 24px;
       // text-align: center;
       // margin: 6px 0;
     }
@@ -47,8 +50,13 @@
         display: none !important;
       }
     }
-    .ant-tree-show-line li:not(:last-child)::before {
-      display: none;
+    .sd-tree {
+      margin: 21px 17px 0 20px;
+      .sd-tree-switcher {
+        position: absolute;
+        right: 0;
+        top: 4px;
+      }
     }
   }
   &-container {

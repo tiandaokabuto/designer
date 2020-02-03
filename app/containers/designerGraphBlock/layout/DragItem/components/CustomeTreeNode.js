@@ -6,6 +6,14 @@ import { BasicStatementTag } from '../../statementTags';
 
 const TreeContext = createContext({});
 
+const generateStyle = isLeaf => ({
+  height: isLeaf ? 40 : 'auto',
+  lineHeight: isLeaf ? '40px' : '',
+  position: isLeaf ? 'unset' : 'relative',
+  paddingLeft: isLeaf ? '16px' : 0,
+  minHeight: '40px',
+});
+
 export default class Tree extends React.Component {
   static TreeNode = props => {
     console.log(props, 'hhh');
@@ -15,21 +23,20 @@ export default class Tree extends React.Component {
       <TreeContext.Consumer>
         {context => {
           return (
-            <div
-              style={{
-                height: isLeaf ? 32 : '',
-                lineHeight: isLeaf ? '32px' : '',
-                position: 'relative',
-              }}
-            >
+            <div style={generateStyle(isLeaf)}>
               {!isLeaf && (
                 <Icon
-                  type="minus-square"
+                  type={open ? 'minus-square' : 'plus-square'}
+                  className="sd-tree-switcher"
                   onClick={() => setOpen(open => !open)}
                 />
               )}
-              {/* {props.icon} */}
-              {isLeaf ? <DragCard item={props.item} /> : props.title}
+              {props.icon}
+              {isLeaf ? (
+                <DragCard item={props.item} />
+              ) : (
+                <span style={{ paddingLeft: '16px' }}>{props.title}</span>
+              )}
               {open && props.children}
             </div>
           );
@@ -40,7 +47,7 @@ export default class Tree extends React.Component {
   render() {
     return (
       <TreeContext.Provider>
-        <div>{this.props.children}</div>
+        <div className="sd-tree">{this.props.children}</div>
       </TreeContext.Provider>
     );
   }

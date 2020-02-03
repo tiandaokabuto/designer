@@ -127,11 +127,10 @@ export default () => {
     });
 
   const [dragCard, setDragCard] = useState(initialState);
-  console.log(TreeNode);
+
   return (
     <div className="dragger-editor-item">
       <div className="dragger-editor-item-title">组件库</div>
-<<<<<<< HEAD
       {/* <Tree
         showLine={true}
         showIcon={true}
@@ -140,8 +139,6 @@ export default () => {
         {renderTreeNodes(atomicCList)}
       </Tree> */}
       <Tree>{renderTreeNodes(atomicCList)}</Tree>
-=======
->>>>>>> d4dc80a211d4db3f5db2ddcb6fa50363d626cefc
       {dragCard.map((item, index) => (
         <DragCard item={item} key={index} />
       ))}

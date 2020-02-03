@@ -7,7 +7,7 @@ export default [
   {
     title: '鼠标与键盘',
     key: '0-0',
-    icon: <Icon type="hdd" />,
+    icon: <Icon type="hdd" style={{ fontSize: '16px' }} />,
     children: [
       {
         title: '打开谷歌浏览器',
@@ -54,14 +54,14 @@ export default [
             optional: [],
           },
         },
-        icon: <Icon type="branches" />,
+        icon: <Icon type="branches" style={{ fontSize: '16px' }} />,
       },
     ],
   },
   {
     title: '界面元素',
     key: '0-1',
-    icon: <Icon type="hdd" />,
+    icon: <Icon type="hdd" style={{ fontSize: '16px' }} />,
     children: [],
   },
 ];
