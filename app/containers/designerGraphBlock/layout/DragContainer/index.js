@@ -280,39 +280,38 @@ const DragContainer = ({ transformToPython }) => {
           className="dragger-editor-container-tabs"
         >
           <TabPane tab="可视化" key="codeblock">
-            31222
+            <InjectProvider
+              value={{
+                renderStatement,
+                renderTailStatement,
+                addCard,
+                moveCard,
+                isDraggingNode,
+                setIsDraggingNode,
+                PLACEHOLDER_STATEMENT,
+                useToggleOpacity,
+                useSetClassName,
+                useDragSource,
+              }}
+            >
+              <div style={style}>
+                {cards.map((card, i) => renderStatement(card, i))}
+                {renderTailStatement({
+                  id: PLACEHOLDER_MAINPROCESS,
+                  text: '添加代码块',
+                  index: PLACEHOLDER_STATEMENT,
+                  moveCard,
+                  addCard,
+                  isDraggingNode,
+                  setIsDraggingNode,
+                })}
+              </div>
+            </InjectProvider>
           </TabPane>
           <TabPane tab="源代码" key="codesource">
             312
           </TabPane>
         </Tabs>
-        <InjectProvider
-          value={{
-            renderStatement,
-            renderTailStatement,
-            addCard,
-            moveCard,
-            isDraggingNode,
-            setIsDraggingNode,
-            PLACEHOLDER_STATEMENT,
-            useToggleOpacity,
-            useSetClassName,
-            useDragSource,
-          }}
-        >
-          <div style={style}>
-            {cards.map((card, i) => renderStatement(card, i))}
-            {renderTailStatement({
-              id: PLACEHOLDER_MAINPROCESS,
-              text: '添加代码块',
-              index: PLACEHOLDER_STATEMENT,
-              moveCard,
-              addCard,
-              isDraggingNode,
-              setIsDraggingNode,
-            })}
-          </div>
-        </InjectProvider>
         <ContextMenu id={MENU_TYPE}>
           <MenuItem onClick={handleClick} data={{ action: 'Added' }}>
             Add 1 count
