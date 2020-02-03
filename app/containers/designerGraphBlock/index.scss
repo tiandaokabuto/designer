@@ -22,6 +22,20 @@
   }
   &-container {
     flex: 1;
+    box-shadow: 1px 0px 0px 0px #eeeeee;
+    &-tabs {
+      .ant-tabs-nav {
+        div:nth-child(1) {
+          height: 42px;
+        }
+        .ant-tabs-tab-active {
+          color: rgba(50, 166, 127, 1);
+        }
+        .ant-tabs-ink-bar {
+          background-color: rgba(50, 166, 166, 1);
+        }
+      }
+    }
   }
   &-parampanel {
     padding-top: 10px;
