@@ -1,2 +1,2 @@
-from selenium import webdriver
-hWeb = webdriver.Chrome(executable_path = 'C:\chromedriver\chromedriver.exe')
+from clickImage import MouseControl
+MouseControl.scshot_match(ImagePath = "C:\\Users\\Administrator.SC-201902012149\\Desktop\\template.jpg")
