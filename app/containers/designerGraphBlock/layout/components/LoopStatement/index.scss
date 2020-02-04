@@ -1,13 +1,23 @@
 .loopstatement {
   &-drag-anchor {
-    // background: rgba(50, 166, 127, 1);
     background: transparent;
-    height: 20px;
+    height: 12px;
     cursor: move;
     transition: all 0.5s;
+    z-index: 1;
+    transform: translateX(0px);
     // &:hover {
     //   // background-color: rgba(50, 166, 127, 1);
     // }
+  }
+  &-drag-mask {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 0;
+    border: 1px solid rgba(50, 166, 127, 1);
   }
   &-header {
     position: absolute;
@@ -27,5 +37,6 @@
   }
   &-content {
     padding-left: 10px;
+    padding-right: 2px;
   }
 }

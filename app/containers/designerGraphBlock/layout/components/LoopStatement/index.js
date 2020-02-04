@@ -72,6 +72,7 @@ const LoopStatement = useInjectContext(props => {
       ref={dragImage}
       className={className}
     >
+      <div className="loopstatement-drag-mask"></div>
       <div className="loopstatement-drag-anchor" ref={ref}></div>
       <div className="loopstatement-header" data-id={id}>
         <div className="loopstatement-header-title">当条件满足</div>
