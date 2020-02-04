@@ -1,9 +1,29 @@
 .loopstatement {
+  &-drag-anchor {
+    // background: rgba(50, 166, 127, 1);
+    background: transparent;
+    height: 20px;
+    cursor: move;
+    transition: all 0.5s;
+    // &:hover {
+    //   // background-color: rgba(50, 166, 127, 1);
+    // }
+  }
   &-header {
-    background: skyblue;
-    height: 37px;
-    line-height: 37px;
-    padding-left: 8px;
+    position: absolute;
+    background: rgba(50, 166, 127, 1);
+    width: 28px;
+    left: 0px;
+    top: 0;
+    height: 100%;
+    display: flex;
+    &-title {
+      white-space: nowrap;
+      transform: rotate(90deg);
+      margin: auto;
+      margin-left: -20px;
+      color: white;
+    }
   }
   &-content {
     padding-left: 10px;
