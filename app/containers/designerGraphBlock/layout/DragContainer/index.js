@@ -279,6 +279,7 @@ const DragContainer = ({ transformToPython }) => {
         >
           转为python代码
         </div> */}
+        <div className="dragger-editor-title">流程块1</div>
         <Tabs
           defaultActiveKey="codeblock"
           className="dragger-editor-container-tabs"

@@ -66,6 +66,14 @@
     flex: 1;
     background-color: #f9fafb;
     box-shadow: 1px 0px 0px 0px #eeeeee;
+    position: relative;
+    .dragger-editor-title {
+      position: absolute;
+      right: 16px;
+      top: 10px;
+      font-weight: 400;
+      color: rgba(51, 51, 51, 1);
+    }
     &-tabs {
       @include tabs();
     }
