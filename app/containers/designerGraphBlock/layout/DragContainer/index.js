@@ -43,6 +43,8 @@ const { TabPane } = Tabs;
 const style = {
   //width: 900,
   padding: 10,
+  overflowY: 'auto',
+  height: 'calc(100vh - 130px)',
 };
 
 const MENU_TYPE = 'MULTI';
