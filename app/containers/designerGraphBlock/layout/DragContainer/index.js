@@ -42,7 +42,7 @@ import update from 'immutability-helper';
 const { TabPane } = Tabs;
 const style = {
   //width: 900,
-  padding: 10,
+  padding: '16px 8px 16px 16px',
   overflowY: 'auto',
   height: 'calc(100vh - 130px)',
 };
