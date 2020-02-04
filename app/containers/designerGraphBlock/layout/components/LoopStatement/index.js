@@ -17,6 +17,7 @@ const style = {
   position: 'relative',
   paddingLeft: '28px',
   overflow: 'hidden',
+  marginRight: '8px',
   minHeight: '104px',
 };
 

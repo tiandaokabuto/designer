@@ -13,6 +13,7 @@ const style = {
   backgroundClip: 'padding-box',
   cursor: 'move',
   position: 'relative',
+  marginRight: '8px',
 };
 const BasicStatement = useInjectContext(props => {
   const {
