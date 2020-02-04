@@ -20,6 +20,7 @@
   height: calc(100vh);
   display: flex;
   color: #000;
+
   &-item {
     min-width: 239px;
     max-width: 239px;
@@ -56,11 +57,15 @@
       }
     }
     .sd-tree {
-      margin: 21px 17px 0 20px;
+      margin: 8px 17px 0 20px;
+      .sd-tree-open {
+        height: 40px;
+        line-height: 40px;
+      }
       .sd-tree-switcher {
         position: absolute;
         right: 0;
-        top: 4px;
+        top: 14px;
         user-select: none;
       }
     }

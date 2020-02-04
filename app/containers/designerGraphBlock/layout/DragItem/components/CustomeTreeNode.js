@@ -24,19 +24,21 @@ export default class Tree extends React.Component {
         {context => {
           return (
             <div style={generateStyle(isLeaf)}>
-              {!isLeaf && (
-                <Icon
-                  type={open ? 'minus-square' : 'plus-square'}
-                  className="sd-tree-switcher"
-                  onClick={() => setOpen(open => !open)}
-                />
-              )}
-              {props.icon}
-              {isLeaf ? (
-                <DragCard item={props.item} />
-              ) : (
-                <span style={{ paddingLeft: '16px' }}>{props.title}</span>
-              )}
+              <div className={isLeaf ? '' : 'sd-tree-open'}>
+                {!isLeaf && (
+                  <Icon
+                    type={open ? 'minus-square' : 'plus-square'}
+                    className="sd-tree-switcher"
+                    onClick={() => setOpen(open => !open)}
+                  />
+                )}
+                {props.icon}
+                {isLeaf ? (
+                  <DragCard item={props.item} />
+                ) : (
+                  <span style={{ paddingLeft: '16px' }}>{props.title}</span>
+                )}
+              </div>
               {open && props.children}
             </div>
           );
