@@ -6,7 +6,7 @@
 import React from 'react';
 import { Icon } from 'antd';
 
-import { BasicStatementTag } from '../statementTags';
+import { BasicStatementTag, LoopStatementTag } from '../statementTags';
 
 const DEFAULT_STYLE = {
   fontSize: '16px',
@@ -63,6 +63,47 @@ const abilityToDatastructure = {
       optional: [],
     },
   },
+  /** 鼠标双击截图 */
+  doubleClick: {
+    $$typeof: BasicStatementTag,
+    text: '鼠标双击-截图',
+    module: 'clickImage',
+    pkg: 'MouseControl',
+    cmdName: '鼠标双击-截图',
+    visible: '查找图片在屏幕中的位置并双击',
+    main: 'scshot_match',
+    output: '',
+    outputDesc: '没有输出',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          enName: 'ImagePath',
+          cnName: '图片路径',
+          desc: '图片路径',
+          paramType: '参数类型：0:变量，',
+          componentType: '组件类型:0：输入框',
+          value: `"C:\\\\Users\\\\Administrator.SC-201902012149\\\\Desktop\\\\template.jpg"`,
+          default: `"C:\\\\Users\\\\Administrator.SC-201902012149\\\\Desktop\\\\template.jpg"`,
+        },
+      ],
+      optional: [
+        {
+          enName: '英文名称',
+          cnName: '显示的名称',
+          desc: '属性说明',
+          paramType: '参数类型：0:变量，1：',
+          componentType: '组件类型:0：输入框',
+          default: '默认值',
+        },
+      ],
+    },
+  },
+  /** 循环控制命令 */
+  loopStatement: {
+    $$typeof: LoopStatementTag,
+    text: '循环控制语句',
+  },
 };
 
 export default [
@@ -78,6 +119,13 @@ export default [
         item: abilityToDatastructure['openBrowser'],
         icon: generateIcon('branches'),
       },
+      {
+        // title: '鼠标双击截图',
+        description: 'doubleClick',
+        key: '0-0-1',
+        item: abilityToDatastructure['doubleClick'],
+        icon: generateIcon('branches'),
+      },
     ],
   },
   {
@@ -90,6 +138,13 @@ export default [
     title: '基本命令',
     key: '0-2',
     icon: generateIcon('hdd'),
-    children: [],
+    children: [
+      {
+        description: 'loopStatement',
+        key: '0-2-0',
+        item: abilityToDatastructure['loopStatement'],
+        icon: generateIcon('branches'),
+      },
+    ],
   },
 ];
