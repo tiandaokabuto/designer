@@ -6,7 +6,11 @@
 import React from 'react';
 import { Icon } from 'antd';
 
-import { BasicStatementTag, LoopStatementTag } from '../statementTags';
+import {
+  BasicStatementTag,
+  LoopStatementTag,
+  ConditionalStatementTag,
+} from '../statementTags';
 
 const DEFAULT_STYLE = {
   fontSize: '16px',
@@ -104,6 +108,11 @@ const abilityToDatastructure = {
     $$typeof: LoopStatementTag,
     text: '循环控制语句',
   },
+  /** 条件分支命令 */
+  conditionalStatement: {
+    $$typeof: ConditionalStatementTag,
+    text: '条件分支语句',
+  },
 };
 
 export default [
@@ -143,6 +152,12 @@ export default [
         description: 'loopStatement',
         key: '0-2-0',
         item: abilityToDatastructure['loopStatement'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'conditionalStatement',
+        key: '0-2-1',
+        item: abilityToDatastructure['conditionalStatement'],
         icon: generateIcon('branches'),
       },
     ],

@@ -139,9 +139,9 @@ export default () => {
         {renderTreeNodes(atomicCList)}
       </Tree> */}
       <Tree>{renderTreeNodes(atomicCList)}</Tree>
-      {dragCard.map((item, index) => (
+      {/* {dragCard.map((item, index) => (
         <DragCard item={item} key={index} />
-      ))}
+      ))} */}
     </div>
   );
 };
