@@ -260,7 +260,9 @@ const DragContainer = ({ transformToPython }) => {
     };
 
     const renderTailStatement = props => {
-      return <BasicStatement {...props} card={{ id: props.id }} />;
+      return (
+        <BasicStatement {...props} card={{ id: props.id }} isTail={true} />
+      );
     };
 
     // console.log(JSON.stringify(cards), cards);
@@ -298,7 +300,8 @@ const DragContainer = ({ transformToPython }) => {
                 {cards.map((card, i) => renderStatement(card, i))}
                 {renderTailStatement({
                   id: PLACEHOLDER_MAINPROCESS,
-                  text: '添加代码块',
+                  text:
+                    '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
                   index: PLACEHOLDER_STATEMENT,
                   moveCard,
                   addCard,

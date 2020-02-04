@@ -7,6 +7,7 @@
 body {
   position: relative;
   color: white;
+  min-width: 952px;
   height: 100vh;
   background-color: #232c39;
   background-image: linear-gradient(

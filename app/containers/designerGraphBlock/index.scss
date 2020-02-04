@@ -18,6 +18,8 @@
   display: flex;
   color: #000;
   &-item {
+    min-width: 239px;
+    max-width: 239px;
     flex-basis: 239px;
     box-shadow: 1px 0px 0px 0px rgba(238, 238, 238, 1);
     &-title {
@@ -62,6 +64,7 @@
   }
   &-container {
     flex: 1;
+    background-color: #f9fafb;
     box-shadow: 1px 0px 0px 0px #eeeeee;
     &-tabs {
       @include tabs();
@@ -103,11 +106,41 @@
     bottom: 0;
     left: 0;
     right: 0;
-    border: 1px dashed grey;
+    // border: 1px dashed grey;
+    &__tail {
+      border-radius: 3px;
+      border: 1px solid rgba(238, 238, 238, 1);
+      font-weight: 400;
+    }
   }
   .card-content {
     position: relative;
     z-index: 1;
-    padding: 0.5rem 1rem;
+    height: 52px;
+    // line-height: 28px;
+    padding: 8px 16px;
+    box-shadow: 0px 1px 0px 0px rgba(238, 238, 238, 1);
+    border-radius: 3px 3px 0px 0px;
+    &__tail {
+      color: rgba(204, 204, 204, 1);
+      height: 28px;
+      line-height: 28px;
+      padding: unset;
+      padding-left: 12px;
+      box-shadow: none;
+      &::after {
+        display: none;
+      }
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 2px;
+      background: rgba(50, 166, 127, 1);
+      left: 50%;
+      bottom: -5px;
+      transform: rotateZ(90deg) translateX(0px);
+    }
   }
 }

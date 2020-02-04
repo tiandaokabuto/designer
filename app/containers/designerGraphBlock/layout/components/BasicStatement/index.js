@@ -9,7 +9,6 @@ import ItemTypes from '../../statementTypes';
 const style = {
   borderTop: '4px solid transparent',
   borderBottom: '4px solid transparent',
-  // padding: '0.5rem 1rem',
   backgroundColor: 'white',
   backgroundClip: 'padding-box',
   cursor: 'move',
@@ -22,6 +21,7 @@ const BasicStatement = useInjectContext(props => {
     index,
     moveCard,
     addCard,
+    isTail,
     isDraggingNode,
     useToggleOpacity,
     useSetClassName,
@@ -66,10 +66,17 @@ const BasicStatement = useInjectContext(props => {
       }}
       className={className}
     >
-      <div className="card-content" data-id={id}>
+      <div
+        className={isTail ? 'card-content card-content__tail' : 'card-content'}
+        data-id={id}
+      >
         {text}
       </div>
-      <div className="card-mask" data-id={id}></div>
+      <div
+        className={isTail ? 'card-mask card-mask__tail' : 'card-mask'}
+        data-id={id}
+        ref={dragImage}
+      ></div>
     </div>
   );
 });
