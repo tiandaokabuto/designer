@@ -264,6 +264,7 @@
     "@hot-loader/react-dom": "^16.11.0",
     "antd": "^3.26.5",
     "axios": "^0.19.1",
+    "codemirror": "^5.51.0",
     "connected-react-router": "^6.6.1",
     "core-js": "^3.5.0",
     "devtron": "^1.4.0",
