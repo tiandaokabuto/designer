@@ -6,6 +6,7 @@ import { InjectProvider } from 'react-hook-easier/lib/useInjectContext';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 import CodeEditing from './CodeEditing';
+import OutputPanel from './OutputPanel';
 
 import BasicStatement from '../components/BasicStatement';
 import LoopStatement from '../components/LoopStatement';
@@ -48,7 +49,7 @@ const style = {
   //width: 900,
   padding: '16px 8px 16px 16px',
   overflowY: 'auto',
-  height: 'calc(100vh - 130px)',
+  height: '100%',
 };
 
 const MENU_TYPE = 'MULTI';
@@ -267,44 +268,48 @@ const DragContainer = ({ transformToPython }) => {
           转为python代码
         </div> */}
       <div className="dragger-editor-title">流程块1</div>
-      <Tabs
-        defaultActiveKey="codeblock"
-        className="dragger-editor-container-tabs"
-      >
-        <TabPane tab="可视化" key="codeblock">
-          <InjectProvider
-            value={{
-              renderStatement,
-              renderTailStatement,
-              addCard,
-              moveCard,
-              isDraggingNode,
-              setIsDraggingNode,
-              PLACEHOLDER_STATEMENT,
-              useToggleOpacity,
-              useSetClassName,
-              useDragSource,
-            }}
-          >
-            <div style={style}>
-              {cards.map((card, i) => renderStatement(card, i))}
-              {renderTailStatement({
-                id: PLACEHOLDER_MAINPROCESS,
-                text:
-                  '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
-                index: PLACEHOLDER_STATEMENT,
-                moveCard,
+      <div className="dragger-editor-container-codeblock">
+        <Tabs
+          defaultActiveKey="codeblock"
+          className="dragger-editor-container-tabs"
+        >
+          <TabPane tab="可视化" key="codeblock">
+            <InjectProvider
+              value={{
+                renderStatement,
+                renderTailStatement,
                 addCard,
+                moveCard,
                 isDraggingNode,
                 setIsDraggingNode,
-              })}
-            </div>
-          </InjectProvider>
-        </TabPane>
-        <TabPane tab="源代码" key="codesource">
-          <CodeEditing />
-        </TabPane>
-      </Tabs>
+                PLACEHOLDER_STATEMENT,
+                useToggleOpacity,
+                useSetClassName,
+                useDragSource,
+              }}
+            >
+              <div style={style}>
+                {cards.map((card, i) => renderStatement(card, i))}
+                {renderTailStatement({
+                  id: PLACEHOLDER_MAINPROCESS,
+                  text:
+                    '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
+                  index: PLACEHOLDER_STATEMENT,
+                  moveCard,
+                  addCard,
+                  isDraggingNode,
+                  setIsDraggingNode,
+                })}
+              </div>
+            </InjectProvider>
+          </TabPane>
+          <TabPane tab="源代码" key="codesource">
+            <CodeEditing />
+          </TabPane>
+        </Tabs>
+        <OutputPanel />
+      </div>
+
       <ContextMenu id={MENU_TYPE}>
         <MenuItem onClick={handleClick} data={{ action: 'Added' }}>
           Add 1 count

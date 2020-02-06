@@ -71,6 +71,7 @@
     }
   }
   &-container {
+    height: calc(100% - 72px);
     flex: 1;
     background-color: #f9fafb;
     box-shadow: 1px 0px 0px 0px #eeeeee;
