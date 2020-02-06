@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'antd';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const { TabPane } = Tabs;
 

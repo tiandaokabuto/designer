@@ -69,13 +69,13 @@ const BasicStatement = useInjectContext(props => {
     >
       <div
         className={isTail ? 'card-content card-content__tail' : 'card-content'}
-        data-id={id}
+        data-id={isTail ? '' : id}
       >
         {text}
       </div>
       <div
         className={isTail ? 'card-mask card-mask__tail' : 'card-mask'}
-        data-id={id}
+        data-id={isTail ? '' : id}
         ref={dragImage}
       ></div>
     </div>
