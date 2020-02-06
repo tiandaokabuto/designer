@@ -14,13 +14,14 @@ export default () => {
         const outputDom = document.querySelector(
           '.dragger-editor-container-output'
         );
-        const originHeight = parseFloat(
+        let originHeight = parseFloat(
           window.getComputedStyle(outputDom).height
         );
-        if (originHeight <= 60 && offset < 0) return;
+        // if (originHeight <= 74 && offset < 0) return;
+        // originHeight = originHeight < 74 ? 74 : originHeight;
         outputDom.style.height = originHeight + offset + 'px';
       }
-    }, 50);
+    }, 0);
 
     const handleMouseUp = () => {
       isMouseDown = false;
@@ -34,7 +35,7 @@ export default () => {
         className="dragger-editor-container-output-anchor"
         onMouseDown={e => ((isMouseDown = true), (startOffset = e.pageY))}
       ></div>
-      <div>输出</div>
+      {/* <div>输出</div> */}
     </div>
   );
 };

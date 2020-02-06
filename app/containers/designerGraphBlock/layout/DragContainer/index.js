@@ -288,7 +288,7 @@ const DragContainer = ({ transformToPython }) => {
                 useDragSource,
               }}
             >
-              <div style={style}>
+              <div style={style} className="scroll-body">
                 {cards.map((card, i) => renderStatement(card, i))}
                 {renderTailStatement({
                   id: PLACEHOLDER_MAINPROCESS,
