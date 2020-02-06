@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { CHANGE_CHECKEDID } from '../../../../actions/codeblock';
 
 const prevChecked = {
   dom: null,
@@ -21,9 +22,8 @@ export default ({ className }) => {
         prevChecked.originColor = e.target.style.backgroundColor;
         e.target.style.backgroundColor = 'aquamarine';
 
-        // TODO...
         dispatch({
-          type: 'parampanel-current-change',
+          type: CHANGE_CHECKEDID,
           payload: checkedId,
         });
       }

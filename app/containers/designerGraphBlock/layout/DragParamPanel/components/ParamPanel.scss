@@ -1,0 +1,11 @@
+.parampanel {
+  &-item {
+    display: flex;
+    align-items: center;
+    margin: 12px 4px;
+    .param-title {
+      white-space: nowrap;
+      margin-right: 16px;
+    }
+  }
+}
