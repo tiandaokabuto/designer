@@ -54,6 +54,19 @@ export const findIFNodeLevelById = (cards, id, layer) => {
 };
 
 /**
+ * 查找当前id对应的代码块数据结构
+ * @param {*} cards
+ * @param {*} id
+ */
+export const findNodeById = (cards, id) => {
+  const find = findNodeLevelById(cards, id, false);
+  if (find) {
+    return find.find(node => node.id === id);
+  }
+  return undefined;
+};
+
+/**
  * 判断当前结点是否是正在拖拽结点的子结点
  * @param {*} node
  * @param {*} id

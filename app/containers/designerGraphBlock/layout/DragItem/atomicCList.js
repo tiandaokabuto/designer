@@ -43,6 +43,7 @@ const abilityToDatastructure = {
           enName: 'outPut',
           value: 'hWeb',
           default: 'hWeb',
+          componentType: 0,
         },
         {
           cnName: '浏览器类型',
@@ -51,7 +52,7 @@ const abilityToDatastructure = {
           default: "'C:\\chromedriver\\chromedriver.exe'",
           desc: '属性说明',
           paramType: '参数类型：0:变量，',
-          componentType: '组件类型:1：下拉框',
+          componentType: 1, //'组件类型:1：下拉框',
           valueMapping: [
             {
               name: '谷歌chrome浏览器',
@@ -86,20 +87,20 @@ const abilityToDatastructure = {
           cnName: '图片路径',
           desc: '图片路径',
           paramType: '参数类型：0:变量，',
-          componentType: '组件类型:0：输入框',
+          componentType: 0, //'组件类型:0：输入框',
           value: `"C:\\\\Users\\\\Administrator.SC-201902012149\\\\Desktop\\\\template.jpg"`,
           default: `"C:\\\\Users\\\\Administrator.SC-201902012149\\\\Desktop\\\\template.jpg"`,
         },
       ],
       optional: [
-        {
-          enName: '英文名称',
-          cnName: '显示的名称',
-          desc: '属性说明',
-          paramType: '参数类型：0:变量，1：',
-          componentType: '组件类型:0：输入框',
-          default: '默认值',
-        },
+        // {
+        //   enName: '英文名称',
+        //   cnName: '显示的名称',
+        //   desc: '属性说明',
+        //   paramType: '参数类型：0:变量，1：',
+        //   componentType: '组件类型:0：输入框',
+        //   default: '默认值',
+        // },
       ],
     },
   },
