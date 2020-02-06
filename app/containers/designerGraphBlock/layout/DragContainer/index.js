@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Tabs } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import { InjectProvider } from 'react-hook-easier/lib/useInjectContext';
-// import { useStore, useSelector, useDispatch } from 'react-redux';
+import { useStore, useSelector, useDispatch } from 'react-redux';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 import CodeEditing from './CodeEditing';
@@ -42,6 +42,8 @@ import {
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper';
 
+import { CHANGE_CARDDATA } from '../../../../actions/codeblock';
+
 import './index.scss';
 
 const { TabPane } = Tabs;
@@ -63,12 +65,13 @@ const DragContainer = ({ transformToPython }) => {
   const event = useEventHandler({
     className: 'dragger-editor-container',
   });
-  // const cards1 = useSelector(state => state.statement.cards);
-  // const dispatch = useDispatch();
-  // console.log(cards1, 'card');
+  const cards = useSelector(state => state.blockcode.cards);
+  const dispatch = useDispatch();
+
+  console.log(cards, 'card');
   const [isDraggingNode, setIsDraggingNode] = useState({});
 
-  const [cards, setCards] = useState([]);
+  // const [cards, setCards] = useState([]);
   const moveCard = useCallback(
     (dragItem, hoverItem) => {
       if (isChildrenNode(dragItem, hoverItem)) {
@@ -101,7 +104,11 @@ const DragContainer = ({ transformToPython }) => {
           const cloneCards = cloneDeep(cards);
           dragNodes.splice(deleteIndex, 1);
           currentLevel.push(deleteNode);
-          setCards([...cards]);
+          dispatch({
+            type: CHANGE_CARDDATA,
+            payload: [...cards],
+          });
+          // setCards([...cards]);
         } else if (
           hoverItem.id.includes('tail') &&
           dragNodes !== undefined &&
@@ -128,7 +135,11 @@ const DragContainer = ({ transformToPython }) => {
           const cloneCards = cloneDeep(cards);
           dragNodes.splice(deleteIndex, 1);
           hoverNodes.push(deleteNode);
-          setCards([...cards]);
+          dispatch({
+            type: CHANGE_CARDDATA,
+            payload: [...cards],
+          });
+          // setCards([...cards]);
         } else if (
           hoverItem.id.includes('tail') &&
           dragNodes !== undefined &&
@@ -150,7 +161,11 @@ const DragContainer = ({ transformToPython }) => {
           const cloneCards = cloneDeep(cards);
           dragNodes.splice(deleteIndex, 1);
           hoverNodes.push(deleteNode);
-          setCards([...cards]);
+          dispatch({
+            type: CHANGE_CARDDATA,
+            payload: [...cards],
+          });
+          // setCards([...cards]);
         }
         return;
       }
@@ -172,7 +187,11 @@ const DragContainer = ({ transformToPython }) => {
       const cloneCards = cloneDeep(cards);
       dragNodes.splice(deleteIndex, 1);
       hoverNodes.splice(insertIndex, 0, deleteNode);
-      setCards([...cards]);
+      dispatch({
+        type: CHANGE_CARDDATA,
+        payload: [...cards],
+      });
+      // setCards([...cards]);
     },
     [cards]
   );
@@ -184,35 +203,42 @@ const DragContainer = ({ transformToPython }) => {
       // });
       const findId = id.replace(/-tail/, '');
       const isTail = isTailStatement(id);
-      setCards(cards => {
-        let currentLevel = undefined;
-        if (isConditionalStatementPlaceholder(findId)) {
-          // 条件语句
-          const layer = extractLayer(findId);
-          const bufId = trimId(findId);
-          currentLevel = findIFNodeLevelById(cards, bufId, layer);
-        } else if (isMainProcessPlaceholder(findId)) {
-          // 主流程的占位符
-          currentLevel = cards;
-        } else {
-          // 包含循环语句的占位符和普通语句的情况
-          currentLevel = findNodeLevelById(cards, findId, isTail);
-        }
-        console.log(card);
-        /* eslint-disable */
-        const newNode = useNode(card, uniqueId(PREFIX_ID));
-        if (!currentLevel) {
-          return cloneDeep(cards);
-        }
-        if (insertIndex === PLACEHOLDER_STATEMENT) {
-          currentLevel.push(newNode);
-        } else {
-          currentLevel.splice(insertIndex, 0, newNode);
-        }
-        return cloneDeep(cards);
+      //setCards(cards => {
+      let currentLevel = undefined;
+      if (isConditionalStatementPlaceholder(findId)) {
+        // 条件语句
+        const layer = extractLayer(findId);
+        const bufId = trimId(findId);
+        currentLevel = findIFNodeLevelById(cards, bufId, layer);
+      } else if (isMainProcessPlaceholder(findId)) {
+        // 主流程的占位符
+        currentLevel = cards;
+      } else {
+        // 包含循环语句的占位符和普通语句的情况
+        currentLevel = findNodeLevelById(cards, findId, isTail);
+      }
+      /* eslint-disable */
+      const newNode = useNode(card, uniqueId(PREFIX_ID));
+      if (!currentLevel) {
+        dispatch({
+          type: CHANGE_CARDDATA,
+          payload: cloneDeep(cards),
+        });
+        return; //cloneDeep(cards);
+      }
+      if (insertIndex === PLACEHOLDER_STATEMENT) {
+        currentLevel.push(newNode);
+      } else {
+        currentLevel.splice(insertIndex, 0, newNode);
+      }
+      dispatch({
+        type: CHANGE_CARDDATA,
+        payload: cloneDeep(cards),
       });
+      // return cloneDeep(cards);
+      //});
     },
-    [setCards]
+    [cards]
   );
 
   const renderStatement = (card, index) => {
