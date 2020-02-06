@@ -67,7 +67,7 @@ export default () => {
     // });
   });
   return (
-    <div>
+    <div style={{ height: '100%' }}>
       <textarea id="editor" className="editor"></textarea>
     </div>
   );
