@@ -1,5 +1,6 @@
 import { issueProcess } from './utils';
 const fs = require('fs');
+const { exec } = require('child_process');
 const path = require('path');
 let JSZIP = require('jszip');
 let zip = new JSZIP();
@@ -60,5 +61,21 @@ export const writeFile = (dirname, content) => {
       console.log('开始压缩...');
       startZIP();
     }
+  });
+};
+
+export const executePython = code => {
+  writeFileRecursive(__dirname + '/nodejs/code.py', code, err => {
+    let command = `python ${__dirname}/nodejs/code.py`;
+    exec(command, (err, stdout, stdin) => {
+      if (err) {
+        let reg = /[\d\D]*(line\s\d)[\d\D]*?(\w*(?:Error|Exception).*)/im;
+        let matchArr = reg.exec(err.message);
+        matchArr.shift();
+        // res.send(matchArr.join(', '));
+      } else {
+        console.log(stdout);
+      }
+    });
   });
 };
