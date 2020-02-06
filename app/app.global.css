@@ -19,9 +19,9 @@ body {
   overflow-y: hidden;
   margin: 0;
 }
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
-}
+} */
 
 h2 {
   margin: 0;
