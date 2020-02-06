@@ -33,7 +33,7 @@ import 'codemirror/addon/edit/matchbrackets.js';
 export default () => {
   const dispatch = useDispatch();
   const pythonCode = useSelector(state => state.test.pythonCode);
-  console.log(dispatch, pythonCode);
+  // console.log(dispatch, pythonCode);
   useEffect(() => {
     var el = document.getElementById('editor');
     var version = '# version: Python3\n\n';
