@@ -42,17 +42,20 @@ export default ({ checkedBlock }) => {
   console.log(checkedBlock);
   return (
     <div className="parampanel">
-      {(checkedBlock.properties.required || []).map((param, index) => {
-        return (
-          <div key={checkedBlock.id + index} className="parampanel-item">
-            <span className="param-title">{param.cnName}</span>
-            {/* <div></div> */}
-            <div style={{ flex: 1, overflow: 'hidden' }}>
-              {getComponentType(param)}
+      <div className="parampanel-required">必选项</div>
+      <div className="parampanel-content">
+        {(checkedBlock.properties.required || []).map((param, index) => {
+          return (
+            <div key={checkedBlock.id + index} className="parampanel-item">
+              <span className="param-title">{param.cnName}</span>
+              <div style={{ flex: 1, overflow: 'hidden' }}>
+                {getComponentType(param)}
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
+      <div className="parampanel-optional">选填项</div>
     </div>
   );
 };
