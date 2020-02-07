@@ -16,7 +16,6 @@ const generateStyle = isLeaf => ({
 
 export default class Tree extends React.Component {
   static TreeNode = props => {
-    console.log(props, 'hhh');
     const isLeaf = !props.children;
     const [open, setOpen] = useState(false);
     return (

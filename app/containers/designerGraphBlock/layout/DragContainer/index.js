@@ -68,7 +68,6 @@ const DragContainer = ({ transformToPython }) => {
   const cards = useSelector(state => state.blockcode.cards);
   const dispatch = useDispatch();
 
-  console.log(cards, 'card');
   const [isDraggingNode, setIsDraggingNode] = useState({});
 
   // const [cards, setCards] = useState([]);
