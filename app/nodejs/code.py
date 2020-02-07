@@ -10,6 +10,6 @@ This function is the entry of this program and
 it must be return your answer of current question.
 '''
 def solution():
-	print('hhhhhh1111')
-	pass
+	print("hhhh")
+	print("hhhh + 2222")
 solution()
