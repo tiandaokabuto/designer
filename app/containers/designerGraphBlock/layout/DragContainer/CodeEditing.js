@@ -43,7 +43,7 @@ export default memo(() => {
     var codeEnd = '# code end\n\n';
     var codeTip =
       "'''\nThis function is the entry of this program and\nit must be return your answer of current question.\n'''\n";
-    var code = 'def solution():\n\tpass';
+    var code = 'def solution():\n\tprint("hhhh")\nsolution()';
     var initValue =
       version + codeAreaTip + codeStart + codeEnd + codeTip + code;
     var myCodeMirror = CodeMirror.fromTextArea(el, {

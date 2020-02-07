@@ -1,4 +1,7 @@
 import { issueProcess } from './utils';
+import event, {
+  PYTHON_OUTPUT,
+} from '../containers/designerGraphBlock/layout/eventCenter';
 const fs = require('fs');
 const { exec } = require('child_process');
 const path = require('path');
@@ -74,7 +77,9 @@ export const executePython = code => {
         matchArr.shift();
         // res.send(matchArr.join(', '));
       } else {
+        // 将结果回显到输出面板
         console.log(stdout);
+        event.emit(PYTHON_OUTPUT, stdout);
       }
     });
   });

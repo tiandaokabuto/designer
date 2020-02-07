@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
+import event, { PYTHON_OUTPUT } from '../eventCenter';
 
 let isMouseDown = false;
 let startOffset = 0;
 
 export default () => {
+  const [output, setOutput] = useState('');
   useEffect(() => {
     const handleAnchorMouseMove = useThrottle(e => {
       if (isMouseDown) {
@@ -29,13 +31,23 @@ export default () => {
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mousemove', handleAnchorMouseMove);
   }, []);
+
+  useEffect(() => {
+    const handlePythonOutput = stdout => {
+      setOutput(stdout);
+    };
+    event.addListener(PYTHON_OUTPUT, handlePythonOutput);
+  }, []);
   return (
     <div className="dragger-editor-container-output">
       <div
         className="dragger-editor-container-output-anchor"
         onMouseDown={e => ((isMouseDown = true), (startOffset = e.pageY))}
       ></div>
-      <div>输出</div>
+      <div>
+        输出:
+        <br /> <pre>{output}</pre>
+      </div>
     </div>
   );
 };
