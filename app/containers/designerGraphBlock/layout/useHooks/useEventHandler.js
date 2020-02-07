@@ -4,7 +4,6 @@ import { CHANGE_CHECKEDID } from '../../../../actions/codeblock';
 
 const prevChecked = {
   dom: null,
-  originColor: undefined,
 };
 
 export default ({ className }) => {
@@ -16,16 +15,17 @@ export default ({ className }) => {
       if (checkedId) {
         if (prevChecked.dom) {
           // 恢复之前选中的代码块
-          prevChecked.dom.style.backgroundColor = prevChecked.originColor;
+          prevChecked.dom.style.borderStyle = 'dashed';
         }
-        prevChecked.dom = e.target;
-        prevChecked.originColor = e.target.style.backgroundColor;
-        e.target.style.backgroundColor = 'aquamarine';
+        if (e.target.nextSibling) {
+          prevChecked.dom = e.target.nextSibling;
+          e.target.nextSibling.style.borderStyle = 'solid';
 
-        dispatch({
-          type: CHANGE_CHECKEDID,
-          payload: checkedId,
-        });
+          dispatch({
+            type: CHANGE_CHECKEDID,
+            payload: checkedId,
+          });
+        }
       }
     };
     container.addEventListener('click', handleClick, false);
