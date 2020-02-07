@@ -13,7 +13,6 @@ export default ({ className }) => {
     const handleClick = e => {
       const checkedId = e.target.getAttribute('data-id');
       if (checkedId) {
-        console.log([e.target]);
         if (e.target.classList.contains('loopstatement-header')) {
           // TODO...
           return;
