@@ -35,7 +35,7 @@ export default () => {
         className="dragger-editor-container-output-anchor"
         onMouseDown={e => ((isMouseDown = true), (startOffset = e.pageY))}
       ></div>
-      {/* <div>输出</div> */}
+      <div>输出</div>
     </div>
   );
 };
