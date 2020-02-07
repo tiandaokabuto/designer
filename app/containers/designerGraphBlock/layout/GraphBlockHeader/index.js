@@ -21,6 +21,9 @@ export default () => {
       style={{
         WebkitAppRegion: 'drag',
       }}
+      onDoubleClick={() => {
+        handleWindowOperation('unmaximize');
+      }}
     >
       <div className="graphblock-header-tools">
         {TOOLS_DESCRIPTION.map((tool, index) => (
