@@ -13,8 +13,12 @@ export default ({ className }) => {
     const handleClick = e => {
       const checkedId = e.target.getAttribute('data-id');
       if (checkedId) {
+        console.log([e.target]);
+        if (e.target.classList.contains('loopstatement-header')) {
+          // TODO...
+          return;
+        }
         if (prevChecked.dom) {
-          // 恢复之前选中的代码块
           prevChecked.dom.style.borderStyle = 'dashed';
         }
         if (e.target.nextSibling) {
