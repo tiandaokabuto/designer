@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 import CodeMirror from 'codemirror';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { CHANGE_SOURCECODE } from '../../../../actions/test';
 import { executePython } from '../../../../nodejs';
+import event, { PYTHON_EXECUTE } from '../eventCenter';
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/addon/fold/foldgutter.css';
@@ -30,10 +31,10 @@ import 'codemirror/addon/fold/comment-fold.js';
 import 'codemirror/addon/edit/closebrackets.js';
 import 'codemirror/addon/edit/matchbrackets.js';
 
-export default () => {
+export default memo(() => {
+  const codeMirrorRef = useRef(null);
   const dispatch = useDispatch();
   const pythonCode = useSelector(state => state.test.pythonCode);
-  // console.log(dispatch, pythonCode);
   useEffect(() => {
     var el = document.getElementById('editor');
     var version = '# version: Python3\n\n';
@@ -72,20 +73,33 @@ export default () => {
     //   // 显示智能提示
     //   myCodeMirror.showHint(); // 注意，注释了CodeMirror库中show-hint.js第131行的代码（阻止了代码补全，同时提供智能提示）
     // });
-  });
+    codeMirrorRef.current = myCodeMirror;
+  }, []);
+
+  useEffect(() => {
+    const handlePythonExecute = () => {
+      const code = codeMirrorRef.current.getValue();
+      executePython(code);
+      dispatch({
+        type: CHANGE_SOURCECODE,
+        payload: code,
+      });
+    };
+    event.addListener(PYTHON_EXECUTE, handlePythonExecute);
+  }, []);
 
   return (
     <div
       style={{ height: '100%' }}
-      onClick={() => {
-        executePython('print("hhh")');
-        dispatch({
-          type: CHANGE_SOURCECODE,
-          payload: 'print("hhh")',
-        });
-      }}
+      // onClick={() => {
+      //   executePython('print("hhh")');
+      //   dispatch({
+      //     type: CHANGE_SOURCECODE,
+      //     payload: 'print("hhh")',
+      //   });
+      // }}
     >
       <textarea id="editor" className="editor"></textarea>
     </div>
   );
-};
+});

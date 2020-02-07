@@ -1,12 +1,4 @@
-class EventCenter {
-  constructor(className) {
-    this.className = className;
-    this.register();
-  }
+import useEventEmitter from 'react-hook-easier/lib/useEventEmitter';
 
-  register() {
-    console.log('jjjjj');
-  }
-}
-
-export default EventCenter;
+export * from './eventTags';
+export default useEventEmitter();

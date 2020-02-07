@@ -1,9 +1,14 @@
 import React from 'react';
 import { Icon } from 'antd';
 
+import event, { PYTHON_EXECUTE } from '../eventCenter';
 import IconFont from '../../../../common/IconFont';
 
 import './index.scss';
+
+const handleOperation = op => (...args) => {
+  event.emit(op, ...args);
+};
 
 const TOOLS_DESCRIPTION = [
   {
@@ -19,6 +24,7 @@ const TOOLS_DESCRIPTION = [
     description: '运行',
     type: 'iconzhihang',
     IconFont: true,
+    onClick: handleOperation(PYTHON_EXECUTE),
   },
   {
     description: '录制',
@@ -45,9 +51,9 @@ export default () => {
       {TOOLS_DESCRIPTION.map((tool, index) => (
         <span key={index}>
           {tool.IconFont ? (
-            <IconFont type={tool.type} />
+            <IconFont type={tool.type} onClick={tool.onClick || (() => {})} />
           ) : (
-            <Icon type={tool.type} />
+            <Icon type={tool.type} onClick={tool.onClick || (() => {})} />
           )}
           {tool.description}
         </span>
