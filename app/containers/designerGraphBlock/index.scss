@@ -92,6 +92,11 @@
     max-width: 239px;
     flex-basis: 239px;
     &-tabs {
+      .ant-tabs-tab {
+        margin: 0;
+        min-width: 68px;
+        text-align: center;
+      }
       @include tabs();
     }
   }
