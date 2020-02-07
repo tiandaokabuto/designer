@@ -10,7 +10,7 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -85,6 +85,11 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  ipcMain.on('min', e => mainWindow.minimize());
+  ipcMain.on('max', e => mainWindow.maximize());
+  ipcMain.on('close', e => mainWindow.close());
+  ipcMain.on('unmaximize', e => mainWindow.unmaximize());
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
