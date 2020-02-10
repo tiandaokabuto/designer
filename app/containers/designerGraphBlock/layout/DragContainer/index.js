@@ -280,8 +280,6 @@ const DragContainer = ({ transformToPython }) => {
     return <BasicStatement {...props} card={{ id: props.id }} isTail={true} />;
   };
 
-  // console.log(JSON.stringify(cards), cards);
-
   return (
     <div className="dragger-editor-container">
       {/* <div

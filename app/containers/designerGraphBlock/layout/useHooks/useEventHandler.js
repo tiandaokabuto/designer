@@ -18,6 +18,7 @@ export default ({ className }) => {
           return;
         }
         if (prevChecked.dom) {
+          // 恢复之前选中的代码块
           prevChecked.dom.style.borderStyle = 'dashed';
         }
         if (e.target.nextSibling) {

@@ -20,24 +20,17 @@
     border: 1px solid rgba(50, 166, 127, 1);
   }
   &-header {
-    position: absolute;
-    background: rgba(50, 166, 127, 1);
-    width: 28px;
-    left: 0px;
-    top: 0;
-    height: 100%;
-    display: flex;
-    &-title {
-      white-space: nowrap;
-      transform: rotate(90deg);
-      margin: auto;
-      margin-left: -20px;
-      color: white;
-      pointer-events: none;
-    }
+    height: 24px;
+    line-height: 24px;
+    background-color: rgba(50, 166, 127, 1);
+    color: white;
+    padding-left: 8px;
+    z-index: 1;
+    transform: translateX(0px);
+    cursor: move;
   }
   &-content {
-    padding-left: 10px;
+    padding-left: 24px;
     padding-right: 2px;
   }
 }
