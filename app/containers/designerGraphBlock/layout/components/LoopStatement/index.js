@@ -15,7 +15,7 @@ const style = {
   backgroundClip: 'padding-box',
   // cursor: 'move',
   position: 'relative',
-  paddingLeft: '28px',
+  // paddingLeft: '28px',
   overflow: 'hidden',
   marginRight: '8px',
   minHeight: '104px',
@@ -74,9 +74,9 @@ const LoopStatement = useInjectContext(props => {
       className={className}
     >
       <div className="loopstatement-drag-mask"></div>
-      <div className="loopstatement-drag-anchor" ref={ref}></div>
-      <div className="loopstatement-header" data-id={id}>
-        <div className="loopstatement-header-title">当条件满足</div>
+      {/* <div className="loopstatement-drag-anchor" ref={ref}></div> */}
+      <div className="loopstatement-header" ref={ref} data-id={id}>
+        <div className="loopstatement-header-title">当循环为真时</div>
       </div>
       <div className="loopstatement-content">
         {card.children.map((subChildren, i) => renderStatement(subChildren, i))}
