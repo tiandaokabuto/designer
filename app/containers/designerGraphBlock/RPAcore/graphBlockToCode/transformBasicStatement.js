@@ -107,6 +107,16 @@ const transformBasicStatement = (dataStructure, result) => {
         params += item.enName + ' = ' + item.value;
     }
   });
+  dataStructure.properties.optional.forEach((item, index) => {
+    switch (item.enName) {
+      case 'outPut':
+        handleStatementOutput(item.value, '', result);
+        break;
+      default:
+        if (params) params += ', ';
+        params += item.enName + ' = ' + item.value;
+    }
+  });
   handleMainFnGeneration(dataStructure, params, result);
 
   // fs.writeFileSync('./test.py', result.output);
