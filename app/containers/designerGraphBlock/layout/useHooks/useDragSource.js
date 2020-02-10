@@ -4,13 +4,26 @@ import cloneDeep from 'lodash/cloneDeep';
 import useLockContextMenu from './useLockContextMenu';
 import ItemTypes from '../statementTypes';
 
-export default ({ setIsDraggingNode, props }) => {
+export default ({
+  setIsDraggingNode,
+  props,
+  handleLoopStatementFlod,
+  isFold,
+}) => {
   const [, drag, dragImage] = useDrag({
     item: { type: ItemTypes.CARD, ...cloneDeep(props.card) },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
     begin(monitor) {
+      /**
+       * 循环语句前置处理
+       */
+      // if (handleLoopStatementFlod) {
+      //   if (!isFold) {
+      //     handleLoopStatementFlod();
+      //   }
+      // }
       setIsDraggingNode(props);
       // 加锁
       /* eslint-disable */

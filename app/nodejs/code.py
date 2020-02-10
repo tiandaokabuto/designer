@@ -11,5 +11,5 @@ it must be return your answer of current question.
 '''
 def solution():
 	print("hhhh")
-	print("hhhh + 2222")
+	print('kkkk')
 solution()
