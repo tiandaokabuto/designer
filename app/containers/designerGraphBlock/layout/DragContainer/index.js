@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Tabs } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import { InjectProvider } from 'react-hook-easier/lib/useInjectContext';
@@ -42,7 +42,12 @@ import {
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper';
 
-import { CHANGE_CARDDATA } from '../../../../actions/codeblock';
+import {
+  CHANGE_CARDDATA,
+  CHANGE_PYTHONCODE,
+} from '../../../../actions/codeblock';
+import { transformBlockToCode } from '../../RPAcore';
+import eventEmit, { PYTHON_DISPLAY } from '../eventCenter';
 
 import './index.scss';
 
@@ -60,7 +65,7 @@ function handleClick(e, data, target) {
   console.log(data, data.target.getAttribute('data-id'));
 }
 
-const DragContainer = ({ transformToPython }) => {
+const DragContainer = () => {
   // 注册点击事件
   const event = useEventHandler({
     className: 'dragger-editor-container',
@@ -280,16 +285,31 @@ const DragContainer = ({ transformToPython }) => {
     return <BasicStatement {...props} card={{ id: props.id }} isTail={true} />;
   };
 
+  /**
+   *
+   * @param {*} cards
+   */
+  const transformToPython = cards => {
+    const result = transformBlockToCode(cards);
+    dispatch({
+      type: CHANGE_PYTHONCODE,
+      payload: result.output,
+    });
+    // writeFile(
+    //   __dirname + '/containers/designerGraphBlock/python/test.py',
+    //   result.output
+    // );
+  };
+
+  /**
+   * 实时更新python源代码
+   */
+  useEffect(() => {
+    transformToPython(cards);
+  }, [cards]);
+
   return (
     <div className="dragger-editor-container">
-      {/* <div
-          style={{ position: 'absolute', top: 0 }}
-          onClick={() => {
-            transformToPython(cards);
-          }}
-        >
-          转为python代码
-        </div> */}
       <div className="dragger-editor-title">流程块1</div>
       <div className="dragger-editor-container-codeblock">
         <Tabs
