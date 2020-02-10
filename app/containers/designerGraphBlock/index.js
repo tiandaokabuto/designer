@@ -9,20 +9,11 @@ import DragContainer from './layout/DragContainer';
 import DragItem from './layout/DragItem';
 import DragParamPanel from './layout/DragParamPanel';
 
-import { transformBlockToCode } from './RPAcore';
 import { writeFile } from '../../nodejs';
 
 import './index.scss';
 
 export default useInjectContext(({ history }) => {
-  const transformToPython = data => {
-    const result = transformBlockToCode(data);
-    console.log(result);
-    writeFile(
-      __dirname + '/containers/designerGraphBlock/python/test.py',
-      result.output
-    );
-  };
   return (
     <DndProvider backend={Backend}>
       <GraphBlockHeader />
@@ -40,7 +31,7 @@ export default useInjectContext(({ history }) => {
           返回
         </div> */}
         <DragItem />
-        <DragContainer transformToPython={transformToPython} />
+        <DragContainer />
         <DragParamPanel />
       </div>
     </DndProvider>

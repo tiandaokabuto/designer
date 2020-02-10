@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, memo } from 'react';
 import CodeMirror from 'codemirror';
 import { useDispatch, useSelector } from 'react-redux';
+import useUpdateEffect from 'react-hook-easier/lib/useUpdateEffect';
 
 import { CHANGE_SOURCECODE } from '../../../../actions/test';
 import { executePython } from '../../../../nodejs';
@@ -34,7 +35,7 @@ import 'codemirror/addon/edit/matchbrackets.js';
 export default memo(() => {
   const codeMirrorRef = useRef(null);
   const dispatch = useDispatch();
-  const pythonCode = useSelector(state => state.test.pythonCode);
+  const pythonCode = useSelector(state => state.blockcode.pythonCode);
   useEffect(() => {
     var el = document.getElementById('editor');
     var version = '# version: Python3\n\n';
@@ -88,17 +89,12 @@ export default memo(() => {
     event.addListener(PYTHON_EXECUTE, handlePythonExecute);
   }, []);
 
+  useEffect(() => {
+    codeMirrorRef.current.setOption('value', pythonCode);
+  }, [pythonCode]);
+
   return (
-    <div
-      style={{ height: '100%' }}
-      // onClick={() => {
-      //   executePython('print("hhh")');
-      //   dispatch({
-      //     type: CHANGE_SOURCECODE,
-      //     payload: 'print("hhh")',
-      //   });
-      // }}
-    >
+    <div style={{ height: '100%' }}>
       <textarea id="editor" className="editor"></textarea>
     </div>
   );
