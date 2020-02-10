@@ -10,6 +10,13 @@
     //   // background-color: rgba(50, 166, 127, 1);
     // }
   }
+  &-fold-anchor {
+    position: absolute;
+    z-index: 1;
+    color: white;
+    right: 16px;
+    top: 5px;
+  }
   &-drag-mask {
     position: absolute;
     top: 0;
@@ -20,17 +27,26 @@
     border: 1px solid rgba(50, 166, 127, 1);
   }
   &-header {
-    height: 24px;
-    line-height: 24px;
+    height: 28px;
+    line-height: 28px;
     background-color: rgba(50, 166, 127, 1);
     color: white;
-    padding-left: 8px;
     z-index: 1;
     transform: translateX(0px);
     cursor: move;
+    &-title {
+      padding-left: 8px;
+      &::after {
+        content: '';
+        position: absolute;
+        background-color: red;
+      }
+    }
   }
   &-content {
     padding-left: 24px;
     padding-right: 2px;
+    overflow: auto;
+    transition: all 0.5s;
   }
 }

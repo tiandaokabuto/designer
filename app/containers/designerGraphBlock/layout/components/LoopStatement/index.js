@@ -1,7 +1,9 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
+import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 import { useDropTarget } from '../../useHooks';
 
 import ItemTypes from '../../statementTypes';
@@ -18,7 +20,7 @@ const style = {
   // paddingLeft: '28px',
   overflow: 'hidden',
   marginRight: '8px',
-  minHeight: '104px',
+  //minHeight: '104px',
 };
 
 const LoopStatement = useInjectContext(props => {
@@ -38,6 +40,8 @@ const LoopStatement = useInjectContext(props => {
     useSetClassName,
     useDragSource,
   } = props;
+
+  const [isFold, setFold] = useState(false);
 
   const [className, setClassName, resetClassName] = useSetClassName();
 
@@ -59,9 +63,21 @@ const LoopStatement = useInjectContext(props => {
     index,
   });
 
+  /**
+   * 组件整体折叠逻辑
+   */
+  const handleStatementFlod = () => {
+    const loopstatement = document.querySelector(`.loopstatement-fold-${id}`);
+    const originalHeight = loopstatement.style.height;
+    loopstatement.style.height = originalHeight ? '' : '0px';
+    setFold(originalHeight ? false : true);
+  };
+
   const [drag, dragImage] = useDragSource({
     props,
     setIsDraggingNode,
+    isFold,
+    handleLoopStatementFlod: handleStatementFlod,
   });
 
   drag(drop(ref));
@@ -69,16 +85,26 @@ const LoopStatement = useInjectContext(props => {
   return (
     <div
       style={{ ...style, opacity }}
-      className="loopstatement"
-      ref={dragImage}
-      className={className}
+      ref={isFold ? null : dragImage}
+      className={`loopstatement ${className}`}
     >
       <div className="loopstatement-drag-mask"></div>
-      {/* <div className="loopstatement-drag-anchor" ref={ref}></div> */}
-      <div className="loopstatement-header" ref={ref} data-id={id}>
-        <div className="loopstatement-header-title">当循环为真时</div>
+      <div
+        className="loopstatement-fold-anchor"
+        ref={ref}
+        onClick={handleStatementFlod}
+      >
+        <Icon type={isFold ? 'up' : 'down'} />
       </div>
-      <div className="loopstatement-content">
+      <div className="loopstatement-header" ref={ref} data-id={id}>
+        <div
+          className="loopstatement-header-title"
+          ref={isFold ? dragImage : null}
+        >
+          当循环为真时
+        </div>
+      </div>
+      <div className={`loopstatement-content loopstatement-fold-${id}`}>
         {card.children.map((subChildren, i) => renderStatement(subChildren, i))}
         {renderTailStatement({
           id: `${id}-tail`,
