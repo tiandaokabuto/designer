@@ -18,7 +18,7 @@ const style = {
   // cursor: 'move',
   position: 'relative',
   // paddingLeft: '28px',
-  overflow: 'hidden',
+  // overflow: 'hidden',
   marginRight: '8px',
   //minHeight: '104px',
 };
