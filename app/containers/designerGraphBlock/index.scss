@@ -57,6 +57,8 @@
       }
     }
     .sd-tree {
+      overflow: auto;
+      height: calc(100vh - 128px);
       margin: 8px 17px 0 20px;
       .sd-tree-open {
         height: 40px;
