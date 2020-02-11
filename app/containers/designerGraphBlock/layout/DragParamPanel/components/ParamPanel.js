@@ -56,6 +56,18 @@ export default ({ checkedBlock }) => {
         })}
       </div>
       <div className="parampanel-optional">选填项</div>
+      <div className="parampanel-content">
+        {(checkedBlock.properties.optional || []).map((param, index) => {
+          return (
+            <div key={checkedBlock.id + index} className="parampanel-item">
+              <span className="param-title">{param.cnName}</span>
+              <div style={{ flex: 1, overflow: 'hidden' }}>
+                {getComponentType(param)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
