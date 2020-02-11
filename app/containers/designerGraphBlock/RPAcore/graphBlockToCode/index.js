@@ -107,6 +107,6 @@ export default dataStructure => {
   moduleMap.clear();
   transformBlockToCodeImpl(dataStructure, 0);
   transformModuleImport(result, moduleMap);
-  console.log(moduleMap);
+
   return result;
 };

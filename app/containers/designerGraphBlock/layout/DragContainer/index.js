@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Tabs } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import { InjectProvider } from 'react-hook-easier/lib/useInjectContext';
+import useDebounce from 'react-hook-easier/lib/useDebounce';
 import { useStore, useSelector, useDispatch } from 'react-redux';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
@@ -285,27 +286,26 @@ const DragContainer = () => {
     return <BasicStatement {...props} card={{ id: props.id }} isTail={true} />;
   };
 
-  /**
-   *
-   * @param {*} cards
-   */
-  const transformToPython = cards => {
-    const result = transformBlockToCode(cards);
-    dispatch({
-      type: CHANGE_PYTHONCODE,
-      payload: result.output,
-    });
-    // writeFile(
-    //   __dirname + '/containers/designerGraphBlock/python/test.py',
-    //   result.output
-    // );
-  };
+  const handleEmitCodeTransform = useCallback(
+    useDebounce(cards => {
+      const result = transformBlockToCode(cards);
+      dispatch({
+        type: CHANGE_PYTHONCODE,
+        payload: result.output,
+      });
+    }, 800),
+    []
+  );
 
   /**
    * 实时更新python源代码
    */
   useEffect(() => {
-    transformToPython(cards);
+    handleEmitCodeTransform(cards);
+    // writeFile(
+    //   __dirname + '/containers/designerGraphBlock/python/test.py',
+    //   result.output
+    // );
   }, [cards]);
 
   return (
