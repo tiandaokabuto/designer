@@ -162,6 +162,13 @@ const abilityToDatastructure = {
       _return: { name: 'suc' },
       required: [
         {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: 'suc',
+          default: 'suc',
+          componentType: 0,
+        },
+        {
           cnName: '浏览器对象',
           enName: 'browser',
           value: 'hWeb',
