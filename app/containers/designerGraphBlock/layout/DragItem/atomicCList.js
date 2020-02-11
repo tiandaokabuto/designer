@@ -29,7 +29,7 @@ const abilityToDatastructure = {
     $$typeof: BasicStatementTag,
     text: '启动新的浏览器',
     module: 'sendiRPA',
-    pkg: 'browser',
+    pkg: 'Browser',
     cmdName: '启动新的浏览器',
     visible: '启动" chrome"浏览器，并将此浏览器作为控对象，赋值给hWeb',
     main: 'openBrowser',
@@ -151,7 +151,7 @@ const abilityToDatastructure = {
     $$typeof: BasicStatementTag,
     text: '跳转到URL',
     module: 'sendiRPA',
-    pkg: 'browser',
+    pkg: 'Browser',
     cmdName: '跳转到URL',
     visible: '跳转到URL',
     main: 'navigateURL',
@@ -565,6 +565,13 @@ const abilityToDatastructure = {
     cmdDesc: '命令说明、描述',
     properties: {
       required: [
+        {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: '_text',
+          default: '_text',
+          componentType: 0,
+        },
         {
           cnName: '浏览器对象',
           enName: '_browser',
