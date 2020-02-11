@@ -463,12 +463,19 @@ const abilityToDatastructure = {
     pkg: 'Browser',
     cmdName: '获取元素属性',
     visible: '获取元素属性',
-    main: 'getElementText',
-    output: '_text',
+    main: 'getElementAttribute',
+    output: '_attribute',
     outputDesc: '返回元素属性内容',
     cmdDesc: '命令说明、描述',
     properties: {
       required: [
+        {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: '_attribute',
+          default: '_attribute',
+          componentType: 0,
+        },
         {
           cnName: '浏览器对象',
           enName: '_browser',
@@ -705,6 +712,13 @@ const abilityToDatastructure = {
     cmdDesc: '命令说明、描述',
     properties: {
       required: [
+        {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: 'img_base64',
+          default: 'img_base64',
+          componentType: 0,
+        },
         {
           cnName: '浏览器对象',
           enName: '_browser',

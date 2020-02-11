@@ -44,7 +44,6 @@ const getComponentType = (param, handleEmitCodeTransform, cards) => {
 };
 
 export default ({ checkedBlock }) => {
-  console.log(checkedBlock);
   const cards = useSelector(state => state.blockcode.cards);
   const handleEmitCodeTransform = useTransformToPython();
   return (
