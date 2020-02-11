@@ -73,6 +73,7 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
       case 1: // 基础语句
         // result.output += `${padding}${statement.text}\n`;
         transformBasicStatement(statement, result, moduleMap);
+        result.output += '\n';
         break;
       // case 2: // while
       //   result.output += `${padding}while ( a < 0 ):\n`;
@@ -98,7 +99,7 @@ const transformModuleImport = (result, moduleMap) => {
       isArray(pkg) ? pkg.join(',') : pkg
     }\n`;
   }
-  result.output = prefix + result.output;
+  result.output = prefix + '\n' + result.output;
 };
 
 export default dataStructure => {

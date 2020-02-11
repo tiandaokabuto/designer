@@ -12,7 +12,6 @@ const getComponentType = param => {
         <Input
           defaultValue={param.value}
           onChange={e => {
-            console.log(e.target.value);
             param.value = e.target.value;
           }}
         />
@@ -22,6 +21,7 @@ const getComponentType = param => {
         <Select
           style={{ width: '100%' }}
           defaultValue={param.value}
+          dropdownMatchSelectWidth={false}
           onChange={value => {
             param.value = value;
           }}
