@@ -2,7 +2,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  section {
+  .card-content-description {
+    pointer-events: none;
     .card-content-icon {
       margin-right: 12px;
     }

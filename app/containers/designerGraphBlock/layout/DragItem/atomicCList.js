@@ -20,6 +20,52 @@ const generateIcon = (type, style = DEFAULT_STYLE) => (
   <Icon type={type} style={style} />
 );
 
+const generateFrom = (() => {
+  const COMMON_DATASTRUCTURE = {
+    delayBefore: {
+      cnName: '执行前延时',
+      enName: 'delayBefore',
+      value: 1,
+      default: 1,
+      desc: '执行动作前延时x秒',
+      paramType: 0, //0: 数值,1: 字符串,2为布尔值
+      componentType: 0, //组件类型: 0: 输入框,1：下拉框
+      valueMapping: [],
+    },
+    delayAfter: {
+      cnName: '执行前延时',
+      enName: 'delayAfter',
+      value: 1,
+      default: 1,
+      desc: '执行动作前延时x秒',
+      paramType: 0, //0: 数值,1: 字符串,2为布尔值
+      componentType: 0, //组件类型: 0: 输入框,1：下拉框
+      valueMapping: [],
+    },
+    continue_On_Failure: {
+      cnName: '执行失败是否继续',
+      enName: 'continue_On_Failure',
+      value: 'True',
+      default: 'True',
+      desc: '该步骤执行失败之后是否继续执行下一个操作',
+      paramType: 2, //0: 数值,1: 字符串,2为布尔值
+      componentType: 0,
+      //组件类型: 0: 输入框,1：下拉框
+      valueMapping: [
+        {
+          name: '是',
+          value: 'True',
+        },
+        {
+          name: '否',
+          value: 'False',
+        },
+      ],
+    },
+  };
+  return pick => pick.map(item => COMMON_DATASTRUCTURE[item]);
+})();
+
 /**
  * 原子能力到具体数据结构的映射关系如下
  */
@@ -67,46 +113,47 @@ const abilityToDatastructure = {
             },
           ],
         },
-        {
-          cnName: '执行前延时',
-          enName: 'delayBefore',
-          value: 1,
-          default: 1,
-          desc: '执行动作前延时x秒',
-          paramType: 0, //0: 数值,1: 字符串,2为布尔值
-          componentType: 0, //组件类型: 0: 输入框,1：下拉框
-          valueMapping: [],
-        },
-        {
-          cnName: '执行前延时',
-          enName: 'delayAfter',
-          value: 1,
-          default: 1,
-          desc: '执行动作前延时x秒',
-          paramType: 0, //0: 数值,1: 字符串,2为布尔值
-          componentType: 0, //组件类型: 0: 输入框,1：下拉框
-          valueMapping: [],
-        },
-        {
-          cnName: '执行失败是否继续',
-          enName: 'continue_On_Failure',
-          value: 'True',
-          default: 'True',
-          desc: '该步骤执行失败之后是否继续执行下一个操作',
-          paramType: 2, //0: 数值,1: 字符串,2为布尔值
-          componentType: 0,
-          //组件类型: 0: 输入框,1：下拉框
-          valueMapping: [
-            {
-              name: '是',
-              value: 'True',
-            },
-            {
-              name: '否',
-              value: 'False',
-            },
-          ],
-        },
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+        // {
+        //   cnName: '执行前延时',
+        //   enName: 'delayBefore',
+        //   value: 1,
+        //   default: 1,
+        //   desc: '执行动作前延时x秒',
+        //   paramType: 0, //0: 数值,1: 字符串,2为布尔值
+        //   componentType: 0, //组件类型: 0: 输入框,1：下拉框
+        //   valueMapping: [],
+        // },
+        // {
+        //   cnName: '执行前延时',
+        //   enName: 'delayAfter',
+        //   value: 1,
+        //   default: 1,
+        //   desc: '执行动作前延时x秒',
+        //   paramType: 0, //0: 数值,1: 字符串,2为布尔值
+        //   componentType: 0, //组件类型: 0: 输入框,1：下拉框
+        //   valueMapping: [],
+        // },
+        // {
+        //   cnName: '执行失败是否继续',
+        //   enName: 'continue_On_Failure',
+        //   value: 'True',
+        //   default: 'True',
+        //   desc: '该步骤执行失败之后是否继续执行下一个操作',
+        //   paramType: 2, //0: 数值,1: 字符串,2为布尔值
+        //   componentType: 0,
+        //   //组件类型: 0: 输入框,1：下拉框
+        //   valueMapping: [
+        //     {
+        //       name: '是',
+        //       value: 'True',
+        //     },
+        //     {
+        //       name: '否',
+        //       value: 'False',
+        //     },
+        //   ],
+        // },
       ],
     },
   },

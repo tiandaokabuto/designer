@@ -77,14 +77,14 @@ const BasicStatement = useInjectContext(props => {
         data-id={isTail ? '' : id}
       >
         {isTail ? (
-          <section>{text}</section>
+          <div>{text}</div>
         ) : (
-          <section>
+          <div className="card-content-description">
             <Icon type="home" className="card-content-icon" />
             {text}
             <br />
-            <section className="card-content-visible">{visible}</section>
-          </section>
+            <div className="card-content-visible">{visible}</div>
+          </div>
         )}
         {isTail ? (
           <div></div>
