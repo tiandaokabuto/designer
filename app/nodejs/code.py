@@ -1,16 +1,6 @@
-# version: Python3
+from sendiRPA import browser
 
-# please edit your code here:
-# code start
+hWeb = browser.openBrowser(executable_path = 'C:\\chromedriver\\chromedriver.exe', delayBefore = 12, delayAfter = 1, continue_On_Failure = True)
 
-# code end
+suc = browser.navigateURL(browser = hWeb, URL = 'about:blank', delayBefore = 1, delayAfter = 1, continue_On_Failure = True)
 
-'''
-This function is the entry of this program and
-it must be return your answer of current question.
-'''
-def solution():
-	print("hhhh")
-	print('kkkk1111')
-solution()
-print('llll')

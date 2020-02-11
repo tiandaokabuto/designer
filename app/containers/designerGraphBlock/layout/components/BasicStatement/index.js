@@ -1,11 +1,15 @@
 import React, { memo, useRef, useState, useCallback, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import { useDropTarget } from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
 import ItemTypes from '../../statementTypes';
+
+import './index.scss';
+
 const style = {
   borderTop: '4px solid transparent',
   borderBottom: '4px solid transparent',
@@ -20,6 +24,7 @@ const BasicStatement = useInjectContext(props => {
     id,
     text,
     index,
+    visible,
     moveCard,
     addCard,
     isTail,
@@ -57,7 +62,7 @@ const BasicStatement = useInjectContext(props => {
   });
 
   drag(drop(ref));
-
+  // console.log(item)
   return (
     <div
       ref={ref}
@@ -71,7 +76,49 @@ const BasicStatement = useInjectContext(props => {
         className={isTail ? 'card-content card-content__tail' : 'card-content'}
         data-id={isTail ? '' : id}
       >
-        {text}
+        {isTail ? (
+          <section>{text}</section>
+        ) : (
+          <section>
+            <Icon type="home" className="card-content-icon" />
+            {text}
+            <br />
+            <section className="card-content-visible">{visible}</section>
+          </section>
+        )}
+        {isTail ? (
+          <div></div>
+        ) : (
+          <div className="card-content-operation">
+            <Icon
+              type="play-circle"
+              onClick={() => {
+                console.log('kkk');
+              }}
+            />
+            <Icon
+              type="eye"
+              onClick={() => {
+                console.log('kkk2');
+              }}
+            />
+            <Icon
+              type="delete"
+              onClick={() => {
+                console.log('kkk3');
+              }}
+            />
+            <div
+              className="card-content-searchtarget"
+              onClick={() => {
+                console.log('jjj');
+              }}
+            >
+              <Icon type="home" className="card-content-searchtarget-anchor" />
+              查找目标
+            </div>
+          </div>
+        )}
       </div>
       <div
         className={isTail ? 'card-mask card-mask__tail' : 'card-mask'}

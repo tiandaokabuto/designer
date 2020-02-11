@@ -257,6 +257,7 @@ const DragContainer = () => {
               id={card.id}
               text={card.text}
               card={card}
+              visible={card.visible || ''}
             />
           </ContextMenuTrigger>
         );
@@ -287,16 +288,6 @@ const DragContainer = () => {
     return <BasicStatement {...props} card={{ id: props.id }} isTail={true} />;
   };
 
-  // const handleEmitCodeTransform = useCallback(
-  //   useDebounce(cards => {
-  //     const result = transformBlockToCode(cards);
-  //     dispatch({
-  //       type: CHANGE_PYTHONCODE,
-  //       payload: result.output,
-  //     });
-  //   }, 800),
-  //   []
-  // );
   const handleEmitCodeTransform = useTransformToPython();
 
   /**
