@@ -1,4 +1,5 @@
 import transformBasicStatement from './transformBasicStatement';
+import { isArray } from './utils';
 
 const fake = [
   {
@@ -63,13 +64,15 @@ const result = {
   output: '',
 };
 
+const moduleMap = new Map();
+
 const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
   const padding = paddingStart(depth);
   dataStructure.forEach((statement, index) => {
     switch (statement.$$typeof) {
       case 1: // 基础语句
         // result.output += `${padding}${statement.text}\n`;
-        transformBasicStatement(statement, result);
+        transformBasicStatement(statement, result, moduleMap);
         break;
       // case 2: // while
       //   result.output += `${padding}while ( a < 0 ):\n`;
@@ -88,8 +91,21 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
   });
 };
 
+const transformModuleImport = (result, moduleMap) => {
+  let prefix = '';
+  for (const [moduleName, pkg] of moduleMap) {
+    prefix += `from ${moduleName} import ${
+      isArray(pkg) ? pkg.join(',') : pkg
+    }\n`;
+  }
+  result.output = prefix + result.output;
+};
+
 export default dataStructure => {
   result.output = '';
-  transformBlockToCodeImpl(dataStructure);
+  moduleMap.clear();
+  transformBlockToCodeImpl(dataStructure, 0);
+  transformModuleImport(result, moduleMap);
+  console.log(moduleMap);
   return result;
 };

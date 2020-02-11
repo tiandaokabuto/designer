@@ -1,86 +1,21 @@
+import { isArray } from './utils';
 const fs = require('fs');
 
-const fake = {
-  typeof: 1,
-  id: 'node_1',
-  cmdName: '启动新的浏览器',
-  text: '启动$1，并将此浏览器作为控对象，赋值给$0', // 代码的描述文字
-  template: `启动$1，并将此浏览器作为控对象，赋值给$0`,
-  module: 'lcy',
-  pkg: 'Browser',
-  main: 'startChrome',
-  output: 'hWeb',
-  outputDesc: '输出说明：返回是否启动成功',
-  outputDesc: '输出说明：返回是否启动成功',
-  cmdDesc: '命令说明、描述',
-  properties: {
-    required: [
-      {
-        cnName: '输出到',
-        enName: 'outPut',
-        value: 'hWeb',
-        default: 'hWeb',
-      },
-      {
-        cnName: '浏览器类型',
-        enName: 'browserType',
-        value: '谷歌chrome浏览器',
-        default: '谷歌chrome浏览器',
-        desc: '属性说明',
-        paramType: '参数类型：0:变量，',
-        componentType: '组件类型:1：下拉框',
-        valueMapping: [
-          {
-            name: '谷歌chrome浏览器',
-            value: 'chrome',
-          },
-          {
-            name: '火狐浏览器',
-            value: 'fireFox',
-          },
-        ],
-      },
-      {
-        enName: 'test',
-        value: 'hhh',
-      },
-    ],
-    optional: [
-      {
-        cnName: '错误继续执行',
-        bContinueOnError: '',
-        value: '否',
-        default: '否',
-      },
-    ],
-  },
-};
-
-const fake1 = {
-  module: 'selenium',
-  pkg: 'webdriver',
-  cmdName: '启动新的浏览器',
-  visible: '启动" chrome"浏览器，并将此浏览器作为控对象，赋值给hWeb',
-  main: 'Chrome',
-  output: 'hWeb',
-  outputDesc: '输出说明：返回是否启动成功',
-  cmdDesc: '命令说明、描述',
-  properties: {
-    required: [
-      {
-        cnName: '输出到',
-        enName: 'outPut',
-        value: 'hWeb',
-        default: 'hWeb',
-      },
-    ],
-    optional: [],
-  },
-};
-
-const handleModuleImport = (dataStructure, result) => {
+const handleModuleImport = (dataStructure, result, moduleMap) => {
   if (dataStructure.module) {
-    result.output += `from ${dataStructure.module} import ${dataStructure.pkg}\n`;
+    // result.output += `from ${dataStructure.module} import ${dataStructure.pkg}\n`;
+    if (moduleMap.get(dataStructure.module)) {
+      let exist = moduleMap.get(dataStructure.module);
+      if (isArray(exist)) {
+        exist.includes(dataStructure.pkg) &&
+          (exist = exist.concat(dataStructure.pkg));
+      } else {
+        exist !== dataStructure.pkg && (exist = [exist, dataStructure.pkg]);
+      }
+      moduleMap.set(dataStructure.module, exist);
+    } else {
+      moduleMap.set(dataStructure.module, dataStructure.pkg);
+    }
   }
 };
 
@@ -93,9 +28,8 @@ const handleMainFnGeneration = (dataStructure, params, result) => {
   result.output += `${dataStructure.pkg}.${dataStructure.main}(${params})\n`;
 };
 
-const transformBasicStatement = (dataStructure, result) => {
-  console.log(dataStructure);
-  handleModuleImport(dataStructure, result);
+const transformBasicStatement = (dataStructure, result, moduleMap) => {
+  handleModuleImport(dataStructure, result, moduleMap);
   let params = ''; // 生成参数类型
   dataStructure.properties.required.forEach((item, index) => {
     switch (item.enName) {
