@@ -39,6 +39,7 @@ import {
   useSetClassName,
   useDragSource,
   useEventHandler,
+  useTransformToPython,
 } from '../useHooks';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper';
@@ -286,16 +287,17 @@ const DragContainer = () => {
     return <BasicStatement {...props} card={{ id: props.id }} isTail={true} />;
   };
 
-  const handleEmitCodeTransform = useCallback(
-    useDebounce(cards => {
-      const result = transformBlockToCode(cards);
-      dispatch({
-        type: CHANGE_PYTHONCODE,
-        payload: result.output,
-      });
-    }, 800),
-    []
-  );
+  // const handleEmitCodeTransform = useCallback(
+  //   useDebounce(cards => {
+  //     const result = transformBlockToCode(cards);
+  //     dispatch({
+  //       type: CHANGE_PYTHONCODE,
+  //       payload: result.output,
+  //     });
+  //   }, 800),
+  //   []
+  // );
+  const handleEmitCodeTransform = useTransformToPython();
 
   /**
    * 实时更新python源代码

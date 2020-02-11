@@ -1,11 +1,14 @@
 import React from 'react';
 import { Input, Select } from 'antd';
+import { useSelector } from 'react-redux';
+
+import { useTransformToPython } from '../../useHooks';
 
 import './ParamPanel.scss';
 
 const { Option } = Select;
 
-const getComponentType = param => {
+const getComponentType = (param, handleEmitCodeTransform, cards) => {
   switch (param.componentType) {
     case 0:
       return (
@@ -13,6 +16,7 @@ const getComponentType = param => {
           defaultValue={param.value}
           onChange={e => {
             param.value = e.target.value;
+            handleEmitCodeTransform(cards);
           }}
         />
       );
@@ -24,6 +28,7 @@ const getComponentType = param => {
           dropdownMatchSelectWidth={false}
           onChange={value => {
             param.value = value;
+            handleEmitCodeTransform(cards);
           }}
         >
           {param.valueMapping.map(item => (
@@ -40,6 +45,8 @@ const getComponentType = param => {
 
 export default ({ checkedBlock }) => {
   console.log(checkedBlock);
+  const cards = useSelector(state => state.blockcode.cards);
+  const handleEmitCodeTransform = useTransformToPython();
   return (
     <div className="parampanel">
       <div className="parampanel-required">必选项</div>
@@ -49,7 +56,7 @@ export default ({ checkedBlock }) => {
             <div key={checkedBlock.id + index} className="parampanel-item">
               <span className="param-title">{param.cnName}</span>
               <div style={{ flex: 1, overflow: 'hidden' }}>
-                {getComponentType(param)}
+                {getComponentType(param, handleEmitCodeTransform, cards)}
               </div>
             </div>
           );
@@ -62,7 +69,7 @@ export default ({ checkedBlock }) => {
             <div key={checkedBlock.id + index} className="parampanel-item">
               <span className="param-title">{param.cnName}</span>
               <div style={{ flex: 1, overflow: 'hidden' }}>
-                {getComponentType(param)}
+                {getComponentType(param, handleEmitCodeTransform, cards)}
               </div>
             </div>
           );
