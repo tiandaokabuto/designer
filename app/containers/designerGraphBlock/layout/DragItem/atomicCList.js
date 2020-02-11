@@ -70,7 +70,7 @@ const abilityToDatastructure = {
   // },
   openBrowser: {
     $$typeof: BasicStatementTag,
-    text: '启动chrome浏览器',
+    text: '启动新的浏览器',
     module: 'sendiRPA',
     pkg: 'browser',
     cmdName: '启动新的浏览器',
