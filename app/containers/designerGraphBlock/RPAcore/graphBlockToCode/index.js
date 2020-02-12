@@ -1,4 +1,6 @@
 import transformBasicStatement from './transformBasicStatement';
+import transformPrintStatement from './transformPrintStatement';
+import { PrintStatementTag } from '../../layout/statementTags';
 import { isArray } from './utils';
 
 const fake = [
@@ -71,8 +73,16 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
   dataStructure.forEach((statement, index) => {
     switch (statement.$$typeof) {
       case 1: // 基础语句
+        /* 处理基础语句下的子语句 */
+        if (
+          statement.subtype &&
+          (statement.subtype & PrintStatementTag) == PrintStatementTag
+        ) {
+          transformPrintStatement(statement, result);
+        } else {
+          transformBasicStatement(statement, result, moduleMap);
+        }
         // result.output += `${padding}${statement.text}\n`;
-        transformBasicStatement(statement, result, moduleMap);
         result.output += '\n';
         break;
       // case 2: // while

@@ -7,6 +7,7 @@ import React from 'react';
 import { Icon } from 'antd';
 
 import {
+  PrintStatementTag,
   BasicStatementTag,
   LoopStatementTag,
   ConditionalStatementTag,
@@ -777,6 +778,55 @@ const abilityToDatastructure = {
       ],
     },
   },
+  /** 控制台输出命令 */
+  print: {
+    $$typeof: BasicStatementTag,
+    subtype: PrintStatementTag,
+    text: '控制台打印语句',
+    visible: '',
+    properties: {
+      required: [
+        {
+          cnName: '模版字符串',
+          enName: 'template_string',
+          default: '',
+          value: '',
+          componentType: 0,
+        },
+      ],
+      optional: [
+        {
+          cnName: '替换类型',
+          enName: 'replaceType',
+          value: 'format',
+          default: 'format',
+          desc: '选择打印输出的替换类型',
+          paramType: 0, //0: 数值,1: 字符串,2为布尔值
+          componentType: 1, //组件类型: 0: 输入框,1：下拉框
+          valueMapping: [
+            {
+              name: 'format',
+              value: 'format',
+            },
+            {
+              name: 'format_map',
+              value: 'format_map',
+            },
+          ],
+        },
+        {
+          cnName: '传参',
+          enName: 'params',
+          value: '',
+          default: '',
+          desc: 'format函数的入参',
+          paramType: 0, //0: 数值,1: 字符串,2为布尔值
+          componentType: 0, //组件类型: 0: 输入框,1：下拉框
+          valueMapping: [],
+        },
+      ],
+    },
+  },
   /** 循环控制命令 */
   loopStatement: {
     $$typeof: LoopStatementTag,
@@ -928,6 +978,12 @@ export default [
         description: 'conditionalStatement',
         key: '0-2-1',
         item: abilityToDatastructure['conditionalStatement'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'print',
+        key: '0-2-3',
+        item: abilityToDatastructure['print'],
         icon: generateIcon('branches'),
       },
     ],
