@@ -95,7 +95,7 @@ const abilityToDatastructure = {
       optional: [
         {
           cnName: '浏览器类型',
-          enName: 'executable_path',
+          enName: 'driverPath',
           value: "'C:\\\\chromedriver\\\\chromedriver.exe'",
           default: "'C:\\\\chromedriver\\\\chromedriver.exe'",
           desc: '属性说明',
@@ -217,14 +217,14 @@ const abilityToDatastructure = {
         },
         {
           cnName: '浏览器对象',
-          enName: 'browser',
+          enName: '_browser',
           value: 'hWeb',
           default: 'hWeb',
           componentType: 0,
         },
         {
           cnName: '网页地址',
-          enName: 'URL',
+          enName: '_url',
           value: "'about:blank'",
           default: "'about:blank'",
           componentType: 0,
