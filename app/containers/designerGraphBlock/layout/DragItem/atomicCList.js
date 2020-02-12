@@ -50,7 +50,7 @@ const generateFrom = (() => {
       default: 'True',
       desc: '该步骤执行失败之后是否继续执行下一个操作',
       paramType: 2, //0: 数值,1: 字符串,2为布尔值
-      componentType: 0,
+      componentType: 1,
       //组件类型: 0: 输入框,1：下拉框
       valueMapping: [
         {
@@ -269,8 +269,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
       ],
@@ -342,8 +342,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
         {
@@ -395,8 +395,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
       ],
@@ -495,8 +495,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
       ],
@@ -534,8 +534,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
         {
@@ -580,8 +580,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
         {
@@ -653,8 +653,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
       ],
@@ -756,8 +756,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
         {

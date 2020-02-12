@@ -1,4 +1,5 @@
 import { isArray } from './utils';
+import { resolve } from 'dns';
 const fs = require('fs');
 
 const handleModuleImport = (dataStructure, result, moduleMap) => {
