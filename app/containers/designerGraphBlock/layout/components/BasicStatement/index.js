@@ -3,7 +3,7 @@ import { useDrag, useDrop } from 'react-dnd';
 import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
-import { useDropTarget } from '../../useHooks';
+import { useDropTarget, useDeleteNodeById } from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
 import ItemTypes from '../../statementTypes';
@@ -61,6 +61,8 @@ const BasicStatement = useInjectContext(props => {
     props,
   });
 
+  const deleteNodeById = useDeleteNodeById();
+
   drag(drop(ref));
   // console.log(item)
   return (
@@ -105,7 +107,8 @@ const BasicStatement = useInjectContext(props => {
             <Icon
               type="delete"
               onClick={() => {
-                console.log('kkk3');
+                deleteNodeById(id);
+                console.log('删除 -->', id);
               }}
             />
             <div
