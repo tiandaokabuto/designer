@@ -269,8 +269,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
       ],
@@ -342,8 +342,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
         {
@@ -395,8 +395,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
       ],
@@ -495,8 +495,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
       ],
@@ -534,8 +534,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
         {
@@ -580,8 +580,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
         {
@@ -653,8 +653,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
       ],
@@ -756,8 +756,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
         {
