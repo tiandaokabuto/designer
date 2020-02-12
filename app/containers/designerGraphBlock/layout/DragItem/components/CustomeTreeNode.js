@@ -15,14 +15,30 @@ const generateStyle = isLeaf => ({
 });
 
 export default class Tree extends React.Component {
+  state = {
+    filter: '',
+  };
+
   static TreeNode = props => {
     const isLeaf = !props.children;
     const [open, setOpen] = useState(false);
     return (
       <TreeContext.Consumer>
-        {context => {
+        {({ filter }) => {
+          const needHidden =
+            isLeaf &&
+            filter &&
+            !props.title &&
+            props.item &&
+            props.item.text &&
+            !props.item.text.includes(filter);
           return (
-            <div style={generateStyle(isLeaf)}>
+            <div
+              style={{
+                ...generateStyle(isLeaf),
+                display: needHidden ? 'none' : '',
+              }}
+            >
               <div className={isLeaf ? '' : 'sd-tree-open'}>
                 {!isLeaf && (
                   <Icon
@@ -47,7 +63,7 @@ export default class Tree extends React.Component {
   };
   render() {
     return (
-      <TreeContext.Provider>
+      <TreeContext.Provider value={this.state}>
         <div className="sd-tree">{this.props.children}</div>
       </TreeContext.Provider>
     );
