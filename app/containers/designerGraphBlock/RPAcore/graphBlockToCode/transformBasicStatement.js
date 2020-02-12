@@ -34,7 +34,7 @@ const transformBasicStatement = (dataStructure, result, moduleMap) => {
   dataStructure.properties.required.forEach((item, index) => {
     switch (item.enName) {
       case 'outPut':
-        handleStatementOutput(item.value, '', result);
+        item.value && handleStatementOutput(item.value, '', result);
         break;
       default:
         if (params) params += ', ';
