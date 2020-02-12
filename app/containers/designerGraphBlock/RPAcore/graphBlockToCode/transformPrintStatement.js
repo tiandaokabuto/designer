@@ -1,5 +1,4 @@
 const transformPrintStatement = (dataStructure, result) => {
-  console.log(dataStructure);
   const template_string = dataStructure['properties']['required'][0].value;
   const main_func = dataStructure['properties']['optional'][0].value;
   const params = dataStructure['properties']['optional'][1].value;

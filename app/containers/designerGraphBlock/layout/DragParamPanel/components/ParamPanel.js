@@ -13,7 +13,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards) => {
     case 0:
       return (
         <Input
-          defaultValue={param.value}
+          defaultValue={param.value || param.default}
           onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
@@ -24,7 +24,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards) => {
       return (
         <Select
           style={{ width: '100%' }}
-          defaultValue={param.value}
+          defaultValue={param.value || param.default}
           dropdownMatchSelectWidth={false}
           onChange={value => {
             param.value = value;

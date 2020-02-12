@@ -38,10 +38,18 @@ const transformBasicStatement = (dataStructure, result, moduleMap) => {
         break;
       default:
         if (params) params += ', ';
-        params += item.enName + ' = ' + item.value;
+        params +=
+          item.enName +
+          ' = ' +
+          (item.default === undefined && item.value === undefined
+            ? 'None'
+            : item.value === undefined
+            ? item.default
+            : item.value);
     }
   });
   dataStructure.properties.optional.forEach((item, index) => {
+    if (item.value === undefined) return;
     switch (item.enName) {
       case 'outPut':
         handleStatementOutput(item.value, '', result);

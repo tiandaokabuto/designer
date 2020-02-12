@@ -26,7 +26,7 @@ const generateFrom = (() => {
     delayBefore: {
       cnName: '执行前延时',
       enName: 'delayBefore',
-      value: 1,
+      value: undefined,
       default: 1,
       desc: '执行动作前延时x秒',
       paramType: 0, //0: 数值,1: 字符串,2为布尔值
@@ -36,7 +36,7 @@ const generateFrom = (() => {
     delayAfter: {
       cnName: '执行前延时',
       enName: 'delayAfter',
-      value: 1,
+      value: undefined,
       default: 1,
       desc: '执行动作前延时x秒',
       paramType: 0, //0: 数值,1: 字符串,2为布尔值
@@ -46,7 +46,7 @@ const generateFrom = (() => {
     continue_On_Failure: {
       cnName: '执行失败是否继续',
       enName: 'continue_On_Failure',
-      value: 'True',
+      value: undefined,
       default: 'True',
       desc: '该步骤执行失败之后是否继续执行下一个操作',
       paramType: 2, //0: 数值,1: 字符串,2为布尔值
@@ -66,7 +66,7 @@ const generateFrom = (() => {
     timeout: {
       cnName: '元素检测超时时间',
       enName: '_timeout',
-      value: 10,
+      value: undefined,
       default: 10,
       desc: '检测多少秒没有发现元素则停止',
       paramType: 0,
@@ -230,8 +230,8 @@ const abilityToDatastructure = {
         {
           cnName: '元素位置XPath',
           enName: 'xpath',
-          value: '',
-          default: '',
+          value: '""',
+          default: undefined,
           componentType: 0,
         },
       ],
