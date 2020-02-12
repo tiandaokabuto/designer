@@ -211,7 +211,7 @@ const abilityToDatastructure = {
         {
           cnName: '输出到',
           enName: 'outPut',
-          value: 'suc',
+          value: '',
           default: 'suc',
           componentType: 0,
         },

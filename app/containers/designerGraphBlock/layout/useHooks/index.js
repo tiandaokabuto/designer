@@ -4,3 +4,4 @@ export { default as useDragSource } from './useDragSource';
 export { default as useDropTarget } from './useDropTarget';
 export { default as useEventHandler } from './useEventHandler';
 export { default as useTransformToPython } from './useTransformToPython';
+export { default as usePublishProcessZip } from './usePublishProcessZip';

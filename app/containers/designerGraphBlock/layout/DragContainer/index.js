@@ -295,10 +295,6 @@ const DragContainer = () => {
    */
   useEffect(() => {
     handleEmitCodeTransform(cards);
-    // writeFile(
-    //   __dirname + '/containers/designerGraphBlock/python/test.py',
-    //   result.output
-    // );
   }, [cards]);
 
   return (
