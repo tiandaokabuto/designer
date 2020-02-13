@@ -778,6 +778,327 @@ const abilityToDatastructure = {
       ],
     },
   },
+  /** 打开Excel工作簿 */
+  openExcel: {
+    $$typeof: BasicStatementTag,
+    text: '打开Excel工作簿',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '打开Excel工作簿',
+    visible: '打开Excel工作簿',
+    main: 'openExcel',
+    output: '(wb, app)',
+    outputDesc: '(工作簿对象, Excel实例)',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: 'wb, app',
+          default: 'wb, app',
+          componentType: 0,
+        },
+        {
+          cnName: '文件路径',
+          enName: 'filePath',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '是否可见',
+          enName: 'visible',
+          value: 'True',
+          default: 'True',
+          paramType: 2,
+          componentType: 1,
+          valueMapping: [
+            {
+              name: '是',
+              value: 'True',
+            },
+            {
+              name: '否',
+              value: 'False',
+            },
+          ],
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 另存Excel工作簿 */
+  saveToExcel: {
+    $$typeof: BasicStatementTag,
+    text: '另存Excel工作簿',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '另存Excel工作簿',
+    visible: '另存Excel工作簿',
+    main: 'saveToExcel',
+    output: 'suc',
+    outputDesc: '成功返回True,失败返回False',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作簿对象',
+          enName: 'wb',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+          valueMapping: [],
+        },
+        {
+          cnName: '文件路径',
+          enName: 'filePath',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+          valueMapping: [],
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 获取行数 */
+  getSheetRowSize: {
+    $$typeof: BasicStatementTag,
+    text: '获取行数',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '获取行数',
+    visible: '获取行数',
+    main: 'getSheetRowSize',
+    output: 'size',
+    outputDesc: '工作表行数',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: 'size',
+          default: 'size',
+          componentType: 0,
+        },
+        {
+          cnName: '工作表对象',
+          enName: 'sht',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+          valueMapping: [],
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 读取行 */
+  readRowValue: {
+    $$typeof: BasicStatementTag,
+    text: '读取行',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '读取行',
+    visible: '读取行',
+    main: 'readRowValue',
+    output: 'values',
+    outputDesc: '行数据数组',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: 'values',
+          default: 'values',
+          componentType: 0,
+        },
+        {
+          cnName: '工作表对象',
+          enName: 'sht',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+          valueMapping: [],
+        },
+        {
+          cnName: '单元格名称',
+          enName: 'name',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+          valueMapping: [],
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 写入行 */
+  writeRowValue: {
+    $$typeof: BasicStatementTag,
+    text: '写入行',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '写入行',
+    visible: '写入行',
+    main: 'writeRowValue',
+    output: '',
+    outputDesc: '',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作表对象',
+          enName: 'sht',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+          valueMapping: [],
+        },
+        {
+          cnName: '单元格名称',
+          enName: 'name',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+          valueMapping: [],
+        },
+        {
+          cnName: '数据值数组',
+          enName: 'values',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+          valueMapping: [],
+        },
+        {
+          cnName: '是否立即保存',
+          enName: 'isSave',
+          value: 'False',
+          default: 'False',
+          paramType: 2,
+          componentType: 1,
+          valueMapping: [
+            {
+              name: '是',
+              value: 'True',
+            },
+            {
+              name: '否',
+              value: 'False',
+            },
+          ],
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 保存工作簿 */
+  saveExcel: {
+    $$typeof: BasicStatementTag,
+    text: '保存Excel工作簿',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '保存Excel工作簿',
+    visible: '保存Excel工作簿',
+    main: 'saveExcel',
+    output: 'suc',
+    outputDesc: '成功返回True,失败返回False',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作簿对象',
+          enName: 'wb',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+          valueMapping: [],
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 关闭工作簿 */
+  closeExcel: {
+    $$typeof: BasicStatementTag,
+    text: '关闭Excel工作簿',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '关闭Excel工作簿',
+    visible: '关闭Excel工作簿',
+    main: 'closeExcel',
+    output: 'suc',
+    outputDesc: '成功返回True,失败返回False',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作簿对象',
+          enName: 'wb',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: 'Excel实例',
+          enName: 'app',
+          value: '""',
+          default: undefined,
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '是否立即保存',
+          enName: 'isSave',
+          value: 'False',
+          default: 'False',
+          paramType: 2,
+          componentType: 1,
+          valueMapping: [
+            {
+              name: '是',
+              value: 'True',
+            },
+            {
+              name: '否',
+              value: 'False',
+            },
+          ],
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+
   /** 控制台输出命令 */
   print: {
     $$typeof: BasicStatementTag,
@@ -962,6 +1283,55 @@ export default [
     key: '0-1',
     icon: generateIcon('hdd'),
     children: [],
+  },
+  {
+    title: 'Excel相关',
+    key: '0-3',
+    icon: generateIcon('hdd'),
+    children: [
+      {
+        description: 'openExcel',
+        key: '0-3-0',
+        item: abilityToDatastructure['openExcel'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'saveToExcel',
+        key: '0-3-1',
+        item: abilityToDatastructure['saveToExcel'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'getSheetRowSize',
+        key: '0-3-2',
+        item: abilityToDatastructure['getSheetRowSize'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'readRowValue',
+        key: '0-3-3',
+        item: abilityToDatastructure['readRowValue'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'writeRowValue',
+        key: '0-3-4',
+        item: abilityToDatastructure['writeRowValue'],
+        icon: generateIcon('branches'),
+      }, // closeExcel
+      {
+        description: 'saveExcel',
+        key: '0-3-5',
+        item: abilityToDatastructure['saveExcel'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'closeExcel',
+        key: '0-3-6',
+        item: abilityToDatastructure['closeExcel'],
+        icon: generateIcon('branches'),
+      },
+    ],
   },
   {
     title: '基本命令',
