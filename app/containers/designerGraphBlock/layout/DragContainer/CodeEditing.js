@@ -67,6 +67,7 @@ export default memo(() => {
       matchBrackets: true, // 匹配结束符号，比如"]、}"
       autoCloseBrackets: true, // 自动闭合符号
       styleActiveLine: true, // 显示选中行的样式
+      viewportMargin: Infinity,
     });
     // 设置初始文本，这个选项也可以在fromTextArea中配置
     myCodeMirror.setOption('value', initValue);
