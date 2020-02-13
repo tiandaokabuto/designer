@@ -87,7 +87,6 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
         break;
       case 2: // while or for
         transformLoopStatement(padding, statement, result);
-        result.output += `${padding}while ( a < 0 ):\n`;
         transformBlockToCodeImpl(statement.children, depth + 1);
         break;
       // case 4: // 条件语句

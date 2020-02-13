@@ -13,8 +13,12 @@ export default ({ className }) => {
     const handleClick = e => {
       const checkedId = e.target.getAttribute('data-id');
       if (checkedId) {
-        if (e.target.classList.contains('loopstatement-header')) {
+        if (e.target.classList.contains('loopstatement-header-title')) {
           // TODO...
+          dispatch({
+            type: CHANGE_CHECKEDID,
+            payload: checkedId,
+          });
           return;
         }
         if (prevChecked.dom) {

@@ -1221,6 +1221,34 @@ const abilityToDatastructure = {
   loopStatement: {
     $$typeof: LoopStatementTag,
     text: '循环控制语句',
+    properties: {
+      required: [
+        {
+          cnName: '循环类型',
+          enName: 'looptype',
+          default: 'for',
+          value: 'for',
+          componentType: 1,
+          valueMapping: [
+            {
+              name: 'for 循环',
+              value: 'for',
+            },
+            {
+              name: 'while 循环',
+              value: 'while',
+            },
+          ],
+        },
+        {
+          cnName: '循环条件',
+          enName: 'loopcondition',
+          default: '',
+          value: '',
+          componentType: 0,
+        },
+      ],
+    },
   },
   /** 条件分支命令 */
   conditionalStatement: {

@@ -96,9 +96,10 @@ const LoopStatement = useInjectContext(props => {
       >
         <Icon type={isFold ? 'up' : 'down'} />
       </div>
-      <div className="loopstatement-header" ref={ref} data-id={id}>
+      <div className="loopstatement-header" ref={ref}>
         <div
           className="loopstatement-header-title"
+          data-id={id}
           ref={isFold ? dragImage : null}
         >
           当循环为真时
