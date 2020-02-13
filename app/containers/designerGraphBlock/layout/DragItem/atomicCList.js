@@ -1098,7 +1098,76 @@ const abilityToDatastructure = {
       ],
     },
   },
-
+  /** 新建Excel工作簿  */
+  newExcel: {
+    $$typeof: BasicStatementTag,
+    text: '新建Excel工作簿',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '新建Excel工作簿',
+    visible: '新建Excel工作簿',
+    main: 'newExcel',
+    output: 'wb',
+    outputDesc: '工作簿对象',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: 'new_wb',
+          default: 'new_wb',
+          componentType: 0,
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 打开工作表 */
+  openSheet: {
+    $$typeof: BasicStatementTag,
+    text: '打开工作表',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '打开工作表',
+    visible: '打开工作表',
+    main: 'openSheet',
+    output: 'sheet',
+    outputDesc: '工作表对象',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: 'sht',
+          default: 'sht',
+          componentType: 0,
+        },
+        {
+          cnName: '工作簿对象',
+          enName: 'wb',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '工作表名称',
+          enName: 'name',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
   /** 控制台输出命令 */
   print: {
     $$typeof: BasicStatementTag,
@@ -1329,6 +1398,18 @@ export default [
         description: 'closeExcel',
         key: '0-3-6',
         item: abilityToDatastructure['closeExcel'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'newExcel',
+        key: '0-3-7',
+        item: abilityToDatastructure['newExcel'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'openSheet',
+        key: '0-3-8',
+        item: abilityToDatastructure['openSheet'],
         icon: generateIcon('branches'),
       },
     ],
