@@ -29,8 +29,9 @@ const handleMainFnGeneration = (dataStructure, params, result) => {
   result.output += `${dataStructure.pkg}.${dataStructure.main}(${params})\n`;
 };
 
-const transformBasicStatement = (dataStructure, result, moduleMap) => {
+const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
   handleModuleImport(dataStructure, result, moduleMap);
+  result.output += `${padding}`;
   let params = ''; // 生成参数类型
   dataStructure.properties.required.forEach((item, index) => {
     switch (item.enName) {

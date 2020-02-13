@@ -1,5 +1,6 @@
 import transformBasicStatement from './transformBasicStatement';
 import transformPrintStatement from './transformPrintStatement';
+import transformLoopStatement from './transformLoopStatement';
 import { PrintStatementTag } from '../../layout/statementTags';
 import { isArray } from './utils';
 
@@ -60,7 +61,7 @@ const fake = [
   },
 ];
 
-const paddingStart = length => '  '.repeat(length);
+const paddingStart = length => '    '.repeat(length);
 
 const result = {
   output: '',
@@ -78,17 +79,17 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
           statement.subtype &&
           (statement.subtype & PrintStatementTag) == PrintStatementTag
         ) {
-          transformPrintStatement(statement, result);
+          transformPrintStatement(padding, statement, result);
         } else {
-          transformBasicStatement(statement, result, moduleMap);
+          transformBasicStatement(padding, statement, result, moduleMap);
         }
-        // result.output += `${padding}${statement.text}\n`;
         result.output += '\n';
         break;
-      // case 2: // while
-      //   result.output += `${padding}while ( a < 0 ):\n`;
-      //   transformBlockToCodeImpl(statement.children, depth + 1);
-      //   break;
+      case 2: // while or for
+        transformLoopStatement(padding, statement, result);
+        result.output += `${padding}while ( a < 0 ):\n`;
+        transformBlockToCodeImpl(statement.children, depth + 1);
+        break;
       // case 4: // 条件语句
       //   result.output += `${padding}if ( b > 0 ):\n`;
       //   transformBlockToCodeImpl(statement.ifChildren, depth + 1);
