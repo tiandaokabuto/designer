@@ -107,8 +107,8 @@ const abilityToDatastructure = {
         {
           cnName: '浏览器类型',
           enName: 'driverPath',
-          value: "'C:\\\\chromedriver\\\\chromedriver.exe'",
-          default: "'C:\\\\chromedriver\\\\chromedriver.exe'",
+          value: '"C:\\\\chromedriver\\\\chromedriver.exe"',
+          default: '"C:\\\\chromedriver\\\\chromedriver.exe"',
           desc: '属性说明',
           paramType: '参数类型：0: 变量，',
           componentType: 1,
@@ -116,7 +116,7 @@ const abilityToDatastructure = {
           valueMapping: [
             {
               name: '谷歌chrome浏览器',
-              value: "'C:\\\\chromedriver\\\\chromedriver.exe'",
+              value: '"C:\\\\chromedriver\\\\chromedriver.exe"',
             },
             {
               name: '火狐浏览器',
