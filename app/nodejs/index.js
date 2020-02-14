@@ -5,6 +5,7 @@ import event, {
 } from '../containers/designerGraphBlock/layout/eventCenter';
 
 const fs = require('fs');
+const process = require('process');
 const { exec } = require('child_process');
 const path = require('path');
 const JSZIP = require('jszip');
@@ -40,11 +41,15 @@ function readDir(obj, nowPath) {
 }
 
 export const startZIP = () => {
-  const currPath = __dirname; // 文件的绝对路径 当前当前js所在的绝对路径
+  // const currPath = __dirname; // 文件的绝对路径 当前当前js所在的绝对路径
+  const currPath = process.cwd();
   const targetDir = path.join(
     currPath,
-    '/containers/designerGraphBlock/python'
+    '/python'
+    // '/containers/designerGraphBlock/python'
   );
+  message.info(currPath);
+  message.info(targetDir);
   readDir(zip, targetDir);
   zip
     .generateAsync({
@@ -57,7 +62,7 @@ export const startZIP = () => {
       }
     })
     .then(function(content) {
-      fs.writeFileSync(`${currPath}/nodejs/result.zip`, content, 'utf-8'); // 将打包的内容写入 当前目录下的 result.zip中
+      fs.writeFileSync(`${currPath}/python/result.zip`, content, 'utf-8'); // 将打包的内容写入 当前目录下的 result.zip中
       console.log('压缩完成...');
       console.log('开始上传流程包...');
       message.info('压缩完成，开始上传流程包');
@@ -68,18 +73,20 @@ export const startZIP = () => {
 export const writeFile = (dirname, content) => {
   writeFileRecursive(dirname, content, err => {
     if (!err) {
+      message.info(dirname);
       message.info('开始压缩...');
       console.log('开始压缩...');
       startZIP();
     } else {
+      message.info(dirname);
       message.info('压缩失败...');
     }
   });
 };
 
 export const executePython = code => {
-  writeFileRecursive(`${__dirname}/nodejs/code.py`, code, err => {
-    const command = `python ${__dirname}/nodejs/code.py`;
+  writeFileRecursive(`${process.cwd()}/python/code.py`, code, err => {
+    const command = `python ${process.cwd()}/python/code.py`;
     exec(command, (err, stdout, stdin) => {
       if (err) {
         const reg = /[\d\D]*(line\s\d)[\d\D]*?(\w*(?:Error|Exception).*)/im;
