@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { message } from 'antd';
+
 import api from '../api';
 
 export const issueProcess = content => {
@@ -14,12 +15,13 @@ export const issueProcess = content => {
   axios
     .post(api.issueProcess, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+      },
     })
     .then(res => res.data)
     .then(json => {
       message.success('发布成功');
       console.log(json, '流程包上传成功');
+      message.success('流程包发布成功');
     });
 };
