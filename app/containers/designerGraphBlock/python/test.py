@@ -1,4 +1,7 @@
 from sendiRPA import Browser
+from clickImage import MouseControl
 
-hWeb = Browser.openBrowser(driverPath = 'C:\\chromedriver\\chromedriver.exe', delayBefore = 1, delayAfter = 1, continue_On_Failure = True)
+hWeb = Browser.openBrowser(driverPath = 'C:\\chromedriver\\chromedriver.exe')
+
+MouseControl.scshot_match(ImagePath = "C:\\Users\\Administrator.SC-201902012149\\Desktop\\template.jpg")
 
