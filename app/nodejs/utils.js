@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { message } from 'antd';
 
 import api from '../api';
 
@@ -20,5 +21,6 @@ export const issueProcess = content => {
     .then(res => res.data)
     .then(json => {
       console.log(json, '流程包上传成功');
+      message.success('流程包发布成功');
     });
 };
