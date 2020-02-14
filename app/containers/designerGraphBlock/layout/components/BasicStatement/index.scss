@@ -3,12 +3,17 @@
   justify-content: space-between;
   align-items: center;
   .card-content-description {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
     pointer-events: none;
     .card-content-icon {
       margin-right: 12px;
     }
   }
   .card-content-visible {
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: rgba(153, 153, 153, 1);
   }
   .card-content-operation {
