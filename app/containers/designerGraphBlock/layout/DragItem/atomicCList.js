@@ -1168,6 +1168,408 @@ const abilityToDatastructure = {
       ],
     },
   },
+  /** 读取单元格 */
+  readCellValue: {
+    $$typeof: BasicStatementTag,
+    text: '读取单元格',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '读取单元格',
+    visible: '读取单元格',
+    main: 'readCellValue',
+    output: '(value, value_type)',
+    outputDesc: '(单元格数据, 单元格数据类型)',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作表对象',
+          enName: 'sht',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '单元格名称',
+          enName: 'name',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 读取列 */
+  readColumnValue: {
+    $$typeof: BasicStatementTag,
+    text: '读取列',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '读取列',
+    visible: '读取列',
+    main: 'readColumnValue',
+    output: 'values',
+    outputDesc: '列数据数组',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作表对象',
+          enName: 'sht',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '单元格名称',
+          enName: 'name',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 获取列数 */
+  getSheetColumnSize: {
+    $$typeof: BasicStatementTag,
+    text: '获取列数',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '获取列数',
+    visible: '获取列数',
+    main: 'getSheetColumnSize',
+    output: 'size',
+    outputDesc: '工作表列数',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作表对象',
+          enName: 'sht',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 删除列 */
+  deleteColumn: {
+    $$typeof: BasicStatementTag,
+    text: '删除列',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '删除列',
+    visible: '删除列',
+    main: 'deleteColumn',
+    output: '',
+    outputDesc: '',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作表对象',
+          enName: 'sht',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '单元格名称或列号',
+          enName: 'name',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '是否立即保存',
+          enName: 'isSave',
+          value: '',
+          default: 'False',
+          paramType: 2,
+          componentType: 1,
+          valueMapping: [
+            {
+              name: '是',
+              value: 'True',
+            },
+            {
+              name: '否',
+              value: 'False',
+            },
+          ],
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 删除行 */
+  deleteRow: {
+    $$typeof: BasicStatementTag,
+    text: '删除行',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '删除行',
+    visible: '删除行',
+    main: 'deleteRow',
+    output: '',
+    outputDesc: '',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作表对象',
+          enName: 'sht',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '单元格名称或行号',
+          enName: 'name',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '是否立即保存',
+          enName: 'isSave',
+          value: '',
+          default: 'False',
+          paramType: 2,
+          componentType: 1,
+          valueMapping: [
+            {
+              name: '是',
+              value: 'True',
+            },
+            {
+              name: '否',
+              value: 'False',
+            },
+          ],
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 写入单元格 */
+  writeCellValue: {
+    $$typeof: BasicStatementTag,
+    text: '写入单元格',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '写入单元格',
+    visible: '写入单元格',
+    main: 'writeCellValue',
+    output: '',
+    outputDesc: '',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作表对象',
+          enName: 'sht',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '单元格名称',
+          enName: 'name',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '数据值',
+          enName: 'value',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '是否立即保存',
+          enName: 'isSave',
+          value: '',
+          default: 'False',
+          paramType: 2,
+          componentType: 1,
+          valueMapping: [
+            {
+              name: '是',
+              value: 'True',
+            },
+            {
+              name: '否',
+              value: 'False',
+            },
+          ],
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 写入列 */
+  writeColumnValue: {
+    $$typeof: BasicStatementTag,
+    text: '写入列',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '写入列',
+    visible: '写入列',
+    main: 'writeColumnValue',
+    output: '',
+    outputDesc: '',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作表对象',
+          enName: 'sht',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '单元格名称',
+          enName: 'name',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '数据值数组',
+          enName: 'values',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '是否立即保存',
+          enName: 'isSave',
+          value: '',
+          default: 'False',
+          paramType: 2,
+          componentType: 1,
+          valueMapping: [
+            {
+              name: '是',
+              value: 'True',
+            },
+            {
+              name: '否',
+              value: 'False',
+            },
+          ],
+        },
+      ],
+      optional: [
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
+  /** 新建工作表 */
+  newSheet: {
+    $$typeof: BasicStatementTag,
+    text: '新建工作表',
+    module: 'sendiRPA',
+    pkg: 'Excel',
+    cmdName: '新建工作表',
+    visible: '新建工作表',
+    main: 'newSheet',
+    output: 'sheetName',
+    outputDesc: '新创建的工作表名称',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '工作簿对象',
+          enName: 'wb',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '工作表名称',
+          enName: 'name',
+          value: '',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '是否立即保存',
+          enName: 'isSave',
+          value: '',
+          default: 'False',
+          paramType: 2,
+          componentType: 1,
+          valueMapping: [
+            {
+              name: '是',
+              value: 'True',
+            },
+            {
+              name: '否',
+              value: 'False',
+            },
+          ],
+        },
+      ],
+      optional: [
+        {
+          cnName: '在工作表之前',
+          enName: 'before',
+          value: '',
+          default: null,
+          paramType: 1,
+          componentType: 0,
+        },
+        {
+          cnName: '在工作表之后',
+          enName: 'after',
+          value: '',
+          default: 'null',
+          paramType: 1,
+          componentType: 0,
+        },
+        ...generateFrom(['delayBefore', 'delayAfter', 'continue_On_Failure']),
+      ],
+    },
+  },
   /** 控制台输出命令 */
   print: {
     $$typeof: BasicStatementTag,
@@ -1439,6 +1841,54 @@ export default [
         key: '0-3-8',
         item: abilityToDatastructure['openSheet'],
         icon: generateIcon('branches'),
+      }, // readColumnValue
+      {
+        description: 'readCellValue',
+        key: '0-3-9',
+        item: abilityToDatastructure['readCellValue'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'readColumnValue',
+        key: '0-3-10',
+        item: abilityToDatastructure['readColumnValue'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'getSheetColumnSize',
+        key: '0-2-11',
+        item: abilityToDatastructure['getSheetColumnSize'],
+        icon: generateIcon('branches'),
+      }, // writeCellValue
+      {
+        description: 'writeCellValue',
+        key: '0-2-14',
+        item: abilityToDatastructure['writeCellValue'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'deleteColumn',
+        key: '0-2-12',
+        item: abilityToDatastructure['deleteColumn'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'deleteRow',
+        key: '0-2-13',
+        item: abilityToDatastructure['deleteRow'],
+        icon: generateIcon('branches'),
+      }, //writeColumnValue
+      {
+        description: 'writeColumnValue',
+        key: '0-2-15',
+        item: abilityToDatastructure['writeColumnValue'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'newSheet',
+        key: '0-2-16',
+        item: abilityToDatastructure['newSheet'],
+        icon: generateIcon('branches'),
       },
     ],
   },
@@ -1464,7 +1914,7 @@ export default [
         key: '0-2-3',
         item: abilityToDatastructure['print'],
         icon: generateIcon('branches'),
-      },
+      }, // getSheetColumnSize
     ],
   },
 ];
