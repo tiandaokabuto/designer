@@ -4,7 +4,7 @@ import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
-import { useDropTarget } from '../../useHooks';
+import { useDropTarget, useDeleteNodeById } from '../../useHooks';
 
 import ItemTypes from '../../statementTypes';
 
@@ -17,6 +17,7 @@ const style = {
   backgroundClip: 'padding-box',
   cursor: 'move',
   position: 'relative',
+  marginRight: '8px',
 };
 
 const ConditionalStatement = useInjectContext(props => {
@@ -62,6 +63,8 @@ const ConditionalStatement = useInjectContext(props => {
     setIsDraggingNode,
   });
 
+  const deleteNodeById = useDeleteNodeById();
+
   drop(drag(ref));
 
   return (
@@ -77,7 +80,7 @@ const ConditionalStatement = useInjectContext(props => {
           <Icon
             type="delete"
             onClick={() => {
-              //deleteNodeById(id);
+              deleteNodeById(id);
               console.log('删除 -->', id);
             }}
           />

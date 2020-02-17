@@ -23,6 +23,7 @@
     border: 1px solid rgba(184, 230, 214, 1);
   }
   &-content {
+    overflow: hidden;
     .IFItem-if {
       padding-left: 24px;
     }
