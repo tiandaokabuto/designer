@@ -4,7 +4,7 @@ import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
-import { useDropTarget } from '../../useHooks';
+import { useDropTarget, useDeleteNodeById } from '../../useHooks';
 
 import ItemTypes from '../../statementTypes';
 
@@ -80,6 +80,8 @@ const LoopStatement = useInjectContext(props => {
     handleLoopStatementFlod: handleStatementFlod,
   });
 
+  const deleteNodeById = useDeleteNodeById();
+
   drag(drop(ref));
 
   return (
@@ -103,6 +105,15 @@ const LoopStatement = useInjectContext(props => {
           ref={isFold ? dragImage : null}
         >
           当循环为真时
+        </div>
+        <div className="loopstatement-header-operation">
+          <Icon
+            type="delete"
+            onClick={() => {
+              deleteNodeById(id);
+              console.log('删除 -->', id);
+            }}
+          />
         </div>
       </div>
       <div className={`loopstatement-content loopstatement-fold-${id}`}>

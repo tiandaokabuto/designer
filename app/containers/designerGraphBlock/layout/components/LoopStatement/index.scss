@@ -27,6 +27,8 @@
     border: 1px solid rgba(50, 166, 127, 1);
   }
   &-header {
+    display: flex;
+    justify-content: space-between;
     height: 28px;
     line-height: 28px;
     background-color: rgba(50, 166, 127, 1);
@@ -35,12 +37,16 @@
     transform: translateX(0px);
     cursor: move;
     &-title {
+      flex: 1;
       padding-left: 8px;
       &::after {
         content: '';
         position: absolute;
         background-color: red;
       }
+    }
+    &-operation {
+      margin-right: 40px;
     }
   }
   &-content {
