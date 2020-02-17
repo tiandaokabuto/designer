@@ -34,7 +34,7 @@ const generateFrom = (() => {
       valueMapping: [],
     },
     delayAfter: {
-      cnName: '执行前延时',
+      cnName: '执行后延时',
       enName: 'delayAfter',
       value: undefined,
       default: 1,
