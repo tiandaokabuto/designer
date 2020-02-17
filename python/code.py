@@ -1,3 +1,5 @@
-
-for i in [1, 2]:
-	print(i)
+a = 2
+do:
+	print(a)
+	a = a - 1
+while a >= 0:

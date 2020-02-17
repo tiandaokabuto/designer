@@ -1,5 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
@@ -71,7 +72,17 @@ const ConditionalStatement = useInjectContext(props => {
       className={className}
     >
       <div className="IFItem-header" ref={ref} data-id={id}>
-        如果条件成立则
+        <div className="IFItem-header-title">当条件满足</div>
+        <div className="IFItem-header-operation">
+          <Icon
+            type="delete"
+            onClick={() => {
+              //deleteNodeById(id);
+              console.log('删除 -->', id);
+            }}
+          />
+          <Icon type="down" />
+        </div>
       </div>
       <div className="IFItem-content">
         <div className="IFItem-if">
@@ -89,19 +100,21 @@ const ConditionalStatement = useInjectContext(props => {
           })}
         </div>
         <div className="IFItem-else">
-          <div className="IFItem-header">否则</div>
-          {card.elseChildren.map((subChildren, i) =>
-            renderStatement(subChildren, i)
-          )}
-          {renderTailStatement({
-            id: `${id}-elseChildren-tail`,
-            text: '在此插入else语句',
-            index: PLACEHOLDER_STATEMENT,
-            moveCard,
-            addCard,
-            isDraggingNode,
-            setIsDraggingNode,
-          })}
+          <div className="IFItem-header IFItem-header__else">否则</div>
+          <div style={{ paddingLeft: 24 }}>
+            {card.elseChildren.map((subChildren, i) =>
+              renderStatement(subChildren, i)
+            )}
+            {renderTailStatement({
+              id: `${id}-elseChildren-tail`,
+              text: '在此插入else语句',
+              index: PLACEHOLDER_STATEMENT,
+              moveCard,
+              addCard,
+              isDraggingNode,
+              setIsDraggingNode,
+            })}
+          </div>
         </div>
       </div>
     </div>
