@@ -4,7 +4,7 @@ import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
-import { useDropTarget } from '../../useHooks';
+import { useDropTarget, useDeleteNodeById } from '../../useHooks';
 
 import ItemTypes from '../../statementTypes';
 
@@ -17,6 +17,7 @@ const style = {
   backgroundClip: 'padding-box',
   cursor: 'move',
   position: 'relative',
+  marginRight: '8px',
 };
 
 const ConditionalStatement = useInjectContext(props => {
@@ -36,6 +37,18 @@ const ConditionalStatement = useInjectContext(props => {
     useSetClassName,
     useDragSource,
   } = props;
+
+  const [isFold, setFold] = useState(false);
+
+  /**
+   * 组件整体折叠逻辑
+   */
+  const handleStatementFlod = () => {
+    const ifstatement = document.querySelector(`.ifstatement-fold-${id}`);
+    const originalHeight = ifstatement.style.height;
+    ifstatement.style.height = originalHeight ? '' : '0px';
+    setFold(originalHeight ? false : true);
+  };
 
   const [className, setClassName, resetClassName] = useSetClassName();
 
@@ -62,29 +75,42 @@ const ConditionalStatement = useInjectContext(props => {
     setIsDraggingNode,
   });
 
+  const deleteNodeById = useDeleteNodeById();
+
   drop(drag(ref));
 
   return (
     <div
       className="IFItem"
       style={{ ...style, opacity }}
-      ref={dragImage}
+      ref={isFold ? null : dragImage}
       className={className}
     >
-      <div className="IFItem-header" ref={ref} data-id={id}>
-        <div className="IFItem-header-title">当条件满足</div>
+      <div className="IFItem-header" ref={ref}>
+        <div
+          className="IFItem-header-title"
+          data-id={id}
+          ref={isFold ? dragImage : null}
+        >
+          当条件满足
+        </div>
         <div className="IFItem-header-operation">
           <Icon
             type="delete"
             onClick={() => {
-              //deleteNodeById(id);
+              deleteNodeById(id);
               console.log('删除 -->', id);
             }}
           />
-          <Icon type="down" />
+          <Icon
+            type={isFold ? 'up' : 'down'}
+            onClick={() => {
+              handleStatementFlod();
+            }}
+          />
         </div>
       </div>
-      <div className="IFItem-content">
+      <div className={`IFItem-content ifstatement-fold-${id}`}>
         <div className="IFItem-if">
           {card.ifChildren.map((subChildren, i) => {
             return renderStatement(subChildren, i);
