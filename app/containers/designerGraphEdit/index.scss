@@ -1,24 +1,4 @@
-@mixin tabs {
-  .ant-tabs-nav {
-    div:nth-child(1) {
-      height: 42px;
-    }
-    .ant-tabs-tab-active {
-      color: rgba(50, 166, 127, 1);
-    }
-    .ant-tabs-ink-bar {
-      background-color: rgba(50, 166, 166, 1);
-    }
-  }
-  .scroll-body {
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-  .ant-tabs-bar {
-    margin: 0;
-  }
-}
+@import '../common/style/common.scss';
 
 .designergraph {
   background: rgba(255, 255, 255, 1);
