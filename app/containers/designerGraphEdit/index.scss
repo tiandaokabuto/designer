@@ -9,14 +9,14 @@
     min-width: 239px;
     max-width: 239px;
     flex-basis: 239px;
-    box-shadow: 1px 0px 0px 0px rgba(238, 238, 238, 1);
+    box-shadow: 1px 0 0 0 rgba(238, 238, 238, 1);
     &-title {
       height: 40px;
       line-height: 40px;
       padding-left: 20px;
       font-weight: 400;
       color: rgba(102, 102, 102, 1);
-      box-shadow: 0px 1px 0px 0px rgba(238, 238, 238, 1);
+      box-shadow: 0 1px 0 0 rgba(238, 238, 238, 1);
     }
   }
   &-container {
@@ -24,7 +24,7 @@
     flex: 1;
     max-width: calc(100vw - 239px * 2);
     background-color: #f9fafb;
-    box-shadow: 1px 0px 0px 0px #eeeeee;
+    box-shadow: 1px 0 0 0 #eee;
   }
   &-parampanel {
     min-width: 239px;

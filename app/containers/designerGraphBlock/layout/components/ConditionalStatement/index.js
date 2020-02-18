@@ -117,7 +117,7 @@ const ConditionalStatement = useInjectContext(props => {
           })}
           {renderTailStatement({
             id: `${id}-ifChildren-tail`,
-            text: '在此插入if语句',
+            text: '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
             index: PLACEHOLDER_STATEMENT,
             moveCard,
             addCard,
@@ -133,7 +133,8 @@ const ConditionalStatement = useInjectContext(props => {
             )}
             {renderTailStatement({
               id: `${id}-elseChildren-tail`,
-              text: '在此插入else语句',
+              text:
+                '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
               index: PLACEHOLDER_STATEMENT,
               moveCard,
               addCard,

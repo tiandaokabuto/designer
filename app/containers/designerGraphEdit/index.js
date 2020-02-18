@@ -11,6 +11,7 @@ import './index.scss';
 import { history } from '../../store/configureStore';
 
 export default () => {
+  history.push('/designerGraphBlock');
   return (
     <Fragment>
       <GraphBlockHeader />

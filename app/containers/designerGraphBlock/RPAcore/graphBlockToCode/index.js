@@ -1,65 +1,66 @@
 import transformBasicStatement from './transformBasicStatement';
 import transformPrintStatement from './transformPrintStatement';
 import transformLoopStatement from './transformLoopStatement';
+import transformConditionalStatement from './transformConditionalStatement';
 import { PrintStatementTag } from '../../layout/statementTags';
 import { isArray } from './utils';
 
-const fake = [
-  {
-    $$typeof: 1,
-    text: 'basic statement1',
-    id: 1,
-  },
-  {
-    $$typeof: 1,
-    text: 'basic statement2',
-    id: 2,
-  },
-  {
-    $$typeof: 2,
-    id: 4,
-    children: [
-      {
-        $$typeof: 1,
-        text: 'basic statement4',
-        id: 5,
-      },
-      {
-        $$typeof: 2,
-        id: 6,
-        children: [
-          {
-            $$typeof: 1,
-            text: 'basic statement5',
-            id: 7,
-          },
-          {
-            $$typeof: 4,
-            ifChildren: [
-              {
-                $$typeof: 1,
-                text: 'basic statement6----if',
-                id: 8,
-              },
-            ],
-            elseChildren: [
-              {
-                $$typeof: 1,
-                text: 'basic statement7----else',
-                id: 9,
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    $$typeof: 1,
-    text: 'basic statement3',
-    id: 3,
-  },
-];
+// const fake = [
+//   {
+//     $$typeof: 1,
+//     text: 'basic statement1',
+//     id: 1,
+//   },
+//   {
+//     $$typeof: 1,
+//     text: 'basic statement2',
+//     id: 2,
+//   },
+//   {
+//     $$typeof: 2,
+//     id: 4,
+//     children: [
+//       {
+//         $$typeof: 1,
+//         text: 'basic statement4',
+//         id: 5,
+//       },
+//       {
+//         $$typeof: 2,
+//         id: 6,
+//         children: [
+//           {
+//             $$typeof: 1,
+//             text: 'basic statement5',
+//             id: 7,
+//           },
+//           {
+//             $$typeof: 4,
+//             ifChildren: [
+//               {
+//                 $$typeof: 1,
+//                 text: 'basic statement6----if',
+//                 id: 8,
+//               },
+//             ],
+//             elseChildren: [
+//               {
+//                 $$typeof: 1,
+//                 text: 'basic statement7----else',
+//                 id: 9,
+//               },
+//             ],
+//           },
+//         ],
+//       },
+//     ],
+//   },
+//   {
+//     $$typeof: 1,
+//     text: 'basic statement3',
+//     id: 3,
+//   },
+// ];
 
 const paddingStart = length => '    '.repeat(length);
 
@@ -89,13 +90,20 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
         transformLoopStatement(padding, statement, result);
         transformBlockToCodeImpl(statement.children, depth + 1);
         break;
-      // case 4: // 条件语句
-      //   result.output += `${padding}if ( b > 0 ):\n`;
-      //   transformBlockToCodeImpl(statement.ifChildren, depth + 1);
+      case 4:
+        transformConditionalStatement(padding, statement, result);
+        if (!statement.ifChildren.length) {
+          result.output += `${paddingStart(depth + 1)}pass\n`;
+        } else {
+          transformBlockToCodeImpl(statement.ifChildren, depth + 1);
+        }
 
-      //   result.output += `${padding}else:\n`;
-      //   transformBlockToCodeImpl(statement.elseChildren, depth + 1);
-      //   break;
+        result.output += `${padding}else:\n`;
+        if (!statement.elseChildren.length) {
+          result.output += `${paddingStart(depth + 1)}pass\n`;
+        } else {
+          transformBlockToCodeImpl(statement.elseChildren, depth + 1);
+        }
       default:
       // do nothing
     }

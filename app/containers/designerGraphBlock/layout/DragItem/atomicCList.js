@@ -1656,6 +1656,17 @@ const abilityToDatastructure = {
   conditionalStatement: {
     $$typeof: ConditionalStatementTag,
     text: '条件分支语句',
+    properties: {
+      required: [
+        {
+          cnName: '条件',
+          enName: 'ifcondition',
+          default: '',
+          value: '',
+          componentType: 0,
+        },
+      ],
+    },
   },
 };
 
