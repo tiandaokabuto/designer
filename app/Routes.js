@@ -4,7 +4,7 @@ import routes from './constants/routes.json';
 import App from './containers/App';
 import HomePage from './containers/HomePage';
 import CounterPage from './containers/CounterPage';
-import DesignerGraphEdit from './containers/designerGraphEdit/DesignerGraphEdit';
+import DesignerGraphEdit from './containers/designerGraphEdit';
 import DesignerGraphBlock from './containers/designerGraphBlock';
 
 export default () => (

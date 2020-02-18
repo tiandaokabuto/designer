@@ -1,10 +1,13 @@
 import React, { Fragment } from 'react';
 
-import DesignerBody from './components/DesignerBody';
 import GraphBlockHeader from '../common/GraphBlockHeader';
 import DragEditorHeader from '../common/DragEditorHeader';
 
-import './DesignerGraphEdit.scss';
+import GraphContainer from './layout/GraphContainer';
+import GraphItem from './layout/GraphItem';
+import GraphParamPanel from './layout/GraphParamPanel';
+
+import './index.scss';
 import { history } from '../../store/configureStore';
 
 export default () => {
@@ -12,9 +15,11 @@ export default () => {
     <Fragment>
       <GraphBlockHeader />
       <DragEditorHeader />
-      {/* <div className="designergraph">
-        <DesignerBody />
-      </div> */}
+      <div className="designergraph">
+        <GraphItem />
+        <GraphContainer />
+        <GraphParamPanel />
+      </div>
     </Fragment>
   );
 };

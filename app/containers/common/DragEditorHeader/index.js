@@ -67,7 +67,6 @@ export default withRouter(({ history }) => {
           {tool.description}
         </span>
       ))}
-      <IconFont type="iconzhihang" />
     </div>
   );
 });
