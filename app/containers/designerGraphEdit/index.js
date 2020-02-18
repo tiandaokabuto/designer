@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import GGEditor, { Flow, RegisterNode } from 'gg-editor';
 
 import GraphBlockHeader from '../common/GraphBlockHeader';
 import DragEditorHeader from '../common/DragEditorHeader';
@@ -13,13 +14,20 @@ import { history } from '../../store/configureStore';
 export default () => {
   return (
     <Fragment>
+      {/* <div
+        onClick={() => {
+          history.push('/designerGraphBlock');
+        }}
+      >
+        click
+      </div> */}
       <GraphBlockHeader />
       <DragEditorHeader />
-      <div className="designergraph">
+      <GGEditor className="designergraph">
         <GraphItem />
         <GraphContainer />
         <GraphParamPanel />
-      </div>
+      </GGEditor>
     </Fragment>
   );
 };
