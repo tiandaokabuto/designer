@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import DesignerBody from './components/DesignerBody';
 import GraphBlockHeader from '../common/GraphBlockHeader';
@@ -9,10 +9,19 @@ import { history } from '../../store/configureStore';
 
 export default () => {
   return (
-    <div className="designergraph">
+    <Fragment>
       <GraphBlockHeader />
       <DragEditorHeader />
-      <DesignerBody />
-    </div>
+      {/* <div className="designergraph">
+        <DesignerBody />
+      </div> */}
+      <div
+        onClick={() => {
+          history.push('/designerGraphBlock');
+        }}
+      >
+        click
+      </div>
+    </Fragment>
   );
 };

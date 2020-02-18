@@ -2,7 +2,7 @@ import React from 'react';
 import { Tooltip } from 'antd';
 import upperFirst from 'lodash/upperFirst';
 import { Command } from 'gg-editor';
-import IconFont from '../../../../../../../common/IconFont';
+import IconFont from '../../../../../../common/IconFont';
 
 const ToolbarButton = props => {
   const { command, icon, text } = props;

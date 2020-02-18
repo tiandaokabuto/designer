@@ -1,11 +1,12 @@
 import React from 'react';
 import { Icon } from 'antd';
+import { withRouter } from 'react-router-dom';
 
 import event, {
   PYTHON_EXECUTE,
 } from '../../designerGraphBlock/layout/eventCenter';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
-import IconFont from '../../../common/IconFont';
+import IconFont from '../IconFont/index';
 
 import './index.scss';
 
@@ -13,7 +14,7 @@ const handleOperation = op => (...args) => {
   event.emit(op, ...args);
 };
 
-export default () => {
+export default withRouter(({ history }) => {
   const handlePublishZip = usePublishProcessZip();
 
   const TOOLS_DESCRIPTION = [
@@ -21,6 +22,9 @@ export default () => {
       description: '返回',
       type: 'rollback',
       IconFont: false,
+      onClick: () => {
+        history.goBack();
+      },
     },
     {
       description: '保存',
@@ -63,6 +67,7 @@ export default () => {
           {tool.description}
         </span>
       ))}
+      <IconFont type="iconzhihang" />
     </div>
   );
-};
+});

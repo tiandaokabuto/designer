@@ -1,7 +1,7 @@
 import React from 'react';
 import { Command } from 'gg-editor';
 import upperFirst from 'lodash/upperFirst';
-import IconFont from '../../../../../../../common/IconFont';
+import IconFont from '../../../../../../common/IconFont';
 
 const MenuItem = props => {
   const { command, icon, text } = props;
