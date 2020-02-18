@@ -20,6 +20,12 @@ export default ({ className }) => {
             payload: checkedId,
           });
           return;
+        } else if (e.target.classList.contains('IFItem-header-title')) {
+          dispatch({
+            type: CHANGE_CHECKEDID,
+            payload: checkedId,
+          });
+          return;
         }
         if (prevChecked.dom) {
           // 恢复之前选中的代码块

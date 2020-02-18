@@ -1,26 +1,9 @@
-const fake = {
-  typeof: 3,
-  ifChildren: [],
-  elseChildren: [],
+const transformConditionalStatement = (padding, dataStructure, result) => {
+  // const looptype = dataStructure['properties']['required'][0].value;
+  // const loopcondition = dataStructure['properties']['required'][1].value;
+  // result.output += `${padding}${looptype} ${loopcondition}:\n`;
+  const loopcondition = dataStructure['properties']['required'][0].value;
+  result.output += `${padding}if ${loopcondition}:\n`;
 };
 
-const paddingStart = length => '    '.repeat(length);
-
-const handleIfChildren = () => {};
-
-const handleElseChildren = () => {};
-
-const transformConditionalStatement = (dataStructure, deep) => {
-  const result = {
-    output: '',
-  };
-  const padding = paddingStart(deep);
-  if (dataStructure.ifChildren.length) {
-    handleIfChildren(dataStructure.ifChildren, deep);
-  }
-  if (dataStructure.elseChildren.length) {
-    handleElseChildren(dataStructure.elseChildren, deep);
-  }
-};
-
-transformConditionalStatement(fake, 2);
+export default transformConditionalStatement;
