@@ -3,8 +3,8 @@ import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
-import GraphBlockHeader from './layout/GraphBlockHeader';
-import DragEditorHeader from './layout/DragEditorHeader';
+import GraphBlockHeader from '../common/GraphBlockHeader';
+import DragEditorHeader from '../common/DragEditorHeader';
 import DragContainer from './layout/DragContainer';
 import DragItem from './layout/DragItem';
 import DragParamPanel from './layout/DragParamPanel';

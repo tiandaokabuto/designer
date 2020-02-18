@@ -1,5 +1,4 @@
-a = 2
-do:
-	print(a)
-	a = a - 1
-while a >= 0:
+from sendiRPA import Browser
+
+hWeb = Browser.openBrowser(driverPath = "C:\\chromedriver\\chromedriver.exe")
+

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Icon } from 'antd';
 
-import event, { PYTHON_EXECUTE } from '../eventCenter';
-import { usePublishProcessZip } from '../useHooks';
-import IconFont from '../../../../common/IconFont';
+import event, {
+  PYTHON_EXECUTE,
+} from '../../designerGraphBlock/layout/eventCenter';
+import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
+import IconFont from '../../../common/IconFont';
 
 import './index.scss';
 
