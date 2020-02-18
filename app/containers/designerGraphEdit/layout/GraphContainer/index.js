@@ -1,5 +1,5 @@
 import React from 'react';
 
 export default () => {
-  return <div>container</div>;
+  return <div className="designergraph-container">container</div>;
 };
