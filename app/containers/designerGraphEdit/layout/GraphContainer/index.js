@@ -3,6 +3,7 @@ import { Flow, withPropsAPI } from 'gg-editor';
 
 import FlowItemPanel from './components/FlowItemPanel';
 import ProcessBlockNode from '../RegisterNode/ProcessBlockNode';
+import StartNode from '../RegisterNode/StartNode';
 
 export default withPropsAPI(({ propsAPI }) => {
   return (
@@ -35,6 +36,7 @@ export default withPropsAPI(({ propsAPI }) => {
         noEndEdge={false}
       />
       <ProcessBlockNode />
+      <StartNode />
     </div>
   );
 });
