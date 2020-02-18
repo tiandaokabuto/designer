@@ -30,7 +30,7 @@ export default () => {
         <GraphItem />
         <GraphContainer />
         <GraphParamPanel />
-        <RegisterNode
+        {/* <RegisterNode
           name="model-card"
           config={{
             draw(item) {
@@ -143,7 +143,7 @@ export default () => {
               [1, 0.5], // 右边的结点
             ],
           }}
-        />
+        /> */}
       </GGEditor>
     </Fragment>
   );

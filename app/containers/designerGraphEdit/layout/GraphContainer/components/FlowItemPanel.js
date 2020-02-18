@@ -21,7 +21,7 @@ const FlowItemPanel = () => {
       <Item
         type="node"
         size="184*56"
-        shape="model-card"
+        shape="processblock"
         icon="http://bpic.588ku.com/element_origin_min_pic/00/92/88/9056f24073c4c87.jpg"
         model={{
           color: '#1890FF',
