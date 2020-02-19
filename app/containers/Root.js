@@ -6,6 +6,7 @@ import { hot } from 'react-hot-loader/root';
 import { InjectProvider } from 'react-hook-easier/lib/useInjectContext';
 
 import type { Store } from '../reducers/types';
+import * as reduxActions from './reduxActions';
 import Routes from '../Routes';
 
 type Props = {
@@ -19,6 +20,7 @@ const Root = ({ store, history }: Props) => (
       <InjectProvider
         value={{
           history,
+          ...reduxActions,
         }}
       >
         <Routes />

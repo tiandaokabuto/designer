@@ -8,7 +8,7 @@ const handlerMap = new Map();
 class RegistryCenterImpl extends React.Component {
   static registerDataChange(change) {
     // 监听到边添加的事件,委托给对应的类处理
-    switch (change.item.type) {
+    switch (change.item && change.item.type) {
       case 'edge':
         handlerMap.get('EdgeHandler').handleEdgeChange(change);
       default:
