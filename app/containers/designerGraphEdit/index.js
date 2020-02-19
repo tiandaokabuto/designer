@@ -32,7 +32,7 @@ export default () => {
 
       <GGEditor className="designergraph editor">
         <GraphItem />
-        <GraphContainer />
+        <GraphContainer history={history} />
         <GraphParamPanel />
         <FlowContextMenu />
       </GGEditor>

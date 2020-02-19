@@ -11,7 +11,7 @@ import EditorChange, {
   registerDataChange,
 } from '../../useHooks/useEditorChange';
 
-export default withPropsAPI(({ propsAPI }) => {
+export default withPropsAPI(({ propsAPI, history }) => {
   return (
     <div className="designergraph-container">
       <div className="designergraph-container-header">
@@ -23,14 +23,25 @@ export default withPropsAPI(({ propsAPI }) => {
       <Flow
         className="designergraph-container-flow"
         onAfterChange={value => {
+          console.log(value);
           registerDataChange(value);
         }}
         graph={{ edgeDefaultShape: 'flow-polyline' }}
-        onNodeClick={_ => {
+        onNodeClick={node => {
           const { getSelected, executeCommand, update, save } = propsAPI;
+          const dataId = node.shape._attrs.dataId;
 
-          const item = getSelected()[0];
-          console.log(item, save()); // 很重要
+          /** 跳转到代码块编辑页面 */
+          switch (dataId) {
+            case 'edit':
+              history.push('/designerGraphBlock');
+              break;
+            default:
+            // do nothing
+          }
+
+          //const item = getSelected()[0];
+          //console.log(item, save()); // 很重要
           // executeCommand(() => {
           //   update(item, {
           //     label: 'hhh',

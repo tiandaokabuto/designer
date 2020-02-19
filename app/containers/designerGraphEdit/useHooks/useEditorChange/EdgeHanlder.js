@@ -1,4 +1,7 @@
 import { findNodeById } from './utils';
+
+const canLink = () => {};
+
 class EdgeHandler {
   constructor(propsAPI) {
     this.propsAPI = propsAPI;
@@ -13,7 +16,7 @@ class EdgeHandler {
       const edges = graphData.edges;
       // FIX ME: 添加判断何时应该删除该条连接线的逻辑
       // this.apiAction("undo");
-      console.log(nodes, edges);
+      // console.log(nodes, edges, target, source);
     }
   };
 
