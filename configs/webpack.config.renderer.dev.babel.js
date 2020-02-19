@@ -74,6 +74,23 @@ export default merge.smart(baseConfig, {
         },
       },
       {
+        test: /\.less$/,
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: 'less-loader',
+          },
+        ],
+      },
+      {
         test: /\.global\.css$/,
         use: [
           {

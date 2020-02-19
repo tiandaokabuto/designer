@@ -7,6 +7,7 @@ const { TreeNode } = Tree;
 
 const DEFAULT_STYLE = {
   fontSize: '16px',
+  verticalAlign: 'middle',
 };
 
 const generateIcon = (type, style = DEFAULT_STYLE) => (

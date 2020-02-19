@@ -1,7 +1,6 @@
 import React, { createContext, useState, useRef } from 'react';
 import { Icon } from 'antd';
-
-// import DragCard from './DragCard';
+import { Item } from 'gg-editor';
 
 const TreeContext = createContext({});
 
@@ -12,6 +11,26 @@ const generateStyle = isLeaf => ({
   paddingLeft: isLeaf ? '16px' : 0,
   minHeight: '40px',
 });
+
+const generateCard = text => {
+  return (
+    <Item
+      type="node"
+      size="184*56"
+      shape="processblock"
+      model={{
+        color: '#FA8C16',
+        label: text,
+        style: {
+          stroke: 'rgba(61, 109, 204, 1)',
+          fill: '#ecf5f6',
+        },
+      }}
+    >
+      {text}
+    </Item>
+  );
+};
 
 export default class Tree extends React.Component {
   state = {
@@ -48,7 +67,16 @@ export default class Tree extends React.Component {
                 )}
                 {props.icon}
                 {isLeaf ? (
-                  <span style={{ paddingLeft: 14 }}>{props.item.text}</span>
+                  <div
+                    style={{
+                      display: 'inline-block',
+                      paddingLeft: '10px',
+                      verticalAlign: 'middle',
+                      userSelect: 'none',
+                    }}
+                  >
+                    {generateCard(props.item.text)}
+                  </div>
                 ) : (
                   //<DragCard item={props.item} />
                   <span style={{ paddingLeft: '16px' }}>{props.title}</span>
