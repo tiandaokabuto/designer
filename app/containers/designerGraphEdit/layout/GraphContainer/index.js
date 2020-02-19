@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Flow, withPropsAPI } from 'gg-editor';
 import { useSelector } from 'react-redux';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
@@ -9,6 +9,8 @@ import StartNode from '../RegisterNode/StartNode';
 import EndNode from '../RegisterNode/EndNode';
 import RhombusNode from '../RegisterNode/RhombusNode';
 
+import EditorDrawer from './components/EditorDrawer';
+
 import EditorChange, {
   registerDataChange,
 } from '../../useHooks/useEditorChange';
@@ -18,7 +20,7 @@ export default useInjectContext(
     const { getSelected, executeCommand, update, save } = propsAPI;
     const graphData = useSelector(state => state.grapheditor.graphData);
     console.log(graphData);
-
+    const [drawerVisible, setDrawerVisible] = useState(false);
     return (
       <div className="designergraph-container">
         <div className="designergraph-container-header">
@@ -37,7 +39,7 @@ export default useInjectContext(
           graph={{ edgeDefaultShape: 'flow-polyline' }}
           onNodeClick={node => {
             const dataId = node.shape._attrs.dataId;
-
+            console.log(node);
             /** 跳转到代码块编辑页面 */
             switch (dataId) {
               case 'edit':
@@ -62,7 +64,16 @@ export default useInjectContext(
             //   });
             // });
           }}
+          onEdgeClick={edge => {
+            /** 点击边的时候判断是否触发label的添加 */
+            console.log(edge);
+            setDrawerVisible(true);
+          }}
           noEndEdge={false}
+        />
+        <EditorDrawer
+          visible={drawerVisible}
+          setDrawerVisible={setDrawerVisible}
         />
         <ProcessBlockNode />
         <StartNode />
