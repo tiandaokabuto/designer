@@ -7,6 +7,10 @@ import StartNode from '../RegisterNode/StartNode';
 import EndNode from '../RegisterNode/EndNode';
 import RhombusNode from '../RegisterNode/RhombusNode';
 
+import EditorChange, {
+  registerDataChange,
+} from '../../useHooks/useEditorChange';
+
 export default withPropsAPI(({ propsAPI }) => {
   return (
     <div className="designergraph-container">
@@ -19,7 +23,7 @@ export default withPropsAPI(({ propsAPI }) => {
       <Flow
         className="designergraph-container-flow"
         onAfterChange={value => {
-          // registerDataChange(value);
+          registerDataChange(value);
         }}
         graph={{ edgeDefaultShape: 'flow-polyline' }}
         onNodeClick={_ => {
@@ -27,14 +31,14 @@ export default withPropsAPI(({ propsAPI }) => {
 
           const item = getSelected()[0];
           console.log(item, save()); // 很重要
-          executeCommand(() => {
-            update(item, {
-              label: 'hhh',
-              style: {
-                fill: 'red',
-              },
-            });
-          });
+          // executeCommand(() => {
+          //   update(item, {
+          //     label: 'hhh',
+          //     style: {
+          //       fill: 'red',
+          //     },
+          //   });
+          // });
         }}
         noEndEdge={false}
       />
@@ -42,6 +46,7 @@ export default withPropsAPI(({ propsAPI }) => {
       <StartNode />
       <EndNode />
       <RhombusNode />
+      <EditorChange />
     </div>
   );
 });

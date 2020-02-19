@@ -15,15 +15,15 @@ const FlowContextMenu = () => {
   return (
     <ContextMenu className="contextMenu">
       <NodeMenu>
-        <MenuItem command="copy" />
-        <MenuItem command="delete" />
+        <MenuItem command="copy" text="复制" />
+        <MenuItem command="delete" text="删除" />
       </NodeMenu>
       <EdgeMenu>
-        <MenuItem command="delete" />
+        <MenuItem command="delete" text="删除" />
       </EdgeMenu>
       <GroupMenu>
-        <MenuItem command="copy" />
-        <MenuItem command="delete" />
+        <MenuItem command="copy" text="复制" />
+        <MenuItem command="delete" text="删除" />
         <MenuItem command="unGroup" icon="ungroup" text="Ungroup" />
       </GroupMenu>
       <MultiMenu>
@@ -33,9 +33,9 @@ const FlowContextMenu = () => {
         <MenuItem command="delete" />
       </MultiMenu>
       <CanvasMenu>
-        <MenuItem command="undo" />
-        <MenuItem command="redo" />
-        <MenuItem command="pasteHere" icon="paste" text="Paste Here" />
+        <MenuItem command="undo" text="取消" />
+        <MenuItem command="redo" text="重做" />
+        <MenuItem command="pasteHere" icon="paste" text="粘贴到此处" />
       </CanvasMenu>
     </ContextMenu>
   );
