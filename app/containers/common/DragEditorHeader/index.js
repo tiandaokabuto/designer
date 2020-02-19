@@ -6,6 +6,7 @@ import event, {
   PYTHON_EXECUTE,
 } from '../../designerGraphBlock/layout/eventCenter';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
+import { usePublishProcess } from '../../useHooks';
 import IconFont from '../IconFont/index';
 
 import './index.scss';
@@ -16,6 +17,8 @@ const handleOperation = op => (...args) => {
 
 export default withRouter(({ history }) => {
   const handlePublishZip = usePublishProcessZip();
+
+  const handlePublishProcess = usePublishProcess();
 
   const TOOLS_DESCRIPTION = [
     {
@@ -29,6 +32,7 @@ export default withRouter(({ history }) => {
     {
       description: '保存',
       type: 'save',
+      onClick: handlePublishProcess,
     },
     {
       description: '运行',
