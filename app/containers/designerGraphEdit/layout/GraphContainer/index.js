@@ -4,6 +4,8 @@ import { Flow, withPropsAPI } from 'gg-editor';
 import FlowItemPanel from './components/FlowItemPanel';
 import ProcessBlockNode from '../RegisterNode/ProcessBlockNode';
 import StartNode from '../RegisterNode/StartNode';
+import EndNode from '../RegisterNode/EndNode';
+import RhombusNode from '../RegisterNode/RhombusNode';
 
 export default withPropsAPI(({ propsAPI }) => {
   return (
@@ -19,6 +21,7 @@ export default withPropsAPI(({ propsAPI }) => {
         onAfterChange={value => {
           // registerDataChange(value);
         }}
+        graph={{ edgeDefaultShape: 'flow-polyline' }}
         onNodeClick={_ => {
           const { getSelected, executeCommand, update, save } = propsAPI;
 
@@ -37,6 +40,8 @@ export default withPropsAPI(({ propsAPI }) => {
       />
       <ProcessBlockNode />
       <StartNode />
+      <EndNode />
+      <RhombusNode />
     </div>
   );
 });
