@@ -30,8 +30,8 @@ class ProcessBlockNode extends Component {
             width,
             height,
             radius: borderRadius,
-            fill: 'white',
-            stroke: '#CED4D9',
+            fill: '#edf6f7',
+            stroke: 'rgba(61, 109, 204, 1)',
           },
         });
 

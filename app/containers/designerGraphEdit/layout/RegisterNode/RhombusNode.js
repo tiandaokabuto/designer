@@ -25,6 +25,8 @@ export default class RhombusNode extends Component {
               ['L', -52, 0],
               ['L', 0, -52],
             ],
+            fill: '#edf6f7',
+            stroke: 'rgba(61, 109, 204, 1)',
           },
         });
 
@@ -56,12 +58,12 @@ export default class RhombusNode extends Component {
         return keyShape;
       },
       // 获取样式
-      getStyle(item) {
-        return {
-          stroke: 'rgba(61, 109, 204, 1)',
-          fill: '#ecf5f6',
-        };
-      },
+      // getStyle(item) {
+      //   return {
+      //     stroke: 'rgba(61, 109, 204, 1)',
+      //     fill: '#ecf5f6',
+      //   };
+      // },
       // // 激活样式
       // getActivedStyle(item) {
       //   return {
