@@ -14,9 +14,10 @@ const transformEditorProcess = (
 
   switch (currentNode.shape) {
     case 'processblock':
-      const blockData = graphDataMap.get(currentId);
+      const blockData = graphDataMap.get(currentId) || {};
       // 找到对应的流程块结点的数据结构
-      result.output = `def test():\n${blockData.pythonCode}` + result.output;
+      result.output =
+        `def test():\n${blockData.pythonCode || '\n'}` + result.output;
       // 如果跟循环没有关系的话就直接执行当前的代码块
       result.output += `${padding(depth)}test()\n`;
       const next = findTargetIdBySourceId(graphData.edges, currentId);
