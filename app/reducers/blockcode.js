@@ -8,6 +8,8 @@ import {
   CHANGE_PYTHONCODE,
 } from '../actions/codeblock';
 
+import { synchroGraphDataMap } from '../containers/reduxActions';
+
 const defaultState = {
   cards: [],
   checkedId: undefined,
@@ -27,6 +29,11 @@ export default (state = defaultState, action) => {
         checkedId: action.payload,
       };
     case CHANGE_PYTHONCODE:
+      // 同步更新最新的流程块的结构到 graphDataMap 注意要放在事件循环的下次来做 否则会报错
+      setTimeout(() => {
+        synchroGraphDataMap(state.cards, action.payload);
+      }, 0);
+      console.log(state.cards, action.payload);
       return {
         ...state,
         pythonCode: action.payload,
