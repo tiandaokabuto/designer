@@ -3,6 +3,7 @@ import {
   CHANGE_CURRENTEDITINGBLOCKID,
   SYNCHRO_GRAPHDATAMAP,
 } from '../../actions/grapheditor';
+import { SYNCHRO_CODEBLOCK } from '../../actions/codeblock';
 import store from '../../store';
 
 const { dispatch } = store;
@@ -25,7 +26,7 @@ export const updateCurrentEditingProcessBlock = id => {
 };
 
 /**
- * 代码同步功能
+ * 代码同步功能 --- 同步已经编辑后的流程块的代码到 graphDataMap
  */
 export const synchroGraphDataMap = (cards, pythonCode) => {
   dispatch({
@@ -34,5 +35,15 @@ export const synchroGraphDataMap = (cards, pythonCode) => {
       cards,
       pythonCode,
     },
+  });
+};
+
+/**
+ * 代码同步功能 --- 同步graphDataMap中的数据到即将要编辑的 codeblock 中
+ */
+export const synchroCodeBlock = (mapData = {}) => {
+  dispatch({
+    type: SYNCHRO_CODEBLOCK,
+    payload: mapData,
   });
 };

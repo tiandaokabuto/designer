@@ -21,11 +21,12 @@ export default useInjectContext(
       propsAPI,
       history,
       updateGraphData,
+      synchroCodeBlock,
       updateCurrentEditingProcessBlock,
     }) => {
       const { getSelected, executeCommand, update, save } = propsAPI;
       const graphData = useSelector(state => state.grapheditor.graphData);
-      console.log(graphData);
+      const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
       const [drawerVisible, setDrawerVisible] = useState(false);
       return (
         <div className="designergraph-container">
@@ -49,10 +50,12 @@ export default useInjectContext(
               /**
                * 跳转到代码块编辑页面
                * 跳转的时候就需要将即将编辑的流程块关联到当前的这个流程块的id
+               * 同时需要同步当前的流程块的 保存在 graphDataMap 的数据结构, 否则置空
                * */
               switch (dataId) {
                 case 'edit':
                   updateCurrentEditingProcessBlock(node.item.id);
+                  synchroCodeBlock(graphDataMap.get(node.item.id));
                   updateGraphData(save());
                   setTimeout(() => {
                     history.push('/designerGraphBlock');

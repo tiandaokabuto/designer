@@ -6,6 +6,7 @@ import {
   CHANGE_CARDDATA,
   CHANGE_CHECKEDID,
   CHANGE_PYTHONCODE,
+  SYNCHRO_CODEBLOCK,
 } from '../actions/codeblock';
 
 import { synchroGraphDataMap } from '../containers/reduxActions';
@@ -33,10 +34,15 @@ export default (state = defaultState, action) => {
       setTimeout(() => {
         synchroGraphDataMap(state.cards, action.payload);
       }, 0);
-      console.log(state.cards, action.payload);
       return {
         ...state,
         pythonCode: action.payload,
+      };
+    case SYNCHRO_CODEBLOCK:
+      return {
+        ...state,
+        pythonCode: action.payload.pythonCode || '',
+        cards: action.payload.cards || [],
       };
     default:
       return state;
