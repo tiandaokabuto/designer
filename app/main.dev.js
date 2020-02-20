@@ -15,6 +15,8 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 
+const net = require('net');
+
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -104,6 +106,40 @@ const createWindow = async () => {
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
+
+  // 本地监听8888端口 获取动态的xpath元素回填
+
+  const server = net.createServer();
+
+  // //一些事件
+  server.on('listening', function() {
+    //的那个服务绑定后触发
+    console.log('服务器已启动');
+  });
+
+  server.on('connection', function(socket) {
+    //当一个新的连接建立时触发，可接收一个socket对象
+    console.log('有新的连接！');
+
+    socket.on('data', function(data) {
+      const str = data.toString().replace(/([\s\S]*)(?={)/, '');
+      const result = str ? JSON.parse(str) : {};
+      mainWindow.restore();
+      //将结果通知给渲染进程
+      mainWindow.webContents.send('updateXpath', result.value);
+      server.close();
+    });
+  });
+
+  server.on('close', function() {
+    //关闭连接时触发
+    console.log('连接已关闭');
+  });
+
+  ipcMain.on('start_server', () => {
+    console.log('hhhhhhhhhhhhh');
+    server.listen('8888', '127.0.0.1'); //监听已有的连接
+  });
 };
 
 /**

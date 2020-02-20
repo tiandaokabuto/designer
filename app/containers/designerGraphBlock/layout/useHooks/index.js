@@ -6,3 +6,4 @@ export { default as useEventHandler } from './useEventHandler';
 export { default as useTransformToPython } from './useTransformToPython';
 export { default as usePublishProcessZip } from './usePublishProcessZip';
 export { default as useDeleteNodeById } from './useDeleteNodeById';
+export { default as useUpdateXpath } from './useUpdateXpath';

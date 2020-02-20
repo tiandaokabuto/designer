@@ -14,6 +14,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards) => {
       return (
         <Input
           defaultValue={param.value || param.default}
+          key={param.value}
           onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
@@ -46,7 +47,6 @@ const getComponentType = (param, handleEmitCodeTransform, cards) => {
 export default ({ checkedBlock }) => {
   const cards = useSelector(state => state.blockcode.cards);
   const handleEmitCodeTransform = useTransformToPython();
-  console.log(checkedBlock);
   return (
     <div className="parampanel">
       <div className="parampanel-required">必选项</div>

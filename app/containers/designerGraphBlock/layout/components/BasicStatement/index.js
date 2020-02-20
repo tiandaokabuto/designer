@@ -3,10 +3,16 @@ import { useDrag, useDrop } from 'react-dnd';
 import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
-import { useDropTarget, useDeleteNodeById } from '../../useHooks';
+import {
+  useDropTarget,
+  useDeleteNodeById,
+  useUpdateXpath,
+} from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
 import ItemTypes from '../../statementTypes';
+
+const { ipcRenderer } = require('electron');
 
 import './index.scss';
 
@@ -63,6 +69,8 @@ const BasicStatement = useInjectContext(props => {
 
   const deleteNodeById = useDeleteNodeById();
 
+  const updateXpath = useUpdateXpath();
+
   drag(drop(ref));
   // console.log(item)
   return (
@@ -114,7 +122,12 @@ const BasicStatement = useInjectContext(props => {
             <div
               className="card-content-searchtarget"
               onClick={() => {
-                console.log('jjj');
+                ipcRenderer.send('min');
+                ipcRenderer.send('start_server');
+                ipcRenderer.on('updateXpath', (e, xpath) => {
+                  // 接收到xpath并作出更新
+                  updateXpath(id, xpath);
+                });
               }}
             >
               <Icon type="home" className="card-content-searchtarget-anchor" />
