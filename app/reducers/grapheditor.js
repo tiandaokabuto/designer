@@ -11,9 +11,11 @@ const defaultState = {
   graphData: {},
   graphDataMap: new Map(), // 保存针对每个流程图的数据结构
   currentEditingId: undefined,
+  checkedGraphBlockId: undefined,
 };
 
 export default (state = defaultState, action) => {
+  let mapData = undefined;
   switch (action.type) {
     case CHANGE_GRAPHDATA:
       return {
@@ -21,9 +23,13 @@ export default (state = defaultState, action) => {
         graphData: action.payload,
       };
     case SET_GRAPHDATAMAP:
+      mapData = state.graphDataMap.get(action.payload.key) || {};
       return {
         ...state,
-        graphDataMap: state.graphDataMap.set(payload.key, payload.value),
+        graphDataMap: state.graphDataMap.set(action.payload.key, {
+          ...mapData,
+          ...action.payload.value,
+        }),
       };
     case DELETE_GRAPHDATAMAP:
       return {
@@ -41,12 +47,13 @@ export default (state = defaultState, action) => {
         currentEditingId: action.payload,
       };
     case SYNCHRO_GRAPHDATAMAP:
+      mapData = state.graphDataMap.get(state.currentEditingId) || {};
       return {
         ...state,
-        graphDataMap: state.graphDataMap.set(
-          state.currentEditingId,
-          action.payload
-        ),
+        graphDataMap: state.graphDataMap.set(state.currentEditingId, {
+          ...mapData,
+          ...action.payload,
+        }),
       };
     default:
       return state;

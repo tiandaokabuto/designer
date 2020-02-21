@@ -2,6 +2,7 @@ import {
   CHANGE_GRAPHDATA,
   CHANGE_CURRENTEDITINGBLOCKID,
   SYNCHRO_GRAPHDATAMAP,
+  SET_GRAPHDATAMAP,
 } from '../../actions/grapheditor';
 import { SYNCHRO_CODEBLOCK } from '../../actions/codeblock';
 import store from '../../store';
@@ -29,6 +30,7 @@ export const updateCurrentEditingProcessBlock = id => {
  * 代码同步功能 --- 同步已经编辑后的流程块的代码到 graphDataMap
  */
 export const synchroGraphDataMap = (cards, pythonCode) => {
+  // FIXME.... 迭代演示需要 暂时在这里生成每个流程块的参数配置
   dispatch({
     type: SYNCHRO_GRAPHDATAMAP,
     payload: {
@@ -45,5 +47,18 @@ export const synchroCodeBlock = (mapData = {}) => {
   dispatch({
     type: SYNCHRO_CODEBLOCK,
     payload: mapData,
+  });
+};
+
+/**
+ * 流程图中的流程块结点的初始参数设置
+ */
+export const setGraphDataMap = (key, value = {}) => {
+  dispatch({
+    type: SET_GRAPHDATAMAP,
+    payload: {
+      key,
+      value,
+    },
   });
 };
