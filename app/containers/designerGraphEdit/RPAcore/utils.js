@@ -15,3 +15,43 @@ export const findTargetIdBySourceId = (edges, sourceId) => {
 export const findNodeById = (nodes, id) => {
   return nodes.find(node => node.id === id);
 };
+
+export const findNodeByLabelAndId = (edges, sourceId, label) => {
+  const find = edges.find(
+    edge => edge.source === sourceId && edge.label === label
+  );
+  return find ? find.target : null;
+};
+
+export const isCircleExist = (edges, id, anchor) => {
+  if (id === null) return false;
+  let searchId = id;
+  let flag = false;
+  let targetId = null;
+  while (((targetId = findTargetIdBySourceId(edges, searchId)), targetId)) {
+    if (targetId === anchor) {
+      flag = true;
+      break;
+    }
+    searchId = targetId;
+  }
+  return flag;
+};
+
+export const findCommonTarget = (edges, labelTrue, labelFalse) => {
+  if (labelTrue === null || labelFalse === null) {
+    return null;
+  }
+  while (
+    labelTrue !== labelFalse &&
+    labelTrue !== null &&
+    labelFalse !== null
+  ) {
+    labelTrue = findTargetIdBySourceId(edges, labelTrue);
+    labelFalse = findTargetIdBySourceId(edges, labelFalse);
+    if (labelTrue === labelFalse) {
+      return labelTrue;
+    }
+  }
+  return null;
+};

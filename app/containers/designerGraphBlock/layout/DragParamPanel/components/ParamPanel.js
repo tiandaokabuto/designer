@@ -14,7 +14,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards) => {
       return (
         <Input
           defaultValue={param.value || param.default}
-          key={param.value}
+          key={param.enName === 'xpath' ? param.value : ''}
           onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
