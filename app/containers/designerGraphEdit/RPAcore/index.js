@@ -1,3 +1,4 @@
+import uniqueId from 'lodash/uniqueId';
 import { findStartNode, findTargetIdBySourceId, findNodeById } from './utils';
 
 const padding = length => '    '.repeat(length);
@@ -16,10 +17,11 @@ const transformEditorProcess = (
     case 'processblock':
       const blockData = graphDataMap.get(currentId) || {};
       // 找到对应的流程块结点的数据结构
+      const funcName = uniqueId('RPA_');
       result.output =
-        `def test():\n${blockData.pythonCode || '\n'}` + result.output;
+        `def ${funcName}():\n${blockData.pythonCode || '\n'}` + result.output;
       // 如果跟循环没有关系的话就直接执行当前的代码块
-      result.output += `${padding(depth)}test()\n`;
+      result.output += `${padding(depth)}${funcName}()\n`;
       const next = findTargetIdBySourceId(graphData.edges, currentId);
       next &&
         transformEditorProcess(graphData, graphDataMap, next, result, depth);
