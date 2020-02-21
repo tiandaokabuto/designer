@@ -30,7 +30,7 @@ const transformEditorProcess = (
       // 找到对应的流程块结点的数据结构
       const funcName = uniqueId('RPA_');
       result.output =
-        `def ${funcName}():\n${transformBlockToCode(blockData.cards, 1)
+        `def ${funcName}():\n${transformBlockToCode(blockData.cards || [], 1)
           .output || '\n'}` + result.output;
       // 如果跟循环没有关系的话就直接执行当前的代码块
       result.output += `${padding(depth)}${funcName}()\n`;
