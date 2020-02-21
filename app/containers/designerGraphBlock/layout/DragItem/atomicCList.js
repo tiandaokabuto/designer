@@ -9,6 +9,7 @@ import { Icon } from 'antd';
 import {
   PrintStatementTag,
   BasicStatementTag,
+  ReturnStatementTag,
   LoopStatementTag,
   ConditionalStatementTag,
 } from '../statementTags';
@@ -2221,6 +2222,25 @@ const abilityToDatastructure = {
       ],
     },
   },
+  /** return返回语句 */
+  returnStatement: {
+    $$typeof: BasicStatementTag,
+    subtype: ReturnStatementTag,
+    text: '模块返回语句',
+    visible: '',
+    properties: {
+      required: [
+        {
+          cnName: '返回值表达式',
+          enName: 'return_string',
+          default: '',
+          value: '',
+          componentType: 0,
+        },
+      ],
+      optional: [],
+    },
+  },
 };
 
 export default [
@@ -2478,7 +2498,13 @@ export default [
         key: '0-2-3',
         item: abilityToDatastructure['print'],
         icon: generateIcon('branches'),
-      }, // getSheetColumnSize
+      }, // returnStatement
+      {
+        description: 'returnStatement',
+        key: '0-2-4',
+        item: abilityToDatastructure['returnStatement'],
+        icon: generateIcon('branches'),
+      },
     ],
   },
   {

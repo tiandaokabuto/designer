@@ -2,7 +2,11 @@ import transformBasicStatement from './transformBasicStatement';
 import transformPrintStatement from './transformPrintStatement';
 import transformLoopStatement from './transformLoopStatement';
 import transformConditionalStatement from './transformConditionalStatement';
-import { PrintStatementTag } from '../../layout/statementTags';
+import transformReturnStatement from './transformReturnStatement';
+import {
+  PrintStatementTag,
+  ReturnStatementTag,
+} from '../../layout/statementTags';
 import { isArray } from './utils';
 
 // const fake = [
@@ -78,9 +82,14 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
         /* 处理基础语句下的子语句 */
         if (
           statement.subtype &&
-          (statement.subtype & PrintStatementTag) == PrintStatementTag
+          (statement.subtype & PrintStatementTag) === PrintStatementTag
         ) {
           transformPrintStatement(padding, statement, result);
+        } else if (
+          statement.subtype &&
+          (statement.subtype & ReturnStatementTag) === ReturnStatementTag
+        ) {
+          transformReturnStatement(padding, statement, result);
         } else {
           transformBasicStatement(padding, statement, result, moduleMap);
         }
