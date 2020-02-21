@@ -39,7 +39,15 @@ export default class Tree extends React.Component {
                 display: needHidden ? 'none' : '',
               }}
             >
-              <div className={isLeaf ? '' : 'sd-tree-open'}>
+              <div
+                className={isLeaf ? '' : 'sd-tree-open'}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'stretch',
+                  alignItems: 'center',
+                  height: '40px',
+                }}
+              >
                 {!isLeaf && (
                   <Icon
                     type={open ? 'minus-square' : 'plus-square'}
