@@ -113,17 +113,17 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
 const transformModuleImport = (result, moduleMap) => {
   let prefix = '';
   for (const [moduleName, pkg] of moduleMap) {
-    prefix += `${paddingStart(1)}from ${moduleName} import ${
+    prefix += `from ${moduleName} import ${
       isArray(pkg) ? pkg.join(',') : pkg
     }\n`;
   }
   result.output = prefix + '\n' + result.output;
 };
 
-export default dataStructure => {
+export default (dataStructure, depth = 0) => {
   result.output = '';
   moduleMap.clear();
-  transformBlockToCodeImpl(dataStructure, 1);
+  transformBlockToCodeImpl(dataStructure, depth);
   transformModuleImport(result, moduleMap);
 
   return result;
