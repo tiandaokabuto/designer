@@ -3,6 +3,7 @@ import {
   CHANGE_CURRENTEDITINGBLOCKID,
   SYNCHRO_GRAPHDATAMAP,
   SET_GRAPHDATAMAP,
+  CHANGE_CHECKEDGRAPHBLOCKID,
 } from '../../actions/grapheditor';
 import { SYNCHRO_CODEBLOCK } from '../../actions/codeblock';
 import store from '../../store';
@@ -60,5 +61,15 @@ export const setGraphDataMap = (key, value = {}) => {
       key,
       value,
     },
+  });
+};
+
+/**
+ * 修改当前正处于点击状态的流程图的流程块的id
+ */
+export const changeCheckedGraphBlockId = id => {
+  dispatch({
+    type: CHANGE_CHECKEDGRAPHBLOCKID,
+    payload: id,
   });
 };

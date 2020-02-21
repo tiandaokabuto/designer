@@ -5,6 +5,7 @@ import {
   CLEAR_GRAPHDATAMAP,
   CHANGE_CURRENTEDITINGBLOCKID,
   SYNCHRO_GRAPHDATAMAP,
+  CHANGE_CHECKEDGRAPHBLOCKID,
 } from '../actions/grapheditor';
 
 const defaultState = {
@@ -54,6 +55,11 @@ export default (state = defaultState, action) => {
           ...mapData,
           ...action.payload,
         }),
+      };
+    case CHANGE_CHECKEDGRAPHBLOCKID:
+      return {
+        ...state,
+        checkedGraphBlockId: action.payload,
       };
     default:
       return state;

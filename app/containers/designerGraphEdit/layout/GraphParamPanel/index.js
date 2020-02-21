@@ -1,6 +1,8 @@
 import React from 'react';
 import { Tabs } from 'antd';
 
+import ProperitiesPanel from './components/ProperitiesPanel';
+
 const { TabPane } = Tabs;
 
 export default () => {
@@ -8,7 +10,7 @@ export default () => {
     <div className="designergraph-parampanel">
       <Tabs className="designergraph-parampanel-tabs">
         <TabPane tab="属性" key="1">
-          1
+          <ProperitiesPanel />
         </TabPane>
         <TabPane tab="变量" key="2">
           2

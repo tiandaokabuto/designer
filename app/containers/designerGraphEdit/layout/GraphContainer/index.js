@@ -22,6 +22,7 @@ export default useInjectContext(
       history,
       updateGraphData,
       synchroCodeBlock,
+      changeCheckedGraphBlockId,
       updateCurrentEditingProcessBlock,
     }) => {
       const { getSelected, executeCommand, update, save } = propsAPI;
@@ -46,10 +47,12 @@ export default useInjectContext(
             graph={{ edgeDefaultShape: 'flow-polyline' }}
             onNodeClick={node => {
               const dataId = node.shape._attrs.dataId;
-              console.log(node, 'jjjj');
               /**
                * 处理参数面板展示的逻辑
                */
+              if (node.item && node.item.model.shape === 'processblock') {
+                changeCheckedGraphBlockId(node.item.model.id);
+              }
 
               /**
                * 跳转到代码块编辑页面
