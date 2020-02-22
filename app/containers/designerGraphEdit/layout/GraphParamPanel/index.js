@@ -2,6 +2,7 @@ import React from 'react';
 import { Tabs } from 'antd';
 
 import ProperitiesPanel from './components/ProperitiesPanel';
+import BlockCodePanel from './components/BlockCodePanel';
 
 const { TabPane } = Tabs;
 
@@ -16,7 +17,7 @@ export default () => {
           2
         </TabPane>
         <TabPane tab="命令" key="3">
-          2
+          <BlockCodePanel />
         </TabPane>
       </Tabs>
     </div>
