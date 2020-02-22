@@ -89,6 +89,9 @@ export default useInjectContext(
               console.log(edge);
               setDrawerVisible(true);
             }}
+            onDoubleClick={(...args) => {
+              console.log(...args);
+            }}
             noEndEdge={false}
           />
           <EditorDrawer
