@@ -14,8 +14,18 @@ export default () => {
     <div key={checkedGraphBlockId}>
       {(properties || []).map((param, index) => {
         return (
-          <div key={index}>
-            {param.cnName}
+          <div
+            key={index}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-evenly',
+              padding: '4px 8px',
+              alignItems: 'center',
+            }}
+          >
+            <span style={{ flex: 1, whiteSpace: 'nowrap', marginRight: '8px' }}>
+              {param.cnName}
+            </span>
             <Input
               defaultValue={param.value}
               onChange={e => {

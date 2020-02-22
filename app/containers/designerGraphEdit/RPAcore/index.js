@@ -6,6 +6,7 @@ import {
   findNodeByLabelAndId,
   isCircleExist,
   findCommonTarget,
+  hasTwoEntryPortInProcessBlock,
 } from './utils';
 
 import { transformBlockToCode } from '../../designerGraphBlock/RPAcore';
@@ -30,10 +31,23 @@ const transformEditorProcess = (
       // 找到对应的流程块结点的数据结构
       const funcName = uniqueId('RPA_');
       result.output =
-        `def ${funcName}():\n${transformBlockToCode(blockData.cards || [], 1)
-          .output || '\n'}` + result.output;
+        `def ${funcName}(*argv, **kw):\n${transformBlockToCode(
+          blockData.cards || [],
+          1
+        ).output || '\n'}` + result.output;
+      // 如果跟循环有关系需要添加循环语句
+      if (hasTwoEntryPortInProcessBlock(graphData.edges, currentId)) {
+        console.log('存在两个点');
+        result.output += `${padding(depth)}while True:\n`;
+        depth = depth + 1;
+      }
       // 如果跟循环没有关系的话就直接执行当前的代码块
-      result.output += `${padding(depth)}${funcName}()\n`;
+      // 解析当前模块传入的参数和返回的参数
+      const params = blockData['properties'][0].value;
+      const return_string = blockData['properties'][1].value;
+      result.output += `${padding(depth)}${
+        return_string ? return_string + ' = ' : ''
+      }${funcName}(${params})\n`;
       const next = findTargetIdBySourceId(graphData.edges, currentId);
       next &&
         transformEditorProcess(
@@ -114,8 +128,15 @@ const transformEditorProcess = (
           );
       } else {
         // 处理存在循环的情况
+        console.log('存在环');
+        result.output += `${padding(depth)}if b > 0:\n${padding(
+          depth + 1
+        )}break`;
       }
 
+      break;
+    case 'end-node':
+      // 停止解析
       break;
     default:
     // do nothing
@@ -130,7 +151,7 @@ export default (graphData, graphDataMap) => {
   const beginId = findStartNode(graphData.nodes || []);
   if (beginId) {
     console.log('开始解析流程图');
-    result.output += "if __name__=='__main__':\n";
+    result.output += "if __name__ == '__main__':\n";
     transformEditorProcess(
       graphData,
       graphDataMap,

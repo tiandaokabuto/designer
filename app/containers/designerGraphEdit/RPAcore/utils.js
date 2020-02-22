@@ -55,3 +55,11 @@ export const findCommonTarget = (edges, labelTrue, labelFalse) => {
   }
   return null;
 };
+
+/**
+ * 判断流程块结点存在两个输入结点
+ */
+export const hasTwoEntryPortInProcessBlock = (edges, id) => {
+  const find = edges.filter(edge => edge.target === id);
+  return find.length === 2;
+};
