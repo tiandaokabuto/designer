@@ -12,17 +12,10 @@ const getComponentType = (param, handleEmitCodeTransform, cards) => {
   // 针对一些特殊的情况需要作出特殊的处理
 
   if (param.enName === 'sqlStr') {
-<<<<<<< HEAD
     return (
       <div className="sqlstr">
         <Input
           defaultValue={param.value.replace(/\s%\s.*/g, '')}
-=======
-    console.log(param);
-    return (
-      <div className="sqlstr">
-        <Input
->>>>>>> 9f2f6e8335bd3cf68272ba8a39b9bc9cf0efc800
           onChange={e => {
             param.value = e.target.value;
             const numOfPlace = (e.target.value.match(/\%s/g) || []).length;
