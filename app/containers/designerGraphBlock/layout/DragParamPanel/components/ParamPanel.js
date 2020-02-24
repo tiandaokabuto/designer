@@ -33,10 +33,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards) => {
         {param.placeholder.map((place, index) => {
           return (
             <Input
-<<<<<<< HEAD
               defaultValue={place}
-=======
->>>>>>> 9f2f6e8335bd3cf68272ba8a39b9bc9cf0efc800
               key={index}
               style={{
                 marginBottom: 8,
