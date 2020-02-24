@@ -9,6 +9,52 @@ import './ParamPanel.scss';
 const { Option } = Select;
 
 const getComponentType = (param, handleEmitCodeTransform, cards) => {
+  // 针对一些特殊的情况需要作出特殊的处理
+
+  if (param.enName === 'sqlStr') {
+    return (
+      <div className="sqlstr">
+        <Input
+          defaultValue={param.value.replace(/\s%\s.*/g, '')}
+          onChange={e => {
+            param.value = e.target.value;
+            const numOfPlace = (e.target.value.match(/\%s/g) || []).length;
+            if (param.placeholder.length < numOfPlace) {
+              param.placeholder = param.placeholder.concat(
+                new Array(numOfPlace - param.placeholder.length).fill(undefined)
+              );
+            } else {
+              param.placeholder = param.placeholder.slice(0, numOfPlace);
+            }
+            handleEmitCodeTransform(cards);
+          }}
+        />
+        请填写替换变量
+        {param.placeholder.map((place, index) => {
+          return (
+            <Input
+              defaultValue={place}
+              key={index}
+              style={{
+                marginBottom: 8,
+              }}
+              onChange={e => {
+                param.placeholder[index] = e.target.value;
+                // 重新调整sql拼接形式
+                param.value =
+                  param.value.replace(/\s%\s.*/g, '') +
+                  ` % (${param.placeholder
+                    .filter(item => item !== undefined)
+                    .join(', ')})`;
+                console.log(param.value);
+                handleEmitCodeTransform(cards);
+              }}
+            />
+          );
+        })}
+      </div>
+    );
+  }
   switch (param.componentType) {
     case 0:
       return (

@@ -2263,11 +2263,12 @@ const abilityToDatastructure = {
           componentType: 0,
         },
         {
-          cnName: '需要执行的SQL语句',
+          cnName: 'SQL语句',
           enName: 'sqlStr',
           value: '',
           default: '',
           componentType: 0,
+          placeholder: [],
         },
       ],
       optional: [...generateFrom(['continue_On_Failure'])],
