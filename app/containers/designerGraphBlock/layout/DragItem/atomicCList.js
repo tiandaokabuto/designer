@@ -1739,7 +1739,7 @@ const abilityToDatastructure = {
         },
       ],
     },
-  }, // ---------------------------------
+  },
   /** 关闭邮箱连接 */
   disconnectEmail: {
     $$typeof: BasicStatementTag,
@@ -2122,6 +2122,194 @@ const abilityToDatastructure = {
           componentType: 0,
         },
       ],
+    },
+  },
+  /** 连接数据库 */
+  connectServer: {
+    $$typeof: BasicStatementTag,
+    text: '连接数据库',
+    module: 'sendiRPA',
+    pkg: 'mysql',
+    cmdName: '连接数据库',
+    visible: '连接数据库',
+    main: 'connectServer',
+    output: 'conn',
+    outputDesc: '成功返回连接对象,失败返回None',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: 'conn',
+          default: 'conn',
+          componentType: 0,
+        },
+        {
+          cnName: '数据库ip/域名',
+          enName: 'hostname',
+          value: '"localhost"',
+          default: '"localhost"',
+          componentType: 0,
+        },
+        {
+          cnName: '端口号',
+          enName: 'port',
+          value: '',
+          default: '',
+          componentType: 0,
+        },
+        {
+          cnName: '用户名',
+          enName: 'username',
+          value: '',
+          default: '',
+          componentType: 0,
+        },
+        {
+          cnName: '密码',
+          enName: 'password',
+          value: '',
+          default: '',
+          componentType: 0,
+        },
+        {
+          cnName: '数据库名称',
+          enName: 'username',
+          value: '',
+          default: '',
+          componentType: 0,
+        },
+      ],
+      optional: [...generateFrom(['continue_On_Failure'])],
+    },
+  },
+  /** 关闭数据库连接 */
+  disconnectServer: {
+    $$typeof: BasicStatementTag,
+    text: '关闭数据库连接',
+    module: 'sendiRPA',
+    pkg: 'mysql',
+    cmdName: '关闭数据库连接',
+    visible: '关闭数据库连接',
+    main: 'disconnectServer',
+    output: 'suc',
+    outputDesc: '成功返回True,失败返回False',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '数据库连接',
+          enName: 'conn',
+          value: '',
+          default: '',
+          componentType: 0,
+        },
+      ],
+      optional: [...generateFrom(['continue_On_Failure'])],
+    },
+  },
+  /** 回滚事务 */
+  rollbackTransaction: {
+    $$typeof: BasicStatementTag,
+    text: '回滚事务',
+    module: 'sendiRPA',
+    pkg: 'mysql',
+    cmdName: '回滚事务',
+    visible: '回滚事务',
+    main: 'rollbackTransaction',
+    output: 'suc',
+    outputDesc: '成功返回True,失败返回False',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '数据库连接',
+          enName: 'conn',
+          value: '',
+          default: '',
+          componentType: 0,
+        },
+      ],
+      optional: [...generateFrom(['continue_On_Failure'])],
+    },
+  },
+  /** 执行SQL语句 */
+  executeSQL: {
+    $$typeof: BasicStatementTag,
+    text: '执行SQL语句',
+    module: 'sendiRPA',
+    pkg: 'mysql',
+    cmdName: '执行SQL语句',
+    visible: '执行SQL语句',
+    main: 'executeSQL',
+    output: 'ret',
+    outputDesc: '返回受影响的行数,默认为0',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: 'ret',
+          default: 'ret',
+          componentType: 0,
+        },
+        {
+          cnName: '数据库连接',
+          enName: 'conn',
+          value: '',
+          default: '',
+          componentType: 0,
+        },
+        {
+          cnName: '需要执行的SQL语句',
+          enName: 'sqlStr',
+          value: '',
+          default: '',
+          componentType: 0,
+        },
+      ],
+      optional: [...generateFrom(['continue_On_Failure'])],
+    },
+  },
+  /** 执行查询数据SQL语句 */
+  querySQL: {
+    $$typeof: BasicStatementTag,
+    text: '执行查询数据SQL语句',
+    module: 'sendiRPA',
+    pkg: 'mysql',
+    cmdName: '执行查询数据SQL语句',
+    visible: '执行查询数据SQL语句',
+    main: 'querySQL',
+    output: 'result',
+    outputDesc: '返回数据对象,默认是空数组',
+    cmdDesc: '命令说明、描述',
+    properties: {
+      required: [
+        {
+          cnName: '输出到',
+          enName: 'outPut',
+          value: 'result',
+          default: 'result',
+          componentType: 0,
+        },
+        {
+          cnName: '数据库连接',
+          enName: 'conn',
+          value: '',
+          default: '',
+          componentType: 0,
+        },
+        {
+          cnName: '需要执行的查询语句',
+          enName: 'sqlStr',
+          value: '',
+          default: '',
+          componentType: 0,
+        },
+      ],
+      optional: [...generateFrom(['continue_On_Failure'])],
     },
   },
   /** 控制台输出命令 */
@@ -2564,6 +2752,43 @@ export default [
         description: 'connectEmail',
         key: '0-4-8',
         item: abilityToDatastructure['connectEmail'],
+        icon: generateIcon('branches'),
+      },
+    ],
+  },
+  {
+    title: '数据库相关',
+    key: '0-5',
+    icon: generateIcon('hdd'), //querySQL
+    children: [
+      {
+        description: 'connectServer',
+        key: '0-5-0',
+        item: abilityToDatastructure['connectServer'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'disconnectServer',
+        key: '0-5-1',
+        item: abilityToDatastructure['disconnectServer'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'rollbackTransaction',
+        key: '0-5-2',
+        item: abilityToDatastructure['rollbackTransaction'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'executeSQL',
+        key: '0-5-3',
+        item: abilityToDatastructure['executeSQL'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'querySQL',
+        key: '0-5-4',
+        item: abilityToDatastructure['querySQL'],
         icon: generateIcon('branches'),
       },
     ],
