@@ -1,4 +1,5 @@
 import uniqueId from 'lodash/uniqueId';
+import { message } from 'antd';
 import {
   findStartNode,
   findTargetIdBySourceId,
@@ -162,6 +163,8 @@ export default (graphData, graphDataMap) => {
     );
     console.log(result.output);
     updateEditorBlockPythonCode(result.output);
+
     // 更新最后的结果
+    message.success('保存成功');
   }
 };
