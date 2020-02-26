@@ -8,8 +8,9 @@ const handleModuleImport = (dataStructure, result, moduleMap) => {
     if (moduleMap.get(dataStructure.module)) {
       let exist = moduleMap.get(dataStructure.module);
       if (isArray(exist)) {
-        exist.includes(dataStructure.pkg) &&
+        !exist.includes(dataStructure.pkg) &&
           (exist = exist.concat(dataStructure.pkg));
+        console.log(exist, 'kkkk');
       } else {
         exist !== dataStructure.pkg && (exist = [exist, dataStructure.pkg]);
       }

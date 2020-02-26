@@ -2175,7 +2175,7 @@ const abilityToDatastructure = {
         },
         {
           cnName: '数据库名称',
-          enName: 'username',
+          enName: 'database',
           value: '',
           default: '',
           componentType: 0,

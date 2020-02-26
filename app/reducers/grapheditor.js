@@ -6,6 +6,7 @@ import {
   CHANGE_CURRENTEDITINGBLOCKID,
   SYNCHRO_GRAPHDATAMAP,
   CHANGE_CHECKEDGRAPHBLOCKID,
+  CHANGE_EDITORBLOCKPYTHONCODE,
 } from '../actions/grapheditor';
 
 const defaultState = {
@@ -13,6 +14,7 @@ const defaultState = {
   graphDataMap: new Map(), // 保存针对每个流程图的数据结构
   currentEditingId: undefined,
   checkedGraphBlockId: undefined,
+  editorBlockPythonCode: '',
 };
 
 export default (state = defaultState, action) => {
@@ -60,6 +62,11 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         checkedGraphBlockId: action.payload,
+      };
+    case CHANGE_EDITORBLOCKPYTHONCODE:
+      return {
+        ...state,
+        editorBlockPythonCode: action.payload,
       };
     default:
       return state;

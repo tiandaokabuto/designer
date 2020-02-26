@@ -10,6 +10,7 @@ import {
 } from './utils';
 
 import { transformBlockToCode } from '../../designerGraphBlock/RPAcore';
+import { updateEditorBlockPythonCode } from '../../reduxActions';
 
 const padding = length => '    '.repeat(length);
 
@@ -147,7 +148,6 @@ export default (graphData, graphDataMap) => {
   const result = {
     output: '',
   };
-  console.log(graphData);
   const beginId = findStartNode(graphData.nodes || []);
   if (beginId) {
     console.log('开始解析流程图');
@@ -161,5 +161,7 @@ export default (graphData, graphDataMap) => {
       null
     );
     console.log(result.output);
+    updateEditorBlockPythonCode(result.output);
+    // 更新最后的结果
   }
 };

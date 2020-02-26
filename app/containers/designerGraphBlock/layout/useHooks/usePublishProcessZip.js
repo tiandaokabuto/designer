@@ -4,7 +4,10 @@ import { useSelector } from 'react-redux';
 import { writeFile } from '../../../../nodejs';
 
 export default () => {
-  const pythonCode = useSelector(state => state.blockcode.pythonCode);
+  // FIXME...  改为发布整个流程块的代码
+  const pythonCode = useSelector(
+    state => state.grapheditor.editorBlockPythonCode
+  );
   const publishZip = () => {
     const process = require('process');
     console.log(pythonCode, 'kkk');

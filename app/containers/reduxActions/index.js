@@ -4,6 +4,7 @@ import {
   SYNCHRO_GRAPHDATAMAP,
   SET_GRAPHDATAMAP,
   CHANGE_CHECKEDGRAPHBLOCKID,
+  CHANGE_EDITORBLOCKPYTHONCODE,
 } from '../../actions/grapheditor';
 import { SYNCHRO_CODEBLOCK } from '../../actions/codeblock';
 import store from '../../store';
@@ -71,5 +72,16 @@ export const changeCheckedGraphBlockId = id => {
   dispatch({
     type: CHANGE_CHECKEDGRAPHBLOCKID,
     payload: id,
+  });
+};
+
+/**
+ * 更新当前流程图的转译后的python代码
+ */
+
+export const updateEditorBlockPythonCode = code => {
+  dispatch({
+    type: CHANGE_EDITORBLOCKPYTHONCODE,
+    payload: code,
   });
 };
