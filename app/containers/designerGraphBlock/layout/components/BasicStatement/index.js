@@ -34,6 +34,7 @@ const BasicStatement = useInjectContext(props => {
     moveCard,
     addCard,
     isTail,
+    readOnly,
     isDraggingNode,
     useToggleOpacity,
     useSetClassName,
@@ -75,7 +76,7 @@ const BasicStatement = useInjectContext(props => {
   // console.log(item)
   return (
     <div
-      ref={ref}
+      ref={readOnly ? null : ref}
       style={{
         ...style,
         opacity: opacity,
@@ -99,41 +100,46 @@ const BasicStatement = useInjectContext(props => {
         {isTail ? (
           <div></div>
         ) : (
-          <div className="card-content-operation">
-            <Icon
-              type="play-circle"
-              onClick={() => {
-                console.log('kkk');
-              }}
-            />
-            <Icon
-              type="eye"
-              onClick={() => {
-                console.log('kkk2');
-              }}
-            />
-            <Icon
-              type="delete"
-              onClick={() => {
-                deleteNodeById(id);
-                console.log('删除 -->', id);
-              }}
-            />
-            <div
-              className="card-content-searchtarget"
-              onClick={() => {
-                ipcRenderer.send('min');
-                ipcRenderer.send('start_server');
-                ipcRenderer.on('updateXpath', (e, xpath) => {
-                  // 接收到xpath并作出更新
-                  updateXpath(id, xpath);
-                });
-              }}
-            >
-              <Icon type="home" className="card-content-searchtarget-anchor" />
-              查找目标
+          !readOnly && (
+            <div className="card-content-operation">
+              <Icon
+                type="play-circle"
+                onClick={() => {
+                  console.log('kkk');
+                }}
+              />
+              <Icon
+                type="eye"
+                onClick={() => {
+                  console.log('kkk2');
+                }}
+              />
+              <Icon
+                type="delete"
+                onClick={() => {
+                  deleteNodeById(id);
+                  console.log('删除 -->', id);
+                }}
+              />
+              <div
+                className="card-content-searchtarget"
+                onClick={() => {
+                  ipcRenderer.send('min');
+                  ipcRenderer.send('start_server');
+                  ipcRenderer.on('updateXpath', (e, xpath) => {
+                    // 接收到xpath并作出更新
+                    updateXpath(id, xpath);
+                  });
+                }}
+              >
+                <Icon
+                  type="home"
+                  className="card-content-searchtarget-anchor"
+                />
+                查找目标
+              </div>
             </div>
-          </div>
+          )
         )}
       </div>
       <div

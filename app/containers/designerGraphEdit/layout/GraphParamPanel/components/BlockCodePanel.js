@@ -2,8 +2,14 @@ import React from 'react';
 import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 
-import DragContainer from '../../../../designerGraphBlock/layout/DragContainer';
+import ProcessBlock from '../../../../designerGraphBlock/layout/DragContainer/ProcessBlock';
 
 export default () => {
-  return <DndProvider backend={Backend}>待开发</DndProvider>;
+  return (
+    <DndProvider backend={Backend}>
+      <div className="dragger-editor-container">
+        <ProcessBlock readOnly={true} />
+      </div>
+    </DndProvider>
+  );
 };
