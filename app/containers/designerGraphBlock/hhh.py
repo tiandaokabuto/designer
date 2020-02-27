@@ -3,7 +3,7 @@ def RPA_44(*argv, **kw):
 
     conn = mysql.connectServer(hostname = "72.168.201.90", port = 3306, username = "test", password = "Test_12345", username = "test")
 
-    ret = mysql.executeSQL(conn = conn, sqlStr = "insert into getWeather('city', 'weather') values ('%s', '%s')"  % (argv[0].data.city, _text))
+    ret = mysql.executeSQL(conn = conn, sqlStr = "insert into getWeather('city', 'weather') values ('%s', '%s')"  % (argv[0]['data']['data']['city'], _text))
 
     mysql.disconnectServer(conn = conn)
 
@@ -29,7 +29,7 @@ def RPA_42(*argv, **kw):
 
     Excel.saveToExcel(wb = new_wb, filePath = "../resources/水果测试写入.xlsx")
 
-    return "../resources/水果测试写入.xlsx"
+    return "../resources/水果测试写入.xlsx", _text
 def RPA_41(*argv, **kw):
     from sendiRPA import TaskDataItem,Browser
 
