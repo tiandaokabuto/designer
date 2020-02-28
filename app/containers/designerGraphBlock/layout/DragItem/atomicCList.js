@@ -14,6 +14,7 @@ import {
   ConditionalStatementTag,
   BreakStatementTag,
   ContinueStatementTag,
+  SleepStatementTag,
 } from '../statementTags';
 
 const DEFAULT_STYLE = {
@@ -2443,7 +2444,7 @@ const abilityToDatastructure = {
       optional: [],
     },
   },
-  /* continue循环继续语句 */
+  /**  continue循环继续语句 */
   continueStatement: {
     $$typeof: BasicStatementTag,
     subtype: ContinueStatementTag,
@@ -2451,6 +2452,28 @@ const abilityToDatastructure = {
     visible: '',
     properties: {
       required: [],
+      optional: [],
+    },
+  },
+  /** sleep延迟语句 */
+  sleepStatement: {
+    $$typeof: BasicStatementTag,
+    subtype: SleepStatementTag,
+    text: 'sleep语句',
+    module: 'time',
+    pkg: 'sleep',
+    visible: '',
+    properties: {
+      required: [
+        {
+          cnName: '延迟时间',
+          enName: 'delay',
+          value: '0',
+          default: '',
+          paramType: 1,
+          componentType: 0,
+        },
+      ],
       optional: [],
     },
   },
@@ -3031,6 +3054,12 @@ export default [
         description: 'continueStatement',
         key: '0-2-6',
         item: abilityToDatastructure['continueStatement'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'sleepStatement',
+        key: '0-2-7',
+        item: abilityToDatastructure['sleepStatement'],
         icon: generateIcon('branches'),
       },
     ],

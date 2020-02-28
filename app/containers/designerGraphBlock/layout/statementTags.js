@@ -6,3 +6,4 @@ export const PrintStatementTag = /*           */ 0b00001000;
 export const ReturnStatementTag = /*          */ 0b00010000;
 export const BreakStatementTag = /*           */ 0b00100000;
 export const ContinueStatementTag = /*        */ 0b01000000;
+export const SleepStatementTag = /*           */ 0b10000000;
