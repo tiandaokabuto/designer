@@ -28,6 +28,18 @@ class NodeHandler {
             },
           ],
         });
+      } else if (description.model.shape === 'rhombus-node') {
+        const key = description.item.id;
+        setGraphDataMap(key, {
+          properties: [
+            {
+              cnName: '分支条件',
+              enName: 'condition',
+              value: '',
+              default: '',
+            },
+          ],
+        });
       }
     }
   };

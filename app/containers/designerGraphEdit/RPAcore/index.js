@@ -26,10 +26,10 @@ const transformEditorProcess = (
   // 判断当前的结点类型 流程块结点 或者是 判断结点
   const currentNode = findNodeById(graphData.nodes, currentId);
   if (currentId === breakPoint) return;
+  const blockData = graphDataMap.get(currentId) || {};
   switch (currentNode.shape) {
     case 'processblock':
       // 停止解析
-      const blockData = graphDataMap.get(currentId) || {};
       // 找到对应的流程块结点的数据结构
       const funcName = uniqueId('RPA_');
       result.output =
@@ -38,11 +38,11 @@ const transformEditorProcess = (
           1
         ).output || '\n'}` + result.output;
       // 如果跟循环有关系需要添加循环语句
-      if (hasTwoEntryPortInProcessBlock(graphData.edges, currentId)) {
-        console.log('存在两个点');
-        result.output += `${padding(depth)}while True:\n`;
-        depth = depth + 1;
-      }
+      // if (hasTwoEntryPortInProcessBlock(graphData.edges, currentId)) {
+      //   result.output += `${padding(depth)}while True:\n`;
+      //   depth = depth + 1;
+      // }
+
       // 如果跟循环没有关系的话就直接执行当前的代码块
       // 解析当前模块传入的参数和返回的参数
       const params = blockData['properties'][0].value;
@@ -62,7 +62,6 @@ const transformEditorProcess = (
         );
       break;
     case 'rhombus-node':
-      console.log('判断结点');
       /**
        * 情况一: 条件判断的分支具有相同的终点, 不属于循环的情况
        *    需要找到共同的终点，并在那个终点跳出对条件分支的解析，回归主分支
@@ -70,6 +69,7 @@ const transformEditorProcess = (
        * 情况二: 条件判断其中有一个的分支在遍历的路径上又回到了自身, 属于循环的情况
        *    额外处理
        */
+      const condition = blockData['properties'][0].value;
 
       const isCircle =
         isCircleExist(
@@ -92,7 +92,7 @@ const transformEditorProcess = (
         );
         // 寻找label为是的出点进行解析
         const nextTrue = findNodeByLabelAndId(graphData.edges, currentId, '是');
-        nextTrue && (result.output += `${padding(depth)}if a > 0:\n`);
+        nextTrue && (result.output += `${padding(depth)}if ${condition}:\n`);
         nextTrue &&
           transformEditorProcess(
             graphData,
@@ -130,10 +130,10 @@ const transformEditorProcess = (
           );
       } else {
         // 处理存在循环的情况
-        console.log('存在环');
-        result.output += `${padding(depth)}if b > 0:\n${padding(
-          depth + 1
-        )}break`;
+        // console.log('存在环');
+        // result.output += `${padding(depth)}if b > 0:\n${padding(
+        //   depth + 1
+        // )}break`;
       }
 
       break;
@@ -151,7 +151,6 @@ export default (graphData, graphDataMap) => {
   };
   const beginId = findStartNode(graphData.nodes || []);
   if (beginId) {
-    console.log('开始解析流程图');
     result.output += "if __name__ == '__main__':\n";
     transformEditorProcess(
       graphData,
@@ -161,9 +160,8 @@ export default (graphData, graphDataMap) => {
       1,
       null
     );
-    console.log(result.output);
     updateEditorBlockPythonCode(result.output);
-
+    console.log(result.output);
     // 更新最后的结果
     message.success('保存成功');
   }

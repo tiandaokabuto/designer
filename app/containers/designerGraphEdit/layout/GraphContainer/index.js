@@ -50,7 +50,10 @@ export default useInjectContext(
               /**
                * 处理参数面板展示的逻辑
                */
-              if (node.item && node.item.model.shape === 'processblock') {
+              if (
+                node.item &&
+                ['processblock', 'rhombus-node'].includes(node.item.model.shape)
+              ) {
                 changeCheckedGraphBlockId(node.item.model.id);
               }
 
