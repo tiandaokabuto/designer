@@ -31,17 +31,17 @@ const transformEditorProcess = (
     case 'processblock':
       // 停止解析
       // 找到对应的流程块结点的数据结构
-      const funcName = uniqueId('RPA_');
+      const funcName = `RPA_${currentId}`; //uniqueId('RPA_');
       result.output =
         `def ${funcName}(*argv, **kw):\n${transformBlockToCode(
           blockData.cards || [],
           1
         ).output || '\n'}` + result.output;
       // 如果跟循环有关系需要添加循环语句
-      // if (hasTwoEntryPortInProcessBlock(graphData.edges, currentId)) {
-      //   result.output += `${padding(depth)}while True:\n`;
-      //   depth = depth + 1;
-      // }
+      if (hasTwoEntryPortInProcessBlock(graphData.edges, currentId)) {
+        result.output += `${padding(depth)}while True:\n`;
+        depth = depth + 1;
+      }
 
       // 如果跟循环没有关系的话就直接执行当前的代码块
       // 解析当前模块传入的参数和返回的参数
@@ -71,17 +71,20 @@ const transformEditorProcess = (
        */
       const condition = blockData['properties'][0].value;
 
-      const isCircle =
-        isCircleExist(
-          graphData.edges,
-          findNodeByLabelAndId(graphData.edges, currentId, '是'),
-          currentId
-        ) ||
-        isCircleExist(
-          graphData.edges,
-          findNodeByLabelAndId(graphData.edges, currentId, '否'),
-          currentId
-        );
+      const isYesCircleExist = isCircleExist(
+        graphData.edges,
+        findNodeByLabelAndId(graphData.edges, currentId, '是'),
+        currentId
+      );
+
+      const isNoCircleExist = isCircleExist(
+        graphData.edges,
+        findNodeByLabelAndId(graphData.edges, currentId, '否'),
+        currentId
+      );
+
+      const isCircle = isYesCircleExist || isNoCircleExist;
+
       if (!isCircle) {
         // 当找到两者共同的点时结束条件判断的转译
         // 找到两者共同的结束点
@@ -130,10 +133,24 @@ const transformEditorProcess = (
           );
       } else {
         // 处理存在循环的情况
-        // console.log('存在环');
-        // result.output += `${padding(depth)}if b > 0:\n${padding(
-        //   depth + 1
-        // )}break`;
+        result.output += `${padding(depth)}if ${condition}:\n${padding(
+          depth + 1
+        )}break\n`;
+        let nextLabel = isYesCircleExist ? '否' : '是';
+        const nextNode = findNodeByLabelAndId(
+          graphData.edges,
+          currentId,
+          nextLabel
+        );
+        nextNode &&
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            nextNode,
+            result,
+            depth - 1,
+            null
+          );
       }
 
       break;

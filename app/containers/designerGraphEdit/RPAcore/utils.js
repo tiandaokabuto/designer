@@ -61,5 +61,9 @@ export const findCommonTarget = (edges, labelTrue, labelFalse) => {
  */
 export const hasTwoEntryPortInProcessBlock = (edges, id) => {
   const find = edges.filter(edge => edge.target === id);
-  return find.length === 2;
+  console.log(find);
+  return (
+    find.length === 2 &&
+    find.filter(edge => ['是', '否'].includes(edge.label)).length === 1
+  );
 };
