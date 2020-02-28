@@ -5,70 +5,15 @@ import transformConditionalStatement from './transformConditionalStatement';
 import transformReturnStatement from './transformReturnStatement';
 import transformBreakStatement from './transformBreakStatement';
 import transformContinueStatement from './transformContinueStatement';
+import transformSleepStatement from './transformSleepStatement';
 import {
   PrintStatementTag,
   ReturnStatementTag,
   BreakStatementTag,
   ContinueStatementTag,
+  SleepStatementTag,
 } from '../../layout/statementTags';
 import { isArray } from './utils';
-
-// const fake = [
-//   {
-//     $$typeof: 1,
-//     text: 'basic statement1',
-//     id: 1,
-//   },
-//   {
-//     $$typeof: 1,
-//     text: 'basic statement2',
-//     id: 2,
-//   },
-//   {
-//     $$typeof: 2,
-//     id: 4,
-//     children: [
-//       {
-//         $$typeof: 1,
-//         text: 'basic statement4',
-//         id: 5,
-//       },
-//       {
-//         $$typeof: 2,
-//         id: 6,
-//         children: [
-//           {
-//             $$typeof: 1,
-//             text: 'basic statement5',
-//             id: 7,
-//           },
-//           {
-//             $$typeof: 4,
-//             ifChildren: [
-//               {
-//                 $$typeof: 1,
-//                 text: 'basic statement6----if',
-//                 id: 8,
-//               },
-//             ],
-//             elseChildren: [
-//               {
-//                 $$typeof: 1,
-//                 text: 'basic statement7----else',
-//                 id: 9,
-//               },
-//             ],
-//           },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     $$typeof: 1,
-//     text: 'basic statement3',
-//     id: 3,
-//   },
-// ];
 
 const paddingStart = length => '    '.repeat(length);
 
@@ -104,6 +49,11 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
           (statement.subtype & ContinueStatementTag) === ContinueStatementTag
         ) {
           transformContinueStatement(padding, statement, result);
+        } else if (
+          statement.subtype && // ContinueStatementTag
+          (statement.subtype & SleepStatementTag) === SleepStatementTag
+        ) {
+          transformSleepStatement(padding, statement, result, moduleMap);
         } else {
           transformBasicStatement(padding, statement, result, moduleMap);
         }

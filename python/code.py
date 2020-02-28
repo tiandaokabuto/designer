@@ -1,11 +1,4 @@
-def RPA_12():
+from time import sleep
 
-    print(222)
-def RPA_11():
-
-    print(111)
-if __name__ == '__main__':
-
-    RPA_11()
-    RPA_12()
-        
+sleep( 1 )
+print('hhh')
