@@ -12,6 +12,7 @@ import {
   ReturnStatementTag,
   LoopStatementTag,
   ConditionalStatementTag,
+  BreakStatementTag,
 } from '../statementTags';
 
 const DEFAULT_STYLE = {
@@ -2430,6 +2431,17 @@ const abilityToDatastructure = {
       optional: [],
     },
   },
+  /** break循环跳出语句 */
+  breakStatement: {
+    $$typeof: BasicStatementTag,
+    subtype: BreakStatementTag,
+    text: 'break语句',
+    visible: '',
+    properties: {
+      required: [],
+      optional: [],
+    },
+  },
   /** 查询任务数据 */
   queryData: {
     $$typeof: BasicStatementTag,
@@ -2990,11 +3002,17 @@ export default [
         key: '0-2-3',
         item: abilityToDatastructure['print'],
         icon: generateIcon('branches'),
-      }, // returnStatement
+      }, // breakStatement
       {
         description: 'returnStatement',
         key: '0-2-4',
         item: abilityToDatastructure['returnStatement'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'breakStatement',
+        key: '0-2-5',
+        item: abilityToDatastructure['breakStatement'],
         icon: generateIcon('branches'),
       },
     ],

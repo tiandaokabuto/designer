@@ -3,9 +3,11 @@ import transformPrintStatement from './transformPrintStatement';
 import transformLoopStatement from './transformLoopStatement';
 import transformConditionalStatement from './transformConditionalStatement';
 import transformReturnStatement from './transformReturnStatement';
+import transformBreakStatement from './transformBreakStatement';
 import {
   PrintStatementTag,
   ReturnStatementTag,
+  BreakStatementTag,
 } from '../../layout/statementTags';
 import { isArray } from './utils';
 
@@ -90,6 +92,11 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
           (statement.subtype & ReturnStatementTag) === ReturnStatementTag
         ) {
           transformReturnStatement(padding, statement, result);
+        } else if (
+          statement.subtype && // BreakStatementTag
+          (statement.subtype & BreakStatementTag) === BreakStatementTag
+        ) {
+          transformBreakStatement(padding, statement, result);
         } else {
           transformBasicStatement(padding, statement, result, moduleMap);
         }
