@@ -13,6 +13,7 @@ import {
   LoopStatementTag,
   ConditionalStatementTag,
   BreakStatementTag,
+  ContinueStatementTag,
 } from '../statementTags';
 
 const DEFAULT_STYLE = {
@@ -2442,6 +2443,17 @@ const abilityToDatastructure = {
       optional: [],
     },
   },
+  /* continue循环继续语句 */
+  continueStatement: {
+    $$typeof: BasicStatementTag,
+    subtype: ContinueStatementTag,
+    text: 'continue语句',
+    visible: '',
+    properties: {
+      required: [],
+      optional: [],
+    },
+  },
   /** 查询任务数据 */
   queryData: {
     $$typeof: BasicStatementTag,
@@ -3002,7 +3014,7 @@ export default [
         key: '0-2-3',
         item: abilityToDatastructure['print'],
         icon: generateIcon('branches'),
-      }, // breakStatement
+      }, // ContinueStatementTag
       {
         description: 'returnStatement',
         key: '0-2-4',
@@ -3013,6 +3025,12 @@ export default [
         description: 'breakStatement',
         key: '0-2-5',
         item: abilityToDatastructure['breakStatement'],
+        icon: generateIcon('branches'),
+      },
+      {
+        description: 'continueStatement',
+        key: '0-2-6',
+        item: abilityToDatastructure['continueStatement'],
         icon: generateIcon('branches'),
       },
     ],

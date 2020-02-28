@@ -4,10 +4,12 @@ import transformLoopStatement from './transformLoopStatement';
 import transformConditionalStatement from './transformConditionalStatement';
 import transformReturnStatement from './transformReturnStatement';
 import transformBreakStatement from './transformBreakStatement';
+import transformContinueStatement from './transformContinueStatement';
 import {
   PrintStatementTag,
   ReturnStatementTag,
   BreakStatementTag,
+  ContinueStatementTag,
 } from '../../layout/statementTags';
 import { isArray } from './utils';
 
@@ -93,10 +95,15 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
         ) {
           transformReturnStatement(padding, statement, result);
         } else if (
-          statement.subtype && // BreakStatementTag
+          statement.subtype &&
           (statement.subtype & BreakStatementTag) === BreakStatementTag
         ) {
           transformBreakStatement(padding, statement, result);
+        } else if (
+          statement.subtype && // ContinueStatementTag
+          (statement.subtype & ContinueStatementTag) === ContinueStatementTag
+        ) {
+          transformContinueStatement(padding, statement, result);
         } else {
           transformBasicStatement(padding, statement, result, moduleMap);
         }
