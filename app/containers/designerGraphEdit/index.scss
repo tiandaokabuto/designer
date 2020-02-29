@@ -128,5 +128,17 @@
       }
       @include tabs();
     }
+    .card-content {
+      &::after {
+        content: '';
+        position: absolute;
+        width: 8px;
+        height: 2px;
+        background: rgba(50, 166, 127, 1);
+        left: 50%;
+        bottom: -5px;
+        transform: rotateZ(90deg) translateX(0);
+      }
+    }
   }
 }
