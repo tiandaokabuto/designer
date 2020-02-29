@@ -64,9 +64,11 @@ function handleClick(e, data, target) {
 
 export default ({ readOnly = false }) => {
   // 注册点击事件
-  const event = useEventHandler({
-    className: 'dragger-editor-container',
-  });
+  const event = !readOnly
+    ? useEventHandler({
+        className: 'dragger-editor-container',
+      })
+    : null;
   const cards = useSelector(state => state.blockcode.cards);
   const dispatch = useDispatch();
 

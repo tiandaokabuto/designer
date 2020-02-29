@@ -28,6 +28,7 @@ const ConditionalStatement = useInjectContext(props => {
     index,
     moveCard,
     addCard,
+    readOnly,
     isDraggingNode,
     setIsDraggingNode,
     renderStatement,
@@ -86,7 +87,7 @@ const ConditionalStatement = useInjectContext(props => {
       ref={isFold ? null : dragImage}
       className={className}
     >
-      <div className="IFItem-header" ref={ref}>
+      <div className="IFItem-header" ref={readOnly ? null : ref}>
         <div
           className="IFItem-header-title"
           data-id={id}
@@ -95,13 +96,15 @@ const ConditionalStatement = useInjectContext(props => {
           当条件满足
         </div>
         <div className="IFItem-header-operation">
-          <Icon
-            type="delete"
-            onClick={() => {
-              deleteNodeById(id);
-              console.log('删除 -->', id);
-            }}
-          />
+          {!readOnly && (
+            <Icon
+              type="delete"
+              onClick={() => {
+                deleteNodeById(id);
+                console.log('删除 -->', id);
+              }}
+            />
+          )}
           <Icon
             type={isFold ? 'up' : 'down'}
             onClick={() => {

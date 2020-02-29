@@ -31,6 +31,7 @@ const LoopStatement = useInjectContext(props => {
     index,
     moveCard,
     addCard,
+    readOnly,
     isDraggingNode,
     setIsDraggingNode,
     renderStatement,
@@ -98,7 +99,7 @@ const LoopStatement = useInjectContext(props => {
       >
         <Icon type={isFold ? 'up' : 'down'} />
       </div>
-      <div className="loopstatement-header" ref={ref}>
+      <div className="loopstatement-header" ref={readOnly ? null : ref}>
         <div
           className="loopstatement-header-title"
           data-id={id}
@@ -106,15 +107,17 @@ const LoopStatement = useInjectContext(props => {
         >
           当循环为真时
         </div>
-        <div className="loopstatement-header-operation">
-          <Icon
-            type="delete"
-            onClick={() => {
-              deleteNodeById(id);
-              console.log('删除 -->', id);
-            }}
-          />
-        </div>
+        {!readOnly && (
+          <div className="loopstatement-header-operation">
+            <Icon
+              type="delete"
+              onClick={() => {
+                deleteNodeById(id);
+                console.log('删除 -->', id);
+              }}
+            />
+          </div>
+        )}
       </div>
       <div className={`loopstatement-content loopstatement-fold-${id}`}>
         {card.children.map((subChildren, i) => renderStatement(subChildren, i))}
