@@ -121,15 +121,16 @@ const LoopStatement = useInjectContext(props => {
       </div>
       <div className={`loopstatement-content loopstatement-fold-${id}`}>
         {card.children.map((subChildren, i) => renderStatement(subChildren, i))}
-        {renderTailStatement({
-          id: `${id}-tail`,
-          text: '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
-          index: PLACEHOLDER_STATEMENT,
-          moveCard,
-          addCard,
-          isDraggingNode,
-          setIsDraggingNode,
-        })}
+        {!readOnly &&
+          renderTailStatement({
+            id: `${id}-tail`,
+            text: '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
+            index: PLACEHOLDER_STATEMENT,
+            moveCard,
+            addCard,
+            isDraggingNode,
+            setIsDraggingNode,
+          })}
       </div>
     </div>
   );

@@ -118,24 +118,9 @@ const ConditionalStatement = useInjectContext(props => {
           {card.ifChildren.map((subChildren, i) => {
             return renderStatement(subChildren, i);
           })}
-          {renderTailStatement({
-            id: `${id}-ifChildren-tail`,
-            text: '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
-            index: PLACEHOLDER_STATEMENT,
-            moveCard,
-            addCard,
-            isDraggingNode,
-            setIsDraggingNode,
-          })}
-        </div>
-        <div className="IFItem-else">
-          <div className="IFItem-header IFItem-header__else">否则</div>
-          <div style={{ paddingLeft: 24 }}>
-            {card.elseChildren.map((subChildren, i) =>
-              renderStatement(subChildren, i)
-            )}
-            {renderTailStatement({
-              id: `${id}-elseChildren-tail`,
+          {!readOnly &&
+            renderTailStatement({
+              id: `${id}-ifChildren-tail`,
               text:
                 '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
               index: PLACEHOLDER_STATEMENT,
@@ -144,6 +129,24 @@ const ConditionalStatement = useInjectContext(props => {
               isDraggingNode,
               setIsDraggingNode,
             })}
+        </div>
+        <div className="IFItem-else">
+          <div className="IFItem-header IFItem-header__else">否则</div>
+          <div style={{ paddingLeft: 24 }}>
+            {card.elseChildren.map((subChildren, i) =>
+              renderStatement(subChildren, i)
+            )}
+            {!readOnly &&
+              renderTailStatement({
+                id: `${id}-elseChildren-tail`,
+                text:
+                  '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
+                index: PLACEHOLDER_STATEMENT,
+                moveCard,
+                addCard,
+                isDraggingNode,
+                setIsDraggingNode,
+              })}
           </div>
         </div>
       </div>

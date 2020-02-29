@@ -315,17 +315,21 @@ export default ({ readOnly = false }) => {
         useDragSource,
       }}
     >
-      <div style={style} className="scroll-body">
+      <div
+        style={{ ...style, height: readOnly ? 'calc(100vh - 113px)' : '100%' }}
+        className="scroll-body"
+      >
         {cards.map((card, i) => renderStatement(card, i))}
-        {renderTailStatement({
-          id: PLACEHOLDER_MAINPROCESS,
-          text: '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
-          index: PLACEHOLDER_STATEMENT,
-          moveCard,
-          addCard,
-          isDraggingNode,
-          setIsDraggingNode,
-        })}
+        {!readOnly &&
+          renderTailStatement({
+            id: PLACEHOLDER_MAINPROCESS,
+            text: '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
+            index: PLACEHOLDER_STATEMENT,
+            moveCard,
+            addCard,
+            isDraggingNode,
+            setIsDraggingNode,
+          })}
       </div>
       <ContextMenu id={MENU_TYPE}>
         <MenuItem onClick={handleClick} data={{ action: 'Added' }}>
