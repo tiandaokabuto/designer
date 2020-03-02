@@ -133,19 +133,21 @@ const createWindow = async () => {
       mainWindow.restore();
       //将结果通知给渲染进程
       mainWindow.webContents.send('updateXpath', { ...result, targetId });
-      isNetStart = false;
-      server.close();
+      // isNetStart = false;
+      // server.close();
     });
   });
 
   server.on('close', function() {
     //关闭连接时触发
+    isNetStart = false;
     console.log('连接已关闭');
   });
 
   ipcMain.on('start_server', (event, id) => {
-    if (isNetStart) return;
     targetId = id;
+    if (isNetStart) return;
+
     server.listen('8888', '127.0.0.1'); //监听已有的连接
     isNetStart = true;
   });
