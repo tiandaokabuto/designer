@@ -92,7 +92,9 @@ const abilityToDatastructure = {
     module: 'sendiRPA',
     pkg: 'Browser',
     cmdName: '启动新的浏览器',
-    visible: '启动" chrome"浏览器，并将此浏览器作为控对象，赋值给hWeb',
+    visible: '启动chrome浏览器，并将此浏览器作为控对象，赋值给{{outPut}}',
+    visibleTemplate:
+      '启动chrome浏览器，并将此浏览器作为控对象，赋值给{{outPut}}',
     main: 'openBrowser',
     output: 'hWeb',
     outputDesc: '输出说明：返回是否启动成功',

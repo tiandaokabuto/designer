@@ -255,6 +255,7 @@ export default ({ readOnly = false }) => {
               text={card.text}
               card={card}
               visible={card.visible || ''}
+              visibleTemplate={card.visibleTemplate || ''}
               readOnly={readOnly}
             />
           </ContextMenuTrigger>

@@ -32,6 +32,7 @@ const BasicStatement = useInjectContext(props => {
     text,
     index,
     visible,
+    visibleTemplate,
     moveCard,
     addCard,
     isTail,
@@ -44,7 +45,7 @@ const BasicStatement = useInjectContext(props => {
     PLACEHOLDER_STATEMENT,
   } = props;
 
-  const templateVisible = useVisibleDynamicUpdate(id, visible);
+  const templateVisible = useVisibleDynamicUpdate(id, visibleTemplate);
 
   const [className, setClassName, resetClassName] = useSetClassName();
 
