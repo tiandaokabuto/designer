@@ -7,6 +7,7 @@ import {
   useDropTarget,
   useDeleteNodeById,
   useUpdateXpath,
+  useVisibleDynamicUpdate,
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
@@ -42,6 +43,8 @@ const BasicStatement = useInjectContext(props => {
     setIsDraggingNode,
     PLACEHOLDER_STATEMENT,
   } = props;
+
+  const templateVisible = useVisibleDynamicUpdate(id, visible);
 
   const [className, setClassName, resetClassName] = useSetClassName();
 
@@ -94,7 +97,7 @@ const BasicStatement = useInjectContext(props => {
             <Icon type="home" className="card-content-icon" />
             {text}
             <br />
-            <div className="card-content-visible">{visible}</div>
+            <div className="card-content-visible">{templateVisible}</div>
           </div>
         )}
         {isTail ? (

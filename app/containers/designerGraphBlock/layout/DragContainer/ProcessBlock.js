@@ -225,9 +225,9 @@ export default ({ readOnly = false }) => {
       if (!currentLevel) {
         dispatch({
           type: CHANGE_CARDDATA,
-          payload: cloneDeep(cards),
+          payload: [...cards], //cloneDeep(cards),
         });
-        return; //cloneDeep(cards);
+        return;
       }
       if (insertIndex === PLACEHOLDER_STATEMENT) {
         currentLevel.push(newNode);
@@ -236,7 +236,7 @@ export default ({ readOnly = false }) => {
       }
       dispatch({
         type: CHANGE_CARDDATA,
-        payload: cloneDeep(cards),
+        payload: [...cards], //cloneDeep(cards),
       });
       // return cloneDeep(cards);
       //});
