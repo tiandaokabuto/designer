@@ -7,9 +7,11 @@ export default () => {
   const dispatch = useDispatch();
   return (id, xpath) => {
     const node = findNodeById(cards, id);
-    node['properties']['required'].find(
+    const find = node['properties']['required'].find(
       item => item.enName === 'xpath'
-    ).value = `"${xpath}"`;
+    );
+    if (!find) return;
+    find.value = `"${xpath}"`;
     dispatch({
       type: CHANGE_CARDDATA,
       payload: [...cards],

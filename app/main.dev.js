@@ -27,6 +27,9 @@ export default class AppUpdater {
 
 let mainWindow = null;
 
+let isNetStart = false;
+let targetId = undefined;
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -129,7 +132,8 @@ const createWindow = async () => {
       const result = str ? JSON.parse(str) : {};
       mainWindow.restore();
       //将结果通知给渲染进程
-      mainWindow.webContents.send('updateXpath', result);
+      mainWindow.webContents.send('updateXpath', { ...result, targetId });
+      isNetStart = false;
       server.close();
     });
   });
@@ -139,9 +143,11 @@ const createWindow = async () => {
     console.log('连接已关闭');
   });
 
-  ipcMain.on('start_server', () => {
-    console.log('hhhhhhhhhhhhh');
+  ipcMain.on('start_server', (event, id) => {
+    if (isNetStart) return;
+    targetId = id;
     server.listen('8888', '127.0.0.1'); //监听已有的连接
+    isNetStart = true;
   });
 };
 

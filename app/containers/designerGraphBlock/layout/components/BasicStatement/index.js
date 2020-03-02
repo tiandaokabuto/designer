@@ -1,4 +1,11 @@
-import React, { memo, useRef, useState, useCallback, useEffect } from 'react';
+import React, {
+  Fragment,
+  memo,
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+} from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
@@ -76,6 +83,9 @@ const BasicStatement = useInjectContext(props => {
 
   const updateXpath = useUpdateXpath();
 
+  /** 保存xpath截图 */
+  const [xpathImage, setXpathImage] = useState(undefined);
+
   drag(drop(ref));
   // console.log(item)
   return (
@@ -129,20 +139,34 @@ const BasicStatement = useInjectContext(props => {
                 className="card-content-searchtarget"
                 onClick={() => {
                   ipcRenderer.send('min');
-                  ipcRenderer.send('start_server');
-                  ipcRenderer.on('updateXpath', (e, { xpath, imageData }) => {
-                    if (xpath === undefined) return;
-                    // 接收到xpath并作出更新
-                    console.log(imageData);
-                    updateXpath(id, xpath);
-                  });
+                  ipcRenderer.send('start_server', id);
+                  ipcRenderer.on(
+                    'updateXpath',
+                    (e, { xpath, imageData, targetId }) => {
+                      if (xpath === undefined) return;
+                      // 接收到xpath并作出更新
+                      if (targetId !== id) return;
+                      setXpathImage(imageData);
+                      updateXpath(id, xpath);
+                    }
+                  );
                 }}
               >
-                <Icon
-                  type="home"
-                  className="card-content-searchtarget-anchor"
-                />
-                查找目标
+                {xpathImage === undefined ? (
+                  <Fragment>
+                    <Icon
+                      type="home"
+                      className="card-content-searchtarget-anchor"
+                    />
+                    查找目标
+                  </Fragment>
+                ) : (
+                  <img
+                    src={xpathImage}
+                    alt="xpath"
+                    style={{ width: 48, height: 32, objectFit: 'contain' }}
+                  />
+                )}
               </div>
             </div>
           )
