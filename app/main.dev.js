@@ -122,11 +122,14 @@ const createWindow = async () => {
     console.log('有新的连接！');
 
     socket.on('data', function(data) {
-      const str = data.toString().replace(/([\s\S]*)(?={)/, '');
+      const str = data
+        .toString()
+        .replace(/([\s\S]*)(?={)/, '')
+        .replace(/}}/, '}');
       const result = str ? JSON.parse(str) : {};
       mainWindow.restore();
       //将结果通知给渲染进程
-      mainWindow.webContents.send('updateXpath', result.value);
+      mainWindow.webContents.send('updateXpath', result);
       server.close();
     });
   });

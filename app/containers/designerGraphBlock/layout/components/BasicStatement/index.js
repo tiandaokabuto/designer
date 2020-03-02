@@ -130,8 +130,10 @@ const BasicStatement = useInjectContext(props => {
                 onClick={() => {
                   ipcRenderer.send('min');
                   ipcRenderer.send('start_server');
-                  ipcRenderer.on('updateXpath', (e, xpath) => {
+                  ipcRenderer.on('updateXpath', (e, { xpath, imageData }) => {
+                    if (xpath === undefined) return;
                     // 接收到xpath并作出更新
+                    console.log(imageData);
                     updateXpath(id, xpath);
                   });
                 }}
