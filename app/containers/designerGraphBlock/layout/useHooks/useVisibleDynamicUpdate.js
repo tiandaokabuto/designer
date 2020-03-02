@@ -24,7 +24,6 @@ export default (id, visibleTemplate) => {
         )
       );
       const updateTemplate = template => {
-        // 获取所有 watchingList 中的值
         let result = template.replace(/({{.*?}})/g, (_, ...args) => {
           const find = proxyList.find(item => args[0].includes(item.enName));
           return find.value || '';
