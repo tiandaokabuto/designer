@@ -54,6 +54,7 @@ const BasicStatement = useInjectContext(props => {
   } = props;
 
   const [
+    canDrag,
     templateVisible,
     changeToEditableTemplate,
     save,
@@ -82,6 +83,7 @@ const BasicStatement = useInjectContext(props => {
   const [drag, dragImage] = useDragSource({
     setIsDraggingNode,
     props,
+    canDrag,
   });
 
   const deleteNodeById = useDeleteNodeById();
@@ -92,7 +94,7 @@ const BasicStatement = useInjectContext(props => {
   const [xpathImage, setXpathImage] = useState(undefined);
 
   drag(drop(ref));
-  // console.log(item)
+
   return (
     <div
       ref={readOnly ? null : ref}
@@ -119,6 +121,9 @@ const BasicStatement = useInjectContext(props => {
               onClick={() => {
                 changeToEditableTemplate();
                 // 触发变量的修改
+              }}
+              onDragStart={e => {
+                e.preventDefault();
               }}
               onBlur={save}
               dangerouslySetInnerHTML={{ __html: templateVisible }}

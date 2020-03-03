@@ -9,12 +9,16 @@ export default ({
   props,
   handleLoopStatementFlod,
   isFold,
+  canDrag,
 }) => {
   const [, drag, dragImage] = useDrag({
     item: { type: ItemTypes.CARD, ...cloneDeep(props.card) },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag: () => {
+      return canDrag;
+    },
     begin(monitor) {
       /**
        * 循环语句前置处理

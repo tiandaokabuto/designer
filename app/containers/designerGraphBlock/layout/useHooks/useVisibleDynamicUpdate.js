@@ -7,6 +7,7 @@ import event from '../eventCenter';
 export default (id, visibleTemplate) => {
   if (visibleTemplate) {
     const [newVisible, setNewVisible] = useState('');
+    const [canDrag, setCanDrag] = useState(true);
     const cards = useSelector(state => state.blockcode.cards);
     const node = findNodeById(cards, id);
 
@@ -56,13 +57,13 @@ export default (id, visibleTemplate) => {
           } class="template_input" value=${find.value || ''} >` || ''
         );
       });
+      setCanDrag(false);
       setNewVisible(result);
     };
 
     const saveInputChange = e => {
       const dataId = e.target.dataset.id;
       const newValue = e.target.value;
-      console.log(dataId, typeof newValue);
       // save
       const find = proxyList.find(item => item.enName === dataId);
       if (find) {
@@ -71,10 +72,11 @@ export default (id, visibleTemplate) => {
         event.emit('forceUpdate');
       }
       // reset
+      setCanDrag(true);
       updateTemplate(visibleTemplate);
     };
 
-    return [newVisible, changeToEditableTemplate, saveInputChange];
+    return [canDrag, newVisible, changeToEditableTemplate, saveInputChange];
   }
   return [];
 };
