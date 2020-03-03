@@ -11,7 +11,6 @@ export default ({ className }) => {
   useEffect(() => {
     const container = document.querySelector(`.${className}`);
     const handleClick = e => {
-      console.log(e.target);
       const checkedId = e.target.getAttribute('data-id');
       if (checkedId) {
         if (e.target.classList.contains('loopstatement-header-title')) {

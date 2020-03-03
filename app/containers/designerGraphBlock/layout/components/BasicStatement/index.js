@@ -119,7 +119,9 @@ const BasicStatement = useInjectContext(props => {
               className="card-content-visible"
               key={uniqueId('visible_')}
               onClick={e => {
-                changeToEditableTemplate();
+                const anchor = e.target.dataset.anchor;
+                console.log(e.target, [e.target]);
+                changeToEditableTemplate(anchor);
                 // 触发变量的修改
               }}
               onDragStart={e => {

@@ -25,7 +25,10 @@ export default (id, visibleTemplate) => {
     const updateTemplate = template => {
       let result = template.replace(/({{.*?}})/g, (_, ...args) => {
         const find = proxyList.find(item => args[0].includes(item.enName));
-        return `<span class="template_span">${find.value}</span>` || '';
+        return (
+          `<span data-anchor=${find.enName} class="template_span">${find.value}</span>` ||
+          ''
+        );
       });
       setNewVisible(result);
     };
@@ -48,9 +51,16 @@ export default (id, visibleTemplate) => {
       updateTemplate(visibleTemplate);
     }, [id]);
 
-    const changeToEditableTemplate = () => {
+    const changeToEditableTemplate = anchor => {
       let result = visibleTemplate.replace(/({{.*?}})/g, (_, ...args) => {
         const find = proxyList.find(item => args[0].includes(item.enName));
+        // 判断是否为点击对象
+        if (anchor !== find.enName) {
+          return (
+            `<span data-anchor=${find.enName} class="template_span">${find.value}</span>` ||
+            ''
+          );
+        }
         return (
           `<input data-anchor=${
             find.enName
