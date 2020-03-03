@@ -16,6 +16,10 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 
 const net = require('net');
+const appexpress = require('express')();
+const bodyParser = require('body-parser'); //解析,用req.body获取post参数
+appexpress.use(bodyParser.json());
+appexpress.use(bodyParser.urlencoded({ extended: false }));
 
 export default class AppUpdater {
   constructor() {
@@ -112,45 +116,83 @@ const createWindow = async () => {
 
   // 本地监听8888端口 获取动态的xpath元素回填
 
-  const server = net.createServer();
-
-  // //一些事件
-  server.on('listening', function() {
-    //的那个服务绑定后触发
-    console.log('服务器已启动');
-  });
-
-  server.on('connection', function(socket) {
-    //当一个新的连接建立时触发，可接收一个socket对象
-    console.log('有新的连接！');
-
-    socket.on('data', function(data) {
-      const str = data
-        .toString()
-        .replace(/([\s\S]*)(?={)/, '')
-        .replace(/}}/, '}');
-      const result = str ? JSON.parse(str) : {};
+  // --------------------------- express版本
+  appexpress.post('/upload', function(req, res) {
+    // console.log();
+    try {
+      // const result = JSON.stringify(req.body);
+      // const str = result.replace(/}}/, '}');
+      // const finallyResult = str ? JSON.parse(str) : {};
+      const finallyResult = req.body;
       mainWindow.restore();
       //将结果通知给渲染进程
-      mainWindow.webContents.send('updateXpath', { ...result, targetId });
-      // isNetStart = false;
-      // server.close();
-    });
-  });
+      if (targetId === undefined) return;
+      mainWindow.webContents.send('updateXpath', {
+        ...finallyResult.value,
+        targetId,
+      });
+      targetId = undefined;
+    } catch (e) {
+      // 处理错误
+      console.log('err---', e);
+    }
 
-  server.on('close', function() {
-    //关闭连接时触发
-    isNetStart = false;
-    console.log('连接已关闭');
+    res.sendStatus(200);
   });
 
   ipcMain.on('start_server', (event, id) => {
     targetId = id;
     if (isNetStart) return;
 
-    server.listen('8888', '127.0.0.1'); //监听已有的连接
+    appexpress.listen(8888, function() {
+      console.log('服务器已启动');
+    });
     isNetStart = true;
   });
+
+  // --------------------------- net版本
+
+  // const server = net.createServer();
+
+  // // //一些事件
+  // server.on('listening', function() {
+  //   //的那个服务绑定后触发
+  //   console.log('服务器已启动');
+  // });
+
+  // server.on('connection', function(socket) {
+  //   //当一个新的连接建立时触发，可接收一个socket对象
+  //   console.log('有新的连接！');
+
+  //   socket.on('data', function(data) {
+  //     const str = data
+  //       .toString()
+  //       .replace(/([\s\S]*)(?={)/, '')
+  //       .replace(/}}/, '}');
+  //     const result = str ? JSON.parse(str) : {};
+  //     mainWindow.restore();
+  //     //将结果通知给渲染进程
+  //     if (targetId === undefined) return;
+  //     mainWindow.webContents.send('updateXpath', { ...result, targetId });
+  //     targetId = undefined;
+  //     // isNetStart = false;
+  //     // server.close();
+  //   });
+  // });
+
+  // server.on('close', function() {
+  //   //关闭连接时触发
+  //   isNetStart = false;
+  //   console.log('连接已关闭');
+  // });
+
+  // ipcMain.on('start_server', (event, id) => {
+  //   targetId = id;
+  //   if (isNetStart) return;
+
+  //   server.listen('8888', '127.0.0.1'); //监听已有的连接
+  //   isNetStart = true;
+  // });
 };
 
 /**
