@@ -62,10 +62,11 @@ export default (id, visibleTemplate) => {
     const saveInputChange = e => {
       const dataId = e.target.dataset.id;
       const newValue = e.target.value;
+      console.log(dataId, typeof newValue);
       // save
       const find = proxyList.find(item => item.enName === dataId);
       if (find) {
-        find.value = newValue;
+        find.value = newValue || null;
         // forceUpdate
         event.emit('forceUpdate');
       }
