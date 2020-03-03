@@ -178,7 +178,7 @@ const abilityToDatastructure = {
     pkg: 'Browser',
     cmdName: '跳转到URL',
     visible: '跳转到URL',
-    visibleTemplate: '跳转到{{_url}}',
+    visibleTemplate: '跳转{{outPut}}到{{_url}}',
     main: 'navigateURL',
     output: 'suc',
     outputDesc: '成功返回True,失败返回False',

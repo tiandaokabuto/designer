@@ -52,7 +52,7 @@ export default (id, visibleTemplate) => {
       let result = visibleTemplate.replace(/({{.*?}})/g, (_, ...args) => {
         const find = proxyList.find(item => args[0].includes(item.enName));
         return (
-          `<input data-id=${
+          `<input data-anchor=${
             find.enName
           } class="template_input" value=${find.value || ''} >` || ''
         );
@@ -62,7 +62,7 @@ export default (id, visibleTemplate) => {
     };
 
     const saveInputChange = e => {
-      const dataId = e.target.dataset.id;
+      const dataId = e.target.dataset.anchor;
       const newValue = e.target.value;
       // save
       const find = proxyList.find(item => item.enName === dataId);

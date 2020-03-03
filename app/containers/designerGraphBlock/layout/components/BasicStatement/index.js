@@ -118,7 +118,7 @@ const BasicStatement = useInjectContext(props => {
             <div
               className="card-content-visible"
               key={uniqueId('visible_')}
-              onClick={() => {
+              onClick={e => {
                 changeToEditableTemplate();
                 // 触发变量的修改
               }}
