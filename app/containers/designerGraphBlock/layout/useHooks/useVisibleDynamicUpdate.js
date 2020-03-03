@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react';
 
 import { findNodeLevelById, findNodeById } from '../shared/utils';
 import event from '../eventCenter';
+import useTransformToPython from './useTransformToPython';
 
 export default (id, visibleTemplate) => {
   if (visibleTemplate) {
+    const cards = useSelector(state => state.blockcode.cards);
+    const handleEmitCodeTransform = useTransformToPython();
     const [newVisible, setNewVisible] = useState('');
     const [canDrag, setCanDrag] = useState(true);
-    const cards = useSelector(state => state.blockcode.cards);
     const node = findNodeById(cards, id);
 
     const watchingList = visibleTemplate
@@ -91,6 +93,7 @@ export default (id, visibleTemplate) => {
       // reset
       setCanDrag(true);
       updateTemplate(visibleTemplate);
+      handleEmitCodeTransform(cards);
     };
 
     return [canDrag, newVisible, changeToEditableTemplate, saveInputChange];
