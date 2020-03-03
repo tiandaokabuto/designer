@@ -52,7 +52,11 @@ const BasicStatement = useInjectContext(props => {
     PLACEHOLDER_STATEMENT,
   } = props;
 
-  const templateVisible = useVisibleDynamicUpdate(id, visibleTemplate);
+  const [
+    templateVisible,
+    changeToEditableTemplate,
+    save,
+  ] = useVisibleDynamicUpdate(id, visibleTemplate);
 
   const [className, setClassName, resetClassName] = useSetClassName();
 
@@ -108,7 +112,15 @@ const BasicStatement = useInjectContext(props => {
             <Icon type="home" className="card-content-icon" />
             {text}
             <br />
-            <div className="card-content-visible">{templateVisible}</div>
+            <div
+              className="card-content-visible"
+              onClick={() => {
+                changeToEditableTemplate();
+                // 触发变量的修改
+              }}
+              onBlur={save}
+              dangerouslySetInnerHTML={{ __html: templateVisible }}
+            ></div>
           </div>
         )}
         {isTail ? (

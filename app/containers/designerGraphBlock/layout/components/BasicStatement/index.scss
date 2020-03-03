@@ -44,4 +44,16 @@
       }
     }
   }
+  .template_span {
+    background: #eeeeee;
+    border-radius: 2px;
+    height: 24px;
+    padding: 2px 4px;
+    font-size: 14px;
+    pointer-events: auto;
+    display: inline-flex;
+  }
+  .template_input {
+    pointer-events: auto;
+  }
 }

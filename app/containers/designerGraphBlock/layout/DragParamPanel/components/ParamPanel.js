@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input, Select } from 'antd';
 import { useSelector } from 'react-redux';
+import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
 import { useTransformToPython } from '../../useHooks';
+import event from '../../eventCenter';
 
 import './ParamPanel.scss';
 
 const { Option } = Select;
 
-const getComponentType = (param, handleEmitCodeTransform, cards) => {
+const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
   // 针对一些特殊的情况需要作出特殊的处理
 
   if (param.enName === 'sqlStr') {
@@ -60,7 +62,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards) => {
       return (
         <Input
           defaultValue={param.value || param.default}
-          key={param.enName === 'xpath' ? param.value : ''}
+          key={keyFlag || param.enName === 'xpath' ? param.value : ''}
           onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
@@ -93,6 +95,19 @@ const getComponentType = (param, handleEmitCodeTransform, cards) => {
 export default ({ checkedBlock }) => {
   const cards = useSelector(state => state.blockcode.cards);
   const handleEmitCodeTransform = useTransformToPython();
+  const [flag, setFlag] = useState(false);
+  useEffect(() => {
+    const handleForceUpdate = () => {
+      setFlag(true);
+      setTimeout(() => {
+        setFlag(false);
+      }, 50);
+    };
+    event.addListener('forceUpdate', handleForceUpdate);
+    return () => {
+      event.removeListener('forceUpdate', handleForceUpdate);
+    };
+  }, []);
   return (
     <div className="parampanel">
       <div className="parampanel-required">必选项</div>
@@ -102,7 +117,7 @@ export default ({ checkedBlock }) => {
             <div key={checkedBlock.id + index} className="parampanel-item">
               <span className="param-title">{param.cnName}</span>
               <div style={{ flex: 1, overflow: 'hidden' }}>
-                {getComponentType(param, handleEmitCodeTransform, cards)}
+                {getComponentType(param, handleEmitCodeTransform, cards, flag)}
               </div>
             </div>
           );
@@ -115,7 +130,7 @@ export default ({ checkedBlock }) => {
             <div key={checkedBlock.id + index} className="parampanel-item">
               <span className="param-title">{param.cnName}</span>
               <div style={{ flex: 1, overflow: 'hidden' }}>
-                {getComponentType(param, handleEmitCodeTransform, cards)}
+                {getComponentType(param, handleEmitCodeTransform, cards, flag)}
               </div>
             </div>
           );
