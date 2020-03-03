@@ -120,7 +120,6 @@ const BasicStatement = useInjectContext(props => {
               key={uniqueId('visible_')}
               onClick={e => {
                 const anchor = e.target.dataset.anchor;
-                console.log(e.target, [e.target]);
                 changeToEditableTemplate(anchor);
                 // 触发变量的修改
               }}

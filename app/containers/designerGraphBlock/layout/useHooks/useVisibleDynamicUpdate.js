@@ -64,11 +64,18 @@ export default (id, visibleTemplate) => {
         return (
           `<input data-anchor=${
             find.enName
-          } class="template_input" value=${find.value || ''} >` || ''
+          } class="template_input template_input_${anchor}" value=${find.value ||
+            ''} >` || ''
         );
       });
       setCanDrag(false);
       setNewVisible(result);
+      setTimeout(() => {
+        const inputDom = document.querySelector(
+          `input.template_input_${anchor}`
+        );
+        inputDom.focus();
+      }, 0);
     };
 
     const saveInputChange = e => {
