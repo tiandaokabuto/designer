@@ -9,6 +9,7 @@ import React, {
 import { useDrag, useDrop } from 'react-dnd';
 import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
+import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import {
   useDropTarget,
@@ -114,6 +115,7 @@ const BasicStatement = useInjectContext(props => {
             <br />
             <div
               className="card-content-visible"
+              key={uniqueId('visible_')}
               onClick={() => {
                 changeToEditableTemplate();
                 // 触发变量的修改

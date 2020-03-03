@@ -55,7 +55,7 @@
     display: inline-flex;
     &:empty {
       &::before {
-        content: '2';
+        content: '_';
         visibility: hidden;
       }
     }
