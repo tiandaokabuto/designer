@@ -184,7 +184,7 @@ const BasicStatement = useInjectContext(props => {
                   <img
                     src={xpathImage}
                     alt="xpath"
-                    style={{ width: 48, height: 32, objectFit: 'contain' }}
+                    style={{ width: 48, height: 32 }}
                   />
                 )}
               </div>
