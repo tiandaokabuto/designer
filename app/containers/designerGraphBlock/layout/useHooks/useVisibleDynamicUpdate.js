@@ -24,7 +24,7 @@ export default (id, visibleTemplate) => {
     const updateTemplate = template => {
       let result = template.replace(/({{.*?}})/g, (_, ...args) => {
         const find = proxyList.find(item => args[0].includes(item.enName));
-        return `<span class="template_span"">${find.value}</span>` || '';
+        return `<span class="template_span">${find.value}</span>` || '';
       });
       setNewVisible(result);
     };
@@ -51,8 +51,9 @@ export default (id, visibleTemplate) => {
       let result = visibleTemplate.replace(/({{.*?}})/g, (_, ...args) => {
         const find = proxyList.find(item => args[0].includes(item.enName));
         return (
-          `<input value=${find.value} data-id=${find.enName} class="template_input">` ||
-          ''
+          `<input data-id=${
+            find.enName
+          } class="template_input" value=${find.value || ''} >` || ''
         );
       });
       setNewVisible(result);

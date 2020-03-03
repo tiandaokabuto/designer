@@ -49,11 +49,23 @@
     border-radius: 2px;
     height: 24px;
     padding: 2px 4px;
+    min-width: 40px;
     font-size: 14px;
     pointer-events: auto;
     display: inline-flex;
+    &:empty {
+      &::before {
+        content: '2';
+        visibility: hidden;
+      }
+    }
   }
   .template_input {
     pointer-events: auto;
+    // width: 50px;
+    height: 24px;
+    // &:empty{
+
+    // }
   }
 }
