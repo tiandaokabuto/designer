@@ -57,19 +57,24 @@ export const readAllFileName = path => {
  * @param {*} tree
  * @param {*} key
  */
-export const isNotLeafNode = (tree, key) => {
+export const isDirNode = (tree, key) => {
   for (const child of tree) {
     if (child.key === key) {
-      return child.children ? child : false;
+      return child.type === 'dir' ? child : false;
     }
     if (child.children) {
-      const isNotLeaf = isNotLeafNode(child.children, key);
-      if (isNotLeaf) return isNotLeaf;
+      const bool = isDirNode(child.children, key);
+      if (bool) return bool;
     }
   }
   return false;
 };
 
+/**
+ * 数据持久化保存到本地
+ * @param {*} processTree
+ * @param {*} name
+ */
 export const persistentStorage = (processTree, name) => {
   console.log(name, processTree);
   // 重新覆写processTree
@@ -106,39 +111,56 @@ export const persistentStorage = (processTree, name) => {
 
 export const newProcess = (type, name, processTree, checkedTreeNode) => {
   let newProcessTree = undefined;
+  const isDirNodeBool = isDirNode(processTree, checkedTreeNode);
+  const isLeafNodeOrUndefined = checkedTreeNode === undefined || !isDirNodeBool;
   if (type === 'process') {
-    /**
-     * 新建流程
-     */
     // 如果是作为根结点添加, 那么逻辑如下
-    if (
-      checkedTreeNode === undefined ||
-      !isNotLeafNode(processTree, checkedTreeNode)
-    ) {
+    if (isLeafNodeOrUndefined) {
       newProcessTree = processTree.concat({
         title: name,
         key: '0-' + processTree.length,
+        type: 'process',
       });
     } else {
-      // 在这个项目目录下新增
-      const parentNode = isNotLeafNode(processTree, checkedTreeNode);
-      parentNode.children.push({
+      //在这个项目目录下新增
+      isDirNodeBool.children.push({
         title: name,
-        key: parentNode.key + '-' + parentNode.children.length,
+        key: isDirNodeBool.key + '-' + isDirNodeBool.children.length,
       });
-      newProcessTree = processTree.concat();
+      newProcessTree = [...processTree];
     }
   } else {
-    /**
-     * 新建项目的流程
-     * 获取该工程下的流程树
-     */
-    newProcessTree = processTree.concat({
-      title: name,
-      key: '0-' + processTree.length,
-      children: [],
-    });
+    // 支持嵌套目录
+    if (isLeafNodeOrUndefined) {
+      newProcessTree = processTree.concat({
+        title: name,
+        key: '0-' + processTree.length,
+        type: 'dir',
+        children: [],
+      });
+    } else {
+      isDirNodeBool.children.push({
+        title: name,
+        key: isDirNodeBool.key + '-' + isDirNodeBool.children.length,
+        type: 'dir',
+        children: [],
+      });
+      newProcessTree = [...processTree];
+    }
   }
   changeProcessTree(newProcessTree);
   return newProcessTree;
+};
+
+export const isNameExist = (tree, title, checkedTreeNode) => {
+  for (const child of tree) {
+    if (child.title === key) {
+      return child.children ? child : false;
+    }
+    if (child.children) {
+      const isNotLeaf = isDirNode(child.children, key);
+      if (isNotLeaf) return isNotLeaf;
+    }
+  }
+  return false;
 };

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input, Select, message } from 'antd';
 import { useSelector } from 'react-redux';
 
-import { newProcess, persistentStorage } from '../../utils';
+import { newProcess, persistentStorage, isNameExist } from '../../utils';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -24,6 +24,10 @@ export default ({ resetVisible }) => {
 
   /* ---------- 流程/项目新增逻辑 ----------- */
   const handleAddProcessOrProject = () => {
+    // 做流程名校验避免重复
+    // if (!isNameExist(processTree, name, checkedTreeNode)) {
+    //   return void message.info('流程名重复,请重新填写!!');
+    // }
     const newProcessTree = newProcess(type, name, processTree, checkedTreeNode);
     setVisible(false);
     resetVisible(undefined);
@@ -58,10 +62,10 @@ export default ({ resetVisible }) => {
           }}
         >
           <Option value="process">流程</Option>
-          <Option value="project">项目</Option>
+          <Option value="dir">目录</Option>
         </Select>
       </FormItem>
-      <FormItem label="流程/项目名称" {...layout}>
+      <FormItem label="流程/目录名称" {...layout}>
         <Input
           onChange={e => {
             setName(e.target.value);
