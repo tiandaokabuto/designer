@@ -98,5 +98,5 @@ export default (id, visibleTemplate) => {
 
     return [canDrag, newVisible, changeToEditableTemplate, saveInputChange];
   }
-  return [];
+  return [true];
 };

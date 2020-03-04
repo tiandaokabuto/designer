@@ -10,6 +10,7 @@ export default ({
   handleLoopStatementFlod,
   isFold,
   canDrag,
+  id,
 }) => {
   const [, drag, dragImage] = useDrag({
     item: { type: ItemTypes.CARD, ...cloneDeep(props.card) },
@@ -17,6 +18,7 @@ export default ({
       isDragging: monitor.isDragging(),
     }),
     canDrag: () => {
+      console.log(canDrag, id, 'ooooo');
       return canDrag;
     },
     begin(monitor) {
