@@ -1,10 +1,24 @@
-import React from 'react';
-import { Icon } from 'antd';
+import React, { useState } from 'react';
+import { Icon, Dropdown, Menu } from 'antd';
+
+import NewProject from './NewProject';
 const { ipcRenderer } = require('electron');
 
 import './index.scss';
 
-const TOOLS_DESCRIPTION = ['文件', '编辑', '运行', '调试', '工具', '帮助'];
+const generateMenu = arr => {
+  return (
+    <Menu>
+      {arr.map((subMenu, index) => {
+        return (
+          <Menu.Item key={index}>
+            <a onClick={subMenu.onClick || (() => {})}>{subMenu.title}</a>
+          </Menu.Item>
+        );
+      })}
+    </Menu>
+  );
+};
 
 /**
  * 处理窗口的缩小、全屏、关闭操作
@@ -15,6 +29,28 @@ const handleWindowOperation = op => {
 };
 
 export default () => {
+  const [visible, setVisible] = useState(undefined);
+  const resetVisible = () => {
+    setVisible(undefined);
+  };
+  const TOOLS_DESCRIPTION = [
+    {
+      title: '项目',
+      children: [
+        {
+          title: '新建',
+          onClick: () => {
+            setVisible('newproject');
+          },
+        },
+      ],
+    },
+    '编辑',
+    '运行',
+    '调试',
+    '工具',
+    '帮助',
+  ];
   return (
     <div
       className="graphblock-header"
@@ -26,9 +62,20 @@ export default () => {
       }}
     >
       <div className="graphblock-header-tools">
-        {TOOLS_DESCRIPTION.map((tool, index) => (
-          <span key={index}>{tool}</span>
-        ))}
+        {TOOLS_DESCRIPTION.map((tool, index) => {
+          if (typeof tool === 'object') {
+            return (
+              <Dropdown
+                key={index}
+                overlay={generateMenu(tool.children || [])}
+                placement="bottomLeft"
+              >
+                <span>{tool.title}</span>
+              </Dropdown>
+            );
+          }
+          return <span key={index}>{tool}</span>;
+        })}
       </div>
       <div className="graphblock-header-title">SD-RPA Studio</div>
       <div className="graphblock-header-user">
@@ -51,6 +98,7 @@ export default () => {
           onClick={() => handleWindowOperation('close')}
         />
       </div>
+      {visible === 'newproject' && <NewProject resetVisible={resetVisible} />}
     </div>
   );
 };

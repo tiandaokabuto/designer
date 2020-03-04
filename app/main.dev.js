@@ -142,6 +142,7 @@ const createWindow = async () => {
 
   ipcMain.on('start_server', (event, id) => {
     targetId = id;
+    console.log('再次触发选取操作', id);
     if (isNetStart) return;
 
     appexpress.listen(8888, function() {
