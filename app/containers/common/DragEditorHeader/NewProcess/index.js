@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
 import { useSelector } from 'react-redux';
 
-import { newProcess } from '../../utils';
+import { newProcess, persistentStorage } from '../../utils';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -20,12 +20,16 @@ export default ({ resetVisible }) => {
     state => state.grapheditor.currentCheckedTreeNode
   );
   const processTree = useSelector(state => state.grapheditor.processTree);
+  const currentProject = useSelector(state => state.grapheditor.currentProject);
 
   /* ---------- 流程/项目新增逻辑 ----------- */
   const handleAddProcessOrProject = () => {
-    newProcess(type, name, processTree, checkedTreeNode);
+    const newProcessTree = newProcess(type, name, processTree, checkedTreeNode);
     setVisible(false);
     resetVisible(undefined);
+    setTimeout(() => {
+      persistentStorage(newProcessTree, currentProject);
+    }, 0);
   };
   return (
     <Modal

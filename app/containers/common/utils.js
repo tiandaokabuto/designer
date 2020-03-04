@@ -1,4 +1,5 @@
 //import moment from moment
+import { useSelector } from 'react-redux';
 import { changeProcessTree } from '../reduxActions';
 const fs = require('fs');
 const process = require('process');
@@ -51,6 +52,11 @@ export const readAllFileName = path => {
   return fileList;
 };
 
+/**
+ * 判断为非叶子结点
+ * @param {*} tree
+ * @param {*} key
+ */
 export const isNotLeafNode = (tree, key) => {
   for (const child of tree) {
     if (child.key === key) {
@@ -64,7 +70,42 @@ export const isNotLeafNode = (tree, key) => {
   return false;
 };
 
+export const persistentStorage = (processTree, name) => {
+  console.log(name, processTree);
+  // 重新覆写processTree
+  fs.readFile(`${process.cwd()}/project/${name}/manifest.json`, function(
+    err,
+    data
+  ) {
+    if (!err) {
+      let description = JSON.parse(data.toString());
+      fs.writeFile(
+        `${process.cwd()}/project/${name}/manifest.json`,
+        JSON.stringify({
+          ...description,
+          processTree,
+        }),
+        function(err) {
+          if (err) {
+            console.error(err);
+          }
+          console.log('----------新增成功-------------');
+        }
+      );
+    }
+  });
+};
+
+/**
+ * 创建新流程
+ * @param {*} type
+ * @param {*} name
+ * @param {*} processTree
+ * @param {*} checkedTreeNode
+ */
+
 export const newProcess = (type, name, processTree, checkedTreeNode) => {
+  let newProcessTree = undefined;
   if (type === 'process') {
     /**
      * 新建流程
@@ -74,11 +115,10 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
       checkedTreeNode === undefined ||
       !isNotLeafNode(processTree, checkedTreeNode)
     ) {
-      const newProcessTree = processTree.concat({
+      newProcessTree = processTree.concat({
         title: name,
         key: '0-' + processTree.length,
       });
-      changeProcessTree(newProcessTree);
     } else {
       // 在这个项目目录下新增
       const parentNode = isNotLeafNode(processTree, checkedTreeNode);
@@ -86,18 +126,19 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: parentNode.key + '-' + parentNode.children.length,
       });
-      changeProcessTree(processTree.concat());
+      newProcessTree = processTree.concat();
     }
   } else {
     /**
      * 新建项目的流程
      * 获取该工程下的流程树
      */
-    const newProcessTree = processTree.concat({
+    newProcessTree = processTree.concat({
       title: name,
       key: '0-' + processTree.length,
       children: [],
     });
-    changeProcessTree(newProcessTree);
   }
+  changeProcessTree(newProcessTree);
+  return newProcessTree;
 };

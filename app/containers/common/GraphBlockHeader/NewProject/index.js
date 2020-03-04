@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Modal, Form, Input, Table } from 'antd';
 
 import { newProject, readAllFileName } from '../../utils';
+import { changeCurrentProject } from '../../../reduxActions';
 
 const FormItem = Form.Item;
 const layout = {
@@ -49,6 +50,8 @@ export default ({ resetVisible }) => {
         newProject(projectName, () => {
           setVisible(false);
           resetVisible(undefined);
+          // 保存当前的工程名字
+          changeCurrentProject(projectName);
         });
       }}
     >
