@@ -7,6 +7,7 @@ import {
   SYNCHRO_GRAPHDATAMAP,
   CHANGE_CHECKEDGRAPHBLOCKID,
   CHANGE_EDITORBLOCKPYTHONCODE,
+  CHANGE_PROCESSTREE,
 } from '../actions/grapheditor';
 
 const defaultState = {
@@ -15,6 +16,7 @@ const defaultState = {
   currentEditingId: undefined,
   checkedGraphBlockId: undefined,
   editorBlockPythonCode: '',
+  processTree: [],
 };
 
 export default (state = defaultState, action) => {
@@ -67,6 +69,11 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         editorBlockPythonCode: action.payload,
+      };
+    case CHANGE_PROCESSTREE:
+      return {
+        ...state,
+        processTree: action.payload,
       };
     default:
       return state;

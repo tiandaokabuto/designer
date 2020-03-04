@@ -1,4 +1,5 @@
 //import moment from moment
+import { changeProcessTree } from '../../reduxActions';
 const fs = require('fs');
 const process = require('process');
 
@@ -14,6 +15,8 @@ export const newProject = (name, callback) => {
     if (!err) {
       callback();
       console.log('创建成功');
+      // 修改左侧自定义目录树
+      changeProcessTree([]);
       const initialJson = {
         processTree: [],
       };
@@ -29,6 +32,10 @@ export const newProject = (name, callback) => {
   });
 };
 
+/**
+ * 读取项目文件夹下的所有项目
+ * @param {*} path
+ */
 export const readAllFileName = path => {
   const result = fs.readdirSync(`${process.cwd()}/project/`);
   const fileList = [];

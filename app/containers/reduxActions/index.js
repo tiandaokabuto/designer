@@ -5,6 +5,7 @@ import {
   SET_GRAPHDATAMAP,
   CHANGE_CHECKEDGRAPHBLOCKID,
   CHANGE_EDITORBLOCKPYTHONCODE,
+  CHANGE_PROCESSTREE,
 } from '../../actions/grapheditor';
 import { SYNCHRO_CODEBLOCK } from '../../actions/codeblock';
 import store from '../../store';
@@ -83,5 +84,12 @@ export const updateEditorBlockPythonCode = code => {
   dispatch({
     type: CHANGE_EDITORBLOCKPYTHONCODE,
     payload: code,
+  });
+};
+
+export const changeProcessTree = (processTree = []) => {
+  dispatch({
+    type: CHANGE_PROCESSTREE,
+    payload: processTree,
   });
 };

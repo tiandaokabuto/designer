@@ -1,5 +1,6 @@
 import React from 'react';
 import { Icon } from 'antd';
+import { useSelector } from 'react-redux';
 
 import Tree from './components/CustomeTreeNode';
 
@@ -46,6 +47,7 @@ const projectlist = [
   },
 ];
 export default () => {
+  const processTree = useSelector(state => state.grapheditor.processTree);
   const renderTreeNodes = data =>
     data.map(item => {
       if (item.children) {
@@ -62,10 +64,11 @@ export default () => {
       }
       return <TreeNode key={item.key} {...item} />;
     });
+
   return (
     <div className="designergraph-item">
       <div className="designergraph-item-title">我的项目</div>
-      <Tree>{renderTreeNodes(projectlist)}</Tree>
+      <Tree>{renderTreeNodes(processTree)}</Tree>
     </div>
   );
 };
