@@ -28,7 +28,7 @@ export default () => {
         click
       </div> */}
       <GraphBlockHeader />
-      <DragEditorHeader />
+      <DragEditorHeader type="process" />
 
       <GGEditor className="designergraph editor">
         <GraphItem />

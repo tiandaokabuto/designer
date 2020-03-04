@@ -10,7 +10,6 @@ import EndNode from '../RegisterNode/EndNode';
 import RhombusNode from '../RegisterNode/RhombusNode';
 
 import EditorDrawer from './components/EditorDrawer';
-import event from '../../../designerGraphBlock/layout/eventCenter';
 
 import EditorChange, {
   registerDataChange,
@@ -70,7 +69,6 @@ export default useInjectContext(
                   updateCurrentEditingProcessBlock(node.item.id);
                   synchroCodeBlock(graphDataMap.get(node.item.id));
                   updateGraphData(save());
-                  event.emit('toggle');
                   setTimeout(() => {
                     history.push('/designerGraphBlock');
                   }, 0);

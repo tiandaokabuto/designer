@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useMemo } from 'react';
 import { Icon } from 'antd';
 import { withRouter } from 'react-router-dom';
 
@@ -17,10 +17,8 @@ const handleOperation = op => (...args) => {
   event.emit(op, ...args);
 };
 
-let currentTools = true;
-
 export default memo(
-  withRouter(({ history }) => {
+  withRouter(({ history, type }) => {
     const [visible, setVisible] = useState(undefined);
     const resetVisible = () => {
       setVisible(undefined);
@@ -29,100 +27,111 @@ export default memo(
 
     const handlePublishProcess = usePublishProcess();
 
-    const TOOLS_DESCRIPTION_FOR_CODEBLOCK = [
-      {
-        description: '返回',
-        type: 'rollback',
-        IconFont: false,
-        onClick: () => {
-          event.emit('toggle');
-          history.goBack();
+    const TOOLS_DESCRIPTION_FOR_CODEBLOCK = useMemo(
+      () => [
+        {
+          description: '返回',
+          type: 'rollback',
+          IconFont: false,
+          onClick: () => {
+            event.emit('toggle');
+            history.goBack();
+          },
         },
-      },
-      {
-        description: '保存',
-        type: 'save',
-        onClick: handlePublishProcess,
-      },
-      {
-        description: '运行',
-        type: 'iconzhihang',
-        IconFont: true,
-        onClick: handleOperation(PYTHON_EXECUTE),
-      },
-      {
-        description: '录制',
-        type: 'iconrecordlight',
-        IconFont: true,
-      },
-      {
-        description: '发布',
-        type: 'cloud-upload',
-        onClick: handlePublishZip,
-      },
-      {
-        description: '导出',
-        type: 'upload',
-      },
-      {
-        description: '控制台',
-        type: 'desktop',
-      },
-    ];
+        {
+          description: '保存',
+          type: 'save',
+          onClick: handlePublishProcess,
+        },
+        {
+          description: '运行',
+          type: 'iconzhihang',
+          IconFont: true,
+          onClick: handleOperation(PYTHON_EXECUTE),
+        },
+        {
+          description: '录制',
+          type: 'iconrecordlight',
+          IconFont: true,
+        },
+        {
+          description: '发布',
+          type: 'cloud-upload',
+          onClick: handlePublishZip,
+        },
+        {
+          description: '导出',
+          type: 'upload',
+        },
+        {
+          description: '控制台',
+          type: 'desktop',
+        },
+      ],
+      []
+    );
 
-    const TOOLS_DESCRIPTION_FOR_PROCESS = [
-      {
-        description: '新建',
-        type: 'rollback',
-        IconFont: false,
-        onClick: () => {
-          console.log('jjjj');
-          setVisible('newprocess');
+    const TOOLS_DESCRIPTION_FOR_PROCESS = useMemo(
+      () => [
+        {
+          description: '新建',
+          type: 'rollback',
+          IconFont: false,
+          onClick: () => {
+            console.log('jjjj');
+            setVisible('newprocess');
+          },
         },
-      },
-      {
-        description: '打开',
-        type: 'save',
-      },
-      {
-        description: '保存',
-        type: 'iconzhihang',
-        IconFont: true,
-      },
-      {
-        description: '运行',
-        type: 'iconrecordlight',
-        IconFont: true,
-      },
-      {
-        description: '发布',
-        type: 'cloud-upload',
-      },
-      {
-        description: '导出',
-        type: 'upload',
-      },
-      {
-        description: '控制台',
-        type: 'desktop',
-      },
-    ];
+        {
+          description: '打开',
+          type: 'save',
+        },
+        {
+          description: '保存',
+          type: 'iconzhihang',
+          IconFont: true,
+        },
+        {
+          description: '运行',
+          type: 'iconrecordlight',
+          IconFont: true,
+        },
+        {
+          description: '发布',
+          type: 'cloud-upload',
+        },
+        {
+          description: '导出',
+          type: 'upload',
+        },
+        {
+          description: '控制台',
+          type: 'desktop',
+        },
+      ],
+      []
+    );
 
     const [tools, setTools] = useState(
-      currentTools
+      type === 'process'
         ? TOOLS_DESCRIPTION_FOR_PROCESS
         : TOOLS_DESCRIPTION_FOR_CODEBLOCK
     );
 
-    useEffect(() => {
-      const toggle = () => {
-        currentTools = !currentTools;
-      };
-      event.addListener('toggle', toggle);
-      return () => {
-        event.removeListener('toggle', toggle);
-      };
-    }, []);
+    // useEffect(() => {
+    //   const toggle = () => {
+    //     // currentTools = !currentTools;
+    //     setTools(tools => {
+    //       return tools === TOOLS_DESCRIPTION_FOR_PROCESS
+    //         ? TOOLS_DESCRIPTION_FOR_CODEBLOCK
+    //         : TOOLS_DESCRIPTION_FOR_PROCESS;
+    //     });
+    //   };
+    //   event.addListener('toggle', toggle);
+    //   return () => {
+    //     event.removeListener('toggle', toggle);
+    //   };
+    // }, []);
     return (
       <div className="drageditor-header">
         {tools.map((tool, index) => (

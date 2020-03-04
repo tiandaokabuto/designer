@@ -17,7 +17,7 @@ export default useInjectContext(({ history }) => {
   return (
     <DndProvider backend={Backend}>
       <GraphBlockHeader />
-      <DragEditorHeader />
+      <DragEditorHeader type="block" />
       <div className="dragger-editor">
         {/* <div
           style={{
