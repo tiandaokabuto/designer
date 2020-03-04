@@ -126,6 +126,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
       isDirNodeBool.children.push({
         title: name,
         key: isDirNodeBool.key + '-' + isDirNodeBool.children.length,
+        type: 'process',
       });
       newProcessTree = [...processTree];
     }
