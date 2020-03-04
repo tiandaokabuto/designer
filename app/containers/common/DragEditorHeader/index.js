@@ -9,6 +9,8 @@ import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
 import { usePublishProcess } from '../../designerGraphEdit/useHooks';
 import IconFont from '../IconFont/index';
 
+import NewProcess from './NewProcess';
+
 import './index.scss';
 
 const handleOperation = op => (...args) => {
@@ -19,6 +21,10 @@ let currentTools = true;
 
 export default memo(
   withRouter(({ history }) => {
+    const [visible, setVisible] = useState(undefined);
+    const resetVisible = () => {
+      setVisible(undefined);
+    };
     const handlePublishZip = usePublishProcessZip();
 
     const handlePublishProcess = usePublishProcess();
@@ -69,6 +75,10 @@ export default memo(
         description: '新建',
         type: 'rollback',
         IconFont: false,
+        onClick: () => {
+          console.log('jjjj');
+          setVisible('newprocess');
+        },
       },
       {
         description: '打开',
@@ -125,6 +135,7 @@ export default memo(
             {tool.description}
           </span>
         ))}
+        {visible === 'newprocess' && <NewProcess resetVisible={resetVisible} />}
       </div>
     );
   })

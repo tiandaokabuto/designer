@@ -6,6 +6,8 @@ import {
   CHANGE_CHECKEDGRAPHBLOCKID,
   CHANGE_EDITORBLOCKPYTHONCODE,
   CHANGE_PROCESSTREE,
+  CHANGE_CHECKEDTREENODE,
+  CHANGE_CURRENTPROJECT,
 } from '../../actions/grapheditor';
 import { SYNCHRO_CODEBLOCK } from '../../actions/codeblock';
 import store from '../../store';
@@ -87,9 +89,31 @@ export const updateEditorBlockPythonCode = code => {
   });
 };
 
+/**
+ * 更新左侧项目目录树
+ * @param {*} processTree
+ */
 export const changeProcessTree = (processTree = []) => {
   dispatch({
     type: CHANGE_PROCESSTREE,
     payload: processTree,
+  });
+};
+
+/**
+ * 修改当前选中的流程树结点
+ * @param {*} checkedTreeNode
+ */
+export const changeCheckedTreeNode = checkedTreeNode => {
+  dispatch({
+    type: CHANGE_CHECKEDTREENODE,
+    payload: checkedTreeNode,
+  });
+};
+
+export const changeCurrentProject = projectName => {
+  dispatch({
+    type: CHANGE_CURRENTPROJECT,
+    payload: projectName,
   });
 };

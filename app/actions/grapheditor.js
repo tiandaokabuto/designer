@@ -7,3 +7,5 @@ export const SYNCHRO_GRAPHDATAMAP = 'synchro_graphDataMap';
 export const CHANGE_CHECKEDGRAPHBLOCKID = 'change_checkedGraphBlockId';
 export const CHANGE_EDITORBLOCKPYTHONCODE = 'change_editorBlockPythonCode';
 export const CHANGE_PROCESSTREE = 'change_processTree';
+export const CHANGE_CHECKEDTREENODE = 'change_checkedTreeNode';
+export const CHANGE_CURRENTPROJECT = 'change_currentProject';

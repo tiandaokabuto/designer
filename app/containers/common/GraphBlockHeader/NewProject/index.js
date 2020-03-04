@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Modal, Form, Input, Table } from 'antd';
 
-import { newProject, readAllFileName } from '../utils';
+import { newProject, readAllFileName } from '../../utils';
 
 const FormItem = Form.Item;
 const layout = {

@@ -8,6 +8,8 @@ import {
   CHANGE_CHECKEDGRAPHBLOCKID,
   CHANGE_EDITORBLOCKPYTHONCODE,
   CHANGE_PROCESSTREE,
+  CHANGE_CHECKEDTREENODE,
+  CHANGE_CURRENTPROJECT,
 } from '../actions/grapheditor';
 
 const defaultState = {
@@ -17,6 +19,8 @@ const defaultState = {
   checkedGraphBlockId: undefined,
   editorBlockPythonCode: '',
   processTree: [],
+  currentCheckedTreeNode: undefined,
+  currentProject: undefined,
 };
 
 export default (state = defaultState, action) => {
@@ -74,6 +78,16 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         processTree: action.payload,
+      };
+    case CHANGE_CHECKEDTREENODE:
+      return {
+        ...state,
+        currentCheckedTreeNode: action.payload,
+      };
+    case CHANGE_CURRENTPROJECT:
+      return {
+        ...state,
+        currentProject: action.payload,
       };
     default:
       return state;
