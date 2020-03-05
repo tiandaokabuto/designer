@@ -2,7 +2,11 @@ import React, { useState, useMemo } from 'react';
 import { Modal, Form, Input, Table } from 'antd';
 
 import { newProject, readAllFileName, openProject } from '../../utils';
-import { changeCurrentProject } from '../../../reduxActions';
+import {
+  changeCurrentProject,
+  changeProcessTree,
+  changeCheckedTreeNode,
+} from '../../../reduxActions';
 
 const FormItem = Form.Item;
 const layout = {
@@ -77,6 +81,8 @@ export default ({ resetVisible, tag }) => {
               // 打开对应的项目
               openProject(record.name);
               changeCurrentProject(record.name);
+              changeProcessTree([]);
+              changeCheckedTreeNode(undefined);
               setVisible(false);
               resetVisible(undefined);
             },

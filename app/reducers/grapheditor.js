@@ -49,7 +49,7 @@ const jsonChangeMap = json => objChangeMap(JSON.parse(json));
 const changeEditingProcessId = (state, currentCheckedTreeNode) => {
   // 判断是否为目录结点不做任务操作
   const node = findNodeByKey(state.processTree, currentCheckedTreeNode);
-  if (node.type === 'dir') {
+  if (!node || node.type === 'dir') {
     return {};
   } else {
     console.log(node, state, ' node ');
