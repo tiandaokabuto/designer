@@ -14,7 +14,7 @@ export default ({ resetVisible }) => {
   const [visible, setVisible] = useState(true);
   // 新建类型 process --- 流程  project --- 项目
   const [type, setType] = useState(undefined);
-  // 类型/项目名称
+  // 类型/目录名称
   const [name, setName] = useState();
   const checkedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
@@ -26,7 +26,9 @@ export default ({ resetVisible }) => {
   const handleAddProcessOrProject = () => {
     // 做流程名校验避免重复
     if (isNameExist(processTree, name, checkedTreeNode)) {
-      return void message.info('流程/目录名重复,请重新填写!!');
+      return void message.info(
+        `${type === 'process' ? '流程名' : '目录名'}重复,请重新填写!`
+      );
     }
     const newProcessTree = newProcess(type, name, processTree, checkedTreeNode);
     setVisible(false);
