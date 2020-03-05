@@ -34,9 +34,7 @@ export default (id, visibleTemplate) => {
       });
       setNewVisible(result);
     };
-    /**
-     * 对属性的改变做一个代理
-     */
+    // 对属性的改变做一个代理
     useEffect(() => {
       proxyList.forEach(item => {
         item._value = item.value;
@@ -83,14 +81,11 @@ export default (id, visibleTemplate) => {
     const saveInputChange = e => {
       const dataId = e.target.dataset.anchor;
       const newValue = e.target.value;
-      // save
       const find = proxyList.find(item => item.enName === dataId);
       if (find) {
         find.value = newValue || null;
-        // forceUpdate
         event.emit('forceUpdate');
       }
-      // reset
       setCanDrag(true);
       updateTemplate(visibleTemplate);
       handleEmitCodeTransform(cards);

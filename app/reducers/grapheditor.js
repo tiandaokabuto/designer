@@ -72,7 +72,6 @@ const updateProcessTree = state => {
     graphDataMap: mapChangeJson(graphDataMap),
     graphData,
   };
-  console.log(node);
 
   return processTree;
 };
