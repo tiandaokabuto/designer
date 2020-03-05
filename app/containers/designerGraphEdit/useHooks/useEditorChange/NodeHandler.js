@@ -13,7 +13,14 @@ class NodeHandler {
       if (description.model.shape === 'processblock') {
         const key = description.item.id;
         setGraphDataMap(key, {
+          shape: 'processblock',
           properties: [
+            {
+              cnName: '标签名称',
+              enName: 'label',
+              value: '流程块',
+              default: '',
+            },
             {
               cnName: '输入参数',
               enName: 'param',
@@ -31,6 +38,7 @@ class NodeHandler {
       } else if (description.model.shape === 'rhombus-node') {
         const key = description.item.id;
         setGraphDataMap(key, {
+          shape: 'rhombus-node',
           properties: [
             {
               cnName: '分支条件',

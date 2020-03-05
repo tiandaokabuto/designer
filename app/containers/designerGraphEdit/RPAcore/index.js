@@ -45,8 +45,8 @@ const transformEditorProcess = (
 
       // 如果跟循环没有关系的话就直接执行当前的代码块
       // 解析当前模块传入的参数和返回的参数
-      const params = blockData['properties'][0].value;
-      const return_string = blockData['properties'][1].value;
+      const params = blockData['properties'][1].value;
+      const return_string = blockData['properties'][2].value;
       result.output += `${padding(depth)}${
         return_string ? return_string + ' = ' : ''
       }${funcName}(${params})\n`;
