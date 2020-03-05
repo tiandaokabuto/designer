@@ -70,6 +70,19 @@ export const isDirNode = (tree, key) => {
   return false;
 };
 
+export const findNodeByKey = (tree, key) => {
+  for (const child of tree) {
+    if (child.key === key) {
+      return child;
+    }
+    if (child.children) {
+      let bool = findNodeByKey(child.children, key);
+      if (bool) return bool;
+    }
+  }
+  return false;
+};
+
 /**
  * 数据持久化保存到本地
  * @param {*} processTree
@@ -119,6 +132,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: '0-' + processTree.length,
         type: 'process',
+        data: {},
       });
     } else {
       //在这个项目目录下新增
@@ -126,6 +140,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: isDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'process',
+        data: {},
       });
       newProcessTree = [...processTree];
     }

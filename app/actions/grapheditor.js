@@ -9,3 +9,5 @@ export const CHANGE_EDITORBLOCKPYTHONCODE = 'change_editorBlockPythonCode';
 export const CHANGE_PROCESSTREE = 'change_processTree';
 export const CHANGE_CHECKEDTREENODE = 'change_checkedTreeNode';
 export const CHANGE_CURRENTPROJECT = 'change_currentProject';
+export const SYNCHRO_GRAPHDATATOPROCESSTREE = 'synchro_graphDataToProcessTree';
+export const CHANGE_CURRENTEDITINGPROCESSID = 'currentEditingProcessId';

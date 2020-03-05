@@ -8,6 +8,7 @@ import {
   CHANGE_PROCESSTREE,
   CHANGE_CHECKEDTREENODE,
   CHANGE_CURRENTPROJECT,
+  SYNCHRO_GRAPHDATATOPROCESSTREE,
 } from '../../actions/grapheditor';
 import { SYNCHRO_CODEBLOCK } from '../../actions/codeblock';
 import store from '../../store';
@@ -31,6 +32,12 @@ export const updateCurrentEditingProcessBlock = id => {
   });
 };
 
+export const synchroGraphDataToProcessTree = () => {
+  dispatch({
+    type: SYNCHRO_GRAPHDATATOPROCESSTREE,
+  });
+};
+
 /**
  * 代码同步功能 --- 同步已经编辑后的流程块的代码到 graphDataMap
  */
@@ -43,6 +50,9 @@ export const synchroGraphDataMap = (cards, pythonCode) => {
       pythonCode,
     },
   });
+  setTimeout(() => {
+    synchroGraphDataToProcessTree();
+  }, 333);
 };
 
 /**
@@ -66,6 +76,9 @@ export const setGraphDataMap = (key, value = {}) => {
       value,
     },
   });
+  setTimeout(() => {
+    synchroGraphDataToProcessTree();
+  }, 333);
 };
 
 /**
@@ -117,3 +130,5 @@ export const changeCurrentProject = projectName => {
     payload: projectName,
   });
 };
+
+//export const

@@ -10,17 +10,71 @@ import {
   CHANGE_PROCESSTREE,
   CHANGE_CHECKEDTREENODE,
   CHANGE_CURRENTPROJECT,
+  SYNCHRO_GRAPHDATATOPROCESSTREE,
+  CHANGE_CURRENTEDITINGPROCESSID,
 } from '../actions/grapheditor';
+
+import { isDirNode, findNodeByKey } from '../containers/common/utils';
 
 const defaultState = {
   graphData: {},
   graphDataMap: new Map(), // 保存针对每个流程图的数据结构
-  currentEditingId: undefined,
+  currentEditingId: undefined, // 当前编辑的是哪个流程块
   checkedGraphBlockId: undefined,
   editorBlockPythonCode: '',
-  processTree: [],
+  processTree: [], // 当前项目的自定义流程树结构
+  currentEditingProcessId: undefined, // 当前编辑的是项目下的哪个流程
   currentCheckedTreeNode: undefined,
   currentProject: undefined,
+};
+
+const objChangeMap = obj => {
+  let map = new Map();
+  for (let key in obj) {
+    map.set(key, obj[key]);
+  }
+  return map;
+};
+
+const mapChangeObj = map => {
+  let obj = {};
+  for (let [k, v] of map) {
+    obj[k] = v;
+  }
+  return obj;
+};
+const mapChangeJson = map => JSON.stringify(mapChangeObj(map));
+const jsonChangeMap = json => objChangeMap(JSON.parse(json));
+
+const changeEditingProcessId = (state, currentCheckedTreeNode) => {
+  // 判断是否为目录结点不做任务操作
+  const node = findNodeByKey(state.processTree, currentCheckedTreeNode);
+  if (node.type === 'dir') {
+    return {};
+  } else {
+    console.log(node, state, ' node ');
+    return {
+      currentEditingProcessId: currentCheckedTreeNode,
+      graphData: node.data.graphData,
+      graphDataMap: node.data.graphDataMap
+        ? jsonChangeMap(node.data.graphDataMap)
+        : new Map(),
+    };
+  }
+};
+
+const updateProcessTree = state => {
+  const { processTree, graphDataMap, graphData } = state;
+  const node = findNodeByKey(processTree, state.currentEditingProcessId);
+  console.log(processTree, state, 'save');
+  if (!node) return processTree;
+  node.data = {
+    graphDataMap: mapChangeJson(graphDataMap),
+    graphData,
+  };
+  console.log(node);
+
+  return processTree;
 };
 
 export default (state = defaultState, action) => {
@@ -83,11 +137,18 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         currentCheckedTreeNode: action.payload,
+        // 判断当前点击的是否为流程结点 切换当前编辑的流程结点
+        ...changeEditingProcessId(state, action.payload),
       };
     case CHANGE_CURRENTPROJECT:
       return {
         ...state,
         currentProject: action.payload,
+      };
+    case SYNCHRO_GRAPHDATATOPROCESSTREE:
+      return {
+        ...state,
+        ...updateProcessTree(state),
       };
     default:
       return state;

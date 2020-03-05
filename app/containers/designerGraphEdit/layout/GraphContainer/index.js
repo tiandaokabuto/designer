@@ -68,7 +68,6 @@ export default useInjectContext(
                 case 'edit':
                   updateCurrentEditingProcessBlock(node.item.id);
                   synchroCodeBlock(graphDataMap.get(node.item.id));
-                  updateGraphData(save());
                   setTimeout(() => {
                     history.push('/designerGraphBlock');
                   }, 0);

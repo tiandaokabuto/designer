@@ -88,6 +88,11 @@ export default () => {
         onDrop={onDrop}
         treeData={processTree}
         onSelect={(selectedKey, e) => {
+          // // 如果进行流程的切换需要重置整个graphData
+          // const node = e.node.props;
+          // if (node.type === 'process') {
+          //   console.log('重置流程图数据');
+          // }
           changeCheckedTreeNode(selectedKey[0]);
         }}
       />

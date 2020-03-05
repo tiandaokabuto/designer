@@ -1,5 +1,5 @@
 import { findNodeById } from './utils';
-import { setGraphDataMap } from '../../../reduxActions';
+import { setGraphDataMap, updateGraphData } from '../../../reduxActions';
 
 const canLink = () => {};
 
@@ -41,6 +41,8 @@ class NodeHandler {
           ],
         });
       }
+      // 保存当前流程图的任意更新不加区分
+      updateGraphData(this.propsAPI.save());
     }
   };
 
