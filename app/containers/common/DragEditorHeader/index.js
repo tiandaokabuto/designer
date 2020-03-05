@@ -1,6 +1,7 @@
 import React, { useState, useEffect, memo, useMemo } from 'react';
 import { Icon } from 'antd';
 import { withRouter } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import event, {
   PYTHON_EXECUTE,
@@ -8,6 +9,7 @@ import event, {
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
 import { usePublishProcess } from '../../designerGraphEdit/useHooks';
 import IconFont from '../IconFont/index';
+import usePersistentStorage from './useHooks/usePersistentStorage';
 
 import NewProcess from './NewProcess';
 
@@ -23,6 +25,9 @@ export default memo(
     const resetVisible = () => {
       setVisible(undefined);
     };
+
+    const persistentStorage = usePersistentStorage();
+
     const handlePublishZip = usePublishProcessZip();
 
     const handlePublishProcess = usePublishProcess();
@@ -41,7 +46,7 @@ export default memo(
         {
           description: '保存',
           type: 'save',
-          onClick: handlePublishProcess,
+          onClick: () => {}, //handlePublishProcess,
         },
         {
           description: '运行',
@@ -57,7 +62,10 @@ export default memo(
         {
           description: '发布',
           type: 'cloud-upload',
-          onClick: handlePublishZip,
+          onClick: () => {
+            handlePublishProcess();
+            handlePublishZip();
+          },
         },
         {
           description: '导出',
@@ -78,7 +86,6 @@ export default memo(
           type: 'rollback',
           IconFont: false,
           onClick: () => {
-            console.log('jjjj');
             setVisible('newprocess');
           },
         },
@@ -89,6 +96,12 @@ export default memo(
         {
           description: '保存',
           type: 'iconzhihang',
+          onClick: () => {
+            // // 保存到本地
+            // console.log('jjj', processTree, currentProject);
+            // persistentStorage(processTree, currentProject);
+            persistentStorage();
+          },
           IconFont: true,
         },
         {
