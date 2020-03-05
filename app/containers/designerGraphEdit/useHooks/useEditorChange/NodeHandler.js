@@ -1,3 +1,5 @@
+import { message } from 'antd';
+
 import { findNodeById } from './utils';
 import { setGraphDataMap, updateGraphData } from '../../../reduxActions';
 
@@ -47,6 +49,34 @@ class NodeHandler {
               default: '',
             },
           ],
+        });
+      } else if (description.model.shape === 'start-node') {
+        const graphData = this.propsAPI.save();
+        if (
+          graphData.nodes.filter(node => node.shape === 'start-node').length > 1
+        ) {
+          message.info('只允许拖入一个开始结点');
+          this.apiAction('undo');
+          return;
+        }
+        const key = description.item.id;
+        setGraphDataMap(key, {
+          shape: 'start-node',
+          properties: [],
+        });
+      } else if (description.model.shape === 'end-node') {
+        const graphData = this.propsAPI.save();
+        if (
+          graphData.nodes.filter(node => node.shape === 'end-node').length > 1
+        ) {
+          message.info('只允许拖入一个结束结点');
+          this.apiAction('undo');
+          return;
+        }
+        const key = description.item.id;
+        setGraphDataMap(key, {
+          shape: 'end-node',
+          properties: [],
         });
       }
       // 保存当前流程图的任意更新不加区分
