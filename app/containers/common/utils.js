@@ -154,14 +154,9 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
 };
 
 export const isNameExist = (tree, title, checkedTreeNode) => {
-  for (const child of tree) {
-    if (child.title === key) {
-      return child.children ? child : false;
-    }
-    if (child.children) {
-      const isNotLeaf = isDirNode(child.children, key);
-      if (isNotLeaf) return isNotLeaf;
-    }
-  }
-  return false;
+  const isDirNodeBool = isDirNode(tree, checkedTreeNode);
+  // 不在同级下建目录或流程跳过检验
+  if (!isDirNodeBool) return false;
+  const children = isDirNodeBool.children;
+  return children.find(item => item.title === title);
 };

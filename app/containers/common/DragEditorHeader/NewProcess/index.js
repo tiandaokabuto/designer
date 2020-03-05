@@ -25,9 +25,9 @@ export default ({ resetVisible }) => {
   /* ---------- 流程/项目新增逻辑 ----------- */
   const handleAddProcessOrProject = () => {
     // 做流程名校验避免重复
-    // if (!isNameExist(processTree, name, checkedTreeNode)) {
-    //   return void message.info('流程名重复,请重新填写!!');
-    // }
+    if (isNameExist(processTree, name, checkedTreeNode)) {
+      return void message.info('流程/目录名重复,请重新填写!!');
+    }
     const newProcessTree = newProcess(type, name, processTree, checkedTreeNode);
     setVisible(false);
     resetVisible(undefined);
