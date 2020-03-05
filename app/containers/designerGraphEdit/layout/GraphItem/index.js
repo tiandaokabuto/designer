@@ -6,7 +6,6 @@ import ProcessTree from './components/ProcessTree';
 
 export default () => {
   const currentProject = useSelector(state => state.grapheditor.currentProject);
-  console.log(currentProject);
   return (
     <div className="designergraph-item">
       <div className="designergraph-item-title">

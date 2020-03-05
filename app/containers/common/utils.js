@@ -76,7 +76,6 @@ export const isDirNode = (tree, key) => {
  * @param {*} name
  */
 export const persistentStorage = (processTree, name) => {
-  console.log(name, processTree);
   // 重新覆写processTree
   fs.readFile(`${process.cwd()}/project/${name}/manifest.json`, function(
     err,
@@ -153,10 +152,30 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
   return newProcessTree;
 };
 
+/**
+ * 校验流程名是否重复
+ * @param {*} tree
+ * @param {*} title
+ * @param {*} checkedTreeNode
+ */
 export const isNameExist = (tree, title, checkedTreeNode) => {
   const isDirNodeBool = isDirNode(tree, checkedTreeNode);
   // 不在同级下建目录或流程跳过检验
   if (!isDirNodeBool) return false;
   const children = isDirNodeBool.children;
   return children.find(item => item.title === title);
+};
+
+export const openProject = name => {
+  fs.readFile(`${process.cwd()}/project/${name}/manifest.json`, function(
+    err,
+    data
+  ) {
+    if (!err) {
+      const { processTree } = JSON.parse(data.toString());
+      changeProcessTree(processTree);
+    } else {
+      console.log(err);
+    }
+  });
 };

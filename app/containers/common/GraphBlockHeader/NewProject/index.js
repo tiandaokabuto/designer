@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Modal, Form, Input, Table } from 'antd';
 
-import { newProject, readAllFileName } from '../../utils';
+import { newProject, readAllFileName, openProject } from '../../utils';
 import { changeCurrentProject } from '../../../reduxActions';
 
 const FormItem = Form.Item;
@@ -62,7 +62,21 @@ export default ({ resetVisible }) => {
           }}
         />
       </FormItem>
-      <Table columns={columns} dataSource={fileList} />
+      <Table
+        columns={columns}
+        dataSource={fileList}
+        onRow={record => {
+          return {
+            onClick: event => {
+              // 打开对应的项目
+              openProject(record.name);
+              changeCurrentProject(record.name);
+              setVisible(false);
+              resetVisible(undefined);
+            },
+          };
+        }}
+      />
     </Modal>
   );
 };
