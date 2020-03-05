@@ -1,5 +1,6 @@
 //import moment from moment
 import { useSelector } from 'react-redux';
+import uniqueId from 'lodash/uniqueId';
 import { changeProcessTree } from '../reduxActions';
 const fs = require('fs');
 const process = require('process');
@@ -130,7 +131,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
     if (isLeafNodeOrUndefined) {
       newProcessTree = processTree.concat({
         title: name,
-        key: '0-' + processTree.length,
+        key: uniqueId('key_'), //'0-' + processTree.length,
         type: 'process',
         data: {},
       });
@@ -138,7 +139,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
       //在这个项目目录下新增
       isDirNodeBool.children.push({
         title: name,
-        key: isDirNodeBool.key + '-' + isDirNodeBool.children.length,
+        key: uniqueId('key_'), // isDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'process',
         data: {},
       });
@@ -149,14 +150,14 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
     if (isLeafNodeOrUndefined) {
       newProcessTree = processTree.concat({
         title: name,
-        key: '0-' + processTree.length,
+        key: uniqueId('key_'), // '0-' + processTree.length,
         type: 'dir',
         children: [],
       });
     } else {
       isDirNodeBool.children.push({
         title: name,
-        key: isDirNodeBool.key + '-' + isDirNodeBool.children.length,
+        key: uniqueId('key_'), // uniqueId('key_'),sDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'dir',
         children: [],
       });
