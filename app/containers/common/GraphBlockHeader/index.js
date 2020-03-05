@@ -43,6 +43,12 @@ export default () => {
             setVisible('newproject');
           },
         },
+        {
+          title: '打开',
+          onClick: () => {
+            setVisible('openproject');
+          },
+        },
       ],
     },
     '编辑',
@@ -98,7 +104,12 @@ export default () => {
           onClick={() => handleWindowOperation('close')}
         />
       </div>
-      {visible === 'newproject' && <NewProject resetVisible={resetVisible} />}
+      {visible === 'newproject' && (
+        <NewProject resetVisible={resetVisible} tag="new" />
+      )}
+      {visible === 'openproject' && (
+        <NewProject resetVisible={resetVisible} tag="open" />
+      )}
     </div>
   );
 };

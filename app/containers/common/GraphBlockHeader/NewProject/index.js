@@ -10,7 +10,7 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 
-export default ({ resetVisible }) => {
+export default ({ resetVisible, tag }) => {
   const [visible, setVisible] = useState(true);
   const [projectName, setProjectName] = useState('');
   const fileList = useMemo(() => {
@@ -55,16 +55,22 @@ export default ({ resetVisible }) => {
         });
       }}
     >
-      <FormItem label="项目名称" {...layout}>
-        <Input
-          onChange={e => {
-            setProjectName(e.target.value);
-          }}
-        />
-      </FormItem>
+      {tag === 'new' ? (
+        <FormItem label="项目名称" {...layout}>
+          <Input
+            onChange={e => {
+              setProjectName(e.target.value);
+            }}
+          />
+        </FormItem>
+      ) : null}
+
       <Table
         columns={columns}
         dataSource={fileList}
+        scroll={{
+          y: tag === 'new' ? 'calc(70vh - 230px)' : 'calc(70vh - 170px)',
+        }}
         onRow={record => {
           return {
             onClick: event => {
