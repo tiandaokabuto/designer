@@ -10,6 +10,9 @@ import {
 export default () => {
   const [expandedKeys, setExpandedKeys] = useState([]);
   const processTree = useSelector(state => state.grapheditor.processTree);
+  const currentCheckedTreeNode = useSelector(
+    state => state.grapheditor.currentCheckedTreeNode
+  );
   const onDragEnter = info => {
     console.log(info);
     // expandedKeys 需要受控时设置
@@ -82,11 +85,13 @@ export default () => {
       <Tree
         className="draggable-tree"
         defaultExpandedKeys={expandedKeys}
+        defaultExpandAll={true}
         draggable
         blockNode
         onDragEnter={onDragEnter}
         onDrop={onDrop}
         treeData={processTree}
+        selectedKeys={[currentCheckedTreeNode]}
         onSelect={(selectedKey, e) => {
           // // 如果进行流程的切换需要重置整个graphData
           // const node = e.node.props;

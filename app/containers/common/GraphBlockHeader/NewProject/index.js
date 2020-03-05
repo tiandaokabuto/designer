@@ -6,6 +6,7 @@ import {
   changeCurrentProject,
   changeProcessTree,
   changeCheckedTreeNode,
+  resetGraphEditData,
 } from '../../../reduxActions';
 
 const FormItem = Form.Item;
@@ -56,6 +57,9 @@ export default ({ resetVisible, tag }) => {
           resetVisible(undefined);
           // 保存当前的工程名字
           changeCurrentProject(projectName);
+          resetGraphEditData();
+          // changeProcessTree([]);
+          // changeCheckedTreeNode(undefined);
         });
       }}
     >
@@ -81,8 +85,9 @@ export default ({ resetVisible, tag }) => {
               // 打开对应的项目
               openProject(record.name);
               changeCurrentProject(record.name);
-              changeProcessTree([]);
-              changeCheckedTreeNode(undefined);
+              resetGraphEditData();
+              // changeProcessTree([]);
+              // changeCheckedTreeNode(undefined);
               setVisible(false);
               resetVisible(undefined);
             },

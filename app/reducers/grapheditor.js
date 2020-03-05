@@ -12,6 +12,7 @@ import {
   CHANGE_CURRENTPROJECT,
   SYNCHRO_GRAPHDATATOPROCESSTREE,
   CHANGE_CURRENTEDITINGPROCESSID,
+  RESET_ALLGRAPHEDITDATA,
 } from '../actions/grapheditor';
 
 import { isDirNode, findNodeByKey } from '../containers/common/utils';
@@ -148,6 +149,13 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         ...updateProcessTree(state),
+      };
+    case RESET_ALLGRAPHEDITDATA:
+      return {
+        ...state,
+        currentCheckedTreeNode: undefined,
+        graphData: {},
+        graphDataMap: new Map(),
       };
     default:
       return state;

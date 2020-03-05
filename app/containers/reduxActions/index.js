@@ -9,6 +9,7 @@ import {
   CHANGE_CHECKEDTREENODE,
   CHANGE_CURRENTPROJECT,
   SYNCHRO_GRAPHDATATOPROCESSTREE,
+  RESET_ALLGRAPHEDITDATA,
 } from '../../actions/grapheditor';
 import { SYNCHRO_CODEBLOCK } from '../../actions/codeblock';
 import store from '../../store';
@@ -131,4 +132,11 @@ export const changeCurrentProject = projectName => {
   });
 };
 
-//export const
+/**
+ * 重置流程图模块的相关数据
+ */
+export const resetGraphEditData = () => {
+  dispatch({
+    type: RESET_ALLGRAPHEDITDATA,
+  });
+};
