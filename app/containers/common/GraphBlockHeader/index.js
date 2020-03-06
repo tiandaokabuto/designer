@@ -38,13 +38,13 @@ export default () => {
       title: '项目',
       children: [
         {
-          title: '新建',
+          title: '新建目录',
           onClick: () => {
             setVisible('newproject');
           },
         },
         {
-          title: '打开',
+          title: '打开目录',
           onClick: () => {
             setVisible('openproject');
           },

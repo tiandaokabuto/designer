@@ -44,6 +44,16 @@ export default memo(
           },
         },
         {
+          description: '上一步',
+          type: 'save',
+          onClick: () => {},
+        },
+        {
+          description: '下一步',
+          type: 'save',
+          onClick: () => {},
+        },
+        {
           description: '保存',
           type: 'save',
           onClick: () => {}, //handlePublishProcess,
@@ -81,7 +91,7 @@ export default memo(
 
     const TOOLS_DESCRIPTION_FOR_PROCESS = [
       {
-        description: '新建',
+        description: '新建目录',
         type: 'rollback',
         IconFont: false,
         onClick: () => {
@@ -89,7 +99,15 @@ export default memo(
         },
       },
       {
-        description: '打开',
+        description: '新建流程',
+        type: 'save',
+      },
+      {
+        description: '上一步',
+        type: 'save',
+      },
+      {
+        description: '下一步',
         type: 'save',
       },
       {
@@ -126,20 +144,6 @@ export default memo(
         : TOOLS_DESCRIPTION_FOR_CODEBLOCK
     );
 
-    // useEffect(() => {
-    //   const toggle = () => {
-    //     // currentTools = !currentTools;
-    //     setTools(tools => {
-    //       return tools === TOOLS_DESCRIPTION_FOR_PROCESS
-    //         ? TOOLS_DESCRIPTION_FOR_CODEBLOCK
-    //         : TOOLS_DESCRIPTION_FOR_PROCESS;
-    //     });
-    //   };
-    //   event.addListener('toggle', toggle);
-    //   return () => {
-    //     event.removeListener('toggle', toggle);
-    //   };
-    // }, []);
     return (
       <div className="drageditor-header">
         {tools.map((tool, index) => (
