@@ -59,9 +59,9 @@ const installExtensions = async () => {
 
 const createLoginWindow = () => {
   loginWindow = new BrowserWindow({
-    width: 662,
-    height: 442,
-    useContentSize: true,
+    width: 800,
+    height: 500,
+    //useContentSize: true,
     frame: false,
     resizable: false,
     webPreferences: {

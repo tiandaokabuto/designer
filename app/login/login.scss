@@ -1,0 +1,82 @@
+.login {
+  display: flex;
+  height: 100vh;
+  &-left {
+    flex-basis: 400px;
+    background-image: url('../containers/images/login.png');
+    background-size: cover;
+  }
+  &-right {
+    flex-basis: 400px;
+    padding: 56px 0 0 80px;
+    &-title {
+      margin-bottom: 56px;
+      font-size: 14px;
+    }
+    input {
+      height: 40px;
+      border: none;
+      // border-bottom: 1px solid rgba(238, 238, 238, 1);
+      border-radius: 0em;
+      padding-left: 0;
+    }
+    button {
+      border-radius: 32px;
+      width: 80px;
+    }
+    &-username {
+      width: 240px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      position: relative;
+
+      &::after {
+        content: '';
+        transition: width 0.5s linear;
+        transform-origin: right;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 0;
+        height: 1px;
+        background-color: rgba(238, 238, 238, 1);
+      }
+      &:focus-within {
+        &::after {
+          transform-origin: left;
+          width: 100%;
+          left: 0;
+        }
+      }
+    }
+    &-password {
+      width: 240px;
+      font-size: 12px;
+      margin-bottom: 16px;
+      position: relative;
+
+      &::after {
+        content: '';
+        transition: width 0.5s linear;
+        transform-origin: right;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 0;
+        height: 1px;
+        background-color: rgba(238, 238, 238, 1);
+      }
+      &:focus-within {
+        &::after {
+          transform-origin: left;
+          width: 100%;
+          left: 0;
+        }
+      }
+    }
+  }
+}
+
+:root {
+  margin: 0;
+}
