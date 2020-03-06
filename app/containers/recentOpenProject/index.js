@@ -5,7 +5,12 @@ import React, { useState, useMemo } from 'react';
 import { Table, Button, Input, message } from 'antd';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
-import { newProject, openProject, readAllFileName } from '../common/utils';
+import {
+  newProject,
+  openProject,
+  readAllFileName,
+  formatDateTime,
+} from '../common/utils';
 import { changeCurrentProject } from '../reduxActions';
 
 import './index.scss';
@@ -20,10 +25,12 @@ export default useInjectContext(({ history }) => {
     {
       title: '创建时间',
       dataIndex: 'birthtime',
+      render: formatDateTime,
     },
     {
       title: '修改时间',
       dataIndex: 'mtime',
+      render: formatDateTime,
     },
   ];
   const fileList = useMemo(() => {

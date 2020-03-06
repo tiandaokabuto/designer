@@ -1,7 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { Modal, Form, Input, Table } from 'antd';
 
-import { newProject, readAllFileName, openProject } from '../../utils';
+import {
+  newProject,
+  readAllFileName,
+  openProject,
+  formatDateTime,
+} from '../../utils';
 import {
   changeCurrentProject,
   changeProcessTree,
@@ -30,10 +35,12 @@ export default ({ resetVisible, tag }) => {
     {
       title: '创建时间',
       dataIndex: 'birthtime',
+      render: formatDateTime,
     },
     {
       title: '修改时间',
       dataIndex: 'mtime',
+      render: formatDateTime,
     },
   ];
   return (

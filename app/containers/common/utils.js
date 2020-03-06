@@ -1,6 +1,7 @@
 //import moment from moment
 import { useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
+import moment from 'moment';
 import { changeProcessTree } from '../reduxActions';
 const fs = require('fs');
 const process = require('process');
@@ -194,4 +195,8 @@ export const openProject = name => {
       console.log(err);
     }
   });
+};
+
+export const formatDateTime = time => {
+  return moment(time).format('YYYY-MM-DD HH:mm');
 };
