@@ -8,7 +8,7 @@ $btn_backgroundColor: rgba(42, 140, 108, 1);
   background: rgba(50, 166, 127, 1);
   border-color: rgba(50, 166, 127, 1);
   a {
-    color: white;
+    color: white !important;
     &:hover {
       color: white;
       border-color: rgba(50, 166, 127, 1);

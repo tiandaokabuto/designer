@@ -21,6 +21,9 @@ export default useInjectContext(({ history }) => {
     {
       title: '项目名称',
       dataIndex: 'name',
+      render: title => {
+        return <span style={{ color: 'rgba(50, 166, 127, 1)' }}>{title}</span>;
+      },
     },
     {
       title: '创建时间',
