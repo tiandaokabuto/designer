@@ -79,51 +79,46 @@ export default memo(
       []
     );
 
-    const TOOLS_DESCRIPTION_FOR_PROCESS = useMemo(
-      () => [
-        {
-          description: '新建',
-          type: 'rollback',
-          IconFont: false,
-          onClick: () => {
-            setVisible('newprocess');
-          },
+    const TOOLS_DESCRIPTION_FOR_PROCESS = [
+      {
+        description: '新建',
+        type: 'rollback',
+        IconFont: false,
+        onClick: () => {
+          setVisible('newprocess');
         },
-        {
-          description: '打开',
-          type: 'save',
+      },
+      {
+        description: '打开',
+        type: 'save',
+      },
+      {
+        description: '保存',
+        type: 'iconzhihang',
+        onClick: () => {
+          // 保存到本地
+          persistentStorage();
         },
-        {
-          description: '保存',
-          type: 'iconzhihang',
-          onClick: () => {
-            // // 保存到本地
-            // console.log('jjj', processTree, currentProject);
-            // persistentStorage(processTree, currentProject);
-            persistentStorage();
-          },
-          IconFont: true,
-        },
-        {
-          description: '运行',
-          type: 'iconrecordlight',
-          IconFont: true,
-        },
-        {
-          description: '发布',
-          type: 'cloud-upload',
-        },
-        {
-          description: '导出',
-          type: 'upload',
-        },
-        {
-          description: '控制台',
-          type: 'desktop',
-        },
-      ],
-      []
-    );
+        IconFont: true,
+      },
+      {
+        description: '运行',
+        type: 'iconrecordlight',
+        IconFont: true,
+      },
+      {
+        description: '发布',
+        type: 'cloud-upload',
+      },
+      {
+        description: '导出',
+        type: 'upload',
+      },
+      {
+        description: '控制台',
+        type: 'desktop',
+      },
+    ];
 
     const [tools, setTools] = useState(
       type === 'process'

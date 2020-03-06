@@ -53,7 +53,6 @@ const changeEditingProcessId = (state, currentCheckedTreeNode) => {
   if (!node || node.type === 'dir') {
     return {};
   } else {
-    console.log(node, state, ' node ');
     return {
       currentEditingProcessId: currentCheckedTreeNode,
       graphData: node.data.graphData,

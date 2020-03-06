@@ -1,10 +1,13 @@
 import { useSelector } from 'react-redux';
 import { persistentStorage } from '../../utils';
 
+import store from '../../../../store';
+
 export default () => {
-  const processTree = useSelector(state => state.grapheditor.processTree);
-  const currentProject = useSelector(state => state.grapheditor.currentProject);
   return () => {
+    const {
+      grapheditor: { processTree, currentProject },
+    } = store.getState();
     persistentStorage(processTree, currentProject);
   };
 };
