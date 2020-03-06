@@ -135,26 +135,28 @@ const BasicStatement = useInjectContext(props => {
           <div></div>
         ) : (
           !readOnly && (
-            <div className="card-content-operation">
-              <Icon
-                type="play-circle"
-                onClick={() => {
-                  console.log('kkk');
-                }}
-              />
-              <Icon
-                type="eye"
-                onClick={() => {
-                  console.log('kkk2');
-                }}
-              />
-              <Icon
-                type="delete"
-                onClick={() => {
-                  deleteNodeById(id);
-                  console.log('删除 -->', id);
-                }}
-              />
+            <React.Fragment>
+              <div className="card-content-operation">
+                <Icon
+                  type="play-circle"
+                  onClick={() => {
+                    console.log('kkk');
+                  }}
+                />
+                <Icon
+                  type="eye"
+                  onClick={() => {
+                    console.log('kkk2');
+                  }}
+                />
+                <Icon
+                  type="delete"
+                  onClick={() => {
+                    deleteNodeById(id);
+                    console.log('删除 -->', id);
+                  }}
+                />
+              </div>
               <div
                 className="card-content-searchtarget"
                 onClick={() => {
@@ -188,7 +190,7 @@ const BasicStatement = useInjectContext(props => {
                   />
                 )}
               </div>
-            </div>
+            </React.Fragment>
           )
         )}
       </div>

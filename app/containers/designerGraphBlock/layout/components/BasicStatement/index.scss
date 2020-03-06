@@ -16,32 +16,43 @@
     text-overflow: ellipsis;
     color: rgba(153, 153, 153, 1);
   }
+  &:hover {
+    .card-content-operation {
+      right: 84px;
+      visibility: visible;
+    }
+  }
   .card-content-operation {
+    position: absolute;
+    right: -2px;
+    transition: right 1s cubic-bezier(0.01, 0.28, 0, 1.09);
+    visibility: hidden;
     color: rgba(204, 204, 204, 1);
     font-size: 16px;
     > * {
       margin-left: 14px;
       vertical-align: middle;
     }
-    .card-content-searchtarget {
-      position: relative;
-      display: inline-flex;
-      flex-direction: column;
-      font-size: 12px;
-      cursor: default;
-      &-anchor {
-        font-size: 14px;
-        color: rgba(50, 166, 127, 1);
-      }
-      &::before {
-        content: '';
-        position: absolute;
-        height: 52px;
-        top: -10px;
-        left: -8px;
-        width: 1px;
-        background: rgba(50, 166, 127, 1);
-      }
+  }
+  .card-content-searchtarget {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    font-size: 12px;
+    background-color: white;
+    cursor: default;
+    &-anchor {
+      font-size: 14px;
+      color: rgba(50, 166, 127, 1);
+    }
+    &::before {
+      content: '';
+      position: absolute;
+      height: 52px;
+      top: -10px;
+      left: -8px;
+      width: 1px;
+      background: rgba(50, 166, 127, 1);
     }
   }
   .template_span {
