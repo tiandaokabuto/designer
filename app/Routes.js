@@ -6,10 +6,16 @@ import HomePage from './containers/HomePage';
 import CounterPage from './containers/CounterPage';
 import DesignerGraphEdit from './containers/designerGraphEdit';
 import DesignerGraphBlock from './containers/designerGraphBlock';
+import RecentOpenProject from './containers/recentOpenProject';
 
 export default () => (
   <App>
     <Switch>
+      <Route
+        exact={true}
+        path={routes.RecentOpenProject}
+        component={RecentOpenProject}
+      />
       <Route exact={true} path={routes.COUNTER} component={CounterPage} />
       <Route
         exact={true}

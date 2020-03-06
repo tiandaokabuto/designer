@@ -11,6 +11,8 @@ import type { Store } from '../reducers/types';
 import * as reduxActions from './reduxActions';
 import Routes from '../Routes';
 
+import './global.scss';
+
 type Props = {
   store: Store,
   history: {},
