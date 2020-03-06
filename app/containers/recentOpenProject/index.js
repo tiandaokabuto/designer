@@ -1,11 +1,11 @@
 /**
  * 最近打开项目列表
  */
-import React, { useState } from 'react';
-import { Table, Button, Input } from 'antd';
+import React, { useState, useMemo } from 'react';
+import { Table, Button, Input, message } from 'antd';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
-import { newProject, openProject } from '../common/utils';
+import { newProject, openProject, readAllFileName } from '../common/utils';
 import { changeCurrentProject } from '../reduxActions';
 
 import './index.scss';
@@ -26,6 +26,9 @@ export default useInjectContext(({ history }) => {
       dataIndex: 'mtime',
     },
   ];
+  const fileList = useMemo(() => {
+    return readAllFileName();
+  }, []);
   return (
     <div className="recentproject">
       <div className="recentproject-leftcontent">
@@ -39,6 +42,10 @@ export default useInjectContext(({ history }) => {
           <Button
             type="primary"
             onClick={() => {
+              if (!name) {
+                message.info('请填写项目名称');
+                return;
+              }
               history.push('/designGraphEdit');
               setTimeout(() => {
                 newProject(name, () => {
@@ -51,7 +58,23 @@ export default useInjectContext(({ history }) => {
           </Button>
         </div>
         <h2>最近使用项目</h2>
-        <Table columns={columns} />
+        <Table
+          columns={columns}
+          dataSource={fileList}
+          scroll={{
+            y: 'calc(100vh - 327px)',
+          }}
+          onRow={record => {
+            return {
+              onClick: event => {
+                // 打开对应的项目
+                openProject(record.name);
+                changeCurrentProject(record.name);
+                history.push('/designGraphEdit');
+              },
+            };
+          }}
+        />
       </div>
       <div className="recentproject-rightcontent">
         <div className="recentproject-rightcontent-close"></div>
