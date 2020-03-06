@@ -1,5 +1,6 @@
 {
   "DESIGNGRAPHEDIT": "/",
   "COUNTER": "/counter",
-  "DesignerGraphBlock": "/designerGraphBlock"
+  "DesignerGraphBlock": "/designerGraphBlock",
+  "LOGIN": "/login"
 }

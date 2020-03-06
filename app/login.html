@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>流程易</title>
+    <title>登录</title>
     <script>
       (() => {
         if (!process.env.START_HOT) {
@@ -31,8 +31,8 @@
         const port = process.env.PORT || 1212;
         scripts.push(
           process.env.START_HOT
-            ? `http://localhost:${port}/dist/main.min.js`
-            : './dist/main.prod.min.js'
+            ? `http://localhost:${port}/dist/login.min.js`
+            : './dist/login.prod.min.js'
         );
 
         document.write(

@@ -30,6 +30,7 @@ export default class AppUpdater {
 }
 
 let mainWindow = null;
+let loginWindow = null;
 
 let isNetStart = false;
 let targetId = undefined;
@@ -56,6 +57,24 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
+const createLoginWindow = () => {
+  loginWindow = new BrowserWindow({
+    width: 662,
+    height: 442,
+    useContentSize: true,
+    frame: false,
+    resizable: false,
+    webPreferences: {
+      nodeIntegration: true,
+      devTools: true,
+    },
+  });
+
+  loginWindow.setMenu(null);
+
+  loginWindow.loadURL(`file://${__dirname}/login.html`);
+};
+
 const createWindow = async () => {
   if (
     process.env.NODE_ENV === 'development' ||
@@ -78,6 +97,8 @@ const createWindow = async () => {
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
+
+  createLoginWindow();
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
@@ -87,14 +108,23 @@ const createWindow = async () => {
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
-      mainWindow.show();
-      mainWindow.focus();
+      // mainWindow.show();
+      // mainWindow.focus();
     }
   });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // 登录成功切换到主页面
+  ipcMain.on('loginSuccess', () => {
+    loginWindow.close();
+    mainWindow.show();
+    mainWindow.focus();
+  });
+
+  // 创建登录窗口
 
   ipcMain.on('min', e => mainWindow.minimize());
   ipcMain.on('max', e => mainWindow.maximize());
@@ -150,50 +180,6 @@ const createWindow = async () => {
     });
     isNetStart = true;
   });
-
-  // --------------------------- net版本
-
-  // const server = net.createServer();
-
-  // // //一些事件
-  // server.on('listening', function() {
-  //   //的那个服务绑定后触发
-  //   console.log('服务器已启动');
-  // });
-
-  // server.on('connection', function(socket) {
-  //   //当一个新的连接建立时触发，可接收一个socket对象
-  //   console.log('有新的连接！');
-
-  //   socket.on('data', function(data) {
-  //     const str = data
-  //       .toString()
-  //       .replace(/([\s\S]*)(?={)/, '')
-  //       .replace(/}}/, '}');
-  //     const result = str ? JSON.parse(str) : {};
-  //     mainWindow.restore();
-  //     //将结果通知给渲染进程
-  //     if (targetId === undefined) return;
-  //     mainWindow.webContents.send('updateXpath', { ...result, targetId });
-  //     targetId = undefined;
-  //     // isNetStart = false;
-  //     // server.close();
-  //   });
-  // });
-
-  // server.on('close', function() {
-  //   //关闭连接时触发
-  //   isNetStart = false;
-  //   console.log('连接已关闭');
-  // });
-
-  // ipcMain.on('start_server', (event, id) => {
-  //   targetId = id;
-  //   if (isNetStart) return;
-
-  //   server.listen('8888', '127.0.0.1'); //监听已有的连接
-  //   isNetStart = true;
-  // });
 };
 
 /**
