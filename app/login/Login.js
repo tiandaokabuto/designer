@@ -20,9 +20,8 @@ const Login = () => {
       })
       .then(json => {
         if (~json.code) {
-          console.log('登录成功');
+          ipcRenderer.send('loginSuccess');
         }
-        ipcRenderer.send('loginSuccess');
       });
   };
   useEffect(() => {

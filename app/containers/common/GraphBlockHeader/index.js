@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Icon, Dropdown, Menu } from 'antd';
+import axios from 'axios';
 
 import NewProject from './NewProject';
+import api from '../../../api';
 const { ipcRenderer } = require('electron');
 
 import './index.scss';
@@ -57,6 +59,16 @@ export default () => {
     '工具',
     '帮助',
   ];
+  const handleSignOut = () => {
+    axios
+      .get(api.signOut)
+      .then(res => res.data)
+      .then(json => {
+        if (~json.code) {
+          ipcRenderer.send('signOut');
+        }
+      });
+  };
   return (
     <div
       className="graphblock-header"
@@ -87,7 +99,12 @@ export default () => {
       <div className="graphblock-header-user">
         <Icon type="user" />
         <span>韩冬冬, 您好!</span>
-        <span className="graphblock-header-user-sign-out">退出</span>
+        <span
+          className="graphblock-header-user-sign-out"
+          onClick={handleSignOut}
+        >
+          退出
+        </span>
         <Icon
           type="minus"
           className="graphblock-header-operation"

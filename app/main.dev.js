@@ -119,9 +119,16 @@ const createWindow = async () => {
 
   // 登录成功切换到主页面
   ipcMain.on('loginSuccess', () => {
-    loginWindow.close();
+    loginWindow.hide();
     mainWindow.show();
     mainWindow.focus();
+  });
+
+  // 退出登录切换到登录页面
+  ipcMain.on('signOut', () => {
+    mainWindow.hide();
+    loginWindow.show();
+    loginWindow.focus();
   });
 
   // 创建登录窗口
