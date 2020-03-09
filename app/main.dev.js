@@ -59,6 +59,7 @@ const installExtensions = async () => {
 
 const createLoginWindow = () => {
   loginWindow = new BrowserWindow({
+    show: false,
     width: 800,
     height: 500,
     //useContentSize: true,
@@ -73,9 +74,14 @@ const createLoginWindow = () => {
   loginWindow.setMenu(null);
 
   loginWindow.loadURL(`file://${__dirname}/login.html`);
+
+  loginWindow.on('ready-to-show', function() {
+    loginWindow.show();
+  });
 };
 
 const createWindow = async () => {
+  createLoginWindow();
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -97,8 +103,6 @@ const createWindow = async () => {
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
-
-  createLoginWindow();
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
