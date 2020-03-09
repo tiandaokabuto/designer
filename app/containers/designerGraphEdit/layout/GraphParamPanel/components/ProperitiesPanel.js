@@ -2,8 +2,29 @@ import React from 'react';
 import { Input } from 'antd';
 import { useSelector } from 'react-redux';
 import { withPropsAPI } from 'gg-editor';
+import useDebounce from 'react-hook-easier/lib/useDebounce';
 
-const FormItem = ({ param, propsAPI }) => {
+import { updateGraphData } from '../../../../reduxActions';
+
+const FormItem = ({ param, propsAPI, checkedGraphBlockId }) => {
+  const handleLableChange = useDebounce(e => {
+    const value = e.target.value;
+    param.value = value;
+
+    const { executeCommand, update, save, find } = propsAPI;
+    const item = find(checkedGraphBlockId);
+    if (!item) {
+      return;
+    }
+    setTimeout(() => {
+      updateGraphData(save());
+    }, 0);
+    executeCommand(
+      update(item, {
+        label: value,
+      })
+    );
+  }, 333);
   return (
     <div
       style={{
@@ -21,18 +42,8 @@ const FormItem = ({ param, propsAPI }) => {
         onChange={
           param.enName === 'label'
             ? e => {
-                param.value = e.target.value;
-                const { getSelected, executeCommand, update } = propsAPI;
-                const item = getSelected()[0];
-                const { label } = item.getModel();
-                if (!item) {
-                  return;
-                }
-                executeCommand(
-                  update(item, {
-                    label: e.target.value,
-                  })
-                );
+                e.persist();
+                handleLableChange(e);
               }
             : e => {
                 param.value = e.target.value;
@@ -50,10 +61,18 @@ export default withPropsAPI(({ propsAPI }) => {
   const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
 
   const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
+  console.log(blockNode);
   return (
     <div key={checkedGraphBlockId}>
       {(blockNode.properties || []).map((param, index) => {
-        return <FormItem param={param} key={index} propsAPI={propsAPI} />;
+        return (
+          <FormItem
+            param={param}
+            checkedGraphBlockId={checkedGraphBlockId}
+            key={index}
+            propsAPI={propsAPI}
+          />
+        );
       })}
     </div>
   );

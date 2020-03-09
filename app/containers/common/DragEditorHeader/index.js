@@ -72,10 +72,6 @@ export default memo(
         {
           description: '发布',
           type: 'cloud-upload',
-          onClick: () => {
-            handlePublishProcess();
-            handlePublishZip();
-          },
         },
         {
           description: '导出',
@@ -127,6 +123,10 @@ export default memo(
       {
         description: '发布',
         type: 'cloud-upload',
+        onClick: () => {
+          handlePublishProcess();
+          // handlePublishZip();
+        },
       },
       {
         description: '导出',
