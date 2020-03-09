@@ -4,7 +4,10 @@ import { useSelector } from 'react-redux';
 import { withPropsAPI } from 'gg-editor';
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 
-import { updateGraphData } from '../../../../reduxActions';
+import {
+  updateGraphData,
+  synchroGraphDataToProcessTree,
+} from '../../../../reduxActions';
 
 const FormItem = ({ param, propsAPI, checkedGraphBlockId }) => {
   const handleLableChange = useDebounce(e => {
@@ -18,6 +21,7 @@ const FormItem = ({ param, propsAPI, checkedGraphBlockId }) => {
     }
     setTimeout(() => {
       updateGraphData(save());
+      synchroGraphDataToProcessTree();
     }, 0);
     executeCommand(
       update(item, {
@@ -61,7 +65,7 @@ export default withPropsAPI(({ propsAPI }) => {
   const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
 
   const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
-  console.log(blockNode);
+
   return (
     <div key={checkedGraphBlockId}>
       {(blockNode.properties || []).map((param, index) => {

@@ -41,7 +41,6 @@ export default useInjectContext(
             className="designergraph-container-flow"
             onAfterChange={value => {
               // 将每次的状态更新保存下来
-              console.log(value);
               registerDataChange(value);
             }}
             data={graphData}
