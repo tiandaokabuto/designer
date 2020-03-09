@@ -1,9 +1,11 @@
 import React from 'react';
 import { Tabs } from 'antd';
 import { useSelector } from 'react-redux';
+import GGEditor from 'gg-editor';
 
 import ParamPanel from './components/ParamPanel';
 import { findNodeById } from '../shared/utils';
+import GraphContainer from '../../../designerGraphEdit/layout/GraphContainer';
 
 const { TabPane } = Tabs;
 
@@ -24,7 +26,11 @@ export default ({ current }) => {
           2
         </TabPane>
         <TabPane tab="流程图" key="3">
-          2
+          <GGEditor>
+            <div style={{ height: 'calc(100vh - 81px)' }}>
+              <GraphContainer showHead={true} />
+            </div>
+          </GGEditor>
         </TabPane>
       </Tabs>
     </div>

@@ -22,6 +22,7 @@ export default useInjectContext(
     ({
       propsAPI,
       history,
+      showHead,
       updateGraphData,
       synchroCodeBlock,
       changeCheckedGraphBlockId,
@@ -33,12 +34,15 @@ export default useInjectContext(
       const [drawerVisible, setDrawerVisible] = useState(false);
       return (
         <div className="designergraph-container">
-          <div className="designergraph-container-header">
-            <FlowItemPanel />
-            <span className="designergraph-container-header-title">
-              我的项目我的项目我的项目我的项目我的项目
-            </span>
-          </div>
+          {!showHead && (
+            <div className="designergraph-container-header">
+              <FlowItemPanel />
+              <span className="designergraph-container-header-title">
+                我的项目我的项目我的项目我的项目我的项目
+              </span>
+            </div>
+          )}
+
           <Flow
             className="designergraph-container-flow"
             onAfterChange={value => {
