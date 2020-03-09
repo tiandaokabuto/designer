@@ -19,6 +19,9 @@
       // border-bottom: 1px solid rgba(238, 238, 238, 1);
       border-radius: 0em;
       padding-left: 0;
+      &:focus {
+        box-shadow: none;
+      }
     }
     button {
       border-radius: 32px;
