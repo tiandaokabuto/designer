@@ -50,7 +50,10 @@ export default useInjectContext(
               registerDataChange(value);
             }}
             data={graphData}
-            graph={{ edgeDefaultShape: 'flow-polyline' }}
+            graph={{
+              edgeDefaultShape: 'flow-polyline',
+              model: showHead ? 'readOnly' : 'default',
+            }}
             onNodeClick={node => {
               const dataId = node.shape._attrs.dataId;
               /**
