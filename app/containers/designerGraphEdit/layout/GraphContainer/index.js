@@ -10,6 +10,7 @@ import EndNode from '../RegisterNode/EndNode';
 import RhombusNode from '../RegisterNode/RhombusNode';
 
 import EditorDrawer from './components/EditorDrawer';
+import HighlightEditor from '../../useHooks/HighlightEditor';
 
 import EditorChange, {
   registerDataChange,
@@ -125,6 +126,7 @@ export default useInjectContext(
           <EndNode />
           <RhombusNode />
           <EditorChange />
+          <HighlightEditor />
         </div>
       );
     }
