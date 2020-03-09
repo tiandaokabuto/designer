@@ -45,6 +45,9 @@ export default useInjectContext(
 
           <Flow
             className="designergraph-container-flow"
+            style={{
+              background: showHead ? 'rgba(252, 252, 252, 1)' : '',
+            }}
             onAfterChange={value => {
               // 将每次的状态更新保存下来
               registerDataChange(value);
@@ -101,6 +104,7 @@ export default useInjectContext(
               /** 点击边的时候判断是否触发label的添加 */
               const model = edge.item.model;
               if (
+                !showHead &&
                 isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
               ) {
                 setDrawerVisible(true);
