@@ -6,7 +6,6 @@ import FlowDetailPanel from '../EditorDetailPanel/FlowDetailPanel';
 export default ({ visible, setDrawerVisible }) => {
   return (
     <Drawer
-      title="Basic Drawer"
       placement="right"
       closable={false}
       visible={visible}

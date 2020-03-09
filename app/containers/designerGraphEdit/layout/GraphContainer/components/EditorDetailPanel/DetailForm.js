@@ -60,6 +60,15 @@ class DetailForm extends React.Component {
     );
   };
 
+  renderEdgeLabelSelect = () => {
+    return (
+      <Select onChange={this.handleSubmit}>
+        <Option value="是">是</Option>
+        <Option value="否">否</Option>
+      </Select>
+    );
+  };
+
   renderNodeDetail = () => {
     const { form } = this.props;
     const { label } = this.item.getModel();
@@ -79,12 +88,12 @@ class DetailForm extends React.Component {
 
     return (
       <Fragment>
-        <Item label="Label" {...inlineFormItemLayout}>
+        <Item label="标签" {...inlineFormItemLayout}>
           {form.getFieldDecorator('label', {
             initialValue: label,
-          })(<Input onBlur={this.handleSubmit} />)}
+          })(this.renderEdgeLabelSelect())}
         </Item>
-        <Item label="Shape" {...inlineFormItemLayout}>
+        <Item label="形状" {...inlineFormItemLayout}>
           {form.getFieldDecorator('shape', {
             initialValue: shape,
           })(this.renderEdgeShapeSelect())}
@@ -114,13 +123,11 @@ class DetailForm extends React.Component {
     }
 
     return (
-      <Card type="inner" size="small" title={upperFirst(type)} bordered={false}>
-        <Form onSubmit={this.handleSubmit}>
-          {type === 'node' && this.renderNodeDetail()}
-          {type === 'edge' && this.renderEdgeDetail()}
-          {type === 'group' && this.renderGroupDetail()}
-        </Form>
-      </Card>
+      <Form onSubmit={this.handleSubmit}>
+        {type === 'node' && this.renderNodeDetail()}
+        {type === 'edge' && this.renderEdgeDetail()}
+        {type === 'group' && this.renderGroupDetail()}
+      </Form>
     );
   }
 }

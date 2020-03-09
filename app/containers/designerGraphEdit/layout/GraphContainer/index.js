@@ -15,6 +15,8 @@ import EditorChange, {
   registerDataChange,
 } from '../../useHooks/useEditorChange';
 
+import { isEdgeConnectWithRhombusNode } from '../../RPAcore/utils';
+
 export default useInjectContext(
   withPropsAPI(
     ({
@@ -91,7 +93,13 @@ export default useInjectContext(
             onEdgeClick={edge => {
               /** 点击边的时候判断是否触发label的添加 */
               console.log(edge);
-              setDrawerVisible(true);
+              const model = edge.item.model;
+              if (
+                isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
+              ) {
+                setDrawerVisible(true);
+              }
+              // 判断当前的edge是否与判断结点项关联\
             }}
             onDoubleClick={(...args) => {
               console.log(...args);

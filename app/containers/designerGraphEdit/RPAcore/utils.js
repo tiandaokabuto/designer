@@ -67,3 +67,7 @@ export const hasTwoEntryPortInProcessBlock = (edges, id) => {
     find.filter(edge => ['是', '否'].includes(edge.label)).length === 1
   );
 };
+
+export const isEdgeConnectWithRhombusNode = (dataMap, id) => {
+  return !!dataMap[id] && dataMap[id].shape === 'rhombus-node';
+};
