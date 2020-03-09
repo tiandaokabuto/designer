@@ -37,6 +37,7 @@ const style = {
 const BasicStatement = useInjectContext(props => {
   const {
     id,
+    card,
     text,
     index,
     visible,
@@ -91,7 +92,7 @@ const BasicStatement = useInjectContext(props => {
   const updateXpath = useUpdateXpath();
 
   /** 保存xpath截图 */
-  const [xpathImage, setXpathImage] = useState(undefined);
+  const [xpathImage, setXpathImage] = useState(card.xpathImage);
 
   drag(drop(ref));
 
@@ -168,6 +169,7 @@ const BasicStatement = useInjectContext(props => {
                       if (xpath === undefined) return;
                       // 接收到xpath并作出更新
                       if (targetId !== id) return;
+                      card.xpathImage = imageData;
                       setXpathImage(imageData);
                       updateXpath(id, xpath);
                     }
