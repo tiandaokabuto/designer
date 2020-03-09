@@ -3,6 +3,11 @@ import { Card, Form, Input, Select } from 'antd';
 import { withPropsAPI } from 'gg-editor';
 import upperFirst from 'lodash/upperFirst';
 
+import {
+  updateGraphData,
+  synchroGraphDataToProcessTree,
+} from '../../../../../reduxActions';
+
 const { Item } = Form;
 const { Option } = Select;
 
@@ -27,7 +32,7 @@ class DetailForm extends React.Component {
     }
 
     const { form, propsAPI } = this.props;
-    const { getSelected, executeCommand, update } = propsAPI;
+    const { getSelected, executeCommand, update, save } = propsAPI;
 
     setTimeout(() => {
       form.validateFieldsAndScroll((err, values) => {
@@ -46,6 +51,10 @@ class DetailForm extends React.Component {
             ...values,
           });
         });
+        setTimeout(() => {
+          updateGraphData(save());
+          synchroGraphDataToProcessTree();
+        }, 0);
       });
     }, 0);
   };

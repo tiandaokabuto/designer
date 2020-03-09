@@ -92,7 +92,6 @@ export default useInjectContext(
             }}
             onEdgeClick={edge => {
               /** 点击边的时候判断是否触发label的添加 */
-              console.log(edge);
               const model = edge.item.model;
               if (
                 isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
