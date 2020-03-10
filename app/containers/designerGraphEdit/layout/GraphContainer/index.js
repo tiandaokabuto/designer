@@ -75,7 +75,7 @@ export default useInjectContext(
                     //     // 'clickCanvasSelected',
                     //   ],
                     // },
-                    //default: ['drag-canvas', 'zoom-canvas'],
+                    default: ['drag-canvas', 'zoom-canvas'],
                   }
                 : {}),
             }}
