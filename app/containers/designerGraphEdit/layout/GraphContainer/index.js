@@ -48,6 +48,7 @@ export default useInjectContext(
             className="designergraph-container-flow"
             style={{
               background: showHead ? 'rgba(252, 252, 252, 1)' : '',
+              height: showHead ? '100%' : '',
             }}
             onAfterChange={value => {
               // 将每次的状态更新保存下来
@@ -56,7 +57,19 @@ export default useInjectContext(
             data={graphData}
             graph={{
               edgeDefaultShape: 'flow-polyline',
-              model: showHead ? 'readOnly' : 'default',
+              ...(showHead
+                ? {
+                    mode: 'readOnly',
+                    modes: {
+                      readOnly: [
+                        'panCanvas',
+                        // 'clickEdgeSelected',
+                        // 'clickNodeSelected',
+                        // 'clickCanvasSelected',
+                      ],
+                    },
+                  }
+                : {}),
             }}
             onNodeClick={node => {
               const dataId = node.shape._attrs.dataId;
