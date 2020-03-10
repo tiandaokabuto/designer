@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import { issueProcess } from './utils';
 import event, {
-  PYTHON_OUTPUT
+  PYTHON_OUTPUT,
 } from '../containers/designerGraphBlock/layout/eventCenter';
 
 const fs = require('fs');
@@ -12,7 +12,7 @@ const JSZIP = require('jszip');
 
 const zip = new JSZIP();
 
-const writeFileRecursive = function(path, buffer, callback) {
+export const writeFileRecursive = function(path, buffer, callback) {
   const lastPath = path.substring(0, path.lastIndexOf('/'));
   fs.mkdir(lastPath, { recursive: true }, err => {
     if (err) return callback(err);
@@ -58,8 +58,8 @@ export const startZIP = () => {
       compression: 'DEFLATE', // 压缩算法
       compressionOptions: {
         // 压缩级别
-        level: 9
-      }
+        level: 9,
+      },
     })
     .then(function(content) {
       fs.writeFileSync(`${currPath}/python/result.zip`, content, 'utf-8'); // 将打包的内容写入 当前目录下的 result.zip中

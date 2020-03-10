@@ -3,7 +3,7 @@ import { Button, Input, message } from 'antd';
 import axios from 'axios';
 
 import api from '../api';
-import { hex_sha1 } from './utils';
+import { hex_sha1, readGlobalConfig, writeGlobalConfig } from './utils';
 
 const { ipcRenderer } = require('electron');
 
@@ -12,6 +12,11 @@ import './login.scss';
 const Login = () => {
   const [userName, setUserName] = useState(undefined);
   const [password, setPassword] = useState(undefined);
+
+  // 保存设置的 IP 和 端口
+  const [ip, setIp] = useState(undefined);
+  const [port, setPort] = useState(undefined);
+
   const handleSignIn = () => {
     axios
       .post(api.signIn, {
@@ -36,6 +41,15 @@ const Login = () => {
       }
       return response.data;
     });
+  }, []);
+
+  useEffect(() => {
+    console.log(readGlobalConfig);
+    const callback = (ip, port) => {
+      setIp(ip);
+      setPort(port);
+    };
+    readGlobalConfig(callback);
   }, []);
   return (
     <div className="login">
@@ -65,25 +79,37 @@ const Login = () => {
             }}
           />
         </div>
+        <span>IP</span>
+        <br />
+        <Input
+          placeholder="请输入IP"
+          value={ip}
+          onChange={e => {
+            setIp(e.target.value);
+          }}
+        />
+        <br />
+        <span>端口</span>
+        <br />
+        <Input
+          placeholder="请输入端口"
+          value={port}
+          onChange={e => {
+            setPort(e.target.value);
+          }}
+        />
         <Button
           onClick={() => {
-            handleSignIn();
-            // ipcRenderer.send('loginSuccess');
+            writeGlobalConfig({
+              ip,
+              port,
+            });
+            // handleSignIn();
           }}
         >
           登录
         </Button>
       </div>
-      {/* <div className="aside">动态更新</div>
-      <div className="login-content">
-        <Button
-          onClick={() => {
-            ipcRenderer.send('loginSuccess');
-          }}
-        >
-          登录通过可以跳转
-        </Button>
-      </div> */}
     </div>
   );
 };
