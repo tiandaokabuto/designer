@@ -18,7 +18,6 @@ export default withPropsAPI(({ propsAPI }) => {
     state => state.grapheditor.checkedGraphBlockId
   );
   useEffect(() => {
-    console.log('更新editor', checkedGraphBlockId, prevCheckedId);
     const { find, executeCommand, update, save } = propsAPI;
     if (!checkedGraphBlockId) return;
     // 恢复之前的样式
