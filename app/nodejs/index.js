@@ -12,7 +12,7 @@ const JSZIP = require('jszip');
 
 const zip = new JSZIP();
 
-export const writeFileRecursive = function(path, buffer, callback) {
+const writeFileRecursive = function(path, buffer, callback) {
   const lastPath = path.substring(0, path.lastIndexOf('/'));
   fs.mkdir(lastPath, { recursive: true }, err => {
     if (err) return callback(err);
@@ -40,8 +40,7 @@ function readDir(obj, nowPath) {
   });
 }
 
-export const startZIP = () => {
-  // const currPath = __dirname; // 文件的绝对路径 当前当前js所在的绝对路径
+export const startZIP = descText => {
   const currPath = process.cwd();
   const targetDir = path.join(
     currPath,
@@ -66,19 +65,16 @@ export const startZIP = () => {
       console.log('压缩完成...');
       console.log('开始上传流程包...');
       message.info('压缩完成，开始上传流程包');
-      issueProcess(content);
+      issueProcess(content, descText);
     });
 };
 
-export const writeFile = (dirname, content) => {
+export const writeFile = (dirname, content, descText) => {
   writeFileRecursive(dirname, content, err => {
     if (!err) {
-      message.info(dirname);
-      message.info('开始压缩...');
       console.log('开始压缩...');
-      startZIP();
+      startZIP(descText);
     } else {
-      message.info(dirname);
       message.info('压缩失败...');
     }
   });

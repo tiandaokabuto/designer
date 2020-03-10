@@ -1,5 +1,5 @@
 import React, { useState, useEffect, memo, useMemo } from 'react';
-import { Icon } from 'antd';
+import { Icon, Modal, Form, Input } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -19,6 +19,12 @@ const handleOperation = op => (...args) => {
   event.emit(op, ...args);
 };
 
+const FormItem = Form.Item;
+const formLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 6 },
+};
+
 export default memo(
   withRouter(({ history, type }) => {
     const [visible, setVisible] = useState(undefined);
@@ -26,11 +32,20 @@ export default memo(
       setVisible(undefined);
     };
 
+    const [modalVisible, setModalVisible] = useState(false);
+    const [descText, setDescText] = useState('');
+
     const persistentStorage = usePersistentStorage();
 
     const handlePublishZip = usePublishProcessZip();
 
     const handlePublishProcess = usePublishProcess();
+
+    const hanldePublishModalOk = () => {
+      setModalVisible(false);
+      handlePublishProcess();
+      handlePublishZip(descText);
+    };
 
     const TOOLS_DESCRIPTION_FOR_CODEBLOCK = useMemo(
       () => [
@@ -124,8 +139,7 @@ export default memo(
         description: '发布',
         type: 'cloud-upload',
         onClick: () => {
-          handlePublishProcess();
-          // handlePublishZip();
+          setModalVisible(true);
         },
       },
       {
@@ -157,6 +171,23 @@ export default memo(
           </span>
         ))}
         {visible === 'newprocess' && <NewProcess resetVisible={resetVisible} />}
+        <Modal
+          visible={modalVisible}
+          closable={false}
+          onOk={hanldePublishModalOk}
+          onCancel={() => {
+            setModalVisible(false);
+          }}
+        >
+          <FormItem label="流程描述">
+            <Input
+              placeholder="请输入流程描述"
+              onChange={e => {
+                setDescText(e.target.value);
+              }}
+            />
+          </FormItem>
+        </Modal>
       </div>
     );
   })
