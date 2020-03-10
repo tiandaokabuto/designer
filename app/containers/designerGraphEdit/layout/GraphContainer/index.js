@@ -36,7 +36,7 @@ export default useInjectContext(
 
       // 自适应当前画布的大小
       useEffect(() => {
-        propsAPI.executeCommand('autoZoom');
+        showHead && propsAPI.executeCommand('autoZoom');
       }, []);
       return (
         <div className="designergraph-container">
@@ -60,19 +60,22 @@ export default useInjectContext(
               registerDataChange(value);
             }}
             data={graphData}
+            fitView={true}
             graph={{
               edgeDefaultShape: 'flow-polyline',
               ...(showHead
                 ? {
                     mode: 'readOnly',
-                    modes: {
-                      readOnly: [
-                        'panCanvas',
-                        // 'clickEdgeSelected',
-                        // 'clickNodeSelected',
-                        // 'clickCanvasSelected',
-                      ],
-                    },
+                    // modes: {
+                    //   readOnly: [
+                    //     'panCanvas',
+                    //     'zoomCanvas',
+                    //     // 'clickEdgeSelected',
+                    //     // 'clickNodeSelected',
+                    //     // 'clickCanvasSelected',
+                    //   ],
+                    // },
+                    //default: ['drag-canvas', 'zoom-canvas'],
                   }
                 : {}),
             }}
@@ -144,7 +147,7 @@ export default useInjectContext(
           <EndNode />
           <RhombusNode />
           <EditorChange />
-          <HighlightEditor />
+          {/* <HighlightEditor /> */}
         </div>
       );
     }
