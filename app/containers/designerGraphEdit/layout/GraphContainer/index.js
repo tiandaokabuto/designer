@@ -33,6 +33,11 @@ export default useInjectContext(
       const graphData = useSelector(state => state.grapheditor.graphData);
       const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
       const [drawerVisible, setDrawerVisible] = useState(false);
+
+      // 自适应当前画布的大小
+      useEffect(() => {
+        propsAPI.executeCommand('autoZoom');
+      }, []);
       return (
         <div className="designergraph-container">
           {!showHead && (
