@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Input, message } from 'antd';
 import axios from 'axios';
 
-import api from '../api';
+import api, { config } from '../api';
 import { hex_sha1, readGlobalConfig, writeGlobalConfig } from './utils';
 
 const { ipcRenderer } = require('electron');
@@ -19,7 +19,7 @@ const Login = () => {
 
   const handleSignIn = () => {
     axios
-      .post(api.signIn, {
+      .post(api('signIn'), {
         userName: userName,
         password: hex_sha1(password),
       })
@@ -30,21 +30,25 @@ const Login = () => {
       });
   };
   useEffect(() => {
-    axios.interceptors.response.use(response => {
-      // 如果存在返回码
-      if (response.data.code) {
-        if (response.data.code !== -1) {
-          // message.success(response.data.msg);
-        } else {
-          message.error(response.data.message);
+    axios.interceptors.response.use(
+      response => {
+        // 如果存在返回码
+        if (response && response.data.code) {
+          if (response.data.code !== -1) {
+            // message.success(response.data.msg);
+          } else {
+            message.error(response.data.message);
+          }
         }
+        return response.data;
+      },
+      err => {
+        message.error('ip或端口配置错误');
       }
-      return response.data;
-    });
+    );
   }, []);
 
   useEffect(() => {
-    console.log(readGlobalConfig);
     const callback = (ip, port) => {
       setIp(ip);
       setPort(port);
@@ -100,11 +104,12 @@ const Login = () => {
         />
         <Button
           onClick={() => {
+            config.context = `http://${ip}:${port}/controller`;
             writeGlobalConfig({
               ip,
               port,
             });
-            // handleSignIn();
+            handleSignIn();
           }}
         >
           登录

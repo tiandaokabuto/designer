@@ -13,7 +13,7 @@ export const issueProcess = content => {
   formData.append('desc', '这是一个压缩后的zip包');
   formData.append('mainFile', 'test.py');
   axios
-    .post(api.issueProcess, formData, {
+    .post(api('issueProcess'), formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

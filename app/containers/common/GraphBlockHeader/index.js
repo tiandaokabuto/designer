@@ -61,7 +61,7 @@ export default () => {
   ];
   const handleSignOut = () => {
     axios
-      .get(api.signOut)
+      .get(api('signOut'))
       .then(res => res.data)
       .then(json => {
         if (~json.code) {
