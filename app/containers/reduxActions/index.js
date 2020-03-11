@@ -11,10 +11,17 @@ import {
   SYNCHRO_GRAPHDATATOPROCESSTREE,
   RESET_ALLGRAPHEDITDATA,
 } from '../../actions/grapheditor';
-import { SYNCHRO_CODEBLOCK } from '../../actions/codeblock';
+import { SYNCHRO_CODEBLOCK, CHANGE_AUTOMICLIST } from '../../actions/codeblock';
 import store from '../../store';
 
 const { dispatch } = store;
+
+export const updateAutomicList = treeData => {
+  dispatch({
+    type: CHANGE_AUTOMICLIST,
+    payload: treeData,
+  });
+};
 
 export const updateGraphData = (graphData = []) => {
   dispatch({

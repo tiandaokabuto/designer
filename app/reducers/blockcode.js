@@ -7,6 +7,7 @@ import {
   CHANGE_CHECKEDID,
   CHANGE_PYTHONCODE,
   SYNCHRO_CODEBLOCK,
+  CHANGE_AUTOMICLIST,
 } from '../actions/codeblock';
 
 import { synchroGraphDataMap } from '../containers/reduxActions';
@@ -15,10 +16,16 @@ const defaultState = {
   cards: [],
   checkedId: undefined,
   pythonCode: '',
+  automicList: [],
 };
 
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case CHANGE_AUTOMICLIST:
+      return {
+        ...state,
+        automicList: action.payload,
+      };
     case CHANGE_CARDDATA:
       return {
         ...state,

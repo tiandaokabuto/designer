@@ -13,20 +13,15 @@ import ExecuteImage from '../images/execute.jpg';
 import EditImage from '../images/edit.jpg';
 
 import DesignerBody from './components/DesignerBody';
+import SyncAutomicList from './components/SyncAutomicList';
+
+import { history } from '../../store/configureStore';
 
 import './index.scss';
-import { history } from '../../store/configureStore';
 
 export default () => {
   return (
     <Fragment>
-      {/* <div
-        onClick={() => {
-          history.push('/designerGraphBlock');
-        }}
-      >
-        click
-      </div> */}
       <GraphBlockHeader />
       <DragEditorHeader type="process" />
 
@@ -36,6 +31,7 @@ export default () => {
         <GraphParamPanel />
         <FlowContextMenu />
       </GGEditor>
+      <SyncAutomicList />
     </Fragment>
   );
 };

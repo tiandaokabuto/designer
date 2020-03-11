@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 // import { Tree, Icon } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import atomicCList from './atomicCList';
+// import atomicCList from './atomicCList';
 import DragCard from './components/DragCard';
 import Tree from './components/CustomeTreeNode';
 import {
@@ -107,7 +107,7 @@ const initialState = [
 ];
 
 export default () => {
-  // const state = useSelector(state => state.dragItem);
+  const atomicCList = useSelector(state => state.blockcode.automicList);
 
   const renderTreeNodes = data =>
     data.map(item => {
