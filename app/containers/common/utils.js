@@ -1,7 +1,7 @@
 //import moment from moment
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Input, message } from 'antd';
+import { Input, message, Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import moment from 'moment';
 import { changeProcessTree } from '../reduxActions';
@@ -196,6 +196,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: uniqueId('key_'), //'0-' + processTree.length,
         type: 'process',
+        icon: <Icon type="edit" />,
         isLeaf: true,
         data: {},
       });
@@ -205,6 +206,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: uniqueId('key_'), // isDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'process',
+        icon: <Icon type="edit" />,
         isLeaf: true,
         data: {},
       });
@@ -217,6 +219,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: uniqueId('key_'), // '0-' + processTree.length,
         type: 'dir',
+        icon: <Icon type="unordered-list" />,
         children: [],
       });
     } else {
@@ -224,6 +227,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: uniqueId('key_'), // uniqueId('key_'),sDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'dir',
+        icon: <Icon type="unordered-list" />,
         children: [],
       });
       newProcessTree = [...processTree];

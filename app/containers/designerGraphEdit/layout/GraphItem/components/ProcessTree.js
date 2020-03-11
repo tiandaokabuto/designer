@@ -105,6 +105,7 @@ export default () => {
         defaultExpandedKeys={expandedKeys}
         //defaultExpandAll={true}
         switcherIcon={<Switcher />}
+        showIcon={true}
         draggable
         blockNode
         onRightClick={({ event, node }) => {
