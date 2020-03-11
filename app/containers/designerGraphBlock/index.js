@@ -8,6 +8,7 @@ import DragEditorHeader from '../common/DragEditorHeader';
 import DragContainer from './layout/DragContainer';
 import DragItem from './layout/DragItem';
 import DragParamPanel from './layout/DragParamPanel';
+import SyncAutomicList from './layout/DragItem/components/SyncAutomicList';
 
 import { writeFile } from '../../nodejs';
 
@@ -34,6 +35,7 @@ export default useInjectContext(({ history }) => {
         <DragContainer />
         <DragParamPanel />
       </div>
+      <SyncAutomicList />
     </DndProvider>
   );
 });

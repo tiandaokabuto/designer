@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { Icon } from 'antd';
 
-import { updateAutomicList } from '../../reduxActions';
+import { updateAutomicList } from '../../../../reduxActions';
 
 const fs = require('fs');
 const currPath = process.cwd();
