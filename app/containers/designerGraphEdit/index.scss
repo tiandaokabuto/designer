@@ -28,6 +28,9 @@
         }
       }
     }
+    .ant-tree-switcher-noop {
+      visibility: hidden;
+    }
     .sd-tree {
       overflow: auto;
       height: calc(100vh - 128px);

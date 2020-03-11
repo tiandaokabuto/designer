@@ -129,13 +129,14 @@ export const renameNodeByKey = (tree, key) => {
   node.title = (
     <Input
       autoFocus
+      defaultValue={node.title}
       onBlur={e => {
         const hasExist = Array.isArray(parent)
           ? parent.filter(item => item.title === e.target.value)
           : parent.children.filter(item => item.title === e.target.value);
         console.log(parent, e.target.value);
         if (hasExist.length) {
-          message.info('目录名重复!');
+          message.info('目录名或流程名重复!');
           return;
         }
         node.title = e.target.value;
@@ -195,6 +196,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: uniqueId('key_'), //'0-' + processTree.length,
         type: 'process',
+        isLeaf: true,
         data: {},
       });
     } else {
@@ -203,6 +205,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: uniqueId('key_'), // isDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'process',
+        isLeaf: true,
         data: {},
       });
       newProcessTree = [...processTree];

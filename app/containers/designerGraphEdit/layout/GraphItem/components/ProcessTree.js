@@ -103,8 +103,8 @@ export default () => {
       <Tree
         className="draggable-tree"
         defaultExpandedKeys={expandedKeys}
-        defaultExpandAll={true}
-        // switcherIcon={<Switcher />}
+        //defaultExpandAll={true}
+        switcherIcon={<Switcher />}
         draggable
         blockNode
         onRightClick={({ event, node }) => {

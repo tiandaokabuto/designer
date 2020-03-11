@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { Icon } from 'antd';
 
-export default () => {
-  const [text, setText] = useState('切换');
+export default props => {
+  const [text, setText] = useState('open');
+
   return (
     <div
-      className="toggle"
+      className="toggle_switcher"
       onClick={() => {
-        setText(t => (t === '切换' ? '折叠' : '切换'));
+        setText(t => (t === 'open' ? 'close' : 'open'));
       }}
     >
-      {text}
+      <Icon type={text === 'open' ? 'plus-square' : 'minus-square'} />
     </div>
   );
 };
