@@ -1,5 +1,7 @@
 //import moment from moment
+import React from 'react';
 import { useSelector } from 'react-redux';
+import { Input, message } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import moment from 'moment';
 import { changeProcessTree } from '../reduxActions';
@@ -106,6 +108,42 @@ export const deleteNodeByKey = (tree, key, parent = tree) => {
       deleteNodeByKey(child.children, key, child);
     }
   }
+};
+
+export const findParentNodeByKey = (tree, key, parent = tree) => {
+  for (const child of tree) {
+    if (child.key === key) {
+      return parent;
+    }
+    if (child.children) {
+      const bool = findParentNodeByKey(child.children, key, child);
+      if (bool) return bool;
+    }
+  }
+};
+
+export const renameNodeByKey = (tree, key) => {
+  console.log(tree, key);
+  const node = findNodeByKey(tree, key);
+  const parent = findParentNodeByKey(tree, key) || [];
+  node.title = (
+    <Input
+      autoFocus
+      onBlur={e => {
+        const hasExist = Array.isArray(parent)
+          ? parent.filter(item => item.title === e.target.value)
+          : parent.children.filter(item => item.title === e.target.value);
+        console.log(parent, e.target.value);
+        if (hasExist.length) {
+          message.info('目录名重复!');
+          return;
+        }
+        node.title = e.target.value;
+        changeProcessTree([...tree]);
+      }}
+    />
+  );
+  changeProcessTree([...tree]);
 };
 
 /**

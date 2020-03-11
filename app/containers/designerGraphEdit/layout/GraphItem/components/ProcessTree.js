@@ -8,7 +8,7 @@ import {
 } from '../../../../reduxActions';
 import Switcher from './Switcher';
 import ContextMenu from './ContextMenu';
-import { deleteNodeByKey } from '../../../../common/utils';
+import { deleteNodeByKey, renameNodeByKey } from '../../../../common/utils';
 
 export default () => {
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -94,6 +94,10 @@ export default () => {
       },
     });
   };
+
+  const handleRename = key => {
+    renameNodeByKey(processTree, key);
+  };
   return (
     <div>
       <Tree
@@ -104,7 +108,6 @@ export default () => {
         draggable
         blockNode
         onRightClick={({ event, node }) => {
-          console.log(node.props);
           setPosition({
             left: event.pageX + 40,
             top: event.pageY - 20,
@@ -119,7 +122,11 @@ export default () => {
           changeCheckedTreeNode(selectedKey[0]);
         }}
       />
-      <ContextMenu position={position} handleDelete={handleDelete} />
+      <ContextMenu
+        position={position}
+        handleDelete={handleDelete}
+        handleRename={handleRename}
+      />
     </div>
   );
 };

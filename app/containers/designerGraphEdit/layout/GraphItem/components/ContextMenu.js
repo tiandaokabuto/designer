@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import './ContextMenu.scss';
 
-export default ({ position, handleDelete }) => {
+export default ({ position, handleDelete, handleRename }) => {
   const { left, top, node } = position;
   const [visible, setVisible] = useState(false);
   const isMount = useRef(false);
@@ -47,6 +47,14 @@ export default ({ position, handleDelete }) => {
         删除
       </div>
       <div>另存为</div>
+      <div
+        onClick={() => {
+          handleRename(node.eventKey);
+          setVisible(false);
+        }}
+      >
+        重命名
+      </div>
     </div>
   );
 };
