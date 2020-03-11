@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Tree } from 'antd';
+import { Tree, Modal } from 'antd';
 import { useSelector } from 'react-redux';
 
 import {
   changeProcessTree,
   changeCheckedTreeNode,
 } from '../../../../reduxActions';
+import Switcher from './Switcher';
+import ContextMenu from './ContextMenu';
+import { deleteNodeByKey } from '../../../../common/utils';
 
 export default () => {
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -13,6 +16,8 @@ export default () => {
   const currentCheckedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
   );
+  // 右键菜单位置设定
+  const [position, setPosition] = useState({});
   const onDragEnter = info => {
     console.log(info);
     // expandedKeys 需要受控时设置
@@ -79,14 +84,33 @@ export default () => {
     }
     changeProcessTree(data);
   };
+
+  const handleDelete = key => {
+    Modal.confirm({
+      content: '是否删除该流程',
+      onOk() {
+        deleteNodeByKey(processTree, key);
+        changeProcessTree([...processTree]);
+      },
+    });
+  };
   return (
     <div>
       <Tree
         className="draggable-tree"
         defaultExpandedKeys={expandedKeys}
         defaultExpandAll={true}
+        // switcherIcon={<Switcher />}
         draggable
         blockNode
+        onRightClick={({ event, node }) => {
+          console.log(node.props);
+          setPosition({
+            left: event.pageX + 40,
+            top: event.pageY - 20,
+            node: node.props,
+          });
+        }}
         onDragEnter={onDragEnter}
         onDrop={onDrop}
         treeData={processTree}
@@ -95,6 +119,7 @@ export default () => {
           changeCheckedTreeNode(selectedKey[0]);
         }}
       />
+      <ContextMenu position={position} handleDelete={handleDelete} />
     </div>
   );
 };

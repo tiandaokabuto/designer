@@ -86,6 +86,29 @@ export const findNodeByKey = (tree, key) => {
 };
 
 /**
+ * 删除树下的某个结点
+ * @param {*} tree
+ * @param {*} key
+ */
+export const deleteNodeByKey = (tree, key, parent = tree) => {
+  for (const child of tree) {
+    if (child.key === key) {
+      if (Array.isArray(parent)) {
+        let index = parent.findIndex(item => item.key === key);
+        parent.splice(index, 1);
+      } else {
+        let index = parent.children.findIndex(item => item.key === key);
+        parent.children.splice(index, 1);
+      }
+      return;
+    }
+    if (child.children) {
+      deleteNodeByKey(child.children, key, child);
+    }
+  }
+};
+
+/**
  * 数据持久化保存到本地
  * @param {*} processTree
  * @param {*} name
