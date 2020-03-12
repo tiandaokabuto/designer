@@ -51,7 +51,7 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
     }
   });
   dataStructure.properties.optional.forEach((item, index) => {
-    if (item.value === undefined) return;
+    if (item.value === '') return;
     switch (item.enName) {
       case 'outPut':
         handleStatementOutput(item.value, '', result);

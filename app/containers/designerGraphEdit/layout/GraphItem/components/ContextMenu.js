@@ -40,8 +40,9 @@ export default ({ position, handleDelete, handleRename }) => {
         top: top,
       }}
     >
-      <div>运行此流程</div>
+      <div className="menuitem">运行此流程</div>
       <div
+        className="menuitem"
         onClick={() => {
           handleDelete(node.eventKey);
           persistentStorage();
@@ -50,8 +51,9 @@ export default ({ position, handleDelete, handleRename }) => {
       >
         删除
       </div>
-      <div>另存为</div>
+      <div className="menuitem">另存为</div>
       <div
+        className="menuitem"
         onClick={() => {
           handleRename(node.eventKey, persistentStorage);
           setVisible(false);

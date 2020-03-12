@@ -24,7 +24,7 @@ export default () => {
             }}
           />
         ) : (
-          currentProject || '未保存项目'
+          currentProject || '当前无项目'
         )}
         <Icon
           type="edit"
