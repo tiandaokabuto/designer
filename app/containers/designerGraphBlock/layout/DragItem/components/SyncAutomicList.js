@@ -22,14 +22,14 @@ const generateIcon = (type, style = DEFAULT_STYLE) => (
 const automicListToTree = (list = [], map) => {
   const result = [];
   list.forEach(node => {
-    if (node.pkey === '-1') {
+    if (node.pKey === '-1') {
       node.icon = generateIcon('hdd');
       result.push(node);
       return;
     }
     node.icon = generateIcon('branches');
     node.item = map[node.item];
-    let parent = list.find(child => child.key === node.pkey);
+    let parent = list.find(child => child.key === node.pKey);
     if (!parent) return;
     if (!parent.children) {
       parent.children = [node];

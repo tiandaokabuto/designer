@@ -10,7 +10,6 @@ const handleModuleImport = (dataStructure, result, moduleMap) => {
       if (isArray(exist)) {
         !exist.includes(dataStructure.pkg) &&
           (exist = exist.concat(dataStructure.pkg));
-        console.log(exist, 'kkkk');
       } else {
         exist !== dataStructure.pkg && (exist = [exist, dataStructure.pkg]);
       }

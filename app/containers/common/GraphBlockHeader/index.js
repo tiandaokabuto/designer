@@ -79,7 +79,12 @@ export default () => {
         handleWindowOperation('unmaximize');
       }}
     >
-      <div className="graphblock-header-tools">
+      <div
+        className="graphblock-header-tools"
+        style={{
+          WebkitAppRegion: 'nodrag',
+        }}
+      >
         {TOOLS_DESCRIPTION.map((tool, index) => {
           if (typeof tool === 'object') {
             return (
@@ -95,8 +100,20 @@ export default () => {
           return <span key={index}>{tool}</span>;
         })}
       </div>
-      <div className="graphblock-header-title">SD-RPA Studio</div>
-      <div className="graphblock-header-user">
+      <div
+        className="graphblock-header-title"
+        style={{
+          WebkitAppRegion: 'nodrag',
+        }}
+      >
+        SD-RPA Studio
+      </div>
+      <div
+        className="graphblock-header-user"
+        style={{
+          WebkitAppRegion: 'nodrag',
+        }}
+      >
         <Icon type="user" />
         <span>韩冬冬, 您好!</span>
         <span
