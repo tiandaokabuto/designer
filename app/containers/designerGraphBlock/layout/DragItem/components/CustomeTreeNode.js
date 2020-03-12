@@ -1,4 +1,4 @@
-import React, { createContext, useState, useRef } from 'react';
+import React, { createContext, useState, useRef, useEffect } from 'react';
 import { Icon } from 'antd';
 
 import DragCard from './DragCard';
@@ -28,7 +28,11 @@ export default class Tree extends React.Component {
 
   static TreeNode = props => {
     const isLeaf = !props.children;
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
+
+    useEffect(() => {
+      setOpen(true);
+    }, [props.filter]);
     return (
       <TreeContext.Consumer>
         {({ filter }) => {

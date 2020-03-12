@@ -1,9 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Input } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
 
-// import atomicCList from './atomicCList';
 import DragCard from './components/DragCard';
 import Tree from './components/CustomeTreeNode';
 import {
@@ -112,7 +111,9 @@ export default () => {
 
   const [filter, setFilter] = useState('');
 
-  const renderTreeNodes = data =>
+  const [treeData, setTreeData] = useState([]);
+
+  const renderTreeNodes = (data, filter) =>
     data.map(item => {
       if (item.children) {
         return (
@@ -120,14 +121,19 @@ export default () => {
             title={item.title}
             key={item.key}
             icon={item.icon}
+            filter={filter}
             dataRef={item}
           >
             {renderTreeNodes(item.children)}
           </TreeNode>
         );
       }
-      return <TreeNode key={item.key} {...item} />;
+      return <TreeNode key={item.key} filter={filter} {...item} />;
     });
+
+  useEffect(() => {
+    setTreeData(renderTreeNodes(atomicCList, filter));
+  }, [atomicCList, filter]);
 
   const [dragCard, setDragCard] = useState(initialState);
 
@@ -149,7 +155,7 @@ export default () => {
       >
         {renderTreeNodes(atomicCList)}
       </Tree> */}
-      <Tree filter={filter}>{renderTreeNodes(atomicCList)}</Tree>
+      <Tree filter={filter}>{treeData}</Tree>
       {/* {dragCard.map((item, index) => (
         <DragCard item={item} key={index} />
       ))} */}
