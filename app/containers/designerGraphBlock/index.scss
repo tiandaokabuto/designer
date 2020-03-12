@@ -10,6 +10,10 @@
     max-width: 239px;
     flex-basis: 239px;
     box-shadow: 1px 0 0 0 rgba(238, 238, 238, 1);
+    &-search {
+      padding: 0 8px;
+      margin-top: 8px;
+    }
     &-title {
       height: 40px;
       line-height: 40px;

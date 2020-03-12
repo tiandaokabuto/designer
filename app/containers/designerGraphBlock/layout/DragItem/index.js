@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-// import { Tree, Icon } from 'antd';
+import { Input } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
 
@@ -13,6 +13,7 @@ import {
 } from '../statementTags';
 
 const { TreeNode } = Tree;
+const { Search } = Input;
 
 const initialState = [
   {
@@ -109,6 +110,8 @@ const initialState = [
 export default () => {
   const atomicCList = useSelector(state => state.blockcode.automicList);
 
+  const [filter, setFilter] = useState('');
+
   const renderTreeNodes = data =>
     data.map(item => {
       if (item.children) {
@@ -131,6 +134,14 @@ export default () => {
   return (
     <div className="dragger-editor-item">
       <div className="dragger-editor-item-title">组件库</div>
+      <div className="dragger-editor-item-search">
+        <Search
+          placeholder="请输入"
+          onSearch={value => {
+            setFilter(value);
+          }}
+        />
+      </div>
       {/* <Tree
         showLine={true}
         showIcon={true}
@@ -138,7 +149,7 @@ export default () => {
       >
         {renderTreeNodes(atomicCList)}
       </Tree> */}
-      <Tree>{renderTreeNodes(atomicCList)}</Tree>
+      <Tree filter={filter}>{renderTreeNodes(atomicCList)}</Tree>
       {/* {dragCard.map((item, index) => (
         <DragCard item={item} key={index} />
       ))} */}

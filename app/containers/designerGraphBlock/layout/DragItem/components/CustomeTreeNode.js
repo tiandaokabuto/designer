@@ -19,6 +19,13 @@ export default class Tree extends React.Component {
     filter: '',
   };
 
+  static getDerivedStateFromProps(nextProps) {
+    console.log(nextProps);
+    return {
+      filter: nextProps.filter,
+    };
+  }
+
   static TreeNode = props => {
     const isLeaf = !props.children;
     const [open, setOpen] = useState(false);
