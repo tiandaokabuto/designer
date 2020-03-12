@@ -100,14 +100,7 @@ export default () => {
           return <span key={index}>{tool}</span>;
         })}
       </div>
-      <div
-        className="graphblock-header-title"
-        style={{
-          WebkitAppRegion: 'nodrag',
-        }}
-      >
-        SD-RPA Studio
-      </div>
+      <div className="graphblock-header-title">SD-RPA Studio</div>
       <div
         className="graphblock-header-user"
         style={{
