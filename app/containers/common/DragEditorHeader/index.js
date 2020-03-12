@@ -1,5 +1,5 @@
 import React, { useState, useEffect, memo, useMemo } from 'react';
-import { Icon, Modal, Form, Input } from 'antd';
+import { Icon, Modal, Form, Input, message } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 

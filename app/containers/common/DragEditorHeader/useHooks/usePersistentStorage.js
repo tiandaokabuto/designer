@@ -8,7 +8,6 @@ export default () => {
     const {
       grapheditor: { processTree, currentProject },
     } = store.getState();
-    console.log(processTree, currentProject);
     persistentStorage(processTree, currentProject);
   };
 };

@@ -12,10 +12,12 @@ export default (id, visibleTemplate) => {
     const [newVisible, setNewVisible] = useState('');
     const [canDrag, setCanDrag] = useState(true);
     const node = findNodeById(cards, id);
-
-    const watchingList = visibleTemplate
-      .match(/({{.*?}})/g)
-      .map(item => item.replace(/[{}]/g, ''));
+    console.log(visibleTemplate, 'kkkkk');
+    const watchingListTemp = visibleTemplate.match(/({{.*?}})/g);
+    if (watchingListTemp === null) return [true, visibleTemplate];
+    const watchingList = watchingListTemp.map(item =>
+      item.replace(/[{}]/g, '')
+    );
     const proxyList = node.properties.required.filter(item =>
       watchingList.includes(item.enName)
     );

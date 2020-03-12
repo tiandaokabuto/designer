@@ -169,6 +169,7 @@ export const persistentStorage = (processTree, name) => {
           if (err) {
             console.error(err);
           }
+          message.success('保存成功');
           console.log('----------新增成功-------------');
         }
       );
