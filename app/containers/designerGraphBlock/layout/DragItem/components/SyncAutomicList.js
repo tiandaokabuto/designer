@@ -22,14 +22,15 @@ const generateIcon = (type, style = DEFAULT_STYLE) => (
 const automicListToTree = (list = [], map) => {
   const result = [];
   list.forEach(node => {
-    if (node.pKey === null) {
+    if (node.pkey === '-1') {
       node.icon = generateIcon('hdd');
       result.push(node);
       return;
     }
     node.icon = generateIcon('branches');
     node.item = map[node.item];
-    let parent = list.find(child => child.key === node.pKey);
+    let parent = list.find(child => child.key === node.pkey);
+    if (!parent) return;
     if (!parent.children) {
       parent.children = [node];
     } else {
@@ -53,8 +54,8 @@ const readGlobalConfig = callback => {
       const getAbilityTree = (() => {
         return axios.get(api('selectMenuJson')).then(res => res.data.data);
       })();
-      const abilityStructure = await getAbialityStructure();
-      const abilityTree = await getAbilityTree();
+      const abilityStructure = await getAbialityStructure;
+      const abilityTree = await getAbilityTree;
       console.log(abilityStructure, abilityTree);
 
       const treeList = [
@@ -131,7 +132,9 @@ const readGlobalConfig = callback => {
           excel: '444',
         },
       };
-      const treeData = automicListToTree(treeList, description);
+      const treeData = automicListToTree(abilityTree, abilityStructure);
+
+      console.log(treeData, 'hhhhhhh');
 
       callback && callback(treeData);
     }
