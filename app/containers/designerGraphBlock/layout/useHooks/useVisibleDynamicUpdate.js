@@ -12,7 +12,6 @@ export default (id, visibleTemplate) => {
     const [newVisible, setNewVisible] = useState('');
     const [canDrag, setCanDrag] = useState(true);
     const node = findNodeById(cards, id);
-    console.log(visibleTemplate, 'kkkkk');
     const watchingListTemp = visibleTemplate.match(/({{.*?}})/g);
     if (watchingListTemp === null) return [true, visibleTemplate];
     const watchingList = watchingListTemp.map(item =>

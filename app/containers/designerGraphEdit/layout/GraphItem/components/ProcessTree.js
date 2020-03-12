@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Tree, Modal } from 'antd';
+import { Tree, Modal, Icon } from 'antd';
 import { useSelector } from 'react-redux';
+import cloneDeep from 'lodash/cloneDeep';
 
 import {
   changeProcessTree,
@@ -9,6 +10,35 @@ import {
 import Switcher from './Switcher';
 import ContextMenu from './ContextMenu';
 import { deleteNodeByKey, renameNodeByKey } from '../../../../common/utils';
+
+const TreeNodeTitle = ({ title, type }) => {
+  return (
+    <div>
+      <Icon type={type} style={{ marginRight: 6 }} />
+      {title}
+    </div>
+  );
+};
+
+const transformTreeTitle = processTree => {
+  const result = cloneDeep(processTree);
+  function recurise(tree) {
+    for (const child of tree) {
+      // 添加title
+      if (child.type === 'process') {
+        child.title = <TreeNodeTitle title={child.title} type="cluster" />;
+      } else {
+        child.title = <TreeNodeTitle title={child.title} type="file" />;
+      }
+      if (child.children) {
+        recurise(child.children);
+      }
+    }
+  }
+  recurise(result);
+  console.log(result);
+  return result;
+};
 
 export default () => {
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -118,7 +148,7 @@ export default () => {
         }}
         onDragEnter={onDragEnter}
         onDrop={onDrop}
-        treeData={processTree}
+        treeData={transformTreeTitle(processTree)}
         selectedKeys={[currentCheckedTreeNode]}
         onSelect={(selectedKey, e) => {
           changeCheckedTreeNode(selectedKey[0]);
