@@ -82,7 +82,7 @@ export default () => {
       <div
         className="graphblock-header-tools"
         style={{
-          WebkitAppRegion: 'nodrag',
+          WebkitAppRegion: 'no-drag',
         }}
       >
         {TOOLS_DESCRIPTION.map((tool, index) => {
@@ -104,7 +104,7 @@ export default () => {
       <div
         className="graphblock-header-user"
         style={{
-          WebkitAppRegion: 'nodrag',
+          WebkitAppRegion: 'no-drag',
         }}
       >
         <Icon type="user" />
