@@ -112,6 +112,9 @@ export default memo(
       {
         description: '新建流程',
         type: 'save',
+        onClick: () => {
+          setVisible('newprocess');
+        },
       },
       {
         description: '上一步',
@@ -161,11 +164,11 @@ export default memo(
     return (
       <div className="drageditor-header">
         {tools.map((tool, index) => (
-          <span key={index}>
+          <span key={index} onClick={tool.onClick || (() => {})}>
             {tool.IconFont ? (
-              <IconFont type={tool.type} onClick={tool.onClick || (() => {})} />
+              <IconFont type={tool.type} />
             ) : (
-              <Icon type={tool.type} onClick={tool.onClick || (() => {})} />
+              <Icon type={tool.type} />
             )}
             {tool.description}
           </span>

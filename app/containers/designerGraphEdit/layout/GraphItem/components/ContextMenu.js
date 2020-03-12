@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 
 import './ContextMenu.scss';
 
@@ -6,6 +7,8 @@ export default ({ position, handleDelete, handleRename }) => {
   const { left, top, node } = position;
   const [visible, setVisible] = useState(false);
   const isMount = useRef(false);
+
+  const persistentStorage = usePersistentStorage();
   useEffect(() => {
     if (!isMount.current) {
       isMount.current = true;
@@ -41,6 +44,7 @@ export default ({ position, handleDelete, handleRename }) => {
       <div
         onClick={() => {
           handleDelete(node.eventKey);
+          persistentStorage();
           setVisible(false);
         }}
       >
@@ -49,7 +53,7 @@ export default ({ position, handleDelete, handleRename }) => {
       <div>另存为</div>
       <div
         onClick={() => {
-          handleRename(node.eventKey);
+          handleRename(node.eventKey, persistentStorage);
           setVisible(false);
         }}
       >

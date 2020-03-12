@@ -122,8 +122,7 @@ export const findParentNodeByKey = (tree, key, parent = tree) => {
   }
 };
 
-export const renameNodeByKey = (tree, key) => {
-  console.log(tree, key);
+export const renameNodeByKey = (tree, key, persistentStorage) => {
   const node = findNodeByKey(tree, key);
   const parent = findParentNodeByKey(tree, key) || [];
   node.title = (
@@ -134,13 +133,13 @@ export const renameNodeByKey = (tree, key) => {
         const hasExist = Array.isArray(parent)
           ? parent.filter(item => item.title === e.target.value)
           : parent.children.filter(item => item.title === e.target.value);
-        console.log(parent, e.target.value);
         if (hasExist.length) {
           message.info('目录名或流程名重复!');
           return;
         }
         node.title = e.target.value;
         changeProcessTree([...tree]);
+        persistentStorage();
       }}
     />
   );
@@ -196,7 +195,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: uniqueId('key_'), //'0-' + processTree.length,
         type: 'process',
-        icon: <Icon type="edit" />,
+        //icon: <Icon type="edit" />,
         isLeaf: true,
         data: {},
       });
@@ -206,7 +205,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: uniqueId('key_'), // isDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'process',
-        icon: <Icon type="edit" />,
+        //icon: <Icon type="edit" />,
         isLeaf: true,
         data: {},
       });
@@ -219,7 +218,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: uniqueId('key_'), // '0-' + processTree.length,
         type: 'dir',
-        icon: <Icon type="unordered-list" />,
+        //icon: <Icon type="unordered-list" />,
         children: [],
       });
     } else {
@@ -227,7 +226,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         title: name,
         key: uniqueId('key_'), // uniqueId('key_'),sDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'dir',
-        icon: <Icon type="unordered-list" />,
+        //icon: <Icon type="unordered-list" />,
         children: [],
       });
       newProcessTree = [...processTree];

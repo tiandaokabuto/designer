@@ -3,8 +3,10 @@
  */
 import React, { Component } from 'react';
 import { Icon } from 'antd';
+import axios from 'axios';
 
 import { updateAutomicList } from '../../../../reduxActions';
+import api from '../../../../../api';
 
 const fs = require('fs');
 const currPath = process.cwd();
@@ -44,6 +46,16 @@ const readGlobalConfig = callback => {
       const { automicList, ip } = JSON.parse(data.toString());
       // if (!automicList) return;
       // 调起接口 返回数据 TODO...
+      const getAbialityStructure = (() => {
+        return axios.get(api('selectCodeJson')).then(res => res.data.data);
+      })();
+
+      const getAbilityTree = (() => {
+        return axios.get(api('selectMenuJson')).then(res => res.data.data);
+      })();
+      const abilityStructure = await getAbialityStructure();
+      const abilityTree = await getAbilityTree();
+      console.log(abilityStructure, abilityTree);
 
       const treeList = [
         {

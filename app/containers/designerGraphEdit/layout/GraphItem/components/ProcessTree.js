@@ -16,6 +16,7 @@ export default () => {
   const currentCheckedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
   );
+
   // 右键菜单位置设定
   const [position, setPosition] = useState({});
   const onDragEnter = info => {
@@ -95,8 +96,8 @@ export default () => {
     });
   };
 
-  const handleRename = key => {
-    renameNodeByKey(processTree, key);
+  const handleRename = (key, persistentStorage) => {
+    renameNodeByKey(processTree, key, persistentStorage);
   };
   return (
     <div>
