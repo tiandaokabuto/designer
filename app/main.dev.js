@@ -160,7 +160,6 @@ const createWindow = async () => {
 
   // --------------------------- express版本
   appexpress.post('/upload', function(req, res) {
-    // console.log();
     try {
       // const result = JSON.stringify(req.body);
       // const str = result.replace(/}}/, '}');
@@ -169,14 +168,15 @@ const createWindow = async () => {
       mainWindow.restore();
       //将结果通知给渲染进程
       if (targetId === undefined) return;
+      targetId = undefined;
       mainWindow.webContents.send('updateXpath', {
         ...finallyResult.value,
         targetId,
       });
-      targetId = undefined;
     } catch (e) {
       // 处理错误
       console.log('err---', e);
+      res.sendStatus(200);
     }
 
     res.sendStatus(200);
