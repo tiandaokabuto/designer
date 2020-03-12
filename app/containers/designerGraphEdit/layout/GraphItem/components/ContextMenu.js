@@ -8,6 +8,8 @@ export default ({ position, handleDelete, handleRename }) => {
   const [visible, setVisible] = useState(false);
   const isMount = useRef(false);
 
+  const isProcess = node && node.type === 'process';
+
   const persistentStorage = usePersistentStorage();
   useEffect(() => {
     if (!isMount.current) {
@@ -40,7 +42,8 @@ export default ({ position, handleDelete, handleRename }) => {
         top: top,
       }}
     >
-      <div className="menuitem">运行此流程</div>
+      {isProcess && <div className="menuitem">运行此流程</div>}
+
       <div
         className="menuitem"
         onClick={() => {
@@ -51,7 +54,8 @@ export default ({ position, handleDelete, handleRename }) => {
       >
         删除
       </div>
-      <div className="menuitem">另存为</div>
+      {isProcess && <div className="menuitem">另存为</div>}
+
       <div
         className="menuitem"
         onClick={() => {

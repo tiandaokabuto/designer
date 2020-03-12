@@ -17,6 +17,7 @@ import EditorChange, {
 } from '../../useHooks/useEditorChange';
 
 import { isEdgeConnectWithRhombusNode } from '../../RPAcore/utils';
+import { findNodeByKey } from '../../../common/utils';
 
 export default useInjectContext(
   withPropsAPI(
@@ -32,8 +33,12 @@ export default useInjectContext(
       const { getSelected, executeCommand, update, save } = propsAPI;
       const graphData = useSelector(state => state.grapheditor.graphData);
       const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+      const currentCheckedTreeNode = useSelector(
+        state => state.grapheditor.currentCheckedTreeNode
+      );
+      const processTree = useSelector(state => state.grapheditor.processTree);
       const [drawerVisible, setDrawerVisible] = useState(false);
-
+      const node = findNodeByKey(processTree, currentCheckedTreeNode);
       // 自适应当前画布的大小
       useEffect(() => {
         showHead && propsAPI.executeCommand('autoZoom');
@@ -44,7 +49,7 @@ export default useInjectContext(
             <div className="designergraph-container-header">
               <FlowItemPanel />
               <span className="designergraph-container-header-title">
-                我的项目我的项目我的项目我的项目我的项目
+                {node && node.title}
               </span>
             </div>
           )}
