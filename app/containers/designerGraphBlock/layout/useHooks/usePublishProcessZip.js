@@ -8,14 +8,10 @@ export default () => {
   const pythonCode = useSelector(
     state => state.grapheditor.editorBlockPythonCode
   );
+
   const publishZip = descText => {
     const process = require('process');
-    writeFile(
-      // __dirname + '/containers/designerGraphBlock/python/test.py',
-      `${process.cwd()}/python/test.py`,
-      pythonCode,
-      descText
-    );
+    writeFile(`${process.cwd()}/python/test.py`, pythonCode, descText);
   };
   return publishZip;
 };

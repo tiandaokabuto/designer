@@ -5,7 +5,6 @@ import axios from 'axios';
 import NewProject from './NewProject';
 import api from '../../../api';
 const { ipcRenderer, remote } = require('electron');
-const userName = remote.getGlobal('sharedObject').userName;
 
 import './index.scss';
 
@@ -32,6 +31,7 @@ const handleWindowOperation = op => {
 };
 
 export default () => {
+  const userName = remote.getGlobal('sharedObject').userName;
   const [visible, setVisible] = useState(undefined);
   const resetVisible = () => {
     setVisible(undefined);
@@ -70,6 +70,7 @@ export default () => {
         }
       });
   };
+  console.log(userName);
   return (
     <div
       className="graphblock-header"

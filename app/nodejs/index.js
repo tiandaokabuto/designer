@@ -42,13 +42,7 @@ function readDir(obj, nowPath) {
 
 export const startZIP = descText => {
   const currPath = process.cwd();
-  const targetDir = path.join(
-    currPath,
-    '/python'
-    // '/containers/designerGraphBlock/python'
-  );
-  message.info(currPath);
-  message.info(targetDir);
+  const targetDir = path.join(currPath, '/python');
   readDir(zip, targetDir);
   zip
     .generateAsync({
@@ -61,7 +55,12 @@ export const startZIP = descText => {
       },
     })
     .then(function(content) {
-      fs.writeFileSync(`${currPath}/python/result.zip`, content, 'utf-8'); // 将打包的内容写入 当前目录下的 result.zip中
+      try {
+        fs.unlinkSync(`${currPath}/python/zip`);
+      } catch (err) {}
+
+      fs.mkdirSync(`${currPath}/python/zip`);
+      fs.writeFileSync(`${currPath}/python/zip/result.zip`, content, 'utf-8'); // 将打包的内容写入 当前目录下的 result.zip 中
       console.log('压缩完成...');
       console.log('开始上传流程包...');
       message.info('压缩完成，开始上传流程包');
@@ -70,6 +69,7 @@ export const startZIP = descText => {
 };
 
 export const writeFile = (dirname, content, descText) => {
+  console.log(`${content} ------`);
   writeFileRecursive(dirname, content, err => {
     if (!err) {
       console.log('开始压缩...');
