@@ -115,12 +115,13 @@ export default () => {
     changeProcessTree(data);
   };
 
-  const handleDelete = key => {
+  const handleDelete = (key, persistentStorage) => {
     Modal.confirm({
       content: '是否删除该流程',
       onOk() {
         deleteNodeByKey(processTree, key);
         changeProcessTree([...processTree]);
+        persistentStorage();
       },
     });
   };

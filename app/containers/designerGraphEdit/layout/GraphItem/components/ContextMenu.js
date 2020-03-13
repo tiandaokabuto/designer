@@ -47,8 +47,7 @@ export default ({ position, handleDelete, handleRename }) => {
       <div
         className="menuitem"
         onClick={() => {
-          handleDelete(node.eventKey);
-          persistentStorage();
+          handleDelete(node.eventKey, persistentStorage);
           setVisible(false);
         }}
       >
