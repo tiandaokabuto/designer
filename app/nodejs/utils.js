@@ -38,7 +38,7 @@ export const issueProcess = (content, descText) => {
     .post(api('issueProcess'), formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        token: token,
+        'datae-token': token,
       },
     })
     .then(res => res.data)

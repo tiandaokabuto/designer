@@ -10,6 +10,8 @@ const apiList = {
   /** 原子能力树型结构获取功能 */
   selectCodeJson: '/designer/selectCodeJson',
   selectMenuJson: '/designer/selectMenuJson',
+  /** 刷新token */
+  refreshToken: '/auth/token/refresh',
 };
 
 export default description => {
