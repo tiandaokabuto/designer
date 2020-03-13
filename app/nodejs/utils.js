@@ -5,6 +5,9 @@ import store from '../store';
 import { findNodeByKey } from '../containers/common/utils';
 import api from '../api';
 
+const remote = require('electron').remote;
+const token = remote.getGlobal('sharedObject').token;
+
 export const issueProcess = (content, descText) => {
   const {
     grapheditor: { currentCheckedTreeNode, processTree },
@@ -29,10 +32,12 @@ export const issueProcess = (content, descText) => {
   formData.append('processName', node.title);
   formData.append('desc', descText);
   formData.append('mainFile', 'test.py');
+  console.log(token);
   axios
     .post(api('issueProcess'), formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
+        token: token,
       },
     })
     .then(res => res.data)

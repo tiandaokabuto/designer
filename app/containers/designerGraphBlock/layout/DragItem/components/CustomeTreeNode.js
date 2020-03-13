@@ -20,7 +20,6 @@ export default class Tree extends React.Component {
   };
 
   static getDerivedStateFromProps(nextProps) {
-    console.log(nextProps);
     return {
       filter: nextProps.filter,
     };

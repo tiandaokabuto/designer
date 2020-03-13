@@ -4,7 +4,8 @@ import axios from 'axios';
 
 import NewProject from './NewProject';
 import api from '../../../api';
-const { ipcRenderer } = require('electron');
+const { ipcRenderer, remote } = require('electron');
+const userName = remote.getGlobal('sharedObject').userName;
 
 import './index.scss';
 
@@ -108,7 +109,7 @@ export default () => {
         }}
       >
         <Icon type="user" />
-        <span>韩冬冬, 您好!</span>
+        <span>{userName}, 您好!</span>
         <span
           className="graphblock-header-user-sign-out"
           onClick={handleSignOut}

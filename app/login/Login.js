@@ -5,7 +5,7 @@ import axios from 'axios';
 import api, { config } from '../api';
 import { hex_sha1, readGlobalConfig, writeGlobalConfig } from './utils';
 
-const { ipcRenderer } = require('electron');
+const { ipcRenderer, remote } = require('electron');
 
 import './login.scss';
 
@@ -25,6 +25,8 @@ const Login = () => {
       })
       .then(json => {
         if (~json.code) {
+          remote.getGlobal('sharedObject').token = json.data.token;
+          remote.getGlobal('sharedObject').userName = json.data.userName;
           ipcRenderer.send('loginSuccess');
         }
       });

@@ -89,6 +89,11 @@ const createWindow = async () => {
     // await installExtensions();
   }
 
+  global.sharedObject = {
+    token: undefined,
+    userName: '',
+  };
+
   mainWindow = new BrowserWindow({
     show: false,
     width: 1350,
