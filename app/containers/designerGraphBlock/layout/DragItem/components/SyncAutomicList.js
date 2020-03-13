@@ -56,7 +56,6 @@ const readGlobalConfig = callback => {
       })();
       const abilityStructure = await getAbialityStructure;
       const abilityTree = await getAbilityTree;
-      console.log(abilityStructure, abilityTree);
 
       const treeList = [
         {
@@ -133,8 +132,6 @@ const readGlobalConfig = callback => {
         },
       };
       const treeData = automicListToTree(abilityTree, abilityStructure);
-
-      console.log(treeData, 'hhhhhhh');
 
       callback && callback(treeData);
     }

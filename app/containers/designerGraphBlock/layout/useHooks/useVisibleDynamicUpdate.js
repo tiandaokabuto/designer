@@ -88,6 +88,7 @@ export default (id, visibleTemplate) => {
         find.value = newValue || null;
         event.emit('forceUpdate');
       }
+
       setCanDrag(true);
       updateTemplate(visibleTemplate);
       handleEmitCodeTransform(cards);

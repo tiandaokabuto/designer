@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Flow, withPropsAPI } from 'gg-editor';
 import { useSelector } from 'react-redux';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
@@ -33,6 +33,8 @@ export default useInjectContext(
       const { getSelected, executeCommand, update, save } = propsAPI;
       const graphData = useSelector(state => state.grapheditor.graphData);
       const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+      const graphDataMapRef = useRef(new Map());
+      graphDataMapRef.current = graphDataMap;
       const currentCheckedTreeNode = useSelector(
         state => state.grapheditor.currentCheckedTreeNode
       );
@@ -43,6 +45,7 @@ export default useInjectContext(
       useEffect(() => {
         showHead && propsAPI.executeCommand('autoZoom');
       }, []);
+      console.log(graphDataMap, 'mmmm');
       return (
         <div className="designergraph-container">
           {!showHead && (
@@ -106,7 +109,8 @@ export default useInjectContext(
               switch (dataId) {
                 case 'edit':
                   updateCurrentEditingProcessBlock(node.item.id);
-                  synchroCodeBlock(graphDataMap.get(node.item.id));
+                  // FIXME...... 没有获取到最新的map 因为再次点击的过程中流程图是没有更新的
+                  synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
                   setTimeout(() => {
                     history.push('/designerGraphBlock');
                   }, 0);
