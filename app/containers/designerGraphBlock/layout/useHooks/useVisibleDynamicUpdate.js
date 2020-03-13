@@ -20,11 +20,12 @@ export default (id, visibleTemplate) => {
     const proxyList = node.properties.required.filter(item =>
       watchingList.includes(item.enName)
     );
-    proxyList.push(
-      ...node.properties.optional.filter(item =>
-        watchingList.includes(item.enName)
-      )
-    );
+    node.properties.optional &&
+      proxyList.push(
+        ...node.properties.optional.filter(item =>
+          watchingList.includes(item.enName)
+        )
+      );
     const updateTemplate = template => {
       let result = template.replace(/({{.*?}})/g, (_, ...args) => {
         const find = proxyList.find(item => args[0].includes(item.enName));

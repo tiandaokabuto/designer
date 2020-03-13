@@ -27,7 +27,6 @@ const handleStatementOutput = (output, value, result) => {
 
 const handleMainFnGeneration = (dataStructure, params, result) => {
   const isSubtype = dataStructure.subtype;
-  console.log(dataStructure, 'kkkkk');
   result.output += `${isSubtype ? '' : dataStructure.pkg + '.'}${
     dataStructure.main
   }(${params})\n`;

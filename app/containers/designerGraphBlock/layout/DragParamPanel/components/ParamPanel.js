@@ -80,11 +80,12 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
             handleEmitCodeTransform(cards);
           }}
         >
-          {param.valueMapping.map(item => (
-            <Option key={item.value} value={item.value}>
-              {item.name}
-            </Option>
-          ))}
+          {param.valueMapping &&
+            param.valueMapping.map(item => (
+              <Option key={item.value} value={item.value}>
+                {item.name}
+              </Option>
+            ))}
         </Select>
       );
     default:

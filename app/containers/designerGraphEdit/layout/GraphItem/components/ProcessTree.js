@@ -36,7 +36,6 @@ const transformTreeTitle = processTree => {
     }
   }
   recurise(result);
-  console.log(result);
   return result;
 };
 
