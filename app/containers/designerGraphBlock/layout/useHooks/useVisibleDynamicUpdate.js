@@ -90,6 +90,7 @@ export default (id, visibleTemplate) => {
       }
 
       setCanDrag(true);
+      console.log('mmmm');
       updateTemplate(visibleTemplate);
       handleEmitCodeTransform(cards);
     };

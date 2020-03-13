@@ -3,6 +3,7 @@ import {
   PLACEHOLDER_MAINPROCESS,
   PLACEHOLDER_CONDITIONALSTATEMENT,
 } from '../statementTypes';
+import cloneDeep from 'lodash/cloneDeep';
 
 export const findNodeLevelById = (cards, id, isTail) => {
   const find = cards.find(item => item.id === id);
@@ -100,7 +101,7 @@ export const useNode = (node, id) => {
     node.elseChildren = [];
   }
   node.id = id;
-  return node;
+  return cloneDeep(node);
 };
 
 /**

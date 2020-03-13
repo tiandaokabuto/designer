@@ -61,6 +61,8 @@ const BasicStatement = useInjectContext(props => {
     save,
   ] = useVisibleDynamicUpdate(id, visibleTemplate);
 
+  console.log(templateVisible, id);
+
   const [className, setClassName, resetClassName] = useSetClassName();
 
   const opacity = useToggleOpacity({

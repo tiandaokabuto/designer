@@ -16,6 +16,7 @@ const getCheckedBlock = (cards, checkedId) => {
 export default ({ current }) => {
   const data = useSelector(state => state.blockcode);
   const checkedBlock = getCheckedBlock(data.cards, data.checkedId);
+  console.log(checkedBlock);
   return (
     <div className="dragger-editor-parampanel">
       <Tabs className="dragger-editor-parampanel-tabs">
