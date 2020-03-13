@@ -45,7 +45,7 @@ export default useInjectContext(
       useEffect(() => {
         showHead && propsAPI.executeCommand('autoZoom');
       }, []);
-      console.log(graphDataMap, 'mmmm');
+
       return (
         <div className="designergraph-container">
           {!showHead && (

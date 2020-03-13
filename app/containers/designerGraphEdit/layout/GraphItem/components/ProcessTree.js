@@ -126,7 +126,16 @@ export default () => {
   };
 
   const handleRename = (key, persistentStorage) => {
-    renameNodeByKey(processTree, key, persistentStorage);
+    const restoreCheckedTreeNode = () => {
+      changeCheckedTreeNode(currentCheckedTreeNode);
+    };
+    changeCheckedTreeNode(undefined);
+    renameNodeByKey(
+      cloneDeep(processTree),
+      key,
+      persistentStorage,
+      restoreCheckedTreeNode
+    );
   };
   return (
     <div>
@@ -147,6 +156,7 @@ export default () => {
         }}
         onDragEnter={onDragEnter}
         onDrop={onDrop}
+        //treeData={processTree}
         treeData={transformTreeTitle(processTree)}
         selectedKeys={[currentCheckedTreeNode]}
         onSelect={(selectedKey, e) => {

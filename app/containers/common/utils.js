@@ -122,7 +122,12 @@ export const findParentNodeByKey = (tree, key, parent = tree) => {
   }
 };
 
-export const renameNodeByKey = (tree, key, persistentStorage) => {
+export const renameNodeByKey = (
+  tree,
+  key,
+  persistentStorage,
+  restoreCheckedTreeNode
+) => {
   const node = findNodeByKey(tree, key);
   const parent = findParentNodeByKey(tree, key) || [];
   node.title = (
@@ -140,6 +145,7 @@ export const renameNodeByKey = (tree, key, persistentStorage) => {
         node.title = e.target.value;
         changeProcessTree([...tree]);
         persistentStorage();
+        restoreCheckedTreeNode();
       }}
     />
   );
@@ -169,7 +175,7 @@ export const persistentStorage = (processTree, name) => {
           if (err) {
             console.error(err);
           }
-          message.success('保存成功');
+          // message.success('保存成功');
           console.log('----------新增成功-------------');
         }
       );
