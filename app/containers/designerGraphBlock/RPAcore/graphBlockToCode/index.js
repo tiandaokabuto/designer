@@ -6,12 +6,14 @@ import transformReturnStatement from './transformReturnStatement';
 import transformBreakStatement from './transformBreakStatement';
 import transformContinueStatement from './transformContinueStatement';
 import transformSleepStatement from './transformSleepStatement';
+import transformVariableDeclar from './transformVariableDeclar';
 import {
   PrintStatementTag,
   ReturnStatementTag,
   BreakStatementTag,
   ContinueStatementTag,
   SleepStatementTag,
+  VariableDeclareTag,
 } from '../../layout/statementTags';
 import { isArray } from './utils';
 
@@ -50,10 +52,15 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
         ) {
           transformContinueStatement(padding, statement, result);
         } else if (
-          statement.subtype && // ContinueStatementTag
+          statement.subtype && // VariableDeclareTag
           (statement.subtype & SleepStatementTag) === SleepStatementTag
         ) {
           transformSleepStatement(padding, statement, result, moduleMap);
+        } else if (
+          statement.subtype && // VariableDeclareTag
+          (statement.subtype & VariableDeclareTag) === VariableDeclareTag
+        ) {
+          transformVariableDeclar(padding, statement, result, moduleMap);
         } else {
           transformBasicStatement(padding, statement, result, moduleMap);
         }
