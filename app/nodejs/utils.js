@@ -6,7 +6,6 @@ import { findNodeByKey } from '../containers/common/utils';
 import api from '../api';
 
 const remote = require('electron').remote;
-const token = remote.getGlobal('sharedObject').token;
 
 export const issueProcess = (content, descText) => {
   const {
@@ -24,6 +23,8 @@ export const issueProcess = (content, descText) => {
     message.info('流程未保存');
     return;
   }
+
+  const token = remote.getGlobal('sharedObject').token;
 
   const file = new File([content], 'upload.zip', { type: 'zip' });
   const formData = new FormData();
