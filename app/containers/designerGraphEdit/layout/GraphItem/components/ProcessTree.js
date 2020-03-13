@@ -117,7 +117,7 @@ export default () => {
 
   const handleDelete = (key, persistentStorage) => {
     Modal.confirm({
-      content: '是否删除该流程',
+      content: '请确认是否删除?',
       onOk() {
         deleteNodeByKey(processTree, key);
         changeProcessTree([...processTree]);
