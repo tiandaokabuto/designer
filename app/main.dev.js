@@ -174,11 +174,11 @@ const createWindow = async () => {
       mainWindow.restore();
       //将结果通知给渲染进程
       if (targetId === undefined) return;
-      targetId = undefined;
       mainWindow.webContents.send('updateXpath', {
         ...finallyResult.value,
         targetId,
       });
+      targetId = undefined;
     } catch (e) {
       // 处理错误
       console.log('err---', e);
