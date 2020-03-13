@@ -132,6 +132,7 @@ const createWindow = async () => {
     loginWindow.hide();
     mainWindow.show();
     mainWindow.focus();
+    mainWindow.webContents.send('updateIpAndPort');
   });
 
   // 退出登录切换到登录页面
