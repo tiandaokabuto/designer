@@ -80,20 +80,7 @@ const createLoginWindow = () => {
   });
 };
 
-const createWindow = async () => {
-  createLoginWindow();
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    // await installExtensions();
-  }
-
-  global.sharedObject = {
-    token: undefined,
-    userName: '',
-  };
-
+const createMainWindow = () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1350,
@@ -115,31 +102,49 @@ const createWindow = async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+
+    mainWindow.webContents.send('updateIpAndPort');
+
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
-      // mainWindow.show();
-      // mainWindow.focus();
+      mainWindow.show();
+      mainWindow.focus();
     }
   });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+};
+
+const createWindow = async () => {
+  createLoginWindow();
+  // if (
+  //   process.env.NODE_ENV === 'development' ||
+  //   process.env.DEBUG_PROD === 'true'
+  // ) {
+  //   // await installExtensions();
+  // }
+
+  global.sharedObject = {
+    token: undefined,
+    userName: '',
+  };
 
   // 登录成功切换到主页面
   ipcMain.on('loginSuccess', () => {
-    loginWindow.hide();
-    mainWindow.show();
-    mainWindow.focus();
-    mainWindow.webContents.send('updateIpAndPort');
+    // loginWindow.hide();
+    loginWindow.destroy();
+    createMainWindow();
+    // mainWindow.show();
+    // mainWindow.focus();
   });
 
   // 退出登录切换到登录页面
   ipcMain.on('signOut', () => {
-    mainWindow.hide();
-    loginWindow.show();
-    loginWindow.focus();
+    mainWindow.destroy();
+    createLoginWindow();
   });
 
   // 创建登录窗口

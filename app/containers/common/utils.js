@@ -42,6 +42,9 @@ export const newProject = (name, callback) => {
  * @param {*} path
  */
 export const readAllFileName = path => {
+  try {
+    fs.mkdirSync(`${process.cwd()}/project`);
+  } catch (err) {}
   const result = fs.readdirSync(`${process.cwd()}/project`);
   const fileList = [];
   result.forEach((name, key) => {
