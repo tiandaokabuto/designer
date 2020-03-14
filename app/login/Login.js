@@ -57,6 +57,22 @@ const Login = () => {
     };
     readGlobalConfig(callback);
   }, []);
+
+  useEffect(() => {
+    document.onkeydown = function(e) {
+      if (e.keyCode === 13) {
+        config.context = `http://${ip}:${port}`;
+        writeGlobalConfig({
+          ip,
+          port,
+        });
+        handleSignIn();
+      }
+    };
+    return () => {
+      document.onkeydown = null;
+    };
+  }, [config, ip, port]);
   return (
     <div className="login">
       <div

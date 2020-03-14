@@ -135,16 +135,16 @@ const createWindow = async () => {
   // 登录成功切换到主页面
   ipcMain.on('loginSuccess', () => {
     // loginWindow.hide();
-    loginWindow.destroy();
     createMainWindow();
+    loginWindow.destroy();
     // mainWindow.show();
     // mainWindow.focus();
   });
 
   // 退出登录切换到登录页面
   ipcMain.on('signOut', () => {
-    mainWindow.destroy();
     createLoginWindow();
+    mainWindow.destroy();
   });
 
   // 创建登录窗口
