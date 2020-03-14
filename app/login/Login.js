@@ -106,7 +106,7 @@ const Login = () => {
         />
         <Button
           onClick={() => {
-            config.context = `http://${ip}:${port}/controller`;
+            config.context = `http://${ip}:${port}`;
             writeGlobalConfig({
               ip,
               port,

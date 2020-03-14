@@ -42,15 +42,16 @@ export default class App extends React.Component<Props> {
   };
 
   refreshToken = () => {
+    console.log('hhhh');
     if (timerID) clearTimeout(timerID);
     timerID = setTimeout(() => {
-      axios.get(api['refreshToken']);
+      axios.get(api('refreshToken'));
       this.refreshToken();
     }, 60 * 1000 * 4);
   };
 
   resetConfig = (ip, port) => {
-    config.context = `http://${ip}:${port}/controller`;
+    config.context = `http://${ip}:${port}`;
   };
 
   render() {

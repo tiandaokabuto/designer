@@ -1,15 +1,15 @@
 export const config = {
-  context: 'http://172.168.201.90:19090/controller',
+  context: 'http://172.168.201.90:19090',
 };
 
 const apiList = {
-  issueProcess: '/designer/issueProcess',
+  issueProcess: '/controller/designer/issueProcess',
   /** 设计器登录接口 */
-  signIn: '/designerLogin/signIn',
-  signOut: '/designerLogin/signOut',
+  signIn: '/controller/designerLogin/signIn',
+  signOut: '/controller/designerLogin/signOut',
   /** 原子能力树型结构获取功能 */
-  selectCodeJson: '/designer/selectCodeJson',
-  selectMenuJson: '/designer/selectMenuJson',
+  selectCodeJson: '/controller/designer/selectCodeJson',
+  selectMenuJson: '/controller/designer/selectMenuJson',
   /** 刷新token */
   refreshToken: '/auth/token/refresh',
 };
