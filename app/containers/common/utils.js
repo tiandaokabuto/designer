@@ -183,6 +183,30 @@ export const persistentStorage = (processTree, name) => {
   });
 };
 
+export const hasDuplicateKey = (tree, new_key) => {
+  for (const child of tree) {
+    if (child.key === new_key) {
+      return true;
+    }
+    if (child.children) {
+      let bool = hasDuplicateKey(child.children, new_key);
+      if (bool) return bool;
+    }
+  }
+};
+
+const getUniqueId = tree => {
+  let new_key = uniqueId('key_');
+  while (true) {
+    if (hasDuplicateKey(tree, new_key)) {
+      new_key = uniqueId('key_');
+      continue;
+    } else {
+      return new_key;
+    }
+  }
+};
+
 /**
  * 创建新流程
  * @param {*} type
@@ -200,7 +224,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
     if (isLeafNodeOrUndefined) {
       newProcessTree = processTree.concat({
         title: name,
-        key: uniqueId('key_'), //'0-' + processTree.length,
+        key: getUniqueId(processTree), //'0-' + processTree.length,
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
@@ -210,7 +234,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
       //在这个项目目录下新增
       isDirNodeBool.children.push({
         title: name,
-        key: uniqueId('key_'), // isDirNodeBool.key + '-' + isDirNodeBool.children.length,
+        key: getUniqueId(processTree), // isDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
@@ -223,7 +247,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
     if (isLeafNodeOrUndefined) {
       newProcessTree = processTree.concat({
         title: name,
-        key: uniqueId('key_'), // '0-' + processTree.length,
+        key: getUniqueId(processTree), // '0-' + processTree.length,
         type: 'dir',
         //icon: <Icon type="unordered-list" />,
         children: [],
@@ -231,7 +255,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
     } else {
       isDirNodeBool.children.push({
         title: name,
-        key: uniqueId('key_'), // uniqueId('key_'),sDirNodeBool.key + '-' + isDirNodeBool.children.length,
+        key: getUniqueId(processTree), // uniqueId('key_'),sDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'dir',
         //icon: <Icon type="unordered-list" />,
         children: [],
