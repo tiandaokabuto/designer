@@ -69,6 +69,7 @@ export const startZIP = descText => {
 };
 
 export const writeFile = (dirname, content, descText) => {
+  // console.log(content);
   writeFileRecursive(dirname, content, err => {
     if (!err) {
       console.log('开始压缩...');

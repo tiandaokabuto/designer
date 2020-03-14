@@ -178,7 +178,6 @@ export default (graphData, graphDataMap) => {
       null
     );
     updateEditorBlockPythonCode(result.output);
-    console.log(result.output);
     // 更新最后的结果
     // message.success('保存成功');
   }

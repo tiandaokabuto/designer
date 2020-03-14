@@ -1,4 +1,7 @@
-def RPA_ddad539d(*argv, **kw):
+def RPA_9614006a(*argv, **kw):
+    from sendiRPA import Browser
+
+    suc = Browser.newTab(_browser = hWeb)
 
 if __name__ == '__main__':
-    RPA_ddad539d()
+    RPA_9614006a()

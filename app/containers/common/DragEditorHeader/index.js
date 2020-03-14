@@ -44,7 +44,9 @@ export default memo(
     const hanldePublishModalOk = () => {
       setModalVisible(false);
       handlePublishProcess();
-      handlePublishZip(descText);
+      setTimeout(() => {
+        handlePublishZip(descText);
+      }, 0);
     };
 
     const TOOLS_DESCRIPTION_FOR_CODEBLOCK = useMemo(
