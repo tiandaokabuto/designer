@@ -13,6 +13,7 @@ import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import {
   useDropTarget,
+  useHasLookTarget,
   useDeleteNodeById,
   useUpdateXpath,
   useVisibleDynamicUpdate,
@@ -53,6 +54,8 @@ const BasicStatement = useInjectContext(props => {
     setIsDraggingNode,
     PLACEHOLDER_STATEMENT,
   } = props;
+
+  const hasLookTarget = useHasLookTarget(card);
 
   const [
     canDrag,
@@ -160,6 +163,9 @@ const BasicStatement = useInjectContext(props => {
               </div>
               <div
                 className="card-content-searchtarget"
+                style={{
+                  display: hasLookTarget ? '' : 'none',
+                }}
                 onClick={() => {
                   ipcRenderer.send('min');
                   ipcRenderer.send('start_server', id);
