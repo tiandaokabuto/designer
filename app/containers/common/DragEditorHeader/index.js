@@ -132,6 +132,7 @@ export default memo(
         onClick: () => {
           // 保存到本地
           persistentStorage();
+          message.success('保存成功');
         },
         IconFont: true,
       },

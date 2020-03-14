@@ -3,7 +3,6 @@
  */
 
 export default card => {
-  console.log(card);
   if (!card || !card.properties) return false;
   const required = card.properties.required || [];
   const optional = card.properties.optional || [];
