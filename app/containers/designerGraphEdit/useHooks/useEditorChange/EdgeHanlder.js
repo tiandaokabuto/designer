@@ -1,4 +1,8 @@
 import { findNodeById } from './utils';
+import {
+  synchroGraphDataToProcessTree,
+  updateGraphData,
+} from '../../../reduxActions';
 
 const canLink = () => {};
 
@@ -18,6 +22,10 @@ class EdgeHandler {
       // this.apiAction("undo");
       // console.log(nodes, edges, target, source);
     }
+    // 保存当前流程图的任意更新不加区分
+    updateGraphData(this.propsAPI.save());
+    synchroGraphDataToProcessTree();
+    // updateGraphData(this.propsAPI.save());
   };
 
   apiAction = command => {

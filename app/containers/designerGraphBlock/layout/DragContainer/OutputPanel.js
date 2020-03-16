@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import event, { PYTHON_OUTPUT } from '../eventCenter';
 
 let isMouseDown = false;
 let startOffset = 0;
 
-export default ({ tag }) => {
+export default memo(({ tag }) => {
   const [output, setOutput] = useState('');
   useEffect(() => {
     const handleAnchorMouseMove = useThrottle(e => {
@@ -46,7 +46,7 @@ export default ({ tag }) => {
       event.removeListener('clear_output', handleClearOutput);
     };
   }, []);
-  console.log(tag);
+
   const style =
     tag === 'graph'
       ? {
@@ -67,4 +67,4 @@ export default ({ tag }) => {
       </div>
     </div>
   );
-};
+});

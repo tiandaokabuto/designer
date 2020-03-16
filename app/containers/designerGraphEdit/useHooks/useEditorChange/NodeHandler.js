@@ -1,7 +1,11 @@
 import { message } from 'antd';
 
 import { findNodeById } from './utils';
-import { setGraphDataMap, updateGraphData } from '../../../reduxActions';
+import {
+  setGraphDataMap,
+  updateGraphData,
+  synchroGraphDataToProcessTree,
+} from '../../../reduxActions';
 
 const canLink = () => {};
 
@@ -79,9 +83,10 @@ class NodeHandler {
           properties: [],
         });
       }
-      // 保存当前流程图的任意更新不加区分
-      updateGraphData(this.propsAPI.save());
     }
+    // 保存当前流程图的任意更新不加区分
+    updateGraphData(this.propsAPI.save());
+    synchroGraphDataToProcessTree();
   };
 
   apiAction = command => {
