@@ -9,13 +9,31 @@ import {
 } from '../../../../reduxActions';
 import Switcher from './Switcher';
 import ContextMenu from './ContextMenu';
-import { deleteNodeByKey, renameNodeByKey } from '../../../../common/utils';
+import {
+  deleteNodeByKey,
+  renameNodeByKey,
+  hasNodeModified,
+  setAllModifiedState,
+} from '../../../../common/utils';
+import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 
-const TreeNodeTitle = ({ title, type }) => {
+const TreeNodeTitle = ({ title, type, hasModified }) => {
   return (
     <div>
       <Icon type={type} style={{ marginRight: 6 }} />
       {title}
+      <span
+        style={{
+          visibility: hasModified ? 'visible' : 'hidden',
+          verticalAlign: 'sub',
+          display: 'inline-block',
+          marginLeft: 8,
+          color: hasModified ? 'red' : '',
+        }}
+        className={hasModified ? 'hasModified' : 'notModified'}
+      >
+        *
+      </span>
     </div>
   );
 };
@@ -26,9 +44,23 @@ const transformTreeTitle = processTree => {
     for (const child of tree) {
       // 添加title
       if (child.type === 'process') {
-        child.title = <TreeNodeTitle title={child.title} type="cluster" />;
+        // child.hasModified = false;
+        child.title = (
+          <TreeNodeTitle
+            title={child.title}
+            hasModified={child.hasModified}
+            type="cluster"
+          />
+        );
       } else {
-        child.title = <TreeNodeTitle title={child.title} type="file" />;
+        // child.hasModified = false;
+        child.title = (
+          <TreeNodeTitle
+            title={child.title}
+            hasModified={child.hasModified}
+            type="file"
+          />
+        );
       }
       if (child.children) {
         recurise(child.children);
@@ -45,6 +77,8 @@ export default () => {
   const currentCheckedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
   );
+
+  const persistentStorage = usePersistentStorage();
 
   // 右键菜单位置设定
   const [position, setPosition] = useState({});
@@ -161,7 +195,29 @@ export default () => {
         treeData={transformTreeTitle(processTree)}
         selectedKeys={[currentCheckedTreeNode]}
         onSelect={(selectedKey, e) => {
-          changeCheckedTreeNode(selectedKey[0]);
+          console.log(hasNodeModified);
+          const isModified = hasNodeModified(
+            processTree,
+            currentCheckedTreeNode
+          );
+          if (isModified) {
+            Modal.confirm({
+              content: '工作区尚未保存,请确认是否保存?',
+              onOk() {
+                // 保存并修改所有的未保存状态
+                persistentStorage();
+                setAllModifiedState(processTree);
+                changeCheckedTreeNode(selectedKey[0]);
+              },
+              onCancel() {
+                changeCheckedTreeNode(selectedKey[0]);
+              },
+            });
+          } else {
+            changeCheckedTreeNode(selectedKey[0]);
+          }
+
+          // changeCheckedTreeNode(selectedKey[0]);
         }}
       />
       <ContextMenu

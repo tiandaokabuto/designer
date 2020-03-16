@@ -4,6 +4,9 @@ import {
   updateGraphData,
 } from '../../../reduxActions';
 
+import { changeModifyState } from '../../../common/utils';
+import store from '../../../../store';
+
 const canLink = () => {};
 
 class EdgeHandler {
@@ -25,7 +28,12 @@ class EdgeHandler {
     // 保存当前流程图的任意更新不加区分
     updateGraphData(this.propsAPI.save());
     synchroGraphDataToProcessTree();
-    // updateGraphData(this.propsAPI.save());
+
+    // 添加状态为未保存
+    const {
+      grapheditor: { processTree, currentCheckedTreeNode },
+    } = store.getState();
+    changeModifyState(processTree, currentCheckedTreeNode, true);
   };
 
   apiAction = command => {

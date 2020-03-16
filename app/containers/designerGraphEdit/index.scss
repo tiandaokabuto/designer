@@ -49,6 +49,16 @@
         display: none;
       }
     }
+    .draggable-tree {
+      .ant-tree-node-content-wrapper {
+        height: 32px;
+        line-height: 28px;
+      }
+      .ant-tree-node-selected {
+        background-color: #f7f8f9 !important;
+        color: #32a67f;
+      }
+    }
   }
   &-container {
     // display: flex;

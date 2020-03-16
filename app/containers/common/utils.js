@@ -301,3 +301,31 @@ export const openProject = name => {
 export const formatDateTime = time => {
   return moment(time).format('YYYY-MM-DD HH:mm');
 };
+
+// 流程保存相关接口
+export const changeModifyState = (processTree, key, modifyState) => {
+  const node = findNodeByKey(processTree, key);
+  node.hasModified = true;
+  changeProcessTree([...processTree]);
+};
+
+export const hasNodeModified = (processTree, key) => {
+  const node = findNodeByKey(processTree, key);
+  return node.hasModified;
+};
+
+export const traverseTree = (tree, callback) => {
+  for (const child of tree) {
+    callback && callback(child);
+    if (child.children) {
+      traverseTree(child.children, callback);
+    }
+  }
+};
+
+export const setAllModifiedState = processTree => {
+  traverseTree(processTree, node => {
+    node.hasModified = false;
+  });
+  changeProcessTree([...processTree]);
+};

@@ -8,8 +8,9 @@ export default props => {
     <div
       className="toggle_switcher"
       style={{
-        position: 'fixed',
+        position: 'absolute',
         left: '200px',
+        top: '4px',
       }}
       onClick={() => {
         setText(t => (t === 'open' ? 'close' : 'open'));
