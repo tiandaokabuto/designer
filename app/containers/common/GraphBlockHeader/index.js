@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Icon, Dropdown, Menu } from 'antd';
+import { Icon, Dropdown, Menu, Modal } from 'antd';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 import NewProject from './NewProject';
 import api from '../../../api';
+import { existModifiedNode, setAllModifiedState } from '../utils';
+import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
 const { ipcRenderer, remote } = require('electron');
 
 import './index.scss';
@@ -36,6 +39,8 @@ export default ({ history }) => {
   const resetVisible = () => {
     setVisible(undefined);
   };
+  const processTree = useSelector(state => state.grapheditor.processTree);
+  const persistentStorage = usePersistentStorage();
   const TOOLS_DESCRIPTION = [
     {
       title: '项目',
@@ -140,7 +145,25 @@ export default ({ history }) => {
         <Icon
           type="close"
           className="graphblock-header-operation"
-          onClick={() => handleWindowOperation('close')}
+          onClick={() => {
+            const flag = existModifiedNode(processTree);
+            if (flag) {
+              Modal.confirm({
+                content: '工作区内容尚未保存, 请确认是否保存?',
+                onOk() {
+                  setAllModifiedState(processTree);
+                  persistentStorage();
+                  handleWindowOperation('close');
+                },
+                onCancel() {
+                  handleWindowOperation('close');
+                },
+              });
+            } else {
+              handleWindowOperation('close');
+            }
+            // handleWindowOperation('close')
+          }}
         />
       </div>
       {visible === 'newproject' && (

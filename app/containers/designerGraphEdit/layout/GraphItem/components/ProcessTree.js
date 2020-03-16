@@ -195,7 +195,6 @@ export default () => {
         treeData={transformTreeTitle(processTree)}
         selectedKeys={[currentCheckedTreeNode]}
         onSelect={(selectedKey, e) => {
-          console.log(hasNodeModified);
           const isModified = hasNodeModified(
             processTree,
             currentCheckedTreeNode
@@ -205,8 +204,8 @@ export default () => {
               content: '工作区尚未保存,请确认是否保存?',
               onOk() {
                 // 保存并修改所有的未保存状态
-                persistentStorage();
                 setAllModifiedState(processTree);
+                persistentStorage();
                 changeCheckedTreeNode(selectedKey[0]);
               },
               onCancel() {

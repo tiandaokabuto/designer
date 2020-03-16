@@ -323,9 +323,24 @@ export const traverseTree = (tree, callback) => {
   }
 };
 
-export const setAllModifiedState = processTree => {
+export const setAllModifiedState = (processTree, state = false) => {
   traverseTree(processTree, node => {
-    node.hasModified = false;
+    node.hasModified = state;
   });
   changeProcessTree([...processTree]);
+};
+
+export const existModifiedNode = processTree => {
+  let flag = false;
+  // FIXME...
+  try {
+    traverseTree(processTree, node => {
+      flag = node.hasModified;
+      if (flag) throw new Error('flag has been true');
+    });
+  } catch (err) {
+    console.log(err);
+  } finally {
+    return flag;
+  }
 };
