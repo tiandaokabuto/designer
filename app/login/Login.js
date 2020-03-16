@@ -72,7 +72,7 @@ const Login = () => {
     return () => {
       document.onkeydown = null;
     };
-  }, [config, ip, port]);
+  }, [config, ip, port, userName, password]);
   return (
     <div className="login">
       <div
