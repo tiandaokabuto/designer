@@ -30,7 +30,7 @@ const handleWindowOperation = op => {
   ipcRenderer.send(op);
 };
 
-export default () => {
+export default ({ history }) => {
   const userName = remote.getGlobal('sharedObject').userName;
   const [visible, setVisible] = useState(undefined);
   const resetVisible = () => {
@@ -39,20 +39,23 @@ export default () => {
   const TOOLS_DESCRIPTION = [
     {
       title: '项目',
-      children: [
-        {
-          title: '新建项目',
-          onClick: () => {
-            setVisible('newproject');
-          },
-        },
-        {
-          title: '打开项目',
-          onClick: () => {
-            setVisible('openproject');
-          },
-        },
-      ],
+      onClick: () => {
+        history.push('/');
+      },
+      // children: [
+      //   {
+      //     title: '新建项目',
+      //     onClick: () => {
+      //       setVisible('newproject');
+      //     },
+      //   },
+      //   {
+      //     title: '打开项目',
+      //     onClick: () => {
+      //       setVisible('openproject');
+      //     },
+      //   },
+      // ],
     },
     '编辑',
     '运行',
@@ -70,7 +73,7 @@ export default () => {
         }
       });
   };
-  console.log(userName);
+
   return (
     <div
       className="graphblock-header"
@@ -88,7 +91,7 @@ export default () => {
         }}
       >
         {TOOLS_DESCRIPTION.map((tool, index) => {
-          if (typeof tool === 'object') {
+          if (typeof tool === 'object' && tool.children) {
             return (
               <Dropdown
                 key={index}
@@ -97,6 +100,13 @@ export default () => {
               >
                 <span>{tool.title}</span>
               </Dropdown>
+            );
+          }
+          if (typeof tool === 'object') {
+            return (
+              <span key={index} onClick={tool.onClick || (() => {})}>
+                {tool.title}
+              </span>
             );
           }
           return <span key={index}>{tool}</span>;

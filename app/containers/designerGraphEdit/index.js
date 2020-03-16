@@ -21,7 +21,7 @@ import './index.scss';
 export default () => {
   return (
     <Fragment>
-      <GraphBlockHeader />
+      <GraphBlockHeader history={history} />
       <DragEditorHeader type="process" />
 
       <GGEditor className="designergraph editor">
