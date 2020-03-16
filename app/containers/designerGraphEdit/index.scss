@@ -53,10 +53,22 @@
       .ant-tree-node-content-wrapper {
         height: 32px;
         line-height: 28px;
+        margin-left: -20px;
       }
       .ant-tree-node-selected {
-        background-color: #f7f8f9 !important;
         color: #32a67f;
+        background-color: transparent !important;
+        .treenode-title {
+          background-color: #f7f8f9 !important;
+          &::before {
+            content: '';
+            position: absolute;
+            background: #32a67f;
+            width: 2px;
+            height: 30px;
+            margin-left: -3px;
+          }
+        }
       }
     }
   }

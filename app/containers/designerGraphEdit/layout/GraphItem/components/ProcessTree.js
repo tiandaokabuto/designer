@@ -19,8 +19,8 @@ import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/u
 
 const TreeNodeTitle = ({ title, type, hasModified }) => {
   return (
-    <div>
-      <Icon type={type} style={{ marginRight: 6 }} />
+    <div className="treenode-title">
+      <Icon type={type} style={{ marginRight: 8, marginLeft: 12 }} />
       {title}
       <span
         style={{
@@ -36,6 +36,10 @@ const TreeNodeTitle = ({ title, type, hasModified }) => {
       </span>
     </div>
   );
+};
+
+const Footer = () => {
+  return <div>hello world</div>;
 };
 
 const transformTreeTitle = processTree => {
@@ -177,7 +181,7 @@ export default () => {
       <Tree
         className="draggable-tree"
         defaultExpandedKeys={expandedKeys}
-        //defaultExpandAll={true}
+        defaultExpandAll={true}
         switcherIcon={<Switcher />}
         showIcon={true}
         draggable
@@ -202,6 +206,7 @@ export default () => {
           if (isModified) {
             Modal.confirm({
               content: '工作区尚未保存,请确认是否保存?',
+              // footer: <Footer />,
               onOk() {
                 // 保存并修改所有的未保存状态
                 setAllModifiedState(processTree);

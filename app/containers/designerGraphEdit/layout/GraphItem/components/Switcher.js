@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Icon } from 'antd';
 
 export default props => {
-  const [text, setText] = useState('open');
+  const [text, setText] = useState('close');
 
   return (
     <div
