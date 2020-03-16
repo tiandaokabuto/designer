@@ -11,6 +11,7 @@ import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
 import IconFont from '../IconFont/index';
 import usePersistentStorage from './useHooks/usePersistentStorage';
 import useExecutePython from './useHooks/useExecutePython';
+import { setAllModifiedState } from '../utils';
 
 import NewProcess from './NewProcess';
 
@@ -28,6 +29,8 @@ export default memo(
     const resetVisible = () => {
       setVisible(undefined);
     };
+
+    const processTree = useSelector(state => state.grapheditor.processTree);
 
     const [modalVisible, setModalVisible] = useState(false);
     const [descText, setDescText] = useState('');
@@ -135,6 +138,7 @@ export default memo(
         type: 'iconzhihang',
         onClick: () => {
           // 保存到本地
+          setAllModifiedState(processTree);
           persistentStorage();
           message.success('保存成功');
         },
