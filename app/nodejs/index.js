@@ -12,7 +12,7 @@ const JSZIP = require('jszip');
 
 const zip = new JSZIP();
 
-const writeFileRecursive = function(path, buffer, callback) {
+export const writeFileRecursive = function(path, buffer, callback) {
   const lastPath = path.substring(0, path.lastIndexOf('/'));
   fs.mkdir(lastPath, { recursive: true }, err => {
     if (err) return callback(err);

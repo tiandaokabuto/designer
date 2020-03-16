@@ -25,7 +25,7 @@ const DragContainer = () => {
             <CodeEditing />
           </TabPane>
         </Tabs>
-        <OutputPanel />
+        <OutputPanel tag="block" />
       </div>
     </div>
   );

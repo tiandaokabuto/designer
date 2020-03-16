@@ -7,17 +7,14 @@ import event, {
   PYTHON_EXECUTE,
 } from '../../designerGraphBlock/layout/eventCenter';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
-import { usePublishProcess } from '../../designerGraphEdit/useHooks';
+import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
 import IconFont from '../IconFont/index';
 import usePersistentStorage from './useHooks/usePersistentStorage';
+import useExecutePython from './useHooks/useExecutePython';
 
 import NewProcess from './NewProcess';
 
 import './index.scss';
-
-const handleOperation = op => (...args) => {
-  event.emit(op, ...args);
-};
 
 const FormItem = Form.Item;
 const formLayout = {
@@ -39,14 +36,21 @@ export default memo(
 
     const handlePublishZip = usePublishProcessZip();
 
-    const handlePublishProcess = usePublishProcess();
+    const transformProcessToPython = useTransformProcessToPython();
+
+    const executePython = useExecutePython();
 
     const hanldePublishModalOk = () => {
       setModalVisible(false);
-      handlePublishProcess();
+      transformProcessToPython();
       setTimeout(() => {
         handlePublishZip(descText);
       }, 0);
+    };
+
+    const handleOperation = () => {
+      transformProcessToPython();
+      executePython();
     };
 
     const TOOLS_DESCRIPTION_FOR_CODEBLOCK = useMemo(
@@ -79,7 +83,7 @@ export default memo(
           description: '运行',
           type: 'iconzhihang',
           IconFont: true,
-          onClick: handleOperation(PYTHON_EXECUTE),
+          onClick: handleOperation,
         },
         {
           description: '录制',
@@ -140,6 +144,7 @@ export default memo(
         description: '运行',
         type: 'iconrecordlight',
         IconFont: true,
+        onClick: handleOperation,
       },
       {
         description: '发布',

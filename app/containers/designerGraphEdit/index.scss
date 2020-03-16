@@ -51,6 +51,8 @@
     }
   }
   &-container {
+    // display: flex;
+    // flex-direction: column;
     height: calc(100% - 32px);
     flex: 1;
     max-width: calc(100vw - 239px * 2);
@@ -125,7 +127,8 @@
       }
     }
     &-flow {
-      height: calc(100% - 80px);
+      //flex: 1;
+      height: calc(100% - 140px);
     }
   }
   &-parampanel {

@@ -10,6 +10,8 @@ import {
   hasTwoEntryPortInProcessBlock,
 } from './utils';
 
+import { writeFileRecursive } from '../../../nodejs';
+
 import { transformBlockToCode } from '../../designerGraphBlock/RPAcore';
 import { updateEditorBlockPythonCode } from '../../reduxActions';
 
@@ -177,8 +179,15 @@ export default (graphData, graphDataMap) => {
       1,
       null
     );
+    console.log(result.output, 'hhhh', graphData);
     updateEditorBlockPythonCode(result.output);
-    // 更新最后的结果
-    // message.success('保存成功');
+    // 暂存到本地 project/python/temp.py
+    writeFileRecursive(
+      `${process.cwd()}/python/temp.py`,
+      result.output,
+      function() {
+        console.log('保存成功');
+      }
+    );
   }
 };

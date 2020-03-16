@@ -5,7 +5,7 @@ import event, { PYTHON_OUTPUT } from '../eventCenter';
 let isMouseDown = false;
 let startOffset = 0;
 
-export default () => {
+export default ({ tag }) => {
   const [output, setOutput] = useState('');
   useEffect(() => {
     const handleAnchorMouseMove = useThrottle(e => {
@@ -34,12 +34,29 @@ export default () => {
 
   useEffect(() => {
     const handlePythonOutput = stdout => {
-      setOutput(stdout);
+      setOutput(output => output + '\n' + stdout);
+    };
+    const handleClearOutput = () => {
+      setOutput('');
     };
     event.addListener(PYTHON_OUTPUT, handlePythonOutput);
+    event.addListener('clear_output', handleClearOutput);
+    return () => {
+      event.removeListener(PYTHON_OUTPUT, handlePythonOutput);
+      event.removeListener('clear_output', handleClearOutput);
+    };
   }, []);
+  console.log(tag);
+  const style =
+    tag === 'graph'
+      ? {
+          position: 'fixed',
+          width: '100%',
+          bottom: '0px',
+        }
+      : {};
   return (
-    <div className="dragger-editor-container-output">
+    <div className="dragger-editor-container-output" style={{ ...style }}>
       <div
         className="dragger-editor-container-output-anchor"
         onMouseDown={e => ((isMouseDown = true), (startOffset = e.pageY))}

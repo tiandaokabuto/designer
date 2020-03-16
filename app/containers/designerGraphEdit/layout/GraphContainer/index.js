@@ -11,6 +11,7 @@ import RhombusNode from '../RegisterNode/RhombusNode';
 
 import EditorDrawer from './components/EditorDrawer';
 import HighlightEditor from '../../useHooks/HighlightEditor';
+import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
 
 import EditorChange, {
   registerDataChange,
@@ -157,6 +158,7 @@ export default useInjectContext(
           <RhombusNode />
           <EditorChange />
           {/* <HighlightEditor /> */}
+          <OutputPanel tag="graph" />
         </div>
       );
     }

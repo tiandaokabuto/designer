@@ -5,7 +5,7 @@ import useUpdateEffect from 'react-hook-easier/lib/useUpdateEffect';
 
 import { CHANGE_SOURCECODE } from '../../../../actions/test';
 import { executePython } from '../../../../nodejs';
-import event, { PYTHON_EXECUTE } from '../eventCenter';
+// import event, { PYTHON_EXECUTE } from '../eventCenter';
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/addon/fold/foldgutter.css';
@@ -78,17 +78,17 @@ export default memo(() => {
     codeMirrorRef.current = myCodeMirror;
   }, []);
 
-  useEffect(() => {
-    const handlePythonExecute = () => {
-      const code = codeMirrorRef.current.getValue();
-      executePython(code);
-      dispatch({
-        type: CHANGE_SOURCECODE,
-        payload: code,
-      });
-    };
-    event.addListener(PYTHON_EXECUTE, handlePythonExecute);
-  }, []);
+  // useEffect(() => {
+  //   const handlePythonExecute = () => {
+  //     const code = codeMirrorRef.current.getValue();
+  //     executePython(code);
+  //     dispatch({
+  //       type: CHANGE_SOURCECODE,
+  //       payload: code,
+  //     });
+  //   };
+  //   event.addListener(PYTHON_EXECUTE, handlePythonExecute);
+  // }, []);
 
   useEffect(() => {
     codeMirrorRef.current.setOption('value', pythonCode);
