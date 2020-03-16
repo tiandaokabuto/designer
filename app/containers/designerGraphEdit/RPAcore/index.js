@@ -179,7 +179,7 @@ export default (graphData, graphDataMap) => {
       1,
       null
     );
-    console.log(result.output, 'hhhh', graphData);
+    result.output = '# -*- coding: UTF-8 -*-\n' + result.output;
     updateEditorBlockPythonCode(result.output);
     // 暂存到本地 project/python/temp.py
     writeFileRecursive(
