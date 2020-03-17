@@ -10,10 +10,10 @@ const layout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 16 },
 };
-export default ({ resetVisible }) => {
+export default ({ resetVisible, tag }) => {
   const [visible, setVisible] = useState(true);
   // 新建类型 process --- 流程  project --- 项目
-  const [type, setType] = useState(undefined);
+  // const [type, setType] = useState(tag === 'newprocess' ? 'dir' : 'process');
   // 类型/目录名称
   const [name, setName] = useState();
   const checkedTreeNode = useSelector(
@@ -27,10 +27,15 @@ export default ({ resetVisible }) => {
     // 做流程名校验避免重复
     if (isNameExist(processTree, name, checkedTreeNode)) {
       return void message.info(
-        `${type === 'process' ? '流程名' : '目录名'}重复,请重新填写!`
+        `${tag === 'newprocess' ? '流程名' : '目录名'}重复,请重新填写!`
       );
     }
-    const newProcessTree = newProcess(type, name, processTree, checkedTreeNode);
+    const newProcessTree = newProcess(
+      tag === 'newprocess' ? 'process' : 'dir',
+      name,
+      processTree,
+      checkedTreeNode
+    );
     setVisible(false);
     resetVisible(undefined);
     setTimeout(() => {
@@ -54,7 +59,7 @@ export default ({ resetVisible }) => {
         resetVisible(undefined);
       }}
     >
-      <FormItem label="选择类型" {...layout}>
+      {/* <FormItem label="选择类型" {...layout}>
         <Select
           style={{
             width: '100%',
@@ -66,8 +71,8 @@ export default ({ resetVisible }) => {
           <Option value="process">流程</Option>
           <Option value="dir">目录</Option>
         </Select>
-      </FormItem>
-      <FormItem label="流程/目录名称" {...layout}>
+      </FormItem> */}
+      <FormItem label={tag === 'newprocess' ? '流程名' : '目录名'} {...layout}>
         <Input
           onChange={e => {
             setName(e.target.value);
