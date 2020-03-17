@@ -3,6 +3,7 @@ import { Tree, Modal, Icon } from 'antd';
 import { useSelector } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
 
+import { ConfirmModal } from '../../../../common/components';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
@@ -16,6 +17,7 @@ import {
   setAllModifiedState,
 } from '../../../../common/utils';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
+import { fromTextArea } from 'codemirror';
 
 const TreeNodeTitle = ({ title, type, hasModified }) => {
   return (
@@ -36,10 +38,6 @@ const TreeNodeTitle = ({ title, type, hasModified }) => {
       </span>
     </div>
   );
-};
-
-const Footer = () => {
-  return <div>hello world</div>;
 };
 
 const transformTreeTitle = processTree => {
@@ -76,6 +74,8 @@ const transformTreeTitle = processTree => {
 };
 
 export default () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedKey, setSelectedKey] = useState('');
   const [expandedKeys, setExpandedKeys] = useState([]);
   const processTree = useSelector(state => state.grapheditor.processTree);
   const currentCheckedTreeNode = useSelector(
@@ -203,31 +203,35 @@ export default () => {
             processTree,
             currentCheckedTreeNode
           );
+          setSelectedKey(selectedKey[0]);
           if (isModified) {
-            Modal.confirm({
-              content: '工作区尚未保存,请确认是否保存?',
-              // footer: <Footer />,
-              onOk() {
-                // 保存并修改所有的未保存状态
-                setAllModifiedState(processTree);
-                persistentStorage();
-                changeCheckedTreeNode(selectedKey[0]);
-              },
-              onCancel() {
-                changeCheckedTreeNode(selectedKey[0]);
-              },
-            });
+            setModalVisible(true);
           } else {
             changeCheckedTreeNode(selectedKey[0]);
           }
-
-          // changeCheckedTreeNode(selectedKey[0]);
         }}
       />
       <ContextMenu
         position={position}
         handleDelete={handleDelete}
         handleRename={handleRename}
+      />
+      <ConfirmModal
+        visible={modalVisible}
+        content="请确认是否保存?"
+        onCancel={() => {
+          setModalVisible(false);
+        }}
+        onCancelOk={() => {
+          changeCheckedTreeNode(selectedKey);
+          setModalVisible(false);
+        }}
+        onOk={() => {
+          setAllModifiedState(processTree);
+          persistentStorage();
+          changeCheckedTreeNode(selectedKey);
+          setModalVisible(false);
+        }}
       />
     </div>
   );
