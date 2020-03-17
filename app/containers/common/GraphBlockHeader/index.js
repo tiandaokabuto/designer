@@ -33,7 +33,7 @@ const handleWindowOperation = op => {
   ipcRenderer.send(op);
 };
 
-export default ({ history }) => {
+export default ({ history, tag }) => {
   const userName = remote.getGlobal('sharedObject').userName;
   const [visible, setVisible] = useState(undefined);
   const resetVisible = () => {
@@ -93,6 +93,7 @@ export default ({ history }) => {
         className="graphblock-header-tools"
         style={{
           WebkitAppRegion: 'no-drag',
+          display: tag === 'recentProject' ? 'none' : '',
         }}
       >
         {TOOLS_DESCRIPTION.map((tool, index) => {
@@ -117,7 +118,14 @@ export default ({ history }) => {
           return <span key={index}>{tool}</span>;
         })}
       </div>
-      <div className="graphblock-header-title">SD-RPA Studio</div>
+      <div
+        className="graphblock-header-title"
+        style={{
+          marginLeft: tag === 'recentProject' ? 18 : 0,
+        }}
+      >
+        SD-RPA Studio
+      </div>
       <div
         className="graphblock-header-user"
         style={{
