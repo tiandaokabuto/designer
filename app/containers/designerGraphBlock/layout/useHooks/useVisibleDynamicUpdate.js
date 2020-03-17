@@ -66,8 +66,7 @@ export default (id, visibleTemplate) => {
         return (
           `<input data-anchor=${
             find.enName
-          } class="template_input template_input_${anchor}" value=${find.value ||
-            ''} >` || ''
+          } class="template_input template_input_${anchor}" value=${find.value !== "" ? find.value : "" } >` || ''
         );
       });
       setCanDrag(false);
@@ -85,7 +84,7 @@ export default (id, visibleTemplate) => {
       const newValue = e.target.value;
       const find = proxyList.find(item => item.enName === dataId);
       if (find) {
-        find.value = newValue || null;
+        find.value = newValue || '';
         event.emit('forceUpdate');
       }
 
