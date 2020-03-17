@@ -51,9 +51,12 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    const callback = (ip, port) => {
+    const callback = (ip, port, userName, password) => {
+      console.log(userName, password);
       setIp(ip);
       setPort(port);
+      setUserName(userName);
+      setPassword(password);
     };
     readGlobalConfig(callback);
   }, []);
@@ -65,6 +68,8 @@ const Login = () => {
         writeGlobalConfig({
           ip,
           port,
+          userName,
+          password,
         });
         handleSignIn();
       }
@@ -86,6 +91,7 @@ const Login = () => {
         <div className="login-right-username">
           <div>用户名</div>
           <Input
+            value={userName}
             placeholder="请输入用户名"
             onChange={e => {
               setUserName(e.target.value);
@@ -95,6 +101,7 @@ const Login = () => {
         <div className="login-right-password">
           <div>密码</div>
           <Input
+            value={password}
             placeholder="请输入密码"
             onChange={e => {
               setPassword(e.target.value);
@@ -126,6 +133,8 @@ const Login = () => {
             writeGlobalConfig({
               ip,
               port,
+              userName,
+              password,
             });
             handleSignIn();
           }}
