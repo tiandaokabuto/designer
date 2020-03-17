@@ -41,7 +41,9 @@ export default class Tree extends React.Component {
             !props.title &&
             props.item &&
             props.item.text &&
-            !props.item.text.includes(filter);
+            !props.item.text
+              .toLocaleLowerCase()
+              .includes(filter.toLocaleLowerCase());
           return (
             <div
               style={{
