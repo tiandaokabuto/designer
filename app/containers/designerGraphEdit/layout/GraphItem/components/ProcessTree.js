@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tree, Modal, Icon } from 'antd';
 import { useSelector } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
@@ -18,6 +18,7 @@ import {
 } from '../../../../common/utils';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 import { fromTextArea } from 'codemirror';
+import event from '../../../../designerGraphBlock/layout/eventCenter';
 
 const TreeNodeTitle = ({ title, type, hasModified }) => {
   return (
@@ -176,16 +177,35 @@ export default () => {
       restoreCheckedTreeNode
     );
   };
+
+  useEffect(() => {
+    const handleAddExpanedKeys = keys => {
+      setExpandedKeys(expandedKeys => {
+        if (expandedKeys.includes(keys)) return expandedKeys;
+        return expandedKeys.concat(keys);
+      });
+    };
+    event.addListener('expandKeys', handleAddExpanedKeys);
+    return () => {
+      event.removeListener('expandKeys', handleAddExpanedKeys);
+    };
+  }, [setExpandedKeys]);
+
+  // console.log(expandedKeys, processTree);
+
   return (
     <div>
       <Tree
         className="draggable-tree"
-        defaultExpandedKeys={expandedKeys}
-        defaultExpandAll={true}
+        expandedKeys={expandedKeys}
+        // defaultExpandAll={true}
         switcherIcon={<Switcher />}
         showIcon={true}
         draggable
         blockNode
+        onExpand={expandKeys => {
+          setExpandedKeys(expandKeys);
+        }}
         onRightClick={({ event, node }) => {
           setPosition({
             left: event.pageX + 40,

@@ -4,7 +4,12 @@ import { useSelector } from 'react-redux';
 import { Input, message, Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import moment from 'moment';
-import { changeProcessTree } from '../reduxActions';
+import {
+  changeProcessTree,
+  changeCheckedTreeNode,
+  clearGrapheditorData,
+} from '../reduxActions';
+import event from '../designerGraphBlock/layout/eventCenter';
 const fs = require('fs');
 const process = require('process');
 
@@ -222,12 +227,13 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
   let newProcessTree = undefined;
   const isDirNodeBool = isDirNode(processTree, checkedTreeNode);
   const isLeafNodeOrUndefined = checkedTreeNode === undefined || !isDirNodeBool;
+  const uniqueid = getUniqueId(processTree);
   if (type === 'process') {
     // 如果是作为根结点添加, 那么逻辑如下
     if (isLeafNodeOrUndefined) {
       newProcessTree = processTree.concat({
         title: name,
-        key: getUniqueId(processTree), //'0-' + processTree.length,
+        key: uniqueid, //'0-' + processTree.length,
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
@@ -237,20 +243,24 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
       //在这个项目目录下新增
       isDirNodeBool.children.push({
         title: name,
-        key: getUniqueId(processTree), // isDirNodeBool.key + '-' + isDirNodeBool.children.length,
+        key: uniqueid, // isDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
         data: {},
       });
       newProcessTree = [...processTree];
+      // 告知processTree 设置展开该结点
+      event.emit('expandKeys', isDirNodeBool.key);
     }
+    clearGrapheditorData();
+    changeCheckedTreeNode(uniqueid);
   } else {
     // 支持嵌套目录
     if (isLeafNodeOrUndefined) {
       newProcessTree = processTree.concat({
         title: name,
-        key: getUniqueId(processTree), // '0-' + processTree.length,
+        key: uniqueid, // '0-' + processTree.length,
         type: 'dir',
         //icon: <Icon type="unordered-list" />,
         children: [],
@@ -258,7 +268,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
     } else {
       isDirNodeBool.children.push({
         title: name,
-        key: getUniqueId(processTree), // uniqueId('key_'),sDirNodeBool.key + '-' + isDirNodeBool.children.length,
+        key: uniqueid, // uniqueId('key_'),sDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'dir',
         //icon: <Icon type="unordered-list" />,
         children: [],
