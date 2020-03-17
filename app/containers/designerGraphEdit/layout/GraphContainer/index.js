@@ -139,9 +139,20 @@ export default useInjectContext(
                 !showHead &&
                 isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
               ) {
-                setDrawerVisible(true);
+                // setDrawerVisible(true);
               }
               // 判断当前的edge是否与判断结点项关联\
+            }}
+            onEdgeDoubleClick={edge => {
+              const model = edge.item.model;
+              /** 双击的时候判断是否触发右侧设置面板的出现 */
+              if (
+                !showHead &&
+                isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
+              ) {
+                setDrawerVisible(true);
+              }
+              // console.log(edge)
             }}
             onDoubleClick={(...args) => {
               console.log(...args);
