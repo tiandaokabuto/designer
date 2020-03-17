@@ -115,7 +115,7 @@ export default memo(
         type: 'rollback',
         IconFont: false,
         onClick: () => {
-          setVisible('newprocess');
+          setVisible('newdir');
         },
       },
       {
@@ -185,7 +185,9 @@ export default memo(
             {tool.description}
           </span>
         ))}
-        {visible === 'newprocess' && <NewProcess resetVisible={resetVisible} />}
+        {(visible === 'newprocess' || visible === 'newdir') && (
+          <NewProcess resetVisible={resetVisible} tag={visible} />
+        )}
         <Modal
           visible={modalVisible}
           closable={false}
