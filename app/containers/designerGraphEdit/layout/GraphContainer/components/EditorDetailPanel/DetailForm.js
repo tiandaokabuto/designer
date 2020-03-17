@@ -102,11 +102,11 @@ class DetailForm extends React.Component {
             initialValue: label,
           })(this.renderEdgeLabelSelect())}
         </Item>
-        <Item label="形状" {...inlineFormItemLayout}>
+        {/* <Item label="形状" {...inlineFormItemLayout}>
           {form.getFieldDecorator('shape', {
             initialValue: shape,
           })(this.renderEdgeShapeSelect())}
-        </Item>
+        </Item> */}
       </Fragment>
     );
   };
