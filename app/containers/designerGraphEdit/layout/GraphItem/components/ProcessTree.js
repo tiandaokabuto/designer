@@ -198,7 +198,7 @@ export default () => {
       <Tree
         className="draggable-tree"
         expandedKeys={expandedKeys}
-        // defaultExpandAll={true}
+        defaultExpandAll={true}
         switcherIcon={<Switcher />}
         showIcon={true}
         draggable

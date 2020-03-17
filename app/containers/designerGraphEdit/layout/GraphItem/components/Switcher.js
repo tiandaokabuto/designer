@@ -5,9 +5,11 @@ export default props => {
   const [text, setText] = useState('open');
   const iconRef = useRef(null);
   useEffect(() => {
-    // console.log(iconRef.current.offsetParent);
     const offsetParent = iconRef.current.offsetParent; // ant-tree-switcher_open
-    if (offsetParent.classList.contains('ant-tree-switcher_open')) {
+    if (
+      offsetParent &&
+      offsetParent.classList.contains('ant-tree-switcher_open')
+    ) {
       if (text === 'open') {
         setText('close');
       }
