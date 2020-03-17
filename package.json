@@ -56,7 +56,7 @@
     ]
   },
   "build": {
-    "productName": "申迪RPA机器人",
+    "productName": "流程易设计器",
     "appId": "org.develar.ElectronReact",
     "files": [
       "dist/",
@@ -65,7 +65,8 @@
       "login.html",
       "main.prod.js",
       "main.prod.js.map",
-      "package.json"
+      "package.json",
+      "designer.icon"
     ],
     "dmg": {
       "contents": [
