@@ -3,6 +3,7 @@ import { Icon, Dropdown, Menu, Modal } from 'antd';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
+import { ConfirmModal } from '../components';
 import NewProject from './NewProject';
 import api from '../../../api';
 import { existModifiedNode, setAllModifiedState } from '../utils';
@@ -34,6 +35,7 @@ const handleWindowOperation = op => {
 };
 
 export default ({ history, tag }) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const userName = remote.getGlobal('sharedObject').userName;
   const [visible, setVisible] = useState(undefined);
   const resetVisible = () => {
@@ -160,21 +162,27 @@ export default ({ history, tag }) => {
           className="graphblock-header-operation"
           onClick={() => {
             const flag = existModifiedNode(processTree);
+
             if (flag) {
-              Modal.confirm({
-                content: '工作区内容尚未保存, 请确认是否保存?',
-                onOk() {
-                  setAllModifiedState(processTree);
-                  persistentStorage();
-                  handleWindowOperation('close');
-                },
-                onCancel() {
-                  handleWindowOperation('close');
-                },
-              });
+              setModalVisible(true);
             } else {
               handleWindowOperation('close');
             }
+            // if (flag) {
+            //   Modal.confirm({
+            //     content: '工作区内容尚未保存, 请确认是否保存?',
+            //     onOk() {
+            //       setAllModifiedState(processTree);
+            //       persistentStorage();
+            //       handleWindowOperation('close');
+            //     },
+            //     onCancel() {
+            //       handleWindowOperation('close');
+            //     },
+            //   });
+            // } else {
+            //   handleWindowOperation('close');
+            // }
             // handleWindowOperation('close')
           }}
         />
@@ -185,6 +193,21 @@ export default ({ history, tag }) => {
       {visible === 'openproject' && (
         <NewProject resetVisible={resetVisible} tag="open" />
       )}
+      <ConfirmModal
+        visible={modalVisible}
+        content="请确认是否保存?"
+        onCancel={() => {
+          setModalVisible(false);
+        }}
+        onCancelOk={() => {
+          handleWindowOperation('close');
+        }}
+        onOk={() => {
+          setAllModifiedState(processTree);
+          persistentStorage();
+          handleWindowOperation('close');
+        }}
+      />
     </div>
   );
 };
