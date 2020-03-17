@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tabs } from 'antd';
+import { useSelector } from 'react-redux';
 
 import ProcessBlock from './ProcessBlock';
 import CodeEditing from './CodeEditing';
@@ -10,9 +11,15 @@ import './index.scss';
 const { TabPane } = Tabs;
 
 const DragContainer = () => {
+  const graphData = useSelector((state) => state.grapheditor.graphData);
+  const { currentEditingId } = useSelector((state) => state.grapheditor);
+  let nodesLabel = {}
+  if(graphData.nodes) {
+    nodesLabel = graphData.nodes.find(item => item.id === currentEditingId);
+  }
   return (
     <div className="dragger-editor-container">
-      <div className="dragger-editor-title">流程块1</div>
+      <div className="dragger-editor-title">{nodesLabel.label}</div>
       <div className="dragger-editor-container-codeblock">
         <Tabs
           defaultActiveKey="codeblock"
