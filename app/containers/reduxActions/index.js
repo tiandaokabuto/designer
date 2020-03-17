@@ -10,11 +10,18 @@ import {
   CHANGE_CURRENTPROJECT,
   SYNCHRO_GRAPHDATATOPROCESSTREE,
   RESET_ALLGRAPHEDITDATA,
+  RESET_GRAPHERITORALLDATA,
 } from '../../actions/grapheditor';
 import { SYNCHRO_CODEBLOCK, CHANGE_AUTOMICLIST } from '../../actions/codeblock';
 import store from '../../store';
 
 const { dispatch } = store;
+
+export const clearGrapheditorData = () => {
+  dispatch({
+    type: RESET_GRAPHERITORALLDATA,
+  });
+};
 
 export const updateAutomicList = treeData => {
   dispatch({

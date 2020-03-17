@@ -11,7 +11,7 @@ import {
   readAllFileName,
   formatDateTime,
 } from '../common/utils';
-import { changeCurrentProject } from '../reduxActions';
+import { changeCurrentProject, clearGrapheditorData } from '../reduxActions';
 
 import './index.scss';
 
@@ -80,6 +80,7 @@ export default useInjectContext(({ history }) => {
                 // 打开对应的项目
                 openProject(record.name);
                 changeCurrentProject(record.name);
+                clearGrapheditorData();
                 history.push('/designGraphEdit');
               },
             };

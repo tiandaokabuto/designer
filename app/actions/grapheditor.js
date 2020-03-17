@@ -12,3 +12,4 @@ export const CHANGE_CURRENTPROJECT = 'change_currentProject';
 export const SYNCHRO_GRAPHDATATOPROCESSTREE = 'synchro_graphDataToProcessTree';
 export const CHANGE_CURRENTEDITINGPROCESSID = 'currentEditingProcessId';
 export const RESET_ALLGRAPHEDITDATA = 'reset_allGraphEditData';
+export const RESET_GRAPHERITORALLDATA = 'reset_grapheditoralldata';

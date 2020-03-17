@@ -13,6 +13,7 @@ import {
   SYNCHRO_GRAPHDATATOPROCESSTREE,
   CHANGE_CURRENTEDITINGPROCESSID,
   RESET_ALLGRAPHEDITDATA,
+  RESET_GRAPHERITORALLDATA,
 } from '../actions/grapheditor';
 
 import { isDirNode, findNodeByKey } from '../containers/common/utils';
@@ -79,6 +80,18 @@ const updateProcessTree = state => {
 export default (state = defaultState, action) => {
   let mapData = undefined;
   switch (action.type) {
+    case RESET_GRAPHERITORALLDATA:
+      return {
+        ...state,
+        graphData: {},
+        graphDataMap: new Map(), // 保存针对每个流程图的数据结构
+        currentEditingId: undefined, // 当前编辑的是哪个流程块
+        checkedGraphBlockId: undefined,
+        editorBlockPythonCode: '',
+        processTree: [], // 当前项目的自定义流程树结构
+        currentEditingProcessId: undefined, // 当前编辑的是项目下的哪个流程
+        currentCheckedTreeNode: undefined,
+      };
     case CHANGE_GRAPHDATA:
       return {
         ...state,
