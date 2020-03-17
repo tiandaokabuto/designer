@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo, useMemo } from 'react';
+import React, { useState, useEffect, memo, useMemo, useRef } from 'react';
 import { Icon, Modal, Form, Input, message } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -31,6 +31,8 @@ export default memo(
     };
 
     const processTree = useSelector(state => state.grapheditor.processTree);
+    const processTreeRef = useRef(null);
+    processTreeRef.current = processTree;
 
     const [modalVisible, setModalVisible] = useState(false);
     const [descText, setDescText] = useState('');
@@ -148,7 +150,7 @@ export default memo(
         type: 'iconzhihang',
         onClick: () => {
           // 保存到本地
-          setAllModifiedState(processTree);
+          setAllModifiedState(processTreeRef.current);
           persistentStorage();
           message.success('保存成功');
         },
