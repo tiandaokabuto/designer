@@ -2,10 +2,12 @@
  * 最近打开项目列表
  */
 import React, { useState, useMemo } from 'react';
-import { Table, Button, Input, message } from 'antd';
+import { Table, Button, Input, Icon, message } from 'antd';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
 import GraphBlockHeader from '../common/GraphBlockHeader';
+import { SDIcon } from '../common/components';
+import RecentBackImg from '../images/recent_back.png';
 
 import {
   newProject,
@@ -41,11 +43,25 @@ export default useInjectContext(({ history }) => {
   const fileList = useMemo(() => {
     return readAllFileName();
   }, []);
+
+  const isJump = history.location.state && history.location.state.jump;
   return (
     <div>
       <GraphBlockHeader tag="recentProject" />
       <div className="recentproject">
         <div className="recentproject-leftcontent">
+          {isJump ? (
+            <SDIcon
+              url={RecentBackImg}
+              size="32"
+              style={{ marginBottom: 16 }}
+              onClick={() => {
+                history.goBack();
+              }}
+            />
+          ) : (
+            'none'
+          )}
           <div className="recentproject-leftcontent-newproject">
             <Input
               placeholder="请输入新建项目名称"

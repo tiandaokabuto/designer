@@ -45,7 +45,12 @@ export default ({ history, tag }) => {
     {
       title: '项目',
       onClick: () => {
-        history.push('/');
+        history.push({
+          pathname: '/',
+          state: {
+            jump: true,
+          },
+        });
       },
       // children: [
       //   {
