@@ -61,7 +61,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
     case 0:
       return (
         <Input
-          defaultValue={param.value} // 可以加上 param.default 在参数面板显示默认值
+          defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
           key={keyFlag || param.enName === 'xpath' ? param.value : ''}
           onChange={e => {
             param.value = e.target.value;

@@ -1,8 +1,19 @@
 import React from 'react';
 import { Card } from 'antd';
 import { ItemPanel, Item } from 'gg-editor';
+import { useSelector } from 'react-redux';
+
+import { isDirNode } from '../../../../common/utils';
 
 const FlowItemPanel = () => {
+  const currentCheckedTreeNode = useSelector(
+    state => state.grapheditor.currentCheckedTreeNode
+  );
+  const processTree = useSelector(state => state.grapheditor.processTree);
+  const isProcessNode =
+    currentCheckedTreeNode && !!!isDirNode(processTree, currentCheckedTreeNode);
+
+  if (!isProcessNode) return null;
   return (
     <ItemPanel className="designergraph-container-itemPanel">
       {/* <Card bordered={false}> */}
