@@ -13,4 +13,10 @@
       margin-right: 7px;
     }
   }
+  &-operation {
+    &:hover {
+      //color: #2a8c6c;
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
 }

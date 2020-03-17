@@ -176,7 +176,11 @@ export default memo(
     return (
       <div className="drageditor-header">
         {tools.map((tool, index) => (
-          <span key={index} onClick={tool.onClick || (() => {})}>
+          <span
+            key={index}
+            onClick={tool.onClick || (() => {})}
+            className="drageditor-header-operation"
+          >
             {tool.IconFont ? (
               <IconFont type={tool.type} />
             ) : (
