@@ -31,8 +31,8 @@ export const readGlobalConfig = callback => {
         }
       );
     } else {
-      const { ip, port } = JSON.parse(data.toString());
-      callback(ip, port);
+      const { ip, port, userName, password } = JSON.parse(data.toString());
+      callback(ip, port, userName, password);
     }
   });
 };

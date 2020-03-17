@@ -136,7 +136,7 @@ const createWindow = async () => {
   ipcMain.on('loginSuccess', () => {
     // loginWindow.hide();
     createMainWindow();
-    loginWindow.destroy();
+    loginWindow && loginWindow.destroy();
     // mainWindow.show();
     // mainWindow.focus();
   });
@@ -144,7 +144,7 @@ const createWindow = async () => {
   // 退出登录切换到登录页面
   ipcMain.on('signOut', () => {
     createLoginWindow();
-    mainWindow.destroy();
+    mainWindow && mainWindow.destroy();
   });
 
   // 创建登录窗口
