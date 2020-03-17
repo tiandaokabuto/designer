@@ -70,39 +70,47 @@ export default memo(
         {
           description: '上一步',
           type: 'save',
+          disabled: true,
           onClick: () => {},
         },
         {
           description: '下一步',
           type: 'save',
+          disabled: true,
           onClick: () => {},
         },
         {
           description: '保存',
           type: 'save',
+          disabled: true,
           onClick: () => {}, //handlePublishProcess,
         },
         {
           description: '运行',
           type: 'iconzhihang',
           IconFont: true,
+          disabled: true,
           onClick: handleOperation,
         },
         {
           description: '录制',
           type: 'iconrecordlight',
+          disabled: true,
           IconFont: true,
         },
         {
           description: '发布',
           type: 'cloud-upload',
+          disabled: true,
         },
         {
           description: '导出',
+          disabled: true,
           type: 'upload',
         },
         {
           description: '控制台',
+          disabled: true,
           type: 'desktop',
         },
       ],
@@ -128,10 +136,12 @@ export default memo(
       {
         description: '上一步',
         type: 'save',
+        disabled: true,
       },
       {
         description: '下一步',
         type: 'save',
+        disabled: true,
       },
       {
         description: '保存',
@@ -160,10 +170,12 @@ export default memo(
       {
         description: '导出',
         type: 'upload',
+        disabled: true,
       },
       {
         description: '控制台',
         type: 'desktop',
+        disabled: true,
       },
     ];
 
@@ -179,7 +191,9 @@ export default memo(
           <span
             key={index}
             onClick={tool.onClick || (() => {})}
-            className="drageditor-header-operation"
+            className={`drageditor-header-operation ${
+              tool.disabled ? 'drageditor-header-operation__disabled' : ''
+            }`}
           >
             {tool.IconFont ? (
               <IconFont type={tool.type} />
