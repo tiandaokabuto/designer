@@ -9,3 +9,4 @@ export { default as useDeleteNodeById } from './useDeleteNodeById';
 export { default as useUpdateXpath } from './useUpdateXpath';
 export { default as useVisibleDynamicUpdate } from './useVisibleDynamicUpdate';
 export { default as useHasLookTarget } from './useHasLookTarget';
+export { default as useWatchBlockCodeChange } from './useWatchBlockCodeChange';

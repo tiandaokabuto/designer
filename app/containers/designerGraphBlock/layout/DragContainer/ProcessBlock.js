@@ -38,6 +38,7 @@ import {
   useDragSource,
   useEventHandler,
   useTransformToPython,
+  useWatchBlockCodeChange,
 } from '../useHooks';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper';
@@ -69,8 +70,12 @@ export default ({ readOnly = false }) => {
         className: 'dragger-editor-container',
       })
     : null;
+
   const cards = useSelector(state => state.blockcode.cards);
   const dispatch = useDispatch();
+
+  // 监听代码块的变化
+  useWatchBlockCodeChange(cards);
 
   const [isDraggingNode, setIsDraggingNode] = useState({});
 
@@ -325,8 +330,7 @@ export default ({ readOnly = false }) => {
           renderTailStatement({
             id: PLACEHOLDER_MAINPROCESS,
             // text: '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
-            text:
-                '拖拽命令行到此处可以添加命令',
+            text: '拖拽命令行到此处可以添加命令',
             index: PLACEHOLDER_STATEMENT,
             moveCard,
             addCard,
