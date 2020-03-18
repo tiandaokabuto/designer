@@ -49,7 +49,6 @@ const readGlobalConfig = (callback, flag = false) => {
     if (!err) {
       const { automicList, ip } = JSON.parse(data.toString());
       if ( flag || !automicList) {
-        console.log('不存在')
         // 调起接口 返回数据 TODO...
         const getAbialityStructure = (() => {
           return axios.get(api('selectCodeJson')).then(res => res.data.data);
@@ -87,16 +86,20 @@ export default class SyncAutomicList extends Component {
   componentDidMount() {
     // 获取本地的数据结构做数据更新
     readGlobalConfig(this.updateAutomicList);
-    event.addListener('update_list', () => {
-      readGlobalConfig(this.updateAutomicList, true);
-      message.info('刷新');
-    });
+    event.addListener('update_list', this.handleUpdate);
   }
-
+  handleUpdate = () => {
+    readGlobalConfig(this.updateAutomicList, true);
+    message.info('刷新');
+  }
 
   updateAutomicList = treeData => {
     updateAutomicList(treeData);
   };
+
+  componentWillUnmount() {
+    event.removeListener('update_list', this.handleUpdate);
+  }
 
   render() {
     return null;

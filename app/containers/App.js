@@ -2,6 +2,7 @@
 import * as React from 'react';
 import api, { config } from '../api';
 import axios from 'axios';
+import moment from 'moment';
 
 const { ipcRenderer, remote } = require('electron');
 import { readGlobalConfig } from '../login/utils';
@@ -11,6 +12,7 @@ type Props = {
 };
 
 let timerID = null;
+const fs = require('fs');
 
 export default class App extends React.Component<Props> {
   props: Props;
@@ -43,6 +45,13 @@ export default class App extends React.Component<Props> {
 
   refreshToken = () => {
     if (timerID) clearTimeout(timerID);
+    fs.appendFileSync('./time.txt', `${moment().format('MMMM Do YYYY, h:mm:ss a')} ${localStorage.getItem('token')}`, err => {
+      if(err) {
+        console.log(err)
+      } else {
+        console.log('写入成功')
+      }
+    })
     timerID = setTimeout(() => {
       axios.get(api('refreshToken')).then(res => {
         console.log(localStorage.getItem('token'))
