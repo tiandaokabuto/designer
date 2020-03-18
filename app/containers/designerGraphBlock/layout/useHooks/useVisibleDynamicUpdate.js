@@ -58,6 +58,7 @@ export default (id, visibleTemplate) => {
       let result = visibleTemplate.replace(/({{.*?}})/g, (_, ...args) => {
         const find = proxyList.find(item => args[0].includes(item.enName));
         // 判断是否为点击对象
+
         if (anchor !== find.enName) {
           return (
             `<span data-anchor=${find.enName} class="template_span">${find.value}</span>` ||
