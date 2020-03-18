@@ -54,26 +54,27 @@ export default ({ history, tag }) => {
           },
         });
       },
-      // children: [
-      //   {
-      //     title: '新建项目',
-      //     onClick: () => {
-      //       setVisible('newproject');
-      //     },
-      //   },
-      //   {
-      //     title: '打开项目',
-      //     onClick: () => {
-      //       setVisible('openproject');
-      //     },
-      //   },
-      // ],
     },
-    '编辑',
-    '运行',
-    '调试',
-    '工具',
-    '帮助',
+    {
+      title: '编辑',
+      disabled: true,
+    },
+    {
+      title: '运行',
+      disabled: true,
+    },
+    {
+      title: '调试',
+      disabled: true,
+    },
+    {
+      title: '工具',
+      disabled: true,
+    },
+    {
+      title: '帮助',
+      disabled: true,
+    },
   ];
   const handleSignOut = () => {
     axios
@@ -117,7 +118,11 @@ export default ({ history, tag }) => {
           }
           if (typeof tool === 'object') {
             return (
-              <span key={index} onClick={tool.onClick || (() => {})}>
+              <span
+                className={tool.disabled ? 'item-disabled' : ''}
+                key={index}
+                onClick={tool.onClick || (() => {})}
+              >
                 {tool.title}
               </span>
             );
