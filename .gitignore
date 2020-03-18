@@ -49,6 +49,7 @@ python
 dll
 main.js
 main.js.map
+time.txt
 
 .idea
 npm-debug.log.*
