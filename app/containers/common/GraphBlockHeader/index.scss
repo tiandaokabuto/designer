@@ -9,6 +9,12 @@
       margin: 0 12px;
       user-select: none;
       cursor: pointer;
+      &:hover {
+        background: #2e9975;
+      }
+    }
+    .item-disabled {
+      color: rgba(255, 255, 255, 0.35);
     }
   }
   &-title {
