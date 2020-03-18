@@ -29,11 +29,13 @@ export default ({ className }) => {
         }
         if (prevChecked.dom) {
           // 恢复之前选中的代码块
-          prevChecked.dom.style.borderStyle = 'dashed';
+          // prevChecked.dom.style.borderStyle = 'dashed';
+          prevChecked.dom.style.background = '#fff';
         }
         if (e.target.nextSibling) {
           prevChecked.dom = e.target.nextSibling;
-          e.target.nextSibling.style.borderStyle = 'solid';
+          // e.target.nextSibling.style.borderStyle = 'solid';
+          e.target.nextSibling.style.background = '#DAF2ED';
 
           dispatch({
             type: CHANGE_CHECKEDID,
