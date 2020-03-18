@@ -18,7 +18,6 @@ export default ({
       isDragging: monitor.isDragging(),
     }),
     canDrag: () => {
-      console.log(canDrag, id, 'ooooo');
       return canDrag;
     },
     begin(monitor) {
