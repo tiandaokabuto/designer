@@ -13,6 +13,7 @@ type Props = {
 
 let timerID = null;
 const fs = require('fs');
+const process = require('process');
 
 export default class App extends React.Component<Props> {
   props: Props;
@@ -45,7 +46,7 @@ export default class App extends React.Component<Props> {
 
   refreshToken = () => {
     if (timerID) clearTimeout(timerID);
-    fs.appendFileSync('./time.txt', `${moment().format('MMMM Do YYYY, h:mm:ss a')} ${localStorage.getItem('token')}`, err => {
+    fs.appendFileSync(`${process.cwd()}\\tokenTime.txt`, `${moment().format('MMMM Do YYYY, h:mm:ss a')} ${localStorage.getItem('token')}`, err => {
       if(err) {
         console.log(err)
       } else {
