@@ -48,7 +48,7 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
           ' = ' +
           (item.default === undefined && item.value === undefined
             ? 'None'
-            : item.value === undefined
+            : !item.value
             ? item.default
             : item.value);
     }

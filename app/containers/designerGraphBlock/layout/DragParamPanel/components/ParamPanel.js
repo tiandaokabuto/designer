@@ -7,6 +7,7 @@ import { useTransformToPython } from '../../useHooks';
 import event from '../../eventCenter';
 
 import './ParamPanel.scss';
+import uniqueId from 'lodash/uniqueId';
 
 const { Option } = Select;
 
@@ -62,7 +63,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
       return (
         <Input
           defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
-          key={keyFlag || param.enName === 'xpath' ? param.value : ''}
+          key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
           onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
