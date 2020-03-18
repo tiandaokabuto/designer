@@ -324,7 +324,9 @@ export default ({ readOnly = false }) => {
         {!readOnly &&
           renderTailStatement({
             id: PLACEHOLDER_MAINPROCESS,
-            text: '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
+            // text: '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
+            text:
+                '拖拽命令行到此处可以添加命令',
             index: PLACEHOLDER_STATEMENT,
             moveCard,
             addCard,

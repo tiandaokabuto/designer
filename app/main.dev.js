@@ -165,7 +165,7 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
 
   // 本地监听8888端口 获取动态的xpath元素回填
 

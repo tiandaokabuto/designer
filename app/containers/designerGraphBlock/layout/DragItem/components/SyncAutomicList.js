@@ -2,7 +2,7 @@
  * 同步原子能力的数据结构
  */
 import React, { Component } from 'react';
-import { Icon } from 'antd';
+import { Icon, message } from 'antd';
 import axios from 'axios';
 
 import { traverseTree } from '../../../../common/utils'
@@ -89,6 +89,7 @@ export default class SyncAutomicList extends Component {
     readGlobalConfig(this.updateAutomicList);
     event.addListener('update_list', () => {
       readGlobalConfig(this.updateAutomicList, true);
+      message.info('刷新');
     });
   }
 
