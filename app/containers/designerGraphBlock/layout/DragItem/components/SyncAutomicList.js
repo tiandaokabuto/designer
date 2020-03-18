@@ -58,8 +58,13 @@ const readGlobalConfig = (callback, flag = false) => {
           return axios.get(api('selectMenuJson')).then(res => res.data.data);
         })();
 
-        const abilityStructure = await getAbialityStructure;
-        const abilityTree = await getAbilityTree;
+        try {
+          const abilityStructure = await getAbialityStructure;
+          const abilityTree = await getAbilityTree;
+          message.info('刷新成功')
+        } catch (err) {
+          message.info('刷新失败')
+        }
 
         const treeData = automicListToTree(abilityTree, abilityStructure);
         writeGlobalConfig({
@@ -90,7 +95,6 @@ export default class SyncAutomicList extends Component {
   }
   handleUpdate = () => {
     readGlobalConfig(this.updateAutomicList, true);
-    message.info('刷新');
   }
 
   updateAutomicList = treeData => {
