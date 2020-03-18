@@ -1,6 +1,7 @@
 import React, { useEffect, useState, memo } from 'react';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
+import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import event, { PYTHON_OUTPUT } from '../eventCenter';
 
 let isMouseDown = false;
