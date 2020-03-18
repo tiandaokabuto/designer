@@ -74,6 +74,7 @@ const ConditionalStatement = useInjectContext(props => {
   const [drag, dragImage] = useDragSource({
     props,
     setIsDraggingNode,
+    canDrag,
   });
 
   const deleteNodeById = useDeleteNodeById();
