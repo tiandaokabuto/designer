@@ -38,9 +38,6 @@ export default memo(
     const handleClearOutput = () => {
       setOutput('');
     };
-    const handleUpdataList = () => {
-
-    }
     event.addListener(PYTHON_OUTPUT, handlePythonOutput);
     event.addListener('clear_output', handleClearOutput);
     return () => {
