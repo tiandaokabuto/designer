@@ -93,7 +93,24 @@ const ConditionalStatement = useInjectContext(props => {
           data-id={id}
           ref={isFold ? dragImage : null}
         >
-          当条件满足
+          <span
+            key={uniqueId('visible_')}
+            onClick={e => {
+              const anchor = e.target.dataset.anchor;
+              changeToEditableTemplate(anchor);
+              // 触发变量的修改
+            }}
+            onDragStart={e => {
+              e.preventDefault();
+            }}
+            onBlur={save}
+            onKeyDown={e => {
+              if (e.keyCode === 13) {
+                save(e);
+              }
+            }}
+            dangerouslySetInnerHTML={{ __html: templateVisible }}
+          ></span>
         </div>
         <div className="IFItem-header-operation">
           {!readOnly && (
@@ -123,8 +140,7 @@ const ConditionalStatement = useInjectContext(props => {
               id: `${id}-ifChildren-tail`,
               // text:
               //   '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
-              text:
-                '拖拽命令行到此处可以添加命令',
+              text: '拖拽命令行到此处可以添加命令',
               index: PLACEHOLDER_STATEMENT,
               moveCard,
               addCard,
@@ -143,8 +159,7 @@ const ConditionalStatement = useInjectContext(props => {
                 id: `${id}-elseChildren-tail`,
                 // text:
                 //   '双击命令行或者拖拽命令行到此处可以添加命令，delete删除命令',
-                text:
-                '拖拽命令行到此处可以添加命令',
+                text: '拖拽命令行到此处可以添加命令',
                 index: PLACEHOLDER_STATEMENT,
                 moveCard,
                 addCard,
