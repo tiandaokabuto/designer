@@ -64,13 +64,12 @@ export default (id, visibleTemplate) => {
             ''
           );
         }
-        return (
-          `<input data-anchor=${
-            find.enName
-          } class="template_input template_input_${anchor}" value=${
-            find.value !== '' ? find.value : ''
-          } >` || ''
-        );
+
+        return `<input data-anchor=${
+          find.enName
+        } class="template_input template_input_${anchor}" value="${
+          find.value !== '' ? find.value : ''
+        }" >`;
       });
       setCanDrag(false);
       setNewVisible(result);

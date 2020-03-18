@@ -44,6 +44,40 @@
         position: absolute;
         background-color: red;
       }
+      .template_span {
+        max-width: 100px;
+        overflow: hidden;
+        background: #eeeeee;
+        border-radius: 2px;
+        height: 24px;
+        padding: 2px 4px;
+        min-width: 40px;
+        font-size: 14px;
+        color: #9c9c9c;
+        pointer-events: auto;
+        margin: 0 4px;
+        display: inline-flex;
+        vertical-align: middle;
+        &__empty {
+          border: 1px solid red;
+        }
+        &:empty {
+          &::before {
+            content: '_';
+            visibility: hidden;
+          }
+        }
+      }
+      .template_input {
+        pointer-events: auto;
+        max-width: 100px;
+        color: #9c9c9c;
+        margin: 0 4px;
+        height: 24px;
+        &:focus {
+          outline: none;
+        }
+      }
     }
     &-operation {
       margin-right: 40px;
