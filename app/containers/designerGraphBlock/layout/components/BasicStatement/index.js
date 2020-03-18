@@ -90,7 +90,7 @@ const BasicStatement = useInjectContext(props => {
     canDrag,
   });
 
-  const deleteNodeById = useDeleteNodeById();
+  const deleteNodeById = useDeleteNodeById(id);
 
   const updateXpath = useUpdateXpath();
 
