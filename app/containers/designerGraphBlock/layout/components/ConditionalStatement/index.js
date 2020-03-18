@@ -116,6 +116,11 @@ const ConditionalStatement = useInjectContext(props => {
               e.preventDefault();
             }}
             onBlur={save}
+            onKeyDown={e => {
+              if (e.keyCode === 13) {
+                save(e);
+              }
+            }}
             dangerouslySetInnerHTML={{ __html: templateVisible }}
           ></span>
         </div>
