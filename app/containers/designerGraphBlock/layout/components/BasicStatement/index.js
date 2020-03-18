@@ -118,6 +118,9 @@ const BasicStatement = useInjectContext(props => {
           <div className="card-content-description">
             <Icon type="home" className="card-content-icon" />
             {text}
+            <span style={{ color: '#b1aeb2', marginLeft: 8 }}>
+              ({card.cmdDesc || ''})
+            </span>
             <br />
             <div
               className="card-content-visible"
