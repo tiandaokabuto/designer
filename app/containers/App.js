@@ -14,6 +14,7 @@ type Props = {
 let timerID = null;
 const fs = require('fs');
 const process = require('process');
+const token = remote.getGlobal('sharedObject').token;
 
 export default class App extends React.Component<Props> {
   props: Props;
@@ -46,7 +47,7 @@ export default class App extends React.Component<Props> {
 
   refreshToken = () => {
     if (timerID) clearTimeout(timerID);
-    fs.appendFileSync(`${process.cwd()}\\tokenTime.txt`, `${moment().format('MMMM Do YYYY, h:mm:ss a')} ${localStorage.getItem('token')}`, err => {
+    fs.appendFileSync(`${process.cwd()}\\tokenTime.txt`, `${moment().format('MMMM Do YYYY, h:mm:ss a')} ${token} \r\n`, err => {
       if(err) {
         console.log(err)
       } else {
@@ -55,12 +56,12 @@ export default class App extends React.Component<Props> {
     })
     timerID = setTimeout(() => {
       axios.get(api('refreshToken')).then(res => {
-        console.log(localStorage.getItem('token'))
+        console.log(token)
       }).catch(e => {
-        console.log(localStorage.getItem('token'))
+        console.log(token)
       });
       this.refreshToken();
-    }, 60 * 1000 * 2);
+    }, 1000 * 60 * 2);
   };
 
   resetConfig = (ip, port) => {
