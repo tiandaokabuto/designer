@@ -1,7 +1,7 @@
 import React, { useEffect, useState, memo } from 'react';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
-import event, { PYTHON_OUTPUT,  } from '../eventCenter';
+import event, { PYTHON_OUTPUT } from '../eventCenter';
 
 let isMouseDown = false;
 let startOffset = 0;
@@ -31,20 +31,12 @@ export default memo(
         }
       }, 0);
 
-  useEffect(() => {
-    const handlePythonOutput = stdout => {
-      setOutput(output => output + '\n' + stdout);
-    };
-    const handleClearOutput = () => {
-      setOutput('');
-    };
-    event.addListener(PYTHON_OUTPUT, handlePythonOutput);
-    event.addListener('clear_output', handleClearOutput);
-    return () => {
-      event.removeListener(PYTHON_OUTPUT, handlePythonOutput);
-      event.removeListener('clear_output', handleClearOutput);
-    };
-  }, []);
+      const handleMouseUp = () => {
+        isMouseDown = false;
+      };
+      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', handleAnchorMouseMove);
+    }, []);
 
     useEffect(() => {
       const handlePythonOutput = stdout => {
