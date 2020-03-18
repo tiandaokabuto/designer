@@ -8,6 +8,7 @@ import {
   changeProcessTree,
   changeCheckedTreeNode,
 } from '../../../../reduxActions';
+import { resetGraphEditData } from '../../../../reduxActions';
 import Switcher from './Switcher';
 import ContextMenu from './ContextMenu';
 import {
@@ -227,6 +228,7 @@ export default () => {
           if (isModified) {
             setModalVisible(true);
           } else {
+            resetGraphEditData();
             changeCheckedTreeNode(selectedKey[0]);
           }
         }}
@@ -243,10 +245,12 @@ export default () => {
           setModalVisible(false);
         }}
         onCancelOk={() => {
+          resetGraphEditData();
           changeCheckedTreeNode(selectedKey);
           setModalVisible(false);
         }}
         onOk={() => {
+          resetGraphEditData();
           setAllModifiedState(processTree);
           persistentStorage();
           changeCheckedTreeNode(selectedKey);
