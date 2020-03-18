@@ -53,6 +53,8 @@ export default memo(({ tag }) => {
           position: 'fixed',
           width: '100%',
           bottom: '0px',
+          overflow: 'auto',
+          width: 'calc(100% - 478px)',
         }
       : {};
   return (

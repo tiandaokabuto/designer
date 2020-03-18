@@ -8,7 +8,10 @@ const process = require('process');
 export default () => {
   return () => {
     event.emit('clear_output');
-    const worker = exec(`${process.cwd()}\\Python\\Python37-32\\python.exe ${process.cwd()}/python/temp.py`, {
+    // const worker = exec(`${process.cwd()}\\Python\\Python37-32\\python.exe ${process.cwd()}/python/temp.py`, {
+    //   encoding: 'buffer',
+    // });
+    const worker = exec(`python ${process.cwd()}/python/temp.py`, {
       encoding: 'buffer',
     });
     worker.stdout.on('data', function(data) {
