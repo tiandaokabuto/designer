@@ -65,6 +65,9 @@
     pointer-events: auto;
     margin: 0 4px;
     display: inline-flex;
+    &__empty {
+      border: 1px solid red;
+    }
     &:empty {
       &::before {
         content: '_';

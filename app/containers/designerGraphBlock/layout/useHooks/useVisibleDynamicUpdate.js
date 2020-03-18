@@ -30,8 +30,9 @@ export default (id, visibleTemplate) => {
       let result = template.replace(/({{.*?}})/g, (_, ...args) => {
         const find = proxyList.find(item => args[0].includes(item.enName));
         return (
-          `<span data-anchor=${find.enName} class="template_span">${find.value}</span>` ||
-          ''
+          `<span data-anchor=${find.enName} class="template_span ${
+            find.value === '' ? 'template_span__empty' : ''
+          }">${find.value}</span>` || ''
         );
       });
       setNewVisible(result);
