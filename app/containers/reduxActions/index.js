@@ -13,9 +13,17 @@ import {
   RESET_GRAPHERITORALLDATA,
 } from '../../actions/grapheditor';
 import { SYNCHRO_CODEBLOCK, CHANGE_AUTOMICLIST } from '../../actions/codeblock';
+import { UPDATE_EXECUTEOUTPUT } from '../../actions/temporaryvariable';
 import store from '../../store';
 
 const { dispatch } = store;
+
+export const updateExecuteOutput = data => {
+  dispatch({
+    type: UPDATE_EXECUTEOUTPUT,
+    payload: data,
+  });
+};
 
 export const clearGrapheditorData = () => {
   dispatch({
