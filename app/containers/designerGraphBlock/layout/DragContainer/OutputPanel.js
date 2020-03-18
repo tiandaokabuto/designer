@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo } from 'react';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
-import event, { PYTHON_OUTPUT } from '../eventCenter';
+import event, { PYTHON_OUTPUT,  } from '../eventCenter';
 
 let isMouseDown = false;
 let startOffset = 0;
@@ -39,6 +39,9 @@ export default memo(({ tag }) => {
     const handleClearOutput = () => {
       setOutput('');
     };
+    const handleUpdataList = () => {
+
+    }
     event.addListener(PYTHON_OUTPUT, handlePythonOutput);
     event.addListener('clear_output', handleClearOutput);
     return () => {

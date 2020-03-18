@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Input } from 'antd';
+import { Input, Icon } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
 
 import DragCard from './components/DragCard';
 import Tree from './components/CustomeTreeNode';
+import event from '../eventCenter'
 import {
   BasicStatementTag,
   LoopStatementTag,
@@ -113,6 +114,7 @@ export default () => {
 
   const [treeData, setTreeData] = useState([]);
 
+  // 渲染树节点
   const renderTreeNodes = (data, filter) =>
     data.map(item => {
       if (item.children) {
@@ -139,7 +141,12 @@ export default () => {
 
   return (
     <div className="dragger-editor-item">
-      <div className="dragger-editor-item-title">组件库</div>
+      <div className="dragger-editor-item-title">
+        <div>组件库</div>
+        <Icon type="redo"  onClick={() => {
+          event.emit('update_list');
+        }} />
+      </div>
       <div className="dragger-editor-item-search">
         <Search
           placeholder="请输入"
