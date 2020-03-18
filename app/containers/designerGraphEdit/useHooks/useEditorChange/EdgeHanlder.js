@@ -3,6 +3,7 @@ import {
   synchroGraphDataToProcessTree,
   updateGraphData,
 } from '../../../reduxActions';
+import { message } from 'antd';
 
 import { changeModifyState } from '../../../common/utils';
 import store from '../../../../store';
@@ -21,8 +22,16 @@ class EdgeHandler {
       const target = description.model.target;
       const nodes = graphData.nodes;
       const edges = graphData.edges;
+      const rhombusNode = nodes.find(item => item.id === source && item.shape === 'rhombus-node');
+      if(rhombusNode) {
+        const arr = edges.filter(item => item.source === rhombusNode.id);
+        if(arr.length > 2) {
+          this.apiAction("undo");
+          message.info('判断节点输出连线不能多于两条');
+        }
+      }
       // FIX ME: 添加判断何时应该删除该条连接线的逻辑
-      // this.apiAction("undo");
+      
       // console.log(nodes, edges, target, source);
     }
     // 保存当前流程图的任意更新不加区分
