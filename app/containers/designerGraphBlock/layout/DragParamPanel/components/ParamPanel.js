@@ -116,7 +116,9 @@ export default ({ checkedBlock }) => {
         {(checkedBlock.properties.required || []).map((param, index) => {
           return (
             <div key={checkedBlock.id + index} className="parampanel-item">
-              <span className="param-title">{param.cnName}</span>
+              <span className="param-title" title={param.desc}>
+                {param.cnName}
+              </span>
               <div style={{ flex: 1, overflow: 'hidden' }}>
                 {getComponentType(param, handleEmitCodeTransform, cards, flag)}
               </div>
@@ -129,7 +131,9 @@ export default ({ checkedBlock }) => {
         {(checkedBlock.properties.optional || []).map((param, index) => {
           return (
             <div key={checkedBlock.id + index} className="parampanel-item">
-              <span className="param-title">{param.cnName}</span>
+              <span className="param-title" title={param.desc}>
+                {param.cnName}
+              </span>
               <div style={{ flex: 1, overflow: 'hidden' }}>
                 {getComponentType(param, handleEmitCodeTransform, cards, flag)}
               </div>

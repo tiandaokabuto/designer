@@ -57,7 +57,7 @@ export default (id, visibleTemplate) => {
       let result = visibleTemplate.replace(/({{.*?}})/g, (_, ...args) => {
         const find = proxyList.find(item => args[0].includes(item.enName));
         // 判断是否为点击对象
-        console.log(anchor)
+        console.log(anchor);
         if (anchor !== find.enName) {
           return (
             `<span data-anchor=${find.enName} class="template_span">${find.value}</span>` ||
@@ -67,7 +67,9 @@ export default (id, visibleTemplate) => {
         return (
           `<input data-anchor=${
             find.enName
-          } class="template_input template_input_${anchor}" value=${find.value !== "" ? find.value : "" } >` || ''
+          } class="template_input template_input_${anchor}" value=${
+            find.value !== '' ? find.value : ''
+          } >` || ''
         );
       });
       setCanDrag(false);
