@@ -1,10 +1,15 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { Icon } from 'antd';
+import uniqueId from 'lodash/uniqueId';
 import cloneDeep from 'lodash/cloneDeep';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
-import { useDropTarget, useDeleteNodeById } from '../../useHooks';
+import {
+  useDropTarget,
+  useDeleteNodeById,
+  useVisibleDynamicUpdate,
+} from '../../useHooks';
 
 import ItemTypes from '../../statementTypes';
 
@@ -43,6 +48,13 @@ const LoopStatement = useInjectContext(props => {
   } = props;
 
   const [isFold, setFold] = useState(false);
+
+  const [
+    canDrag,
+    templateVisible,
+    changeToEditableTemplate,
+    save,
+  ] = useVisibleDynamicUpdate(id, card.visibleTemplate);
 
   const [className, setClassName, resetClassName] = useSetClassName();
 
@@ -85,6 +97,8 @@ const LoopStatement = useInjectContext(props => {
 
   drag(drop(ref));
 
+  console.log(card);
+
   return (
     <div
       style={{ ...style, opacity }}
@@ -105,7 +119,24 @@ const LoopStatement = useInjectContext(props => {
           data-id={id}
           ref={isFold ? dragImage : null}
         >
-          当循环为真时
+          <span
+            key={uniqueId('visible_')}
+            onClick={e => {
+              const anchor = e.target.dataset.anchor;
+              changeToEditableTemplate(anchor);
+              // 触发变量的修改
+            }}
+            onDragStart={e => {
+              e.preventDefault();
+            }}
+            onBlur={save}
+            onKeyDown={e => {
+              if (e.keyCode === 13) {
+                save(e);
+              }
+            }}
+            dangerouslySetInnerHTML={{ __html: templateVisible }}
+          ></span>
         </div>
         {!readOnly && (
           <div className="loopstatement-header-operation">
