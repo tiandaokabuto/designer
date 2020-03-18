@@ -2,9 +2,14 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
+import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
-import { useDropTarget, useDeleteNodeById } from '../../useHooks';
+import {
+  useDropTarget,
+  useDeleteNodeById,
+  useVisibleDynamicUpdate,
+} from '../../useHooks';
 
 import ItemTypes from '../../statementTypes';
 
@@ -40,6 +45,13 @@ const ConditionalStatement = useInjectContext(props => {
   } = props;
 
   const [isFold, setFold] = useState(false);
+
+  const [
+    canDrag,
+    templateVisible,
+    changeToEditableTemplate,
+    save,
+  ] = useVisibleDynamicUpdate(id, card.visibleTemplate);
 
   /**
    * 组件整体折叠逻辑
@@ -93,7 +105,19 @@ const ConditionalStatement = useInjectContext(props => {
           data-id={id}
           ref={isFold ? dragImage : null}
         >
-          当条件满足
+          <span
+            key={uniqueId('visible_')}
+            onClick={e => {
+              const anchor = e.target.dataset.anchor;
+              changeToEditableTemplate(anchor);
+              // 触发变量的修改
+            }}
+            onDragStart={e => {
+              e.preventDefault();
+            }}
+            onBlur={save}
+            dangerouslySetInnerHTML={{ __html: templateVisible }}
+          ></span>
         </div>
         <div className="IFItem-header-operation">
           {!readOnly && (
