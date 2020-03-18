@@ -132,17 +132,17 @@ export default useInjectContext(
               //   });
               // });
             }}
-            onEdgeClick={edge => {
-              /** 点击边的时候判断是否触发label的添加 */
-              const model = edge.item.model;
-              if (
-                !showHead &&
-                isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
-              ) {
-                // setDrawerVisible(true);
-              }
-              // 判断当前的edge是否与判断结点项关联\
-            }}
+            // onEdgeClick={edge => {
+            //   /** 点击边的时候判断是否触发label的添加 */
+            //   const model = edge.item.model;
+            //   if (
+            //     !showHead &&
+            //     isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
+            //   ) {
+            //     // setDrawerVisible(true);
+            //   }
+            //   // 判断当前的edge是否与判断结点项关联\
+            // }}
             onEdgeDoubleClick={edge => {
               const model = edge.item.model;
               /** 双击的时候判断是否触发右侧设置面板的出现 */

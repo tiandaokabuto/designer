@@ -44,7 +44,11 @@ export default class App extends React.Component<Props> {
   refreshToken = () => {
     if (timerID) clearTimeout(timerID);
     timerID = setTimeout(() => {
-      axios.get(api('refreshToken'));
+      axios.get(api('refreshToken')).then(res => {
+        console.log(localStorage.getItem('token'))
+      }).catch(e => {
+        console.log(localStorage.getItem('token'))
+      });
       this.refreshToken();
     }, 60 * 1000 * 2);
   };
