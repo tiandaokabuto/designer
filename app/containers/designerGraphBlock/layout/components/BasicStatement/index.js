@@ -180,6 +180,7 @@ const BasicStatement = useInjectContext(props => {
                 onClick={() => {
                   ipcRenderer.send('min');
                   ipcRenderer.send('start_server', id);
+
                   ipcRenderer.on(
                     'updateXpath',
                     (e, { xpath, imageData, targetId }) => {

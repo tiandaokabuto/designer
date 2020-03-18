@@ -21,6 +21,32 @@ const bodyParser = require('body-parser'); //解析,用req.body获取post参数
 appexpress.use(bodyParser.json());
 appexpress.use(bodyParser.urlencoded({ extended: false }));
 
+// 本地监听8888端口 获取动态的xpath元素回填
+
+// --------------------------- express版本
+appexpress.post('/upload', function(req, res) {
+  try {
+    // const result = JSON.stringify(req.body);
+    // const str = result.replace(/}}/, '}');
+    // const finallyResult = str ? JSON.parse(str) : {};
+    const finallyResult = req.body;
+    mainWindow.restore();
+    //将结果通知给渲染进程
+    if (targetId === undefined) return;
+    mainWindow.webContents.send('updateXpath', {
+      ...finallyResult.value,
+      targetId,
+    });
+    targetId = undefined;
+  } catch (e) {
+    // 处理错误
+    console.log('err---', e);
+    res.sendStatus(200);
+  }
+
+  res.sendStatus(200);
+});
+
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -160,39 +186,6 @@ const createWindow = async () => {
     }
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  // new AppUpdater();
-
-  // 本地监听8888端口 获取动态的xpath元素回填
-
-  // --------------------------- express版本
-  appexpress.post('/upload', function(req, res) {
-    try {
-      // const result = JSON.stringify(req.body);
-      // const str = result.replace(/}}/, '}');
-      // const finallyResult = str ? JSON.parse(str) : {};
-      const finallyResult = req.body;
-      mainWindow.restore();
-      //将结果通知给渲染进程
-      if (targetId === undefined) return;
-      mainWindow.webContents.send('updateXpath', {
-        ...finallyResult.value,
-        targetId,
-      });
-      targetId = undefined;
-    } catch (e) {
-      // 处理错误
-      console.log('err---', e);
-      res.sendStatus(200);
-    }
-
-    res.sendStatus(200);
-  });
-
   ipcMain.on('start_server', (event, id) => {
     targetId = id;
     console.log('再次触发选取操作', id);
@@ -203,6 +196,13 @@ const createWindow = async () => {
     });
     isNetStart = true;
   });
+
+  const menuBuilder = new MenuBuilder(mainWindow);
+  menuBuilder.buildMenu();
+
+  // Remove this if your app does not use auto updates
+  // eslint-disable-next-line
+  // new AppUpdater();
 };
 
 /**
