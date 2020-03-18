@@ -1,5 +1,6 @@
 import React, { createContext, useState, useRef, useEffect } from 'react';
 import { Icon } from 'antd';
+import useUpdateEffect from 'react-hook-easier/lib/useUpdateEffect';
 
 import DragCard from './DragCard';
 import { BasicStatementTag } from '../../statementTags';
@@ -27,9 +28,9 @@ export default class Tree extends React.Component {
 
   static TreeNode = props => {
     const isLeaf = !props.children;
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
-    useEffect(() => {
+    useUpdateEffect(() => {
       setOpen(true);
     }, [props.filter]);
     return (
