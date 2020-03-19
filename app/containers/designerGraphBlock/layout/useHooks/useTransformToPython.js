@@ -9,6 +9,12 @@ let transformCount = 0;
 
 export default () => {
   const dispatch = useDispatch();
+  const currentPagePosition = useSelector(
+    state => state.temporaryvariable.currentPagePosition
+  );
+  const currentPagePositionRef = useRef(null);
+  currentPagePositionRef.current = currentPagePosition;
+
   const currentCheckedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
   );
@@ -20,15 +26,17 @@ export default () => {
   const handleEmitCodeTransform = useCallback(
     useDebounce(cards => {
       const result = transformBlockToCode(cards);
-      if (transformCount) {
+      if (transformCount && currentPagePositionRef.current === 'block') {
         changeModifyState(processTreeRef.current, currentCheckedTreeNode, true);
       }
       transformCount++;
 
-      dispatch({
-        type: CHANGE_PYTHONCODE,
-        payload: result.output,
-      });
+      if (currentPagePositionRef.current === 'block') {
+        dispatch({
+          type: CHANGE_PYTHONCODE,
+          payload: result.output,
+        });
+      }
     }, 800),
     []
   );

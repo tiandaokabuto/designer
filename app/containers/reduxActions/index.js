@@ -13,10 +13,23 @@ import {
   RESET_GRAPHERITORALLDATA,
 } from '../../actions/grapheditor';
 import { SYNCHRO_CODEBLOCK, CHANGE_AUTOMICLIST } from '../../actions/codeblock';
-import { UPDATE_EXECUTEOUTPUT } from '../../actions/temporaryvariable';
+import {
+  UPDATE_EXECUTEOUTPUT,
+  UPDATE_CURRENTPAGEPOSITION,
+} from '../../actions/temporaryvariable';
 import store from '../../store';
 
 const { dispatch } = store;
+
+/**
+ * 修改当前所处的页面位置
+ */
+export const updateCurrentPagePosition = position => {
+  dispatch({
+    type: UPDATE_CURRENTPAGEPOSITION,
+    payload: position,
+  });
+};
 
 export const updateExecuteOutput = data => {
   dispatch({
