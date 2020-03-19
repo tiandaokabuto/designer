@@ -15,6 +15,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 
+const path = require('path');
 const net = require('net');
 const appexpress = require('express')();
 const bodyParser = require('body-parser'); //解析,用req.body获取post参数
@@ -35,7 +36,7 @@ appexpress.post('/upload', function(req, res) {
     if (targetId === undefined) return;
     mainWindow.webContents.send('updateXpath', {
       ...finallyResult.value,
-      targetId,
+      targetId
     });
     targetId = undefined;
   } catch (e) {
@@ -93,9 +94,11 @@ const createLoginWindow = () => {
     resizable: false,
     webPreferences: {
       nodeIntegration: true,
-      devTools: true,
-    },
+      devTools: true
+    }
   });
+
+  loginWindow.setIcon(path.join(__dirname, 'small.png'));
 
   loginWindow.setMenu(null);
 
@@ -116,9 +119,11 @@ const createMainWindow = () => {
     // movable: false, //可否移动
     webPreferences: {
       nodeIntegration: true,
-      devTools: true,
-    },
+      devTools: true
+    }
   });
+
+  mainWindow.setIcon(path.join(__dirname, 'small.png'));
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
@@ -155,7 +160,7 @@ const createWindow = async () => {
 
   global.sharedObject = {
     token: undefined,
-    userName: '',
+    userName: ''
   };
 
   // 登录成功切换到主页面
