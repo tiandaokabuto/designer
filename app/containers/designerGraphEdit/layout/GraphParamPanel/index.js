@@ -4,6 +4,7 @@ import { Tabs } from 'antd';
 
 import ProperitiesPanel from './components/ProperitiesPanel';
 import BlockCodePanel from './components/BlockCodePanel';
+import VariablePanel from './components/VariablePanel';
 
 const { TabPane } = Tabs;
 
@@ -25,7 +26,7 @@ export default () => {
           />
         </TabPane>
         <TabPane tab="变量" key="2">
-          2
+          <VariablePanel blockNode={blockNode} />
         </TabPane>
         <TabPane tab="命令" key="3">
           <BlockCodePanel />

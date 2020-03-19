@@ -6,6 +6,7 @@ import GGEditor from 'gg-editor';
 import ParamPanel from './components/ParamPanel';
 import { findNodeById } from '../shared/utils';
 import GraphContainer from '../../../designerGraphEdit/layout/GraphContainer';
+import VariablePanel from '../../../designerGraphEdit/layout/GraphParamPanel/components/VariablePanel';
 
 const { TabPane } = Tabs;
 
@@ -17,6 +18,13 @@ export default ({ current }) => {
   const data = useSelector(state => state.blockcode);
   const checkedBlock = getCheckedBlock(data.cards, data.checkedId);
 
+  const checkedGraphBlockId = useSelector(
+    state => state.grapheditor.checkedGraphBlockId
+  );
+  const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+
+  const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
+
   return (
     <div className="dragger-editor-parampanel">
       <Tabs className="dragger-editor-parampanel-tabs">
@@ -24,7 +32,7 @@ export default ({ current }) => {
           {checkedBlock && <ParamPanel checkedBlock={checkedBlock} />}
         </TabPane>
         <TabPane tab="变量" key="2">
-          2
+          <VariablePanel blockNode={blockNode} />
         </TabPane>
         <TabPane tab="流程图" key="3">
           <GGEditor>
