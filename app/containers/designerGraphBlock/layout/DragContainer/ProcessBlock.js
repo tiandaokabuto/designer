@@ -75,7 +75,7 @@ export default ({ readOnly = false }) => {
   const dispatch = useDispatch();
 
   // 监听代码块的变化
-  useWatchBlockCodeChange(cards);
+  // const noticyBlockCodeChange = useWatchBlockCodeChange(cards);
 
   const [isDraggingNode, setIsDraggingNode] = useState({});
 

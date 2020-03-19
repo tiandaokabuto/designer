@@ -15,4 +15,7 @@ export default cards => {
   useUpdateEffect(() => {
     changeModifyState(processTreeRef.current, currentCheckedTreeNode, true);
   }, [cards, currentCheckedTreeNode]);
+  return () => {
+    changeModifyState(processTreeRef.current, currentCheckedTreeNode, true);
+  };
 };
