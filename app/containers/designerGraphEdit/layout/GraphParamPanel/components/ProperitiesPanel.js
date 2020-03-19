@@ -67,29 +67,24 @@ const FormItem = ({
   );
 };
 
-export default withPropsAPI(({ propsAPI }) => {
-  const checkedGraphBlockId = useSelector(
-    state => state.grapheditor.checkedGraphBlockId
-  );
-  const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+export default withPropsAPI(
+  ({ propsAPI, checkedGraphBlockId, graphDataMap, blockNode }) => {
+    const noticyBlockCodeChange = useNoticyBlockCodeChange();
 
-  const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
-
-  const noticyBlockCodeChange = useNoticyBlockCodeChange();
-
-  return (
-    <div key={checkedGraphBlockId}>
-      {(blockNode.properties || []).map((param, index) => {
-        return (
-          <FormItem
-            param={param}
-            checkedGraphBlockId={checkedGraphBlockId}
-            key={index}
-            propsAPI={propsAPI}
-            noticyBlockCodeChange={noticyBlockCodeChange}
-          />
-        );
-      })}
-    </div>
-  );
-});
+    return (
+      <div key={checkedGraphBlockId}>
+        {(blockNode.properties || []).map((param, index) => {
+          return (
+            <FormItem
+              param={param}
+              checkedGraphBlockId={checkedGraphBlockId}
+              key={index}
+              propsAPI={propsAPI}
+              noticyBlockCodeChange={noticyBlockCodeChange}
+            />
+          );
+        })}
+      </div>
+    );
+  }
+);
