@@ -22,11 +22,11 @@ export const readGlobalConfig = callback => {
         path,
         JSON.stringify({
           ip: '172.168.201.90',
-          port: '19090',
+          port: '9999',
         }),
         function(err) {
           if (!err) {
-            callback && callback('172.168.201.90', '19090');
+            callback && callback('172.168.201.90', '9999');
           }
         }
       );
