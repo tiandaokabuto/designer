@@ -4,12 +4,19 @@ import { useSelector } from 'react-redux';
 import { withPropsAPI } from 'gg-editor';
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 
+import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
+
 import {
   updateGraphData,
   synchroGraphDataToProcessTree,
 } from '../../../../reduxActions';
 
-const FormItem = ({ param, propsAPI, checkedGraphBlockId }) => {
+const FormItem = ({
+  param,
+  propsAPI,
+  checkedGraphBlockId,
+  noticyBlockCodeChange,
+}) => {
   const handleLableChange = useDebounce(e => {
     const value = e.target.value;
     param.value = value;
@@ -48,9 +55,11 @@ const FormItem = ({ param, propsAPI, checkedGraphBlockId }) => {
             ? e => {
                 e.persist();
                 handleLableChange(e);
+                noticyBlockCodeChange();
               }
             : e => {
                 param.value = e.target.value;
+                noticyBlockCodeChange();
               }
         }
       />
@@ -66,6 +75,8 @@ export default withPropsAPI(({ propsAPI }) => {
 
   const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
 
+  const noticyBlockCodeChange = useNoticyBlockCodeChange();
+
   return (
     <div key={checkedGraphBlockId}>
       {(blockNode.properties || []).map((param, index) => {
@@ -75,6 +86,7 @@ export default withPropsAPI(({ propsAPI }) => {
             checkedGraphBlockId={checkedGraphBlockId}
             key={index}
             propsAPI={propsAPI}
+            noticyBlockCodeChange={noticyBlockCodeChange}
           />
         );
       })}

@@ -315,6 +315,7 @@ export const formatDateTime = time => {
 // 流程保存相关接口
 export const changeModifyState = (processTree, key, modifyState) => {
   const node = findNodeByKey(processTree, key);
+  if (!node) return;
   node.hasModified = true;
   changeProcessTree([...processTree]);
 };
