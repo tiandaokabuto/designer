@@ -78,6 +78,12 @@ export default ({ readOnly = false }) => {
   currentPagePositionRef.current = currentPagePosition;
   const dispatch = useDispatch();
 
+<<<<<<< HEAD
+=======
+  // 监听代码块的变化
+  // const noticyBlockCodeChange = useWatchBlockCodeChange(cards);
+
+>>>>>>> fix:添加流程块改变导致的状态变化
   const [isDraggingNode, setIsDraggingNode] = useState({});
 
   // const [cards, setCards] = useState([]);
