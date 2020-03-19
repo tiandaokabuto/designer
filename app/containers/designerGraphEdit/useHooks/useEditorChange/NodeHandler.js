@@ -44,6 +44,7 @@ class NodeHandler {
               default: '',
             },
           ],
+          variable: [],
         });
       } else if (description.model.shape === 'rhombus-node') {
         const key = description.item.id;
