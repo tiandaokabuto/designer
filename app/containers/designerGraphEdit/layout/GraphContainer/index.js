@@ -40,6 +40,11 @@ export default useInjectContext(
       const currentCheckedTreeNode = useSelector(
         state => state.grapheditor.currentCheckedTreeNode
       );
+
+      // 当前所处的页面位置
+      const currentPagePosition = useSelector(
+        state => state.temporaryvariable.currentPagePosition
+      );
       const processTree = useSelector(state => state.grapheditor.processTree);
       const [drawerVisible, setDrawerVisible] = useState(false);
       const node = findNodeByKey(processTree, currentCheckedTreeNode);
@@ -98,8 +103,17 @@ export default useInjectContext(
                 node.item &&
                 ['processblock', 'rhombus-node'].includes(node.item.model.shape)
               ) {
-                changeCheckedGraphBlockId(node.item.model.id);
-                synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
+                if (currentPagePosition === 'block') {
+                  // 暂时性修改当前所处的页面位置
+                  updateCurrentPagePosition('editor');
+                  setTimeout(() => {
+                    updateCurrentPagePosition('block');
+                  }, 200);
+                }
+                setTimeout(() => {
+                  changeCheckedGraphBlockId(node.item.model.id);
+                  synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
+                }, 0);
               }
 
               /**
