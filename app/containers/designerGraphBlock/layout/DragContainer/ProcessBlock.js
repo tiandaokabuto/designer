@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { InjectProvider } from 'react-hook-easier/lib/useInjectContext';
 
 import uniqueId from 'lodash/uniqueId';
@@ -71,6 +71,11 @@ export default ({ readOnly = false }) => {
     : null;
 
   const cards = useSelector(state => state.blockcode.cards);
+  const currentPagePosition = useSelector(
+    state => state.temporaryvariable.currentPagePosition
+  );
+  const currentPagePositionRef = useRef(null);
+  currentPagePositionRef.current = currentPagePosition;
   const dispatch = useDispatch();
 
   const [isDraggingNode, setIsDraggingNode] = useState({});
@@ -300,7 +305,9 @@ export default ({ readOnly = false }) => {
    * 实时更新python源代码
    */
   useEffect(() => {
-    handleEmitCodeTransform(cards);
+    if (currentPagePositionRef.current !== 'editor') {
+      handleEmitCodeTransform(cards);
+    }
   }, [cards]);
   return (
     <InjectProvider
