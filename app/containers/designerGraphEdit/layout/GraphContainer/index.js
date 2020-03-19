@@ -103,7 +103,6 @@ export default useInjectContext(
                 node.item &&
                 ['processblock', 'rhombus-node'].includes(node.item.model.shape)
               ) {
-<<<<<<< HEAD
                 if (currentPagePosition === 'block') {
                   // 暂时性修改当前所处的页面位置
                   updateCurrentPagePosition('editor');
@@ -115,10 +114,9 @@ export default useInjectContext(
                   changeCheckedGraphBlockId(node.item.model.id);
                   synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
                 }, 0);
-=======
+
                 changeCheckedGraphBlockId(node.item.model.id);
                 synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
->>>>>>> fix:添加流程块改变导致的状态变化
               }
 
               /**
