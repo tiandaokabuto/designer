@@ -12,6 +12,7 @@ import IconFont from '../IconFont/index';
 import usePersistentStorage from './useHooks/usePersistentStorage';
 import useExecutePython from './useHooks/useExecutePython';
 import { setAllModifiedState } from '../utils';
+import { updateCurrentPagePosition } from '../../reduxActions';
 
 import NewProcess from './NewProcess';
 
@@ -66,6 +67,7 @@ export default memo(
           IconFont: false,
           onClick: () => {
             event.emit('toggle');
+            updateCurrentPagePosition('editor');
             history.goBack();
           },
         },

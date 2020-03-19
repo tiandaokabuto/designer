@@ -30,6 +30,7 @@ export default useInjectContext(
       synchroCodeBlock,
       changeCheckedGraphBlockId,
       updateCurrentEditingProcessBlock,
+      updateCurrentPagePosition,
     }) => {
       const { getSelected, executeCommand, update, save } = propsAPI;
       const graphData = useSelector(state => state.grapheditor.graphData);
@@ -98,6 +99,7 @@ export default useInjectContext(
                 ['processblock', 'rhombus-node'].includes(node.item.model.shape)
               ) {
                 changeCheckedGraphBlockId(node.item.model.id);
+                synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
               }
 
               /**
@@ -109,6 +111,7 @@ export default useInjectContext(
                * */
               switch (dataId) {
                 case 'edit':
+                  updateCurrentPagePosition('block');
                   updateCurrentEditingProcessBlock(node.item.id);
                   // FIXME...... 没有获取到最新的map 因为再次点击的过程中流程图是没有更新的
                   synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
