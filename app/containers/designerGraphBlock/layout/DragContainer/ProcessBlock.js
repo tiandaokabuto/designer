@@ -38,7 +38,6 @@ import {
   useDragSource,
   useEventHandler,
   useTransformToPython,
-  useWatchBlockCodeChange,
 } from '../useHooks';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper';
@@ -73,9 +72,6 @@ export default ({ readOnly = false }) => {
 
   const cards = useSelector(state => state.blockcode.cards);
   const dispatch = useDispatch();
-
-  // 监听代码块的变化
-  // const noticyBlockCodeChange = useWatchBlockCodeChange(cards);
 
   const [isDraggingNode, setIsDraggingNode] = useState({});
 

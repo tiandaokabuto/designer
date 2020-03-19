@@ -9,13 +9,18 @@ export default cards => {
   const currentCheckedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
   );
+  const currentCheckedTreeNodeRef = useRef(null);
+  currentCheckedTreeNodeRef.current = currentCheckedTreeNode;
+
   const processTree = useSelector(state => state.grapheditor.processTree);
   const processTreeRef = useRef(null);
   processTreeRef.current = processTree;
-  useUpdateEffect(() => {
-    changeModifyState(processTreeRef.current, currentCheckedTreeNode, true);
-  }, [cards, currentCheckedTreeNode]);
+
   return () => {
-    changeModifyState(processTreeRef.current, currentCheckedTreeNode, true);
+    changeModifyState(
+      processTreeRef.current,
+      currentCheckedTreeNodeRef.current,
+      true
+    );
   };
 };
