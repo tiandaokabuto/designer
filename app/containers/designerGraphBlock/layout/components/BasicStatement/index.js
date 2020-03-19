@@ -62,7 +62,7 @@ const BasicStatement = useInjectContext(props => {
     templateVisible,
     changeToEditableTemplate,
     save,
-  ] = useVisibleDynamicUpdate(id, visibleTemplate);
+  ] = useVisibleDynamicUpdate(id, visibleTemplate, readOnly);
 
   const [className, setClassName, resetClassName] = useSetClassName();
 
@@ -129,6 +129,7 @@ const BasicStatement = useInjectContext(props => {
               className="card-content-visible"
               key={uniqueId('visible_')}
               onClick={e => {
+                if (readOnly) return;
                 const anchor = e.target.dataset.anchor;
                 changeToEditableTemplate(anchor);
                 // 触发变量的修改
