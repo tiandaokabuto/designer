@@ -10,3 +10,4 @@ export { default as useUpdateXpath } from './useUpdateXpath';
 export { default as useVisibleDynamicUpdate } from './useVisibleDynamicUpdate';
 export { default as useHasLookTarget } from './useHasLookTarget';
 export { default as useNoticyBlockCodeChange } from './useNoticyBlockCodeChange';
+export { default as useWatchCmdDesc } from './useWatchCmdDesc';
