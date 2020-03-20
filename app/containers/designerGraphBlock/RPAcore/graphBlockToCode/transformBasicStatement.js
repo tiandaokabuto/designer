@@ -32,8 +32,16 @@ const handleMainFnGeneration = (dataStructure, params, result) => {
   }(${params})\n`;
 };
 
+const handleNote = (cmdDesc, result, padding, dataStructure) => {
+  if (cmdDesc) {
+    result.output += `${padding}`;
+    result.output += `# ${dataStructure.text} -- ${cmdDesc}\n`;
+  }
+};
+
 const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
   handleModuleImport(dataStructure, result, moduleMap);
+  handleNote(dataStructure.cmdDesc, result, padding, dataStructure);
   result.output += `${padding}`;
   let params = ''; // 生成参数类型
   dataStructure.properties.required.forEach((item, index) => {
