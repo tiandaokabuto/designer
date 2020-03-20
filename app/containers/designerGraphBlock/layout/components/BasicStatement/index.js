@@ -17,6 +17,7 @@ import {
   useDeleteNodeById,
   useUpdateXpath,
   useVisibleDynamicUpdate,
+  useWatchCmdDesc,
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
@@ -56,6 +57,8 @@ const BasicStatement = useInjectContext(props => {
   } = props;
 
   const hasLookTarget = useHasLookTarget(card);
+
+  const cmdDesc = useWatchCmdDesc(card);
 
   const [
     canDrag,
@@ -118,9 +121,9 @@ const BasicStatement = useInjectContext(props => {
           <div className="card-content-description">
             <Icon type="home" className="card-content-icon" />
             {text}
-            {card.cmdDesc && (
+            {cmdDesc && (
               <span style={{ color: '#b1aeb2', marginLeft: 8 }}>
-                ({card.cmdDesc || ''})
+                ({cmdDesc || ''})
               </span>
             )}
 

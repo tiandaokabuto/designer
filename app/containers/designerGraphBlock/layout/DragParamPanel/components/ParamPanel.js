@@ -110,8 +110,20 @@ export default ({ checkedBlock }) => {
       event.removeListener('forceUpdate', handleForceUpdate);
     };
   }, []);
+
   return (
     <div className="parampanel">
+      {checkedBlock && checkedBlock.cmdDesc && (
+        <div className="parampanel-desc">
+          <span>命令描述符</span>
+          <Input
+            defaultValue={checkedBlock.cmdDesc}
+            onChange={e => {
+              checkedBlock.cmdDesc = e.target.value;
+            }}
+          />
+        </div>
+      )}
       <div className="parampanel-required">必选项</div>
       <div className="parampanel-content">
         {(checkedBlock.properties.required || []).map((param, index) => {
