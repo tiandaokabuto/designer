@@ -83,6 +83,43 @@ const readGlobalConfig = (callback, flag = false) => {
             node.icon = generateIcon('branches');
           }
         });
+        //console.log(automicList, 'automicList');
+        const fakeData = [
+          {
+            title: '测试',
+            pKey: -1,
+            key: 1,
+            depth: 0,
+            children: [
+              {
+                title: '二层目录',
+                pKey: 1,
+                key: 2,
+                depth: 1,
+                children: [
+                  {
+                    pKey: 2,
+                    key: 3,
+                    depth: 2,
+                    item: {
+                      text: '测试---',
+                      $$typeof: 1,
+                    },
+                  },
+                ],
+              },
+              {
+                depth: 1,
+                item: {
+                  $$typeof: 1,
+                  text: '二级目录--结点',
+                },
+                pKey: 1,
+                key: 4,
+              },
+            ],
+          },
+        ];
         callback && callback(automicList);
       }
     }

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 import DragCard from './components/DragCard';
 import Tree from './components/CustomeTreeNode';
-import event from '../eventCenter'
+import event from '../eventCenter';
 import {
   BasicStatementTag,
   LoopStatementTag,
@@ -123,6 +123,7 @@ export default () => {
             title={item.title}
             key={item.key}
             icon={item.icon}
+            depth={item.depth}
             filter={filter}
             dataRef={item}
           >
@@ -143,9 +144,12 @@ export default () => {
     <div className="dragger-editor-item">
       <div className="dragger-editor-item-title">
         <div>组件库</div>
-        <Icon type="redo"  onClick={() => {
-          event.emit('update_list');
-        }} />
+        <Icon
+          type="redo"
+          onClick={() => {
+            event.emit('update_list');
+          }}
+        />
       </div>
       <div className="dragger-editor-item-search">
         <Search
