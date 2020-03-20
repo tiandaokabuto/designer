@@ -49,6 +49,10 @@
       .ant-tree-node-content-wrapper {
         line-height: 32px;
         height: 32px;
+        user-select: none;
+      }
+      .ant-tree-node-selected {
+        background-color: transparent !important;
       }
     }
     // &-tree {
