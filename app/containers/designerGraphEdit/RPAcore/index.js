@@ -14,6 +14,7 @@ import { writeFileRecursive } from '../../../nodejs';
 
 import { transformBlockToCode } from '../../designerGraphBlock/RPAcore';
 import { updateEditorBlockPythonCode } from '../../reduxActions';
+import transformVariable from './transformVariable';
 
 const padding = length => '    '.repeat(length);
 
@@ -33,12 +34,14 @@ const transformEditorProcess = (
     case 'processblock':
       // 停止解析
       // 找到对应的流程块结点的数据结构
+      console.log(blockData, 'blockData');
+      const variable = blockData.variable || [];
       const funcName = `RPA_${currentId}`; //uniqueId('RPA_');
       result.output =
-        `def ${funcName}(*argv, **kw):\n${transformBlockToCode(
-          blockData.cards || [],
-          1
-        ).output || '\n'}` + result.output;
+        `def ${funcName}(*argv, **kw):\n${transformVariable(
+          variable
+        )}${transformBlockToCode(blockData.cards || [], 1).output || '\n'}` +
+        result.output;
       // 如果跟循环有关系需要添加循环语句
       if (hasTwoEntryPortInProcessBlock(graphData.edges, currentId)) {
         result.output += `${padding(depth)}while True:\n`;
