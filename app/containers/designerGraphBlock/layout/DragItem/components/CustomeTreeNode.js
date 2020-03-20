@@ -7,11 +7,12 @@ import { BasicStatementTag } from '../../statementTags';
 
 const TreeContext = createContext({});
 
-const generateStyle = isLeaf => ({
+const generateStyle = (isLeaf, depth) => ({
   height: isLeaf ? 40 : 'auto',
   lineHeight: isLeaf ? '40px' : '',
   position: isLeaf ? 'unset' : 'relative',
   paddingLeft: isLeaf ? '16px' : 0,
+  // paddingLeft: isLeaf ? '4px' : 16 * depth + 'px',
   minHeight: '40px',
 });
 
@@ -45,11 +46,12 @@ export default class Tree extends React.Component {
             !props.item.text
               .toLocaleLowerCase()
               .includes(filter.toLocaleLowerCase());
+
           if (needHidden) return null;
           return (
             <div
               style={{
-                ...generateStyle(isLeaf),
+                ...generateStyle(isLeaf, props.depth),
                 // display: needHidden ? 'none' : '',
               }}
             >
@@ -73,7 +75,7 @@ export default class Tree extends React.Component {
                 {isLeaf ? (
                   <DragCard item={props.item} />
                 ) : (
-                  <span style={{ paddingLeft: '16px' }}>{props.title}</span>
+                  <span>{props.title}</span>
                 )}
               </div>
               {open && props.children}
