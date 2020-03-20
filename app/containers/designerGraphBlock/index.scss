@@ -41,7 +41,8 @@
       // margin: 6px 0;
     }
     .atomicCList-tree {
-      overflow: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
       margin-top: 8px;
       height: calc(100vh - 157px);
       .ant-tree-switcher-noop {
@@ -51,6 +52,10 @@
         line-height: 32px;
         height: 32px;
         user-select: none;
+        width: -webkit-fill-available;
+        .dragger-editor-item-statement {
+          width: 100%;
+        }
       }
       .ant-tree-node-selected {
         background-color: transparent !important;
