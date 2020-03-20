@@ -3,10 +3,13 @@ import { Icon, Input } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
+import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
+
 import './VariablePanel.scss';
 
 export default ({ blockNode }) => {
   const [flag, forceUpdate] = useForceUpdate();
+  const noticyChange = useNoticyBlockCodeChange();
 
   const variableList = (blockNode && blockNode.variable) || null;
   const handleVariableAdd = () => {
@@ -14,10 +17,12 @@ export default ({ blockNode }) => {
       name: '',
       value: '',
     });
+    noticyChange();
     forceUpdate();
   };
   const handleVariableDelete = index => {
     variableList.splice(index, 1);
+    noticyChange();
     forceUpdate();
   };
   if (variableList === null) return null;
@@ -46,6 +51,7 @@ export default ({ blockNode }) => {
                 key={uniqueId('variable_')}
                 onChange={e => {
                   varibale.name = e.target.value;
+                  noticyChange();
                 }}
               />
               <Input
@@ -54,6 +60,7 @@ export default ({ blockNode }) => {
                 key={uniqueId('variable_')}
                 onChange={e => {
                   varibale.value = e.target.value;
+                  noticyChange();
                 }}
               />
               <Icon
