@@ -1,144 +1,108 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Input, Icon } from 'antd';
+import { Input, Icon, Tree } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
+import cloneDeep from 'lodash/cloneDeep';
 
 import DragCard from './components/DragCard';
-import Tree from './components/CustomeTreeNode';
+// import Tree from './components/CustomeTreeNode';
 import event from '../eventCenter';
 import {
   BasicStatementTag,
   LoopStatementTag,
   ConditionalStatementTag,
 } from '../statementTags';
+import { traverseTree } from '../../../common/utils';
 
 const { TreeNode } = Tree;
 const { Search } = Input;
 
-const initialState = [
-  {
-    $$typeof: BasicStatementTag,
-    text: '启动chrome浏览器', // 代码的描述文字
-    module: 'selenium',
-    pkg: 'webdriver',
-    cmdName: '启动新的浏览器',
-    visible: '启动" chrome"浏览器，并将此浏览器作为控对象，赋值给hWeb',
-    main: 'Chrome',
-    output: 'hWeb',
-    outputDesc: '输出说明：返回是否启动成功',
-    cmdDesc: '命令说明、描述',
-    properties: {
-      required: [
-        {
-          cnName: '输出到',
-          enName: 'outPut',
-          value: 'hWeb',
-          default: 'hWeb',
-        },
-        {
-          cnName: '浏览器类型',
-          enName: 'executable_path',
-          value: "'C:\\chromedriver\\chromedriver.exe'",
-          default: "'C:\\chromedriver\\chromedriver.exe'",
-          desc: '属性说明',
-          paramType: '参数类型：0:变量，',
-          componentType: '组件类型:1：下拉框',
-          valueMapping: [
-            {
-              name: '谷歌chrome浏览器',
-              value: 'chrome',
-            },
-            {
-              name: '火狐浏览器',
-              value: 'fireFox',
-            },
-          ],
-        },
-      ],
-      optional: [],
-    },
-  },
-  {
-    $$typeof: BasicStatementTag,
-    text: '鼠标双击-截图',
-    module: 'clickImage',
-    pkg: 'MouseControl',
-    cmdName: '鼠标双击-截图',
-    visible: '查找图片在屏幕中的位置并双击',
-    main: 'scshot_match',
-    output: '',
-    outputDesc: '没有输出',
-    cmdDesc: '命令说明、描述',
-    properties: {
-      required: [
-        {
-          enName: 'ImagePath',
-          cnName: '图片路径',
-          desc: '图片路径',
-          paramType: '参数类型：0:变量，',
-          componentType: '组件类型:0：输入框',
-          value: `"C:\\\\Users\\\\Administrator.SC-201902012149\\\\Desktop\\\\template.jpg"`,
-          default: `"C:\\\\Users\\\\Administrator.SC-201902012149\\\\Desktop\\\\template.jpg"`,
-        },
-      ],
-      optional: [
-        {
-          enName: '英文名称',
-          cnName: '显示的名称',
-          desc: '属性说明',
-          paramType: '参数类型：0:变量，1：',
-          componentType: '组件类型:0：输入框',
-          default: '默认值',
-        },
-      ],
-    },
-  },
-  {
-    $$typeof: BasicStatementTag,
-    text: '基本语句块2',
-  },
-  {
-    $$typeof: LoopStatementTag,
-    text: '循环控制语句',
-  },
-  {
-    $$typeof: ConditionalStatementTag,
-    text: '条件分支语句',
-  },
-];
+const canDisplay = (match, filter) => {
+  return match.toLocaleLowerCase().includes(filter.toLocaleLowerCase());
+};
 
 export default () => {
   const atomicCList = useSelector(state => state.blockcode.automicList);
+
+  const [expandedKeys, setExpandedKeys] = useState([]);
 
   const [filter, setFilter] = useState('');
 
   const [treeData, setTreeData] = useState([]);
 
   // 渲染树节点
-  const renderTreeNodes = (data, filter) =>
-    data.map(item => {
-      if (item.children) {
-        return (
-          <TreeNode
-            title={item.title}
-            key={item.key}
-            icon={item.icon}
-            depth={item.depth}
-            filter={filter}
-            dataRef={item}
-          >
-            {renderTreeNodes(item.children)}
-          </TreeNode>
+  // const renderTreeNodes = (data, filter) =>
+  //   data.map(item => {
+  //     if (item.children) {
+  //       return (
+  //         <TreeNode
+  //           title={item.title}
+  //           key={item.key}
+  //           icon={item.icon}
+  //           depth={item.depth}
+  //           filter={filter}
+  //           dataRef={item}
+  //         >
+  //           {renderTreeNodes(item.children)}
+  //         </TreeNode>
+  //       );
+  //     }
+  //     return <TreeNode key={item.key} filter={filter} {...item} />;
+  //   });
+  const filterTree = (treeData, filter, parent = [], expandedKeysTemp) => {
+    if (!filter || !treeData) return treeData || [];
+    treeData.forEach((child, index) => {
+      if (!child.children) {
+        // 原子能力结点
+        if (!canDisplay(child.item.text, filter)) {
+          // no match
+          child.isFilter = true;
+        } else {
+          // match and add to expandedKeys
+          parent.forEach(item => {
+            if (!expandedKeysTemp.includes(item)) {
+              expandedKeysTemp.push(item);
+            }
+          });
+        }
+      } else {
+        // 非原子能力结点
+        child.children = filterTree(
+          child.children,
+          filter,
+          parent.concat(child.key),
+          expandedKeysTemp
         );
       }
-      return <TreeNode key={item.key} filter={filter} {...item} />;
     });
+    return treeData.filter(child => {
+      if (child.children) {
+        return child.children.length;
+      } else {
+        return !child.isFilter;
+      }
+    });
+  };
+
+  const renderTreeNode = (tree, filter) => {
+    let treeData = cloneDeep(tree);
+    let expandedKeysTemp = [];
+    treeData = filterTree(treeData, filter, [], expandedKeysTemp);
+
+    setExpandedKeys(expandedKeysTemp);
+    traverseTree(treeData, node => {
+      if (node.item) {
+        node.title = <DragCard item={node.item} />;
+      }
+    });
+    return treeData;
+  };
 
   useEffect(() => {
-    setTreeData(renderTreeNodes(atomicCList, filter));
+    setTreeData(renderTreeNode(atomicCList, filter));
   }, [atomicCList, filter]);
 
-  const [dragCard, setDragCard] = useState(initialState);
+  const [dragCard, setDragCard] = useState([]);
 
   return (
     <div className="dragger-editor-item">
@@ -166,10 +130,15 @@ export default () => {
       >
         {renderTreeNodes(atomicCList)}
       </Tree> */}
-      <Tree filter={filter}>{treeData}</Tree>
-      {/* {dragCard.map((item, index) => (
-        <DragCard item={item} key={index} />
-      ))} */}
+      <Tree
+        className="atomicCList-tree"
+        selectable={false}
+        expandedKeys={expandedKeys}
+        onExpand={expandedKeys => {
+          setExpandedKeys(expandedKeys);
+        }}
+        treeData={treeData}
+      ></Tree>
     </div>
   );
 };
