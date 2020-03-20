@@ -132,10 +132,22 @@ export default () => {
       </Tree> */}
       <Tree
         className="atomicCList-tree"
-        selectable={false}
+        // selectable={false}
         expandedKeys={expandedKeys}
         onExpand={expandedKeys => {
           setExpandedKeys(expandedKeys);
+        }}
+        onSelect={(_, e) => {
+          const props = e.node.props;
+          if (props.children) {
+            setExpandedKeys(keys => {
+              if (keys.includes(props.eventKey)) {
+                return keys.filter(item => item !== props.eventKey);
+              } else {
+                return keys.concat(props.eventKey);
+              }
+            });
+          }
         }}
         treeData={treeData}
       ></Tree>
