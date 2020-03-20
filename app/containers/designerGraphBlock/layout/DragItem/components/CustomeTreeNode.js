@@ -45,11 +45,12 @@ export default class Tree extends React.Component {
             !props.item.text
               .toLocaleLowerCase()
               .includes(filter.toLocaleLowerCase());
+          if (needHidden) return null;
           return (
             <div
               style={{
                 ...generateStyle(isLeaf),
-                display: needHidden ? 'none' : '',
+                // display: needHidden ? 'none' : '',
               }}
             >
               <div

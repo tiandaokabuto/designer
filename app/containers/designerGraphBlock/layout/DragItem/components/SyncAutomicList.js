@@ -5,10 +5,13 @@ import React, { Component } from 'react';
 import { Icon, message } from 'antd';
 import axios from 'axios';
 
-import { traverseTree } from '../../../../common/utils'
+import { traverseTree } from '../../../../common/utils';
 import { updateAutomicList } from '../../../../reduxActions';
 import api from '../../../../../api';
-import { readGlobalConfig as readConfig, writeGlobalConfig } from '../../../../../login/utils'
+import {
+  readGlobalConfig as readConfig,
+  writeGlobalConfig,
+} from '../../../../../login/utils';
 import event from '../../eventCenter';
 
 const fs = require('fs');
@@ -48,7 +51,7 @@ const readGlobalConfig = (callback, flag = false) => {
   fs.readFile(path, async function(err, data) {
     if (!err) {
       const { automicList, ip } = JSON.parse(data.toString());
-      if ( flag || !automicList) {
+      if (flag || !automicList) {
         // 调起接口 返回数据 TODO...
         const getAbialityStructure = (() => {
           return axios.get(api('selectCodeJson')).then(res => res.data.data);
@@ -61,28 +64,26 @@ const readGlobalConfig = (callback, flag = false) => {
         try {
           const abilityStructure = await getAbialityStructure;
           const abilityTree = await getAbilityTree;
-          message.info('刷新成功')
+          message.info('刷新成功');
         } catch (err) {
-          message.info('刷新失败')
+          message.info('刷新失败');
         }
 
         const treeData = automicListToTree(abilityTree, abilityStructure);
         writeGlobalConfig({
-          automicList: treeData
-        })
+          automicList: treeData,
+        });
         callback && callback(treeData);
       } else {
-        console.log('存在')
-        traverseTree(automicList, (node) => {
-          if(node.pKey === -1){
-            node.icon = generateIcon("hdd")
-          }else{
-            node.icon = generateIcon("branches")
+        traverseTree(automicList, node => {
+          if (node.pKey === -1) {
+            node.icon = generateIcon('hdd');
+          } else {
+            node.icon = generateIcon('branches');
           }
-        })
+        });
         callback && callback(automicList);
       }
-      
     }
   });
 };
@@ -95,7 +96,7 @@ export default class SyncAutomicList extends Component {
   }
   handleUpdate = () => {
     readGlobalConfig(this.updateAutomicList, true);
-  }
+  };
 
   updateAutomicList = treeData => {
     updateAutomicList(treeData);
