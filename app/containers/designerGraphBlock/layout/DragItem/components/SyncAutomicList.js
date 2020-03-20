@@ -65,15 +65,16 @@ const readGlobalConfig = (callback, flag = false) => {
           const abilityStructure = await getAbialityStructure;
           const abilityTree = await getAbilityTree;
           message.info('刷新成功');
+          const treeData = automicListToTree(abilityTree, abilityStructure);
+          writeGlobalConfig({
+            automicList: treeData,
+          });
+          callback && callback(treeData);
         } catch (err) {
+          console.log(err);
           message.info('刷新失败');
+          callback && callback([]);
         }
-
-        const treeData = automicListToTree(abilityTree, abilityStructure);
-        writeGlobalConfig({
-          automicList: treeData,
-        });
-        callback && callback(treeData);
       } else {
         traverseTree(automicList, node => {
           if (node.pKey === -1) {
