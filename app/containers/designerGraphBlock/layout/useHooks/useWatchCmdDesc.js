@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 export default card => {
   const [desc, setDesc] = useState(card.cmdDesc);
   useEffect(() => {
+    if (!card || !card.cmdDesc) return;
     card._cmdDesc = card.cmdDesc;
     Object.defineProperty(card, 'cmdDesc', {
       get() {

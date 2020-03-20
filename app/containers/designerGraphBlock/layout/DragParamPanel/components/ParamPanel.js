@@ -120,6 +120,7 @@ export default ({ checkedBlock }) => {
             defaultValue={checkedBlock.cmdDesc}
             onChange={e => {
               checkedBlock.cmdDesc = e.target.value;
+              handleEmitCodeTransform(cards);
             }}
           />
         </div>
