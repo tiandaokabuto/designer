@@ -42,6 +42,7 @@
     }
     .atomicCList-tree {
       overflow: auto;
+      margin-top: 8px;
       height: calc(100vh - 157px);
       .ant-tree-switcher-noop {
         display: none;
