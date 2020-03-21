@@ -2,11 +2,13 @@ import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { findNodeLevelById } from '../shared/utils';
 
+import useNoticyBlockCodeChange from './useNoticyBlockCodeChange';
 import { CHANGE_CARDDATA } from '../../../../actions/codeblock';
 
 export default id => {
   const cards = useSelector(state => state.blockcode.cards);
   const checkedId = useSelector(state => state.blockcode.checkedId);
+  const noticyChange = useNoticyBlockCodeChange();
   const dispatch = useDispatch();
   const handleDeleteNodeById = useCallback(
     node_id => {
@@ -18,6 +20,7 @@ export default id => {
           type: CHANGE_CARDDATA,
           payload: [...cards],
         });
+        noticyChange();
       }
     },
     [cards, dispatch]
