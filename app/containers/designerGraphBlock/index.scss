@@ -60,6 +60,9 @@
       .ant-tree-node-selected {
         background-color: transparent !important;
       }
+      &::-webkit-scrollbar {
+        display: none;
+      }
     }
     // &-tree {
     //   .ant-tree-switcher_open {
