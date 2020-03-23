@@ -6,7 +6,7 @@ export default ({ item }) => {
   const [drag, dragImage] = useInteractiveDragSource({ item });
   return (
     <div className="interactive-control" ref={drag}>
-      控件 ---
+      {item.name}
     </div>
   );
 };
