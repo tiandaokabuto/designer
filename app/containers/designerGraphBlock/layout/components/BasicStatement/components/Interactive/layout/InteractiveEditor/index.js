@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Input } from 'antd';
 
-import InteractiveWrapper from '../../components/InteractiveWrapper';
+import { placeWrapperChild } from '../utils';
 
 const InteractiveContainer = styled.div`
   display: grid;
@@ -15,9 +14,7 @@ export default ({ layout: { column, row } = { column: 2, row: 3 } }) => {
   return (
     <div className="interactive-container-layout">
       <InteractiveContainer column={column} row={row}>
-        <InteractiveWrapper>
-          <Input />
-        </InteractiveWrapper>
+        {placeWrapperChild()}
       </InteractiveContainer>
     </div>
   );
