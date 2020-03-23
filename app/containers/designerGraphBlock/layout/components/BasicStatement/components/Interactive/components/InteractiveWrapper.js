@@ -1,9 +1,12 @@
 import React from 'react';
+import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
 import { useInteractiveDropTarget } from '../useHooks';
 
-export default ({ children }) => {
-  const [{ isOver }, ref, drop] = useInteractiveDropTarget();
+export default useInjectContext(({ children, onDrop }) => {
+  const [{ isOver }, ref, drop] = useInteractiveDropTarget({
+    onDrop,
+  });
   drop(ref);
   return (
     <div
@@ -15,4 +18,4 @@ export default ({ children }) => {
       {children}
     </div>
   );
-};
+});

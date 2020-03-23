@@ -3,7 +3,7 @@ import { useDrop } from 'react-dnd';
 
 import { Interactive } from '../ItemTypes';
 
-export default () => {
+export default ({ onDrop }) => {
   const ref = useRef(null);
   const [collectProps, drop] = useDrop({
     accept: Interactive,
@@ -17,6 +17,7 @@ export default () => {
     },
     drop(item, monitor) {
       console.log(item, '----item');
+      onDrop();
     },
   });
   return [collectProps, ref, drop];
