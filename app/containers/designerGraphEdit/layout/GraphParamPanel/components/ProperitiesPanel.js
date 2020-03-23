@@ -71,7 +71,6 @@ export default withPropsAPI(
   ({ propsAPI, checkedGraphBlockId, graphDataMap, blockNode }) => {
     const noticyBlockCodeChange = useNoticyBlockCodeChange();
 
-<<<<<<< HEAD
     return (
       <div key={checkedGraphBlockId}>
         {(blockNode.properties || []).map((param, index) => {
@@ -89,23 +88,3 @@ export default withPropsAPI(
     );
   }
 );
-=======
-  const noticyBlockCodeChange = useNoticyBlockCodeChange();
-
-  return (
-    <div key={checkedGraphBlockId}>
-      {(blockNode.properties || []).map((param, index) => {
-        return (
-          <FormItem
-            param={param}
-            checkedGraphBlockId={checkedGraphBlockId}
-            key={index}
-            propsAPI={propsAPI}
-            noticyBlockCodeChange={noticyBlockCodeChange}
-          />
-        );
-      })}
-    </div>
-  );
-});
->>>>>>> fix:继续完成判断流程块是否改变的逻辑
