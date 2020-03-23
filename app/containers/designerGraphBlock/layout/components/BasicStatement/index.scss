@@ -37,6 +37,11 @@
       }
     }
   }
+  .cmd-operation {
+    line-height: 32px;
+    height: 100%;
+    cursor: pointer;
+  }
   .card-content-searchtarget {
     position: relative;
     display: inline-flex;
