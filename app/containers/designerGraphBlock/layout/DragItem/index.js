@@ -18,6 +18,7 @@ const { TreeNode } = Tree;
 const { Search } = Input;
 
 const canDisplay = (match, filter) => {
+  if (!match) return false;
   return match.toLocaleLowerCase().includes(filter.toLocaleLowerCase());
 };
 
