@@ -1,0 +1,10 @@
+.interactive {
+  display: flex;
+  &-item {
+    flex-basis: 200px;
+    background: aquamarine;
+  }
+  &-container {
+    flex: 1;
+  }
+}

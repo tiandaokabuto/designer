@@ -11,6 +11,7 @@ import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
+
 import {
   useDropTarget,
   useHasLookTarget,
@@ -21,6 +22,7 @@ import {
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
+import Interactive from './components/Interactive';
 import ItemTypes from '../../statementTypes';
 
 const { ipcRenderer } = require('electron');
@@ -36,13 +38,13 @@ const style = {
   position: 'relative',
   marginRight: '8px',
 };
+
 const BasicStatement = useInjectContext(props => {
   const {
     id,
     card,
     text,
     index,
-    visible,
     visibleTemplate,
     moveCard,
     addCard,
@@ -101,6 +103,27 @@ const BasicStatement = useInjectContext(props => {
   const [xpathImage, setXpathImage] = useState(card.xpathImage);
 
   drag(drop(ref));
+
+  // 人机交互能力逻辑
+  const [visible, setVisible] = useState(false);
+
+  const generateEditOperation = card => {
+    switch (card.cmdName) {
+      case '人机交互':
+        return (
+          <div
+            className="cmd-operation"
+            onClick={() => {
+              setVisible(true);
+            }}
+          >
+            交互设计
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div
@@ -176,6 +199,7 @@ const BasicStatement = useInjectContext(props => {
                   }}
                 />
               </div>
+              {generateEditOperation(card)}
               <div
                 className="card-content-searchtarget"
                 style={{
@@ -224,6 +248,7 @@ const BasicStatement = useInjectContext(props => {
         data-id={isTail ? '' : id}
         ref={dragImage}
       ></div>
+      <Interactive visible={visible} setVisible={setVisible} />
     </div>
   );
 });
