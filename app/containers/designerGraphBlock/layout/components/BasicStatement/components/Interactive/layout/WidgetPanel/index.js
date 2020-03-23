@@ -13,10 +13,9 @@ export default () => {
           button
         </Panel>
         <Panel header="基本控件" key="2">
-          input
+          <InteractiveControl item={{ type1: 'input' }} />
         </Panel>
       </Collapse>
-      {/* <InteractiveControl item={{ type1: 'input' }} /> */}
     </div>
   );
 };

@@ -12,7 +12,7 @@ export default () => {
     // },
     collect: monitor => {
       return {
-        isOver: false,
+        isOver: monitor.isOver(),
       };
     },
     drop(item, monitor) {

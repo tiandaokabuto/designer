@@ -14,7 +14,7 @@ export default ({ layout: { column, row } = { column: 2, row: 3 } }) => {
   return (
     <div className="interactive-container-layout">
       <InteractiveContainer column={column} row={row}>
-        {placeWrapperChild()}
+        {placeWrapperChild(Array.apply(null, { length: row * column }))}
       </InteractiveContainer>
     </div>
   );
