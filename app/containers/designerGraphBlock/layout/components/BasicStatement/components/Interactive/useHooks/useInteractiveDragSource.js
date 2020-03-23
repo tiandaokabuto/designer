@@ -11,7 +11,9 @@ export default ({ item }) => {
     // canDrag: () => {
     //   return canDrag;
     // },
-    begin(monitor) {},
+    begin(monitor) {
+      console.log('drag');
+    },
     end(monitor) {},
   });
   return [drag, dragImage];
