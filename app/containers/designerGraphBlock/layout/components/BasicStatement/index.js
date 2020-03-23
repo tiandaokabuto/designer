@@ -107,6 +107,8 @@ const BasicStatement = useInjectContext(props => {
   // 人机交互能力逻辑
   const [visible, setVisible] = useState(false);
 
+  const [interactiveData, setInteractiveData] = useState({});
+
   const generateEditOperation = card => {
     switch (card.cmdName) {
       case '人机交互':
