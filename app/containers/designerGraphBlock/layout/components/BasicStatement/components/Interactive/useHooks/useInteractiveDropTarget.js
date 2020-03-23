@@ -5,10 +5,19 @@ import { Interactive } from '../ItemTypes';
 
 export default () => {
   const ref = useRef(null);
-  const [, drop] = useDrop({
+  const [collectProps, drop] = useDrop({
     accept: Interactive,
-    hover(item, monitor) {},
-    drop(item, monitor) {},
+    // hover(item, monitor) {
+    //   // console.log('hover');
+    // },
+    collect: monitor => {
+      return {
+        isOver: false,
+      };
+    },
+    drop(item, monitor) {
+      console.log(item, '----item');
+    },
   });
-  return [ref, drop];
+  return [collectProps, ref, drop];
 };
