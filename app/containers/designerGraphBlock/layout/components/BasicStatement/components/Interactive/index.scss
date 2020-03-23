@@ -3,16 +3,17 @@
   background: aliceblue;
   height: 100%;
   &-item {
-    flex-basis: 200px;
+    flex-basis: 220px;
     background: aquamarine;
   }
   &-container {
     flex: 1;
     &-layout {
-      display: grid;
       height: 100%;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
     }
+  }
+  &-parampanel {
+    flex-basis: 220px;
+    background: antiquewhite;
   }
 }

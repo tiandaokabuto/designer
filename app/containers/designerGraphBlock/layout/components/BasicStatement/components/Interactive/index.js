@@ -3,8 +3,9 @@ import { Modal } from 'antd';
 import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 
-import InteractiveControl from './components/InteractiveControl';
 import InteractiveWrapper from './components/InteractiveWrapper';
+import InteractiveEditor from './layout/InteractiveEditor';
+import WidgetPanel from './layout/WidgetPanel';
 
 import './index.scss';
 
@@ -13,7 +14,7 @@ export default ({ visible, setVisible }) => {
     <DndProvider Backend={Backend}>
       <Modal
         visible={visible}
-        width="80%"
+        width="90%"
         bodyStyle={{
           height: '80vh',
         }}
@@ -26,13 +27,12 @@ export default ({ visible, setVisible }) => {
       >
         <div className="interactive">
           <div className="interactive-item">
-            <InteractiveControl item={{ type1: 'input' }} />
+            <WidgetPanel />
           </div>
           <div className="interactive-container">
-            <div className="interactive-container-layout">
-              <InteractiveWrapper />
-            </div>
+            <InteractiveEditor />
           </div>
+          <div className="interactive-parampanel"></div>
         </div>
       </Modal>
     </DndProvider>
