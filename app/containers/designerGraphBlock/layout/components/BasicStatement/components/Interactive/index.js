@@ -4,6 +4,7 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import InteractiveEditor from './layout/InteractiveEditor';
 import WidgetPanel from './layout/WidgetPanel';
+import InteractiveParampanel from './layout/InteractiveParampanel';
 
 import { generateLastPosition } from './utils';
 
@@ -67,7 +68,12 @@ export default ({ visible, setVisible, interactiveCard }) => {
             handleLayoutChange={handleLayoutChange}
           />
         </div>
-        <div className="interactive-parampanel"></div>
+        <div className="interactive-parampanel">
+          <InteractiveParampanel
+            checkedGridItemId={checkedGridItemId}
+            layout={layout}
+          />
+        </div>
       </div>
     </Modal>
   );
