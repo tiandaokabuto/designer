@@ -290,6 +290,7 @@
     "react-dnd": "^10.0.2",
     "react-dnd-html5-backend": "^10.0.2",
     "react-dom": "^16.12.0",
+    "react-grid-layout": "^0.18.3",
     "react-hook-easier": "^0.0.18",
     "react-hot-loader": "^4.12.18",
     "react-redux": "^7.1.3",

@@ -1,30 +1,59 @@
 import React from 'react';
-import styled from 'styled-components';
-import { InjectProvider } from 'react-hook-easier/lib/useInjectContext';
+import GridLayout from 'react-grid-layout';
 
-import { placeWrapperChild } from '../utils';
+import InteractiveWrapper from '../../components/InteractiveWrapper';
 
-const InteractiveContainer = styled.div`
-  display: grid;
-  height: 100%;
-  grid-template-columns: ${({ column }) => `repeat(${column}, 1fr)`};
-  grid-template-rows: ${({ row }) => `repeat(${row}, 1fr)`};
-`;
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 
-export default ({ layout: { column, row } = { column: 2, row: 3 } }) => {
+export default () => {
+  const layout = [
+    {
+      i: 'placeholder-before',
+      x: 0,
+      y: 0,
+      w: 3,
+      h: 1,
+      minW: 3,
+      isDraggable: false,
+    },
+    { i: 'a', x: 0, y: 1, w: 1, h: 2 },
+    { i: 'b', x: 1, y: 0, w: 3, h: 2 },
+    { i: 'c', x: 2, y: 0, w: 1, h: 2 },
+  ];
   return (
-    <InjectProvider
-      value={{
-        onDrop: () => {
-          console.log('drop触发');
-        },
-      }}
-    >
-      <div className="interactive-container-layout">
-        <InteractiveContainer column={column} row={row}>
-          {placeWrapperChild(Array.apply(null, { length: row * column }))}
-        </InteractiveContainer>
-      </div>
-    </InjectProvider>
+    <div className="interactive-container-layout">
+      <GridLayout
+        className="layout"
+        layout={layout}
+        rowHeight={32}
+        compactType="vertical"
+        width={727}
+        cols={3}
+      >
+        <div
+          key="placeholder-before"
+          style={{
+            width: '100%',
+            height: '100%',
+            background: 'skyblue',
+          }}
+        >
+          <InteractiveWrapper>占位符</InteractiveWrapper>
+        </div>
+        <div key="a">a</div>
+        <div
+          key="b"
+          style={{
+            width: '100%',
+            height: '100%',
+            background: 'gray',
+          }}
+        >
+          b
+        </div>
+        <div key="c">c</div>
+      </GridLayout>
+    </div>
   );
 };

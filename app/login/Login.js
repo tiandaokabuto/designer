@@ -21,7 +21,7 @@ const Login = () => {
     axios
       .post(api('signIn'), {
         userName,
-        password: hex_sha1(password)
+        password: hex_sha1(password),
       })
       .then(json => {
         if (~json.code) {
@@ -72,7 +72,7 @@ const Login = () => {
           ip,
           port,
           userName,
-          password
+          password,
         });
         handleSignIn();
       }
@@ -86,7 +86,7 @@ const Login = () => {
       <div
         className="login-left"
         style={{
-          WebkitAppRegion: 'drag'
+          WebkitAppRegion: 'drag',
         }}
       />
       <div className="login-right">
@@ -145,7 +145,7 @@ const Login = () => {
               ip,
               port,
               userName,
-              password
+              password,
             });
             handleSignIn();
           }}
