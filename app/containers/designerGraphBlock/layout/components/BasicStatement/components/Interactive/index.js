@@ -8,14 +8,17 @@ import WidgetPanel from './layout/WidgetPanel';
 import './index.scss';
 
 export default ({ visible, setVisible, interactiveCard }) => {
-  const [layout, setLayout] = useState(interactiveCard.layout || []);
+  const [layout, setLayout] = useState(interactiveCard.layout);
   const onAddControl = item => {
     console.log('add control', item);
-    setLayout([
-      { i: 'a', x: 0, y: 1, w: 1, h: 2 },
-      { i: 'b', x: 1, y: 0, w: 3, h: 2 },
-      { i: 'c', x: 2, y: 0, w: 1, h: 2 },
-    ]);
+    setLayout(layout => ({
+      ...layout,
+      data: [
+        { i: 'a', x: 0, y: 1, w: 1, h: 2 },
+        { i: 'b', x: 1, y: 0, w: 3, h: 2 },
+        { i: 'c', x: 2, y: 0, w: 1, h: 2 },
+      ],
+    }));
   };
 
   useEffect(() => {

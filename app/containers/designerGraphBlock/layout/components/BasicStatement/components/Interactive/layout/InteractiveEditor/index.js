@@ -7,19 +7,15 @@ import { useGetDomWidth } from '../../useHooks';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-export default ({ layout }) => {
+export default ({ layout: { data, cols } }) => {
   const [ref, width] = useGetDomWidth();
-
-  const handleLayoutChange = layout => {
-    console.log(layout);
-  };
 
   return (
     <div className="interactive-container-layout" ref={ref}>
       <GridLayout
         className="layout"
-        layout={layout}
-        onLayoutChange={handleLayoutChange}
+        layout={data}
+        // onLayoutChange={handleLayoutChange}
         rowHeight={32}
         compactType="vertical"
         width={width}
