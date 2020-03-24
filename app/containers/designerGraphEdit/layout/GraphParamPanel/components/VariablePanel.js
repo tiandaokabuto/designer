@@ -47,8 +47,8 @@ export default ({ blockNode }) => {
             <Fragment key={index}>
               <Input
                 placeholder="变量"
-                defaultValue={varibale.name}
-                key={uniqueId('variable_')}
+                value={varibale.name}
+                // key={uniqueId('variable_')}
                 onChange={e => {
                   varibale.name = e.target.value;
                   noticyChange();
@@ -56,8 +56,8 @@ export default ({ blockNode }) => {
               />
               <Input
                 placeholder="值"
-                defaultValue={varibale.value}
-                key={uniqueId('variable_')}
+                value={varibale.value}
+                // key={uniqueId('variable_')}
                 onChange={e => {
                   varibale.value = e.target.value;
                   noticyChange();

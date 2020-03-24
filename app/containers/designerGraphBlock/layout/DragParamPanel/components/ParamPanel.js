@@ -38,7 +38,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
               defaultValue={place}
               key={index}
               style={{
-                marginBottom: 8
+                marginBottom: 8,
               }}
               onChange={e => {
                 param.placeholder[index] = e.target.value;
