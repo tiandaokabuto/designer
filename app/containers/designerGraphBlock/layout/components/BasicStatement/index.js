@@ -107,7 +107,7 @@ const BasicStatement = useInjectContext(props => {
   // 人机交互能力逻辑
   const [visible, setVisible] = useState(false);
 
-  const [interactiveData, setInteractiveData] = useState({});
+  const [interactiveCard, setInteractiveCard] = useState({});
 
   const generateEditOperation = card => {
     switch (card.cmdName) {
@@ -117,7 +117,9 @@ const BasicStatement = useInjectContext(props => {
             className="cmd-operation"
             onClick={() => {
               console.log(card);
+              !card.layout && (card.layout = {});
               setVisible(true);
+              setInteractiveCard(card);
             }}
           >
             交互设计
@@ -251,7 +253,11 @@ const BasicStatement = useInjectContext(props => {
         data-id={isTail ? '' : id}
         ref={dragImage}
       ></div>
-      <Interactive visible={visible} setVisible={setVisible} />
+      <Interactive
+        interactiveCard={interactiveCard}
+        visible={visible}
+        setVisible={setVisible}
+      />
     </div>
   );
 });
