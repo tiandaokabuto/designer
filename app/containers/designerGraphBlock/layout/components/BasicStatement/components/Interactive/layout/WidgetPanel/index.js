@@ -5,16 +5,19 @@ import InteractiveControl from '../../components/InteractiveControl';
 
 const { Panel } = Collapse;
 
-export default () => {
+export default ({ onAddControl }) => {
   return (
     <div className="interactive-collapse">
       <Collapse accordion>
-        <Panel header="布局设置" key="1">
-          <Button>自定义布局</Button>
-        </Panel>
         <Panel header="基本控件" key="2">
-          <InteractiveControl item={{ name: '文本控件' }} />
-          <InteractiveControl item={{ name: '图片控件' }} />
+          <InteractiveControl
+            onAddControl={onAddControl}
+            item={{ name: '文本控件' }}
+          />
+          <InteractiveControl
+            onAddControl={onAddControl}
+            item={{ name: '图片控件' }}
+          />
         </Panel>
       </Collapse>
     </div>

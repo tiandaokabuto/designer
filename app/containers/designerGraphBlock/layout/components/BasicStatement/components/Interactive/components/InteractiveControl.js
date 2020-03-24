@@ -1,11 +1,8 @@
 import React from 'react';
 
-import { useInteractiveDragSource } from '../useHooks';
-
-export default ({ item }) => {
-  const [drag, dragImage] = useInteractiveDragSource({ item });
+export default ({ item, onAddControl }) => {
   return (
-    <div className="interactive-control" ref={drag}>
+    <div className="interactive-control" onClick={() => onAddControl(item)}>
       {item.name}
     </div>
   );

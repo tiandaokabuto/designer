@@ -29,9 +29,6 @@ const Login = () => {
           remote.getGlobal('sharedObject').userName = json.data.userName;
           ipcRenderer.send('loginSuccess');
         }
-      })
-      .catch(e => {
-        console.log(e);
       });
   };
   useEffect(() => {
