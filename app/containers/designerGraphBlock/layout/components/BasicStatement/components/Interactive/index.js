@@ -11,6 +11,7 @@ import './index.scss';
 
 export default ({ visible, setVisible, interactiveCard }) => {
   const [layout, setLayout] = useState(interactiveCard.layout);
+  const [checkedGridItemId, setCheckedGridItemId] = useState({});
   const onAddControl = item => {
     setLayout(layout => {
       const i = 'a' + Math.random(0, 100);
@@ -40,6 +41,7 @@ export default ({ visible, setVisible, interactiveCard }) => {
   useEffect(() => {
     interactiveCard.layout = layout;
   }, [layout]);
+
   return (
     <Modal
       visible={visible}
@@ -61,6 +63,7 @@ export default ({ visible, setVisible, interactiveCard }) => {
         <div className="interactive-container">
           <InteractiveEditor
             layout={layout}
+            setCheckedGridItemId={setCheckedGridItemId}
             handleLayoutChange={handleLayoutChange}
           />
         </div>

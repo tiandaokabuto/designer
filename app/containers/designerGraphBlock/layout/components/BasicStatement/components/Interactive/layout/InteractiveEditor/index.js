@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import GridLayout from 'react-grid-layout';
 
 import InteractiveWrapper from '../components/InteractiveWrapper';
@@ -12,6 +12,7 @@ import 'react-resizable/css/styles.css';
 export default ({
   layout: { data, dataMap = {}, cols },
   handleLayoutChange,
+  setCheckedGridItemId,
 }) => {
   const [ref, width] = useGetDomWidth();
 
@@ -23,6 +24,21 @@ export default ({
         return 'other';
     }
   };
+
+  // 监听元素点击事件
+  useEffect(() => {
+    const container = document.querySelector('.interactive-container-layout');
+    if (!container) return;
+    const handleDridItemClick = e => {
+      if (e.target.dataset.id) {
+        setCheckedGridItemId(e.target.dataset.id);
+      }
+    };
+    container.addEventListener('click', handleDridItemClick);
+    return () => {
+      container.removeEventListener('click', handleDridItemClick);
+    };
+  }, [setCheckedGridItemId]);
 
   return (
     <div className="interactive-container-layout" ref={ref}>
