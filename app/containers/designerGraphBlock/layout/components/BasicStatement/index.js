@@ -116,6 +116,7 @@ const BasicStatement = useInjectContext(props => {
           <div
             className="cmd-operation"
             onClick={() => {
+              console.log(card);
               setVisible(true);
             }}
           >

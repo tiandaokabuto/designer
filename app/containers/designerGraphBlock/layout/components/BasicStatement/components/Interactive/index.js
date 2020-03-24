@@ -8,6 +8,9 @@ import WidgetPanel from './layout/WidgetPanel';
 import './index.scss';
 
 export default ({ visible, setVisible }) => {
+  const onAddControl = item => {
+    console.log('add control', item);
+  };
   return (
     <Modal
       visible={visible}
@@ -24,7 +27,7 @@ export default ({ visible, setVisible }) => {
     >
       <div className="interactive">
         <div className="interactive-item">
-          <WidgetPanel />
+          <WidgetPanel onAddControl={onAddControl} />
         </div>
         <div className="interactive-container">
           <InteractiveEditor />
