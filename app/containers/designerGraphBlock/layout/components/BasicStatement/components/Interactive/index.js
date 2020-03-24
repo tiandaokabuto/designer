@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
+import cloneDeep from 'lodash/cloneDeep';
 
-// import InteractiveWrapper from './components/InteractiveWrapper';
 import InteractiveEditor from './layout/InteractiveEditor';
 import WidgetPanel from './layout/WidgetPanel';
 
@@ -12,25 +12,29 @@ import './index.scss';
 export default ({ visible, setVisible, interactiveCard }) => {
   const [layout, setLayout] = useState(interactiveCard.layout);
   const onAddControl = item => {
-    console.log('add control', item);
-    setLayout(layout => ({
-      ...layout,
-      data: layout.data.concat({
-        i: 'a' + Math.random(0, 100),
-        w: 1,
-        h: 1,
-        ...generateLastPosition(layout.data),
-      }),
-    }));
+    setLayout(layout => {
+      const i = 'a' + Math.random(0, 100);
+      return {
+        ...layout,
+        dataMap: {
+          ...layout.dataMap,
+          [i]: cloneDeep(item),
+        },
+        data: layout.data.concat({
+          i: i,
+          w: 1,
+          h: 1,
+          ...generateLastPosition(layout.data),
+        }),
+      };
+    });
   };
 
   const handleLayoutChange = data => {
-    console.log(data);
     setLayout(layout => ({
       ...layout,
       data: data,
     }));
-    // setLayout(layout1);
   };
 
   useEffect(() => {
