@@ -2,11 +2,13 @@ import React from 'react';
 import GridLayout from 'react-grid-layout';
 
 import InteractiveWrapper from '../../components/InteractiveWrapper';
+import { useGetDomWidth } from '../../useHooks';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 export default () => {
+  const [ref, width] = useGetDomWidth();
   const layout = [
     {
       i: 'placeholder-before',
@@ -21,14 +23,15 @@ export default () => {
     { i: 'b', x: 1, y: 0, w: 3, h: 2 },
     { i: 'c', x: 2, y: 0, w: 1, h: 2 },
   ];
+
   return (
-    <div className="interactive-container-layout">
+    <div className="interactive-container-layout" ref={ref}>
       <GridLayout
         className="layout"
         layout={layout}
         rowHeight={32}
         compactType="vertical"
-        width={727}
+        width={width}
         cols={3}
       >
         <div
