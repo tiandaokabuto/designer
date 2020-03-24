@@ -118,6 +118,7 @@ export default ({ checkedBlock }) => {
           <span>命令描述符</span>
           <Input
             defaultValue={checkedBlock.cmdDesc}
+            key={checkedBlock.cmdDesc}
             onChange={e => {
               checkedBlock.cmdDesc = e.target.value;
               handleEmitCodeTransform(cards);
