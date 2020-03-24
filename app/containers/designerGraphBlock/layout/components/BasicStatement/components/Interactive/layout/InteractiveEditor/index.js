@@ -7,7 +7,7 @@ import { useGetDomWidth } from '../../useHooks';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-export default ({ layout: { data, cols } }) => {
+export default ({ layout: { data, cols }, handleLayoutChange }) => {
   const [ref, width] = useGetDomWidth();
 
   return (
@@ -15,14 +15,17 @@ export default ({ layout: { data, cols } }) => {
       <GridLayout
         className="layout"
         layout={data}
-        // onLayoutChange={handleLayoutChange}
+        onLayoutChange={handleLayoutChange}
         rowHeight={32}
         compactType="vertical"
         width={width}
         cols={3}
       >
-        <div key="a">a</div>
-        <div
+        {(data || []).map(gridItem => (
+          <div key={gridItem.i}>{gridItem.i}</div>
+        ))}
+
+        {/* <div
           key="b"
           style={{
             width: '100%',
@@ -32,7 +35,7 @@ export default ({ layout: { data, cols } }) => {
         >
           b
         </div>
-        <div key="c">c</div>
+        <div key="c">c</div> */}
       </GridLayout>
     </div>
   );
