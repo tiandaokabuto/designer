@@ -25,8 +25,9 @@ export default ({ onAddControl, setCheckedGridItemId }) => {
               label: '文本框',
               type: 'input',
               desc: '提示信息，说明',
-              defaultValue: '默认值',
+              value: '显示值',
               key: '赋值的变量名',
+              password: 'false',
             }}
           />
           <InteractiveControl
@@ -35,7 +36,7 @@ export default ({ onAddControl, setCheckedGridItemId }) => {
               label: '图片控件',
               type: 'image',
               desc: '提示信息，说明',
-              defaultValue: '默认值',
+              value: '显示值',
               key: '赋值的变量名',
             }}
           />
@@ -44,9 +45,6 @@ export default ({ onAddControl, setCheckedGridItemId }) => {
             item={{
               label: '提交按钮',
               type: 'submit-btn',
-              desc: '提示信息，说明',
-              defaultValue: '默认值',
-              key: '赋值的变量名',
             }}
           />
           <InteractiveControl
@@ -54,9 +52,6 @@ export default ({ onAddControl, setCheckedGridItemId }) => {
             item={{
               label: '取消按钮',
               type: 'cancel-btn',
-              desc: '提示信息，说明',
-              defaultValue: '默认值',
-              key: '赋值的变量名',
             }}
           />
         </Panel>

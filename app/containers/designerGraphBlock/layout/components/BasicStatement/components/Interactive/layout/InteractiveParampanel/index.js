@@ -1,10 +1,14 @@
 import React, { memo, Fragment } from 'react';
-import { Input } from 'antd';
+import { Input, Select } from 'antd';
+
+const { Option } = Select;
 
 const NAME_MAP = {
   label: '标签名称',
   key: '变量名',
   desc: '描述',
+  value: '显示值',
+  password: '密码类型',
 };
 
 export default memo(
@@ -30,6 +34,38 @@ export default memo(
     const gridItemDesc = dataMap[checkedGridItemId];
     if (!gridItemDesc) return null;
 
+    const getComponentType = (desc, item) => {
+      switch (item) {
+        case 'password':
+          return (
+            <Select
+              value={desc[item]}
+              onChange={value => {
+                desc[item] = value;
+                handleLabelChange();
+              }}
+              style={{
+                flex: 1,
+                marginLeft: 12,
+              }}
+            >
+              <Option value="true">是</Option>
+              <Option value="false">否</Option>
+            </Select>
+          );
+        default:
+          return (
+            <Input
+              value={desc[item]}
+              onChange={e => {
+                desc[item] = e.target.value;
+                handleLabelChange();
+              }}
+            />
+          );
+      }
+    };
+
     return (
       <Fragment>
         {Object.keys(gridItemDesc).map((item, index) => {
@@ -37,13 +73,7 @@ export default memo(
           return (
             <div className="parampanel-item" key={index}>
               <span>{NAME_MAP[item]}</span>
-              <Input
-                value={gridItemDesc[item]}
-                onChange={e => {
-                  gridItemDesc[item] = e.target.value;
-                  handleLabelChange();
-                }}
-              />
+              {getComponentType(gridItemDesc, item)}
             </div>
           );
         })}

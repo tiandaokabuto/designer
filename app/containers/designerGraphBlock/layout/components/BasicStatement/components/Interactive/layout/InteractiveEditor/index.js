@@ -25,9 +25,9 @@ export default ({
       case 'image':
         return <ImageComponent desc={desc} i={gridItem.i} />;
       case 'submit-btn':
-        return <BasicButton type="primary" text="提交按钮" />;
+        return <BasicButton type="primary" desc={desc} i={gridItem.i} />;
       case 'cancel-btn':
-        return <BasicButton text="取消按钮" />;
+        return <BasicButton desc={desc} i={gridItem.i} />;
       default:
         return 'other';
     }

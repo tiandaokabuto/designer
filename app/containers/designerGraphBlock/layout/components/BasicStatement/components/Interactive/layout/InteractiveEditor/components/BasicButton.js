@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button } from 'antd';
 
-export default ({ type = 'default', text }) => {
+export default ({ type = 'default', desc, i }) => {
   return (
-    <Button type={type} className="interactive-handler">
-      {text}
+    <Button type={type} data-id={i} className="interactive-handler">
+      {desc.label}
     </Button>
   );
 };
