@@ -32,6 +32,13 @@ export default ({ visible, setVisible, interactiveCard }) => {
     });
   };
 
+  const handleLabelChange = () => {
+    setLayout(layout => ({
+      ...layout,
+      dataMap: { ...layout.dataMap },
+    }));
+  };
+
   const handleLayoutChange = data => {
     setLayout(layout => ({
       ...layout,
@@ -70,6 +77,7 @@ export default ({ visible, setVisible, interactiveCard }) => {
         </div>
         <div className="interactive-parampanel">
           <InteractiveParampanel
+            handleLabelChange={handleLabelChange}
             checkedGridItemId={checkedGridItemId}
             layout={layout}
           />
