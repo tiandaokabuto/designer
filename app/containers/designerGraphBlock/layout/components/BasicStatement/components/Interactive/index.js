@@ -32,7 +32,6 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
   const noticyChange = useNoticyBlockCodeChange();
 
   const onAddControl = item => {
-    console.log(INITIAL_WIDTH);
     setLayout(layout => {
       const i = 'a' + Math.random(0, 100);
       return {
