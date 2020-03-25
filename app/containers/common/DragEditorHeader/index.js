@@ -3,9 +3,7 @@ import { Icon, Modal, Form, Input, message } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import event, {
-  PYTHON_EXECUTE,
-} from '../../designerGraphBlock/layout/eventCenter';
+import event from '../../designerGraphBlock/layout/eventCenter';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
 import IconFont from '../IconFont/index';
@@ -21,7 +19,7 @@ import './index.scss';
 const FormItem = Form.Item;
 const formLayout = {
   labelCol: { span: 4 },
-  wrapperCol: { span: 6 },
+  wrapperCol: { span: 6 }
 };
 
 export default memo(
@@ -69,54 +67,54 @@ export default memo(
             event.emit('toggle');
             updateCurrentPagePosition('editor');
             history.goBack();
-          },
+          }
         },
         {
           description: '上一步',
           type: 'save',
           disabled: true,
-          onClick: () => {},
+          onClick: () => {}
         },
         {
           description: '下一步',
           type: 'save',
           disabled: true,
-          onClick: () => {},
+          onClick: () => {}
         },
         {
           description: '保存',
           type: 'save',
           disabled: true,
-          onClick: () => {}, //handlePublishProcess,
+          onClick: () => {} //handlePublishProcess,
         },
         {
           description: '运行',
           type: 'iconzhihang',
           IconFont: true,
           disabled: true,
-          onClick: handleOperation,
+          onClick: handleOperation
         },
         {
           description: '录制',
           type: 'iconrecordlight',
           disabled: true,
-          IconFont: true,
+          IconFont: true
         },
         {
           description: '发布',
           type: 'cloud-upload',
-          disabled: true,
+          disabled: true
         },
         {
           description: '导出',
           disabled: true,
-          type: 'upload',
+          type: 'upload'
         },
         {
           description: '控制台',
           disabled: true,
-          type: 'desktop',
-        },
+          type: 'desktop'
+        }
       ],
       []
     );
@@ -128,24 +126,28 @@ export default memo(
         IconFont: false,
         onClick: () => {
           setVisible('newdir');
-        },
+        }
       },
       {
         description: '新建流程',
         type: 'save',
         onClick: () => {
           setVisible('newprocess');
-        },
+        }
       },
       {
         description: '上一步',
         type: 'save',
-        disabled: true,
+        onClick: () => {
+          event.emit('undo');
+        }
       },
       {
         description: '下一步',
         type: 'save',
-        disabled: true,
+        onClick: () => {
+          event.emit('redo');
+        }
       },
       {
         description: '保存',
@@ -156,31 +158,31 @@ export default memo(
           persistentStorage();
           message.success('保存成功');
         },
-        IconFont: true,
+        IconFont: true
       },
       {
         description: '运行',
         type: 'iconrecordlight',
         IconFont: true,
-        onClick: handleOperation,
+        onClick: handleOperation
       },
       {
         description: '发布',
         type: 'cloud-upload',
         onClick: () => {
           setModalVisible(true);
-        },
+        }
       },
       {
         description: '导出',
         type: 'upload',
-        disabled: true,
+        disabled: true
       },
       {
         description: '控制台',
         type: 'desktop',
-        disabled: true,
-      },
+        disabled: true
+      }
     ];
 
     const [tools, setTools] = useState(
