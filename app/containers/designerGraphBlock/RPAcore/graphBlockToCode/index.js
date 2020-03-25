@@ -26,6 +26,7 @@ const result = {
 const moduleMap = new Map();
 
 const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
+  if (!dataStructure) return;
   const padding = paddingStart(depth);
   dataStructure.forEach((statement, index) => {
     switch (statement.$$typeof) {

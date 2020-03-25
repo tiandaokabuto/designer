@@ -19,6 +19,7 @@ import {
   useUpdateXpath,
   useVisibleDynamicUpdate,
   useWatchCmdDesc,
+  useTransformToPython,
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
@@ -68,6 +69,8 @@ const BasicStatement = useInjectContext(props => {
     changeToEditableTemplate,
     save,
   ] = useVisibleDynamicUpdate(id, visibleTemplate, readOnly);
+
+  const handleEmitCodeTransform = useTransformToPython();
 
   const [className, setClassName, resetClassName] = useSetClassName();
 
@@ -124,6 +127,12 @@ const BasicStatement = useInjectContext(props => {
       default:
         return null;
     }
+  };
+
+  const saveLayoutChange = layout => {
+    if (!layout) return;
+    Object.assign(card.layout, layout);
+    handleEmitCodeTransform();
   };
 
   return (
@@ -250,6 +259,7 @@ const BasicStatement = useInjectContext(props => {
         ref={dragImage}
       ></div>
       <Interactive
+        saveLayoutChange={saveLayoutChange}
         interactiveCard={card}
         visible={visible}
         setVisible={setVisible}

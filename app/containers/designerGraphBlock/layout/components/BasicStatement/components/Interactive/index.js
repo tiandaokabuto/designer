@@ -7,12 +7,16 @@ import WidgetPanel from './layout/WidgetPanel';
 import InteractiveParampanel from './layout/InteractiveParampanel';
 
 import { generateLastPosition } from './utils';
+import { useNoticyBlockCodeChange } from '../../../../useHooks';
 
 import './index.scss';
 
-export default ({ visible, setVisible, interactiveCard }) => {
+export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
   const [layout, setLayout] = useState(interactiveCard.layout);
   const [checkedGridItemId, setCheckedGridItemId] = useState({});
+
+  const noticyChange = useNoticyBlockCodeChange();
+
   const onAddControl = item => {
     setLayout(layout => {
       const i = 'a' + Math.random(0, 100);
@@ -40,15 +44,17 @@ export default ({ visible, setVisible, interactiveCard }) => {
   };
 
   const handleLayoutChange = data => {
+    noticyChange();
     setLayout(layout => ({
       ...layout,
       data: data,
     }));
   };
 
-  useEffect(() => {
-    interactiveCard.layout = layout;
-  }, [layout]);
+  // useEffect(() => {
+  //   if (!layout) return;
+  //   saveLayoutChange(layout);
+  // }, [layout]);
 
   return (
     <Modal
@@ -64,6 +70,9 @@ export default ({ visible, setVisible, interactiveCard }) => {
         setVisible(false);
       }}
       onOk={() => {
+        if (layout) {
+          saveLayoutChange(layout);
+        }
         setVisible(false);
       }}
     >
