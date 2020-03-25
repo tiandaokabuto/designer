@@ -27,6 +27,15 @@
     .interactive-handler {
       cursor: pointer;
     }
+    .interactive-input {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      input {
+        flex: 1;
+        margin-left: 12px;
+      }
+    }
   }
 
   &-parampanel {
