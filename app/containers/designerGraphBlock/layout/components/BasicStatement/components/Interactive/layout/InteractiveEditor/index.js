@@ -11,7 +11,7 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 export default ({
-  layout: { data, dataMap = {}, cols = 2 },
+  layout: { data, dataMap = {}, cols = 4 },
   handleLayoutChange,
   setCheckedGridItemId,
 }) => {

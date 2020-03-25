@@ -15,9 +15,17 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
   const [layout, setLayout] = useState(interactiveCard.layout);
   const [checkedGridItemId, setCheckedGridItemId] = useState({});
 
+  const INITIAL_WIDTH = {
+    input: layout && (layout.cols || 4),
+    image: layout && (layout.cols < 4 ? 4 : layout.cols) / 4,
+    'submit-btn': 1,
+    'cancel-btn': 1,
+  };
+
   const noticyChange = useNoticyBlockCodeChange();
 
   const onAddControl = item => {
+    console.log(INITIAL_WIDTH);
     setLayout(layout => {
       const i = 'a' + Math.random(0, 100);
       return {
@@ -28,7 +36,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
         },
         data: layout.data.concat({
           i: i,
-          w: 1,
+          w: INITIAL_WIDTH[item.type],
           h: 2,
           ...generateLastPosition(layout.data),
         }),
@@ -93,6 +101,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
           />
         </div>
         <div className="interactive-parampanel">
+          <div className="interactive-parampanel-title">参数面板</div>
           <InteractiveParampanel
             handleLabelChange={handleLabelChange}
             checkedGridItemId={checkedGridItemId}

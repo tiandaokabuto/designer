@@ -10,7 +10,7 @@ export default memo(
   }) => {
     if (checkedGridItemId === 'layout') {
       return (
-        <div>
+        <div className="parampanel-item">
           <span>列数设置</span>
           <Input
             value={cols}
@@ -26,7 +26,7 @@ export default memo(
 
     return (
       <Fragment>
-        <div>
+        <div className="parampanel-item">
           <span>标签</span>
           <Input
             value={gridItemDesc.label}
@@ -36,7 +36,7 @@ export default memo(
             }}
           />
         </div>
-        <div>
+        <div className="parampanel-item">
           <span>变量</span>
           <Input
             value={gridItemDesc.key}
@@ -48,7 +48,5 @@ export default memo(
         </div>
       </Fragment>
     );
-
-    return <div>参数面板</div>;
   }
 );
