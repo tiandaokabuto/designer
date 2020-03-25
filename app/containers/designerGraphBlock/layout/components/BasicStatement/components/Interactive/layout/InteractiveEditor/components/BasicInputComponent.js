@@ -7,7 +7,11 @@ export default ({ desc, i }) => {
       <div className="interactive-handler" data-id={i}>
         {desc.label}
       </div>
-      <Input />
+      {desc.password === 'true' ? (
+        <Input.Password value={desc.value} />
+      ) : (
+        <Input value={desc.value} />
+      )}
     </div>
   );
 };
