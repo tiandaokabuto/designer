@@ -5,6 +5,7 @@ import InteractiveWrapper from '../components/InteractiveWrapper';
 import { useGetDomWidth } from '../../useHooks';
 
 import BasicInputComponent from './components/BasicInputComponent';
+import ImageComponent from './components/ImageComponent';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -20,6 +21,8 @@ export default ({
     switch (desc.type) {
       case 'input':
         return <BasicInputComponent desc={desc} i={gridItem.i} />;
+      case 'image':
+        return <ImageComponent desc={desc} i={gridItem.i} />;
       default:
         return 'other';
     }
