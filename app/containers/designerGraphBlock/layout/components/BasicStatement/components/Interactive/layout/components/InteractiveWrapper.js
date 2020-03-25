@@ -5,7 +5,7 @@ export default ({ children, gridItem }) => {
     <div
       data-id={gridItem.i}
       style={{
-        padding: 12,
+        //padding: 12,
         width: '100%',
         height: '100%',
       }}

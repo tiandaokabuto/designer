@@ -23,7 +23,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
   };
 
   const INITIAL_HEIGHT = {
-    input: 2,
+    input: 1,
     image: 4,
     'submit-btn': 1,
     'cancel-btn': 1,
