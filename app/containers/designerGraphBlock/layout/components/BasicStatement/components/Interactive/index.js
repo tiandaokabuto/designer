@@ -63,6 +63,9 @@ export default ({ visible, setVisible, interactiveCard }) => {
       onCancel={() => {
         setVisible(false);
       }}
+      onOk={() => {
+        setVisible(false);
+      }}
     >
       <div className="interactive">
         <div className="interactive-item">

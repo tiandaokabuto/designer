@@ -5,6 +5,7 @@ export default memo(
   ({ handleLabelChange, checkedGridItemId, layout: { dataMap = {} } }) => {
     const gridItemDesc = dataMap[checkedGridItemId];
     if (!gridItemDesc) return null;
+
     return (
       <Fragment>
         <div>

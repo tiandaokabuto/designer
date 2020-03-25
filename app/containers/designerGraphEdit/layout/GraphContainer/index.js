@@ -115,8 +115,8 @@ export default useInjectContext(
                   synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
                 }, 0);
 
-                // changeCheckedGraphBlockId(node.item.model.id);
-                // synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
+                changeCheckedGraphBlockId(node.item.model.id);
+                synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
               }
 
               /**
