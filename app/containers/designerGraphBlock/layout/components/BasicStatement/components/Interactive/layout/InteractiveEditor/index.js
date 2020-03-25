@@ -16,10 +16,10 @@ export default ({
 }) => {
   const [ref, width] = useGetDomWidth();
 
-  const generateComponent = desc => {
+  const generateComponent = (desc, gridItem) => {
     switch (desc.type) {
       case 'input':
-        return <BasicInputComponent desc={desc} />;
+        return <BasicInputComponent desc={desc} i={gridItem.i} />;
       default:
         return 'other';
     }
@@ -55,7 +55,7 @@ export default ({
         {(data || []).map(gridItem => (
           <div key={gridItem.i}>
             <InteractiveWrapper gridItem={gridItem}>
-              {generateComponent(dataMap[gridItem.i])}
+              {generateComponent(dataMap[gridItem.i], gridItem)}
             </InteractiveWrapper>
           </div>
         ))}
