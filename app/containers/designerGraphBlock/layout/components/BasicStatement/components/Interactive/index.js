@@ -36,6 +36,13 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     });
   };
 
+  const handleLayoutColChange = value => {
+    setLayout(layout => ({
+      ...layout,
+      cols: Number(value),
+    }));
+  };
+
   const handleLabelChange = () => {
     setLayout(layout => ({
       ...layout,
@@ -50,11 +57,6 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
       data: data,
     }));
   };
-
-  // useEffect(() => {
-  //   if (!layout) return;
-  //   saveLayoutChange(layout);
-  // }, [layout]);
 
   return (
     <Modal
@@ -78,7 +80,10 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     >
       <div className="interactive">
         <div className="interactive-item">
-          <WidgetPanel onAddControl={onAddControl} />
+          <WidgetPanel
+            onAddControl={onAddControl}
+            setCheckedGridItemId={setCheckedGridItemId}
+          />
         </div>
         <div className="interactive-container">
           <InteractiveEditor
@@ -91,6 +96,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
           <InteractiveParampanel
             handleLabelChange={handleLabelChange}
             checkedGridItemId={checkedGridItemId}
+            handleLayoutColChange={handleLayoutColChange}
             layout={layout}
           />
         </div>

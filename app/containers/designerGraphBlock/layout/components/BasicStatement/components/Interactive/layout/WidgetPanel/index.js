@@ -5,10 +5,19 @@ import InteractiveControl from '../components/InteractiveControl';
 
 const { Panel } = Collapse;
 
-export default ({ onAddControl }) => {
+export default ({ onAddControl, setCheckedGridItemId }) => {
   return (
     <div className="interactive-collapse">
       <Collapse accordion>
+        <Panel header="布局设置" key="1">
+          <Button
+            onClick={() => {
+              setCheckedGridItemId('layout');
+            }}
+          >
+            自定义布局
+          </Button>
+        </Panel>
         <Panel header="基本控件" key="2">
           <InteractiveControl
             onAddControl={onAddControl}
