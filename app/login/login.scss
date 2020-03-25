@@ -9,6 +9,19 @@
   &-right {
     flex-basis: 400px;
     padding: 56px 0 0 80px;
+    &-icon {
+      &-close {
+        position: absolute;
+        right: 18px;
+        top: 13px;
+        font-size: 20px;
+        transform: rotateX(43deg);
+        cursor: pointer;
+        &:hover {
+          color: #40a9ff;
+        }
+      }
+    }
     &-title {
       margin-bottom: 56px;
       font-size: 14px;

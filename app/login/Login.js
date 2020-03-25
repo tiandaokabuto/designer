@@ -20,8 +20,8 @@ const Login = () => {
   const handleSignIn = () => {
     axios
       .post(api('signIn'), {
-        userName: userName,
-        password: hex_sha1(password),
+        userName,
+        password: hex_sha1(password)
       })
       .then(json => {
         if (~json.code) {
@@ -29,6 +29,9 @@ const Login = () => {
           remote.getGlobal('sharedObject').userName = json.data.userName;
           ipcRenderer.send('loginSuccess');
         }
+      })
+      .catch(e => {
+        console.log(e);
       });
   };
   useEffect(() => {
@@ -44,7 +47,7 @@ const Login = () => {
         }
         return response.data;
       },
-      err => {
+      () => {
         message.error('ip或端口配置错误');
       }
     );
@@ -69,7 +72,7 @@ const Login = () => {
           ip,
           port,
           userName,
-          password,
+          password
         });
         handleSignIn();
       }
@@ -83,10 +86,18 @@ const Login = () => {
       <div
         className="login-left"
         style={{
-          WebkitAppRegion: 'drag',
+          WebkitAppRegion: 'drag'
         }}
-      ></div>
+      />
       <div className="login-right">
+        <span
+          className="login-right-icon-close"
+          onClick={() => {
+            ipcRenderer.send('close');
+          }}
+        >
+          X
+        </span>
         <div className="login-right-title">欢迎使用RPA设计器</div>
         <div className="login-right-username">
           <div>用户名</div>
@@ -134,7 +145,7 @@ const Login = () => {
               ip,
               port,
               userName,
-              password,
+              password
             });
             handleSignIn();
           }}

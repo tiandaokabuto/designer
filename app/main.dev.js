@@ -182,7 +182,9 @@ const createWindow = async () => {
 
   ipcMain.on('min', e => mainWindow.minimize());
   ipcMain.on('max', e => mainWindow.maximize());
-  ipcMain.on('close', e => mainWindow.close());
+  ipcMain.on('close', () => {
+    app.quit();
+  });
   ipcMain.on('unmaximize', e => {
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize();

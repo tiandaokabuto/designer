@@ -8,7 +8,7 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const layout = {
   labelCol: { span: 5 },
-  wrapperCol: { span: 16 },
+  wrapperCol: { span: 16 }
 };
 export default ({ resetVisible, tag }) => {
   const [visible, setVisible] = useState(true);
@@ -48,7 +48,7 @@ export default ({ resetVisible, tag }) => {
       width="50vw"
       bodyStyle={{
         height: '50vh',
-        overflow: 'auto',
+        overflow: 'auto'
       }}
       centered
       maskClosable={false}

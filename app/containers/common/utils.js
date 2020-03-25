@@ -7,7 +7,7 @@ import moment from 'moment';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
-  clearGrapheditorData,
+  clearGrapheditorData
 } from '../reduxActions';
 import event from '../designerGraphBlock/layout/eventCenter';
 const fs = require('fs');
@@ -28,7 +28,7 @@ export const newProject = (name, callback) => {
       // 修改左侧自定义目录树
       changeProcessTree([]);
       const initialJson = {
-        processTree: [],
+        processTree: []
       };
       // 创建初始的描述文件
       fs.writeFile(
@@ -58,7 +58,7 @@ export const readAllFileName = path => {
       name,
       key,
       birthtime: new Date(status.birthtime).toISOString(),
-      mtime: new Date(status.mtime).toISOString(),
+      mtime: new Date(status.mtime).toISOString()
     });
   });
   return fileList;
@@ -177,7 +177,7 @@ export const persistentStorage = (processTree, name) => {
         `${process.cwd()}/project/${name}/manifest.json`,
         JSON.stringify({
           ...description,
-          processTree,
+          processTree
         }),
         function(err) {
           if (err) {
@@ -228,6 +228,26 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
   const isDirNodeBool = isDirNode(processTree, checkedTreeNode);
   const isLeafNodeOrUndefined = checkedTreeNode === undefined || !isDirNodeBool;
   const uniqueid = getUniqueId(processTree);
+  // defaultGraphData: 新流程图加一个开始节点
+  const defaultGraphData = {
+    nodes: [
+      {
+        type: 'node',
+        size: '40*40',
+        shape: 'start-node',
+        color: '#FA8C16',
+        label: '开始',
+        x: 436,
+        y: 30,
+        id: 'startNode',
+        index: 0,
+        style: {
+          stroke: 'rgba(61, 109, 204, 1)',
+          fill: '#ecf5f6'
+        }
+      }
+    ]
+  };
   if (type === 'process') {
     // 如果是作为根结点添加, 那么逻辑如下
     if (isLeafNodeOrUndefined) {
@@ -237,7 +257,9 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
-        data: {},
+        data: {
+          graphData: defaultGraphData
+        }
       });
     } else {
       //在这个项目目录下新增
@@ -247,13 +269,17 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
-        data: {},
+        data: {
+          graphData: defaultGraphData
+        }
       });
       newProcessTree = [...processTree];
       // 告知processTree 设置展开该结点
       event.emit('expandKeys', isDirNodeBool.key);
     }
     clearGrapheditorData();
+    // 提前执行更新流程图操作，防止changeCheckedTreeNode无法查找到流程图的节点信息
+    changeProcessTree(newProcessTree);
     changeCheckedTreeNode(uniqueid);
   } else {
     // 支持嵌套目录
@@ -263,7 +289,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         key: uniqueid, // '0-' + processTree.length,
         type: 'dir',
         //icon: <Icon type="unordered-list" />,
-        children: [],
+        children: []
       });
     } else {
       isDirNodeBool.children.push({
@@ -271,12 +297,12 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         key: uniqueid, // uniqueId('key_'),sDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'dir',
         //icon: <Icon type="unordered-list" />,
-        children: [],
+        children: []
       });
       newProcessTree = [...processTree];
     }
+    changeProcessTree(newProcessTree);
   }
-  changeProcessTree(newProcessTree);
   return newProcessTree;
 };
 
