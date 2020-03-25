@@ -2,7 +2,25 @@ import React, { memo, Fragment } from 'react';
 import { Input } from 'antd';
 
 export default memo(
-  ({ handleLabelChange, checkedGridItemId, layout: { dataMap = {} } }) => {
+  ({
+    handleLabelChange,
+    checkedGridItemId,
+    handleLayoutColChange,
+    layout: { dataMap = {}, cols },
+  }) => {
+    if (checkedGridItemId === 'layout') {
+      return (
+        <div>
+          <span>列数设置</span>
+          <Input
+            value={cols}
+            onChange={e => {
+              handleLayoutColChange(e.target.value);
+            }}
+          />
+        </div>
+      );
+    }
     const gridItemDesc = dataMap[checkedGridItemId];
     if (!gridItemDesc) return null;
 

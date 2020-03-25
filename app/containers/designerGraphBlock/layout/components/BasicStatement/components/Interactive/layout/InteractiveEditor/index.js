@@ -11,7 +11,7 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 export default ({
-  layout: { data, dataMap = {}, cols },
+  layout: { data, dataMap = {}, cols = 2 },
   handleLayoutChange,
   setCheckedGridItemId,
 }) => {
@@ -53,7 +53,7 @@ export default ({
         rowHeight={32}
         compactType="vertical"
         width={width}
-        cols={3}
+        cols={cols}
       >
         {(data || []).map(gridItem => (
           <div key={gridItem.i}>
