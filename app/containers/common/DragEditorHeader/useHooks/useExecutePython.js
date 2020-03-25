@@ -9,7 +9,7 @@ export default () => {
   return () => {
     event.emit('clear_output');
     const worker = exec(
-      `${process.cwd()}\\..\\Python\\Python37-32\\ ${process.cwd()}/python/temp.py`,
+      `${process.cwd()}/../Python/python3_lib/ ${process.cwd()}/python/temp.py`,
       {
         encoding: 'buffer',
       }
