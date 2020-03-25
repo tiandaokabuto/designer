@@ -6,6 +6,7 @@ import { useGetDomWidth } from '../../useHooks';
 
 import BasicInputComponent from './components/BasicInputComponent';
 import ImageComponent from './components/ImageComponent';
+import BasicButton from './components/BasicButton';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -23,6 +24,10 @@ export default ({
         return <BasicInputComponent desc={desc} i={gridItem.i} />;
       case 'image':
         return <ImageComponent desc={desc} i={gridItem.i} />;
+      case 'submit-btn':
+        return <BasicButton type="primary" text="提交按钮" />;
+      case 'cancel-btn':
+        return <BasicButton text="取消按钮" />;
       default:
         return 'other';
     }

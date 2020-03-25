@@ -8,7 +8,7 @@ const { Panel } = Collapse;
 export default ({ onAddControl, setCheckedGridItemId }) => {
   return (
     <div className="interactive-collapse">
-      <Collapse>
+      <Collapse defaultActiveKey={['1', '2']}>
         <Panel header="布局设置" key="1">
           <Button
             onClick={() => {
