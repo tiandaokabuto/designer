@@ -6,6 +6,8 @@ export default ({ children, gridItem }) => {
       data-id={gridItem.i}
       style={{
         padding: 12,
+        width: '100%',
+        height: '100%',
       }}
     >
       {children}

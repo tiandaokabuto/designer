@@ -22,6 +22,13 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     'cancel-btn': 1,
   };
 
+  const INITIAL_HEIGHT = {
+    input: 2,
+    image: 4,
+    'submit-btn': 1,
+    'cancel-btn': 1,
+  };
+
   const noticyChange = useNoticyBlockCodeChange();
 
   const onAddControl = item => {
@@ -37,7 +44,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
         data: layout.data.concat({
           i: i,
           w: INITIAL_WIDTH[item.type],
-          h: 2,
+          h: INITIAL_HEIGHT[item.type],
           ...generateLastPosition(layout.data),
         }),
       };
