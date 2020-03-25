@@ -1,5 +1,5 @@
 import React, { useState, useEffect, memo, useMemo, useRef } from 'react';
-import { Icon, Modal, Form, Input, message } from 'antd';
+import { Icon, Modal, Form, Input, message, Button } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -215,10 +215,30 @@ export default memo(
         <Modal
           visible={modalVisible}
           closable={false}
-          onOk={hanldePublishModalOk}
-          onCancel={() => {
-            setModalVisible(false);
-          }}
+          footer={
+            <div>
+              <Button
+                onClick={() => {
+                  setModalVisible(false);
+                }}
+              >
+                取消
+              </Button>
+              <Button type="dashed">下载到本地</Button>
+              <Button
+                type="primary"
+                onClick={() => {
+                  hanldePublishModalOk();
+                }}
+              >
+                发布
+              </Button>
+            </div>
+          }
+          // onOk={hanldePublishModalOk}
+          // onCancel={() => {
+          //   setModalVisible(false);
+          // }}
         >
           <FormItem label="流程描述">
             <Input
