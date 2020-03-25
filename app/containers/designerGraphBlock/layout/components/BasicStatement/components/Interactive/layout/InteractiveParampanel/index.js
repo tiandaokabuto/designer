@@ -1,6 +1,12 @@
 import React, { memo, Fragment } from 'react';
 import { Input } from 'antd';
 
+const NAME_MAP = {
+  label: '标签名称',
+  key: '变量名',
+  desc: '描述',
+};
+
 export default memo(
   ({
     handleLabelChange,
@@ -26,26 +32,21 @@ export default memo(
 
     return (
       <Fragment>
-        <div className="parampanel-item">
-          <span>标签</span>
-          <Input
-            value={gridItemDesc.label}
-            onChange={e => {
-              gridItemDesc.label = e.target.value;
-              handleLabelChange();
-            }}
-          />
-        </div>
-        <div className="parampanel-item">
-          <span>变量</span>
-          <Input
-            value={gridItemDesc.key}
-            onChange={e => {
-              gridItemDesc.key = e.target.value;
-              handleLabelChange();
-            }}
-          />
-        </div>
+        {Object.keys(gridItemDesc).map((item, index) => {
+          if (!NAME_MAP[item]) return null;
+          return (
+            <div className="parampanel-item" key={index}>
+              <span>{NAME_MAP[item]}</span>
+              <Input
+                value={gridItemDesc[item]}
+                onChange={e => {
+                  gridItemDesc[item] = e.target.value;
+                  handleLabelChange();
+                }}
+              />
+            </div>
+          );
+        })}
       </Fragment>
     );
   }

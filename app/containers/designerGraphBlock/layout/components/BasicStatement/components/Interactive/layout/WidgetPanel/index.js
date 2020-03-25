@@ -22,10 +22,8 @@ export default ({ onAddControl, setCheckedGridItemId }) => {
           <InteractiveControl
             onAddControl={onAddControl}
             item={{
-              label: '文本控件',
+              label: '文本框',
               type: 'input',
-              position: '坐标',
-              size: '尺寸',
               desc: '提示信息，说明',
               defaultValue: '默认值',
               key: '赋值的变量名',
@@ -36,8 +34,6 @@ export default ({ onAddControl, setCheckedGridItemId }) => {
             item={{
               label: '图片控件',
               type: 'image',
-              position: '坐标',
-              size: '尺寸',
               desc: '提示信息，说明',
               defaultValue: '默认值',
               key: '赋值的变量名',
@@ -48,8 +44,6 @@ export default ({ onAddControl, setCheckedGridItemId }) => {
             item={{
               label: '提交按钮',
               type: 'submit-btn',
-              position: '坐标',
-              size: '尺寸',
               desc: '提示信息，说明',
               defaultValue: '默认值',
               key: '赋值的变量名',
@@ -60,8 +54,6 @@ export default ({ onAddControl, setCheckedGridItemId }) => {
             item={{
               label: '取消按钮',
               type: 'cancel-btn',
-              position: '坐标',
-              size: '尺寸',
               desc: '提示信息，说明',
               defaultValue: '默认值',
               key: '赋值的变量名',
