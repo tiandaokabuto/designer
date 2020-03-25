@@ -10,7 +10,7 @@
  *
  * @flow
  */
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -36,7 +36,7 @@ appexpress.post('/upload', function(req, res) {
     if (targetId === undefined) return;
     mainWindow.webContents.send('updateXpath', {
       ...finallyResult.value,
-      targetId
+      targetId,
     });
     targetId = undefined;
   } catch (e) {
@@ -94,8 +94,8 @@ const createLoginWindow = () => {
     resizable: false,
     webPreferences: {
       nodeIntegration: true,
-      devTools: true
-    }
+      devTools: true,
+    },
   });
 
   loginWindow.setIcon(path.join(__dirname, 'small.png'));
@@ -119,8 +119,8 @@ const createMainWindow = () => {
     // movable: false, //可否移动
     webPreferences: {
       nodeIntegration: true,
-      devTools: true
-    }
+      devTools: true,
+    },
   });
 
   mainWindow.setIcon(path.join(__dirname, 'small.png'));
@@ -160,7 +160,7 @@ const createWindow = async () => {
 
   global.sharedObject = {
     token: undefined,
-    userName: ''
+    userName: '',
   };
 
   // 登录成功切换到主页面
@@ -176,6 +176,20 @@ const createWindow = async () => {
   ipcMain.on('signOut', () => {
     createLoginWindow();
     mainWindow && mainWindow.destroy();
+  });
+
+  // 选择文件存储路径
+  ipcMain.on('open-directory-dialog', function(event, p) {
+    dialog.showOpenDialog(
+      {
+        properties: [p],
+      },
+      function(files) {
+        if (files) {
+          event.sender.send('selectedItem', files[0]);
+        }
+      }
+    );
   });
 
   // 创建登录窗口
