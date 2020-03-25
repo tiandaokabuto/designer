@@ -3,7 +3,7 @@ import { Input, Icon } from 'antd';
 
 export default ({ desc, i }) => {
   return (
-    <div>
+    <div className="interactive-input">
       <div className="interactive-handler" data-id={i}>
         {desc.label}
       </div>
