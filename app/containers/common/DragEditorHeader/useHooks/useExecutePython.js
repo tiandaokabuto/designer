@@ -9,14 +9,11 @@ export default () => {
   return () => {
     event.emit('clear_output');
     const worker = exec(
-      `${process.cwd()}/../Python/python3_lib/ ${process.cwd()}/python/temp.py`,
+      `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/python/temp.py`,
       {
         encoding: 'buffer',
       }
     );
-    // const worker = exec(`python ${process.cwd()}/python/temp.py`, {
-    //   encoding: 'buffer',
-    // });
     worker.stdout.on('data', function(data) {
       const log = iconv.decode(data, 'cp936');
       event.emit(PYTHON_OUTPUT, log);
