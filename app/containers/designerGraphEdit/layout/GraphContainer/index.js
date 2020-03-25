@@ -130,7 +130,7 @@ export default useInjectContext(
                 case 'edit':
                   updateCurrentPagePosition('block');
                   updateCurrentEditingProcessBlock(node.item.id);
-                  // FIXME...... 没有获取到最新的map 因为再次点击的过程中流程图是没有更新的
+
                   synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
                   setTimeout(() => {
                     history.push('/designerGraphBlock');
@@ -141,28 +141,6 @@ export default useInjectContext(
                 // do nothing
               }
 
-              //const item = getSelected()[0];
-              //console.log(item, save()); // 很重要
-              // executeCommand(() => {
-              //   update(item, {
-              //     label: 'hhh',
-              //     style: {
-              //       fill: 'red',
-              //     },
-              //   });
-              // });
-            }}
-            // onEdgeClick={edge => {
-            //   /** 点击边的时候判断是否触发label的添加 */
-            //   const model = edge.item.model;
-            //   if (
-            //     !showHead &&
-            //     isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
-            //   ) {
-            //     // setDrawerVisible(true);
-            //   }
-            //   // 判断当前的edge是否与判断结点项关联\
-            // }}
             onEdgeDoubleClick={edge => {
               const model = edge.item.model;
               /** 双击的时候判断是否触发右侧设置面板的出现 */
