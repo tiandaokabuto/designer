@@ -140,7 +140,7 @@ export default useInjectContext(
                 default:
                 // do nothing
               }
-
+            }}
             onEdgeDoubleClick={edge => {
               const model = edge.item.model;
               /** 双击的时候判断是否触发右侧设置面板的出现 */
