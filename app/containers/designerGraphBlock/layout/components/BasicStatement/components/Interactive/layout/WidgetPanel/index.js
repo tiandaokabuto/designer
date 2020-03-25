@@ -28,6 +28,7 @@ export default ({ onAddControl, setCheckedGridItemId }) => {
               value: '显示值',
               key: '赋值的变量名',
               password: 'false',
+              validRule: '',
             }}
           />
           <InteractiveControl
