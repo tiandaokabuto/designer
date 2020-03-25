@@ -7,6 +7,7 @@ import React, {
   useEffect,
 } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { useSelector } from 'react-redux';
 import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqueId from 'lodash/uniqueId';
@@ -58,6 +59,8 @@ const BasicStatement = useInjectContext(props => {
     setIsDraggingNode,
     PLACEHOLDER_STATEMENT,
   } = props;
+
+  const cards = useSelector(state => state.blockcode.cards);
 
   const hasLookTarget = useHasLookTarget(card);
 
@@ -132,7 +135,7 @@ const BasicStatement = useInjectContext(props => {
   const saveLayoutChange = layout => {
     if (!layout) return;
     Object.assign(card.layout, layout);
-    handleEmitCodeTransform();
+    handleEmitCodeTransform(cards);
   };
 
   return (
