@@ -5,4 +5,3 @@ export default memo(({ checkedGridItemId, layout: { dataMap = {} } }) => {
 
   return <div>参数面板</div>;
 });
-s;
