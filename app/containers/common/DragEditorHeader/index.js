@@ -9,6 +9,7 @@ import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
 import IconFont from '../IconFont/index';
 import usePersistentStorage from './useHooks/usePersistentStorage';
 import useExecutePython from './useHooks/useExecutePython';
+import useGetDownloadPath from './useHooks/useGetDownloadPath';
 import { setAllModifiedState } from '../utils';
 import { updateCurrentPagePosition } from '../../reduxActions';
 
@@ -39,6 +40,8 @@ export default memo(
     const persistentStorage = usePersistentStorage();
 
     const handlePublishZip = usePublishProcessZip();
+
+    const downloadPython = useGetDownloadPath();
 
     const transformProcessToPython = useTransformProcessToPython();
 
@@ -224,7 +227,15 @@ export default memo(
               >
                 取消
               </Button>
-              <Button type="dashed">下载到本地</Button>
+              <Button
+                type="dashed"
+                onClick={() => {
+                  setModalVisible(false);
+                  downloadPython();
+                }}
+              >
+                下载到本地
+              </Button>
               <Button
                 type="primary"
                 onClick={() => {
