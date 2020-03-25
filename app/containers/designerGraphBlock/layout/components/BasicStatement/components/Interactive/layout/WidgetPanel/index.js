@@ -8,7 +8,7 @@ const { Panel } = Collapse;
 export default ({ onAddControl, setCheckedGridItemId }) => {
   return (
     <div className="interactive-collapse">
-      <Collapse accordion>
+      <Collapse>
         <Panel header="布局设置" key="1">
           <Button
             onClick={() => {
@@ -18,7 +18,7 @@ export default ({ onAddControl, setCheckedGridItemId }) => {
             自定义布局
           </Button>
         </Panel>
-        <Panel header="基本控件" key="2">
+        <Panel header="基础控件" key="2">
           <InteractiveControl
             onAddControl={onAddControl}
             item={{
@@ -36,6 +36,30 @@ export default ({ onAddControl, setCheckedGridItemId }) => {
             item={{
               label: '图片控件',
               type: 'image',
+              position: '坐标',
+              size: '尺寸',
+              desc: '提示信息，说明',
+              defaultValue: '默认值',
+              key: '赋值的变量名',
+            }}
+          />
+          <InteractiveControl
+            onAddControl={onAddControl}
+            item={{
+              label: '提交按钮',
+              type: 'submit-btn',
+              position: '坐标',
+              size: '尺寸',
+              desc: '提示信息，说明',
+              defaultValue: '默认值',
+              key: '赋值的变量名',
+            }}
+          />
+          <InteractiveControl
+            onAddControl={onAddControl}
+            item={{
+              label: '取消按钮',
+              type: 'cancel-btn',
               position: '坐标',
               size: '尺寸',
               desc: '提示信息，说明',

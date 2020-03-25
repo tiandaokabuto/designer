@@ -4,7 +4,20 @@
   height: 100%;
   &-item {
     flex-basis: 220px;
-    background: aquamarine;
+    .interactive-control {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 43px;
+      border-radius: 3px;
+      border: 1px solid rgba(238, 238, 238, 1);
+      margin-bottom: 8px;
+      user-select: none;
+      cursor: pointer;
+      &:hover {
+        border-color: #32a68d;
+      }
+    }
   }
   &-container {
     flex: 1;
@@ -15,13 +28,24 @@
       cursor: pointer;
     }
   }
-  // &-wrapper {
-  //   &__over {
-  //     background-color: gray;
-  //   }
-  // }
+
   &-parampanel {
     flex-basis: 220px;
-    background: antiquewhite;
+    background: rgba(255, 255, 255, 1);
+    &-title {
+      height: 40px;
+      line-height: 40px;
+      padding-left: 35px;
+
+      box-shadow: 0px 1px 0px 0px rgba(238, 238, 238, 1);
+    }
+    .parampanel-item {
+      display: flex;
+      margin: 8px 0 8px 8px;
+      input {
+        flex: 1;
+        margin-left: 12px;
+      }
+    }
   }
 }
