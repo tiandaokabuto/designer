@@ -25,7 +25,7 @@ export default ({ visible, setVisible, interactiveCard }) => {
         data: layout.data.concat({
           i: i,
           w: 1,
-          h: 1,
+          h: 2,
           ...generateLastPosition(layout.data),
         }),
       };
