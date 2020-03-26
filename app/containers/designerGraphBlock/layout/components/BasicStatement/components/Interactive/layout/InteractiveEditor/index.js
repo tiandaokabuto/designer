@@ -58,6 +58,7 @@ export default ({
         rowHeight={32}
         compactType="vertical"
         width={width}
+        margin={[16, 16]}
         cols={cols}
       >
         {(data || []).map(gridItem => (

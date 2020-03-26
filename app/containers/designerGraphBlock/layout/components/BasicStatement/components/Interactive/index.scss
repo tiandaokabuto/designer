@@ -29,6 +29,24 @@
         overflow-x: hidden;
       }
     }
+    .interactive-wrapper {
+      position: relative;
+      &:hover {
+        .interactive-wrapper-operation {
+          visibility: visible;
+        }
+      }
+      &-operation {
+        visibility: hidden;
+        > .anticon {
+          margin-right: 12px;
+          cursor: pointer;
+        }
+        position: absolute;
+        right: 0;
+        top: -16px;
+      }
+    }
     .interactive-handler {
       cursor: pointer;
     }
