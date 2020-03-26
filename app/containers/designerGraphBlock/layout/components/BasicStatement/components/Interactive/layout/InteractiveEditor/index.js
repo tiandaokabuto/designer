@@ -55,7 +55,7 @@ export default ({
   useLayoutEffect(() => {
     if (data.length) {
       const lastItem = data.slice(-1);
-
+      console.log(isLocked, 'isLocked');
       if (isLocked && lastItem[0].i.includes('preset')) {
         // 滚动条下滑到底
         const layoutDom = document.querySelector('.interactive-placeholder');
