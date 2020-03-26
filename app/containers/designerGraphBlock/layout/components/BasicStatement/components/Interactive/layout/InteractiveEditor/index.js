@@ -8,6 +8,8 @@ import BasicInputComponent from './components/BasicInputComponent';
 import ImageComponent from './components/ImageComponent';
 import BasicButton from './components/BasicButton';
 
+import { isLocked } from '../WidgetPanel';
+
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -52,7 +54,8 @@ export default ({
   useLayoutEffect(() => {
     if (data.length) {
       const lastItem = data.slice(-1);
-      if (lastItem[0].i.includes('preset')) {
+
+      if (isLocked && lastItem[0].i.includes('preset')) {
         // 滚动条下滑到底
         const layoutDom = document.querySelector('.interactive-placeholder');
         layoutDom.scrollIntoView({
@@ -60,7 +63,7 @@ export default ({
         });
       }
     }
-  }, [data]);
+  }, [data, isLocked]);
 
   return (
     <div className="interactive-container-layout" ref={ref}>
