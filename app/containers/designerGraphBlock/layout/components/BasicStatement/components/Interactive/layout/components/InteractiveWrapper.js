@@ -1,16 +1,22 @@
 import React from 'react';
+import { Icon } from 'antd';
 
 export default ({ children, gridItem }) => {
   return (
     <div
+      className="interactive-wrapper"
       data-id={gridItem.i}
       style={{
-        //padding: 12,
         width: '100%',
         height: '100%',
       }}
     >
       {children}
+      <div className="interactive-wrapper-operation">
+        <Icon type="drag" className="interactive-handler" />
+        <Icon type="copy" />
+        <Icon type="delete" />
+      </div>
     </div>
   );
 };
