@@ -54,8 +54,10 @@ export default ({
       const lastItem = data.slice(-1);
       if (lastItem[0].i.includes('preset')) {
         // 滚动条下滑到底
-        const layoutDom = document.querySelector('.layout');
-        layoutDom.scrollTop = layoutDom.scrollHeight + 20;
+        const layoutDom = document.querySelector('.interactive-placeholder');
+        layoutDom.scrollIntoView({
+          behavior: 'smooth',
+        });
       }
     }
   }, [data]);
