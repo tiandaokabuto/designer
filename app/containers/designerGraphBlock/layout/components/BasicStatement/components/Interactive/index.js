@@ -72,6 +72,14 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     }));
   };
 
+  const handleControlDelete = i => {
+    setLayout(layout => ({
+      ...layout,
+      data: layout.data.filter(item => item.i !== i),
+      dataMap: !(layout.dataMap[i] = undefined) && layout.dataMap,
+    }));
+  };
+
   return (
     <Modal
       visible={visible}
@@ -104,6 +112,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
             layout={layout}
             setCheckedGridItemId={setCheckedGridItemId}
             handleLayoutChange={handleLayoutChange}
+            handleControlDelete={handleControlDelete}
           />
         </div>
         <div className="interactive-parampanel">

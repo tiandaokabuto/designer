@@ -15,6 +15,7 @@ export default ({
   layout: { data, dataMap = {}, cols = 4 },
   handleLayoutChange,
   setCheckedGridItemId,
+  handleControlDelete,
 }) => {
   const [ref, width] = useGetDomWidth();
 
@@ -63,7 +64,10 @@ export default ({
       >
         {(data || []).map(gridItem => (
           <div key={gridItem.i}>
-            <InteractiveWrapper gridItem={gridItem}>
+            <InteractiveWrapper
+              gridItem={gridItem}
+              handleControlDelete={handleControlDelete}
+            >
               {generateComponent(dataMap[gridItem.i], gridItem)}
             </InteractiveWrapper>
           </div>
