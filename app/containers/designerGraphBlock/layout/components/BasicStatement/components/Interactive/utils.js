@@ -1,3 +1,5 @@
+import uniqueId from 'lodash/uniqueId';
+
 export const generateLastPosition = data => {
   let position = {
     x: 0,
@@ -10,4 +12,12 @@ export const generateLastPosition = data => {
     }
   });
   return position;
+};
+
+export const getUniqueId = (data = []) => {
+  let id = uniqueId('control_');
+  while (data.some(item => item.i === id)) {
+    id = uniqueId('control_');
+  }
+  return id;
 };

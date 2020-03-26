@@ -6,7 +6,7 @@ import InteractiveEditor from './layout/InteractiveEditor';
 import WidgetPanel from './layout/WidgetPanel';
 import InteractiveParampanel from './layout/InteractiveParampanel';
 
-import { generateLastPosition } from './utils';
+import { generateLastPosition, getUniqueId } from './utils';
 import { useNoticyBlockCodeChange } from '../../../../useHooks';
 
 import './index.scss';
@@ -33,7 +33,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
 
   const onAddControl = item => {
     setLayout(layout => {
-      const i = 'a' + Math.random(0, 100);
+      const i = getUniqueId(layout.data);
       return {
         ...layout,
         dataMap: {
