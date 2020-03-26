@@ -67,6 +67,7 @@ export default ({
             <InteractiveWrapper
               gridItem={gridItem}
               handleControlDelete={handleControlDelete}
+              text={dataMap[gridItem.i].label}
             >
               {generateComponent(dataMap[gridItem.i], gridItem)}
             </InteractiveWrapper>
