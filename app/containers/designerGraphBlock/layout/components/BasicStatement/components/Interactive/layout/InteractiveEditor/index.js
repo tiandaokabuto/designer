@@ -65,7 +65,7 @@ export default ({
       }
     }
   }, [data, isLocked]);
-  console.log(width);
+
   return (
     <div className="interactive-container-layout" ref={ref}>
       <GridLayout
