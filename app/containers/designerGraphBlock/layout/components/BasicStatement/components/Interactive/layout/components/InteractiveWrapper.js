@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon } from 'antd';
 
+<<<<<<< HEAD
 const Placeholder = ({ text }) => {
   return <div className="interactive-placeholder">新增{text}</div>;
 };
@@ -8,6 +9,9 @@ const Placeholder = ({ text }) => {
 export default ({ children, gridItem, handleControlDelete, text }) => {
   const isPlaceholder = gridItem.i.includes('preset');
 
+=======
+export default ({ children, gridItem, handleControlDelete }) => {
+>>>>>>> fix:添加人机交互控件的删除功能
   return (
     <div
       className="interactive-wrapper"
