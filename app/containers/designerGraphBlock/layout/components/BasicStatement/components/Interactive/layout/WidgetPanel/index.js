@@ -5,7 +5,7 @@ import InteractiveControl from '../components/InteractiveControl';
 
 const { Panel } = Collapse;
 
-let isLocked = false;
+export let isLocked = false;
 
 export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
   useEffect(() => {
@@ -18,7 +18,8 @@ export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
             ...JSON.parse(e.target.dataset.item),
             preset: true,
           },
-          true
+          true,
+          isLocked
         );
       }
     };
