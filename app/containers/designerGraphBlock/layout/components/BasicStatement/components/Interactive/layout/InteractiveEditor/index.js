@@ -15,11 +15,12 @@ import 'react-resizable/css/styles.css';
 
 export default ({
   layout: { data, dataMap = {}, cols = 4 },
+  isPreview,
   handleLayoutChange,
   setCheckedGridItemId,
   handleControlDelete,
 }) => {
-  const [ref, width] = useGetDomWidth();
+  const [ref, width] = useGetDomWidth(isPreview);
 
   const generateComponent = (desc, gridItem) => {
     switch (desc.type) {
@@ -54,7 +55,7 @@ export default ({
   useLayoutEffect(() => {
     if (data.length) {
       const lastItem = data.slice(-1);
-      console.log(isLocked, 'isLocked');
+
       if (isLocked && lastItem[0].i.includes('preset')) {
         // 滚动条下滑到底
         const layoutDom = document.querySelector('.interactive-placeholder');
@@ -64,7 +65,7 @@ export default ({
       }
     }
   }, [data, isLocked]);
-
+  console.log(width);
   return (
     <div className="interactive-container-layout" ref={ref}>
       <GridLayout
