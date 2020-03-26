@@ -34,6 +34,27 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
   const onAddControl = item => {
     setLayout(layout => {
       const i = getUniqueId(layout.data);
+      if (!item.preset) {
+        const lastItem = layout.data.pop();
+        const newData = layout.data.concat([
+          {
+            i: i,
+            w: INITIAL_WIDTH[item.type],
+            h: INITIAL_HEIGHT[item.type],
+            ...generateLastPosition(layout.data),
+          },
+          lastItem,
+        ]);
+
+        return {
+          ...layout,
+          dataMap: {
+            ...layout.dataMap,
+            [i]: cloneDeep(item),
+          },
+          data: newData,
+        };
+      }
       return {
         ...layout,
         dataMap: {
@@ -46,6 +67,22 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
           h: INITIAL_HEIGHT[item.type],
           ...generateLastPosition(layout.data),
         }),
+      };
+    });
+  };
+
+  const popLayoutData = () => {
+    setLayout(layout => {
+      const lastItem = layout.data.pop();
+      const newData = [...layout.data];
+      const i = lastItem.i;
+      return {
+        ...layout,
+        data: newData,
+        dataMap: {
+          ...layout.dataMap,
+          [i]: undefined,
+        },
       };
     });
   };
@@ -105,6 +142,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
           <WidgetPanel
             onAddControl={onAddControl}
             setCheckedGridItemId={setCheckedGridItemId}
+            popLayoutData={popLayoutData}
           />
         </div>
         <div className="interactive-container">
