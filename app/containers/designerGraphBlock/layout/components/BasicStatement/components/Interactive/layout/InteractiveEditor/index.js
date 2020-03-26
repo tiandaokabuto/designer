@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import GridLayout from 'react-grid-layout';
 
 import InteractiveWrapper from '../components/InteractiveWrapper';
@@ -48,6 +48,17 @@ export default ({
       container.removeEventListener('click', handleDridItemClick);
     };
   }, [setCheckedGridItemId]);
+
+  useLayoutEffect(() => {
+    if (data.length) {
+      const lastItem = data.slice(-1);
+      if (lastItem[0].i.includes('preset')) {
+        // 滚动条下滑到底
+        const layoutDom = document.querySelector('.layout');
+        layoutDom.scrollTop = layoutDom.scrollHeight + 20;
+      }
+    }
+  }, [data]);
 
   return (
     <div className="interactive-container-layout" ref={ref}>
