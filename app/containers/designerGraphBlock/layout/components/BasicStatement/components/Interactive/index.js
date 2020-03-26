@@ -24,7 +24,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
 
   const INITIAL_HEIGHT = {
     input: 1,
-    image: 4,
+    image: 3,
     'submit-btn': 1,
     'cancel-btn': 1,
   };
@@ -59,10 +59,10 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
         ...layout,
         dataMap: {
           ...layout.dataMap,
-          [i]: cloneDeep(item),
+          [i + 'preset']: cloneDeep(item),
         },
         data: layout.data.concat({
-          i: i,
+          i: i + 'preset',
           w: INITIAL_WIDTH[item.type],
           h: INITIAL_HEIGHT[item.type],
           ...generateLastPosition(layout.data),

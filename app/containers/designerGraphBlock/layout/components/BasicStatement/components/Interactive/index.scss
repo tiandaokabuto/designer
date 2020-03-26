@@ -36,6 +36,18 @@
           visibility: visible;
         }
       }
+      .interactive-placeholder {
+        position: absolute;
+        border: 1px dashed #32a67f;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        color: rgba(74, 192, 159, 1);
+        align-items: center;
+      }
       &-operation {
         visibility: hidden;
         > .anticon {

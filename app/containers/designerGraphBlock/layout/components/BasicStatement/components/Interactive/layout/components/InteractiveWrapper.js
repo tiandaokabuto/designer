@@ -1,7 +1,13 @@
 import React from 'react';
 import { Icon } from 'antd';
 
-export default ({ children, gridItem, handleControlDelete }) => {
+const Placeholder = ({ text }) => {
+  return <div className="interactive-placeholder">新增{text}</div>;
+};
+
+export default ({ children, gridItem, handleControlDelete, text }) => {
+  const isPlaceholder = gridItem.i.includes('preset');
+
   return (
     <div
       className="interactive-wrapper"
@@ -11,7 +17,7 @@ export default ({ children, gridItem, handleControlDelete }) => {
         height: '100%',
       }}
     >
-      {children}
+      {isPlaceholder ? <Placeholder text={text} /> : children}
       <div className="interactive-wrapper-operation">
         <Icon type="drag" className="interactive-handler" />
         <Icon type="copy" />
