@@ -180,16 +180,15 @@ const createWindow = async () => {
 
   // 选择文件存储路径
   ipcMain.on('open-directory-dialog', function(event, p) {
-    dialog.showOpenDialog(
-      {
-        properties: [p],
-      },
-      function(files) {
-        if (files) {
-          event.sender.send('selectedItem', files[0]);
+    dialog
+      .showSaveDialog(mainWindow, {
+        title: '流程另存为',
+      })
+      .then(({ filePath, canceled }) => {
+        if (!canceled) {
+          event.sender.send('selectedItem', filePath);
         }
-      }
-    );
+      });
   });
 
   // 创建登录窗口
