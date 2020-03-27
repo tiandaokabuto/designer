@@ -183,6 +183,7 @@ const createWindow = async () => {
     dialog
       .showSaveDialog(mainWindow, {
         title: '流程另存为',
+        buttonLabel: '存储',
       })
       .then(({ filePath, canceled }) => {
         if (!canceled) {
