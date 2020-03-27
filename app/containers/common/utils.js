@@ -7,11 +7,15 @@ import moment from 'moment';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
-  clearGrapheditorData
+  clearGrapheditorData,
 } from '../reduxActions';
+import { readDir } from '../../nodejs';
 import event from '../designerGraphBlock/layout/eventCenter';
 const fs = require('fs');
 const process = require('process');
+const path = require('path');
+const JSZIP = require('jszip');
+const zip = new JSZIP();
 
 /**
  * 新建项目
@@ -28,7 +32,7 @@ export const newProject = (name, callback) => {
       // 修改左侧自定义目录树
       changeProcessTree([]);
       const initialJson = {
-        processTree: []
+        processTree: [],
       };
       // 创建初始的描述文件
       fs.writeFile(
@@ -58,7 +62,7 @@ export const readAllFileName = path => {
       name,
       key,
       birthtime: new Date(status.birthtime).toISOString(),
-      mtime: new Date(status.mtime).toISOString()
+      mtime: new Date(status.mtime).toISOString(),
     });
   });
   return fileList;
@@ -100,21 +104,119 @@ export const findNodeByKey = (tree, key) => {
  * @param {*} tree
  * @param {*} key
  */
-export const deleteNodeByKey = (tree, key, parent = tree) => {
+export const deleteNodeByKey = (tree, name, key, parent = tree) => {
+  // console.log(tree, name, key);
+  // traverseTree(tree, treeItem => {
+  //   if (treeItem.key === key) {
+  //     deleteFolderRecursive(
+  //       `${process.cwd()}/project/${name}/${treeItem.title}`
+  //     );
+  //   }
+  // });
   for (const child of tree) {
     if (child.key === key) {
       if (Array.isArray(parent)) {
-        let index = parent.findIndex(item => item.key === key);
-        parent.splice(index, 1);
+        // parent为数组，parent = processTree时，在第一层
+        console.log(parent, 'isArray---true');
+        // 父节点是否是数组
+        let index = parent.findIndex(item => item.key === key); // 从数组中找到这个元素的index
+        let target = parent.find(item => item.key === key);
+        // 把该目录下的全部流程都删除
+        if (target.children) {
+          traverseTree(target.children, item => {
+            if (item.type === 'process') {
+              deleteFolderRecursive(
+                `${process.cwd()}/project/${name}/${item.title}`
+              );
+            }
+          });
+        } else {
+          deleteFolderRecursive(
+            `${process.cwd()}/project/${name}/${target.title}`
+          );
+        }
+        // if (child.children) {
+        //   traverseTree(child.children, item => {
+        //     if (item.type === 'process') {
+        //       deleteFolderRecursive(
+        //         `${process.cwd()}/project/${name}/${item.title}`
+        //       );
+        //     }
+        //   });
+        // } else {
+        //   deleteFolderRecursive(
+        //     `${process.cwd()}/project/${name}/${child.title}`
+        //   );
+        // }
+        parent.splice(index, 1); // 在tree中删掉该元素
       } else {
+        console.log(key);
+        // parent不是processTree的情况
+        console.log(JSON.parse(JSON.stringify(parent)), 'isArray---false');
+        console.log(
+          JSON.parse(JSON.stringify(parent.children)),
+          'isArray---false'
+        );
         let index = parent.children.findIndex(item => item.key === key);
+        const target = parent.children.find(item => item.key === key);
+        console.log(target);
+        if (target.children) {
+          traverseTree(target.children, item => {
+            if (item.type === 'process') {
+              deleteFolderRecursive(
+                `${process.cwd()}/project/${name}/${item.title}`
+              );
+            }
+          });
+        } else {
+          deleteFolderRecursive(
+            `${process.cwd()}/project/${name}/${target.title}`
+          );
+        }
+        // 把该目录下的全部流程都删除
+        // if (parent.children) {
+        //   console.log(parent.children);
+        //   traverseTree(parent.children, item => {
+        //     if (item.type === 'process') {
+        //       deleteFolderRecursive(
+        //         `${process.cwd()}/project/${name}/${item.title}`
+        //       );
+        //     }
+        //   });
+        // } else {
+        //   deleteFolderRecursive(
+        //     `${process.cwd()}/project/${name}/${child.title}`
+        //   );
+        // }
         parent.children.splice(index, 1);
       }
       return;
     }
     if (child.children) {
-      deleteNodeByKey(child.children, key, child);
+      console.log('递归');
+      console.log(child);
+      deleteNodeByKey(child.children, name, key, child);
     }
+  }
+};
+
+/**
+ * 递归删除文件夹
+ * @param {*} path 路径
+ */
+export const deleteFolderRecursive = path => {
+  if (fs.existsSync(path)) {
+    fs.readdirSync(path).forEach(function(file) {
+      var curPath = path + '/' + file;
+      if (fs.statSync(curPath).isDirectory()) {
+        // recurse
+        deleteFolderRecursive(curPath);
+      } else {
+        // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
   }
 };
 
@@ -134,26 +236,46 @@ export const renameNodeByKey = (
   tree,
   key,
   persistentStorage,
-  restoreCheckedTreeNode
+  restoreCheckedTreeNode,
+  name
 ) => {
   const node = findNodeByKey(tree, key);
   const parent = findParentNodeByKey(tree, key) || [];
+  const oldTitle = node.title;
+  console.log(node, parent, key, tree, name);
   node.title = (
     <Input
       autoFocus
       defaultValue={node.title}
       onBlur={e => {
-        const hasExist = Array.isArray(parent)
-          ? parent.filter(item => item.title === e.target.value)
-          : parent.children.filter(item => item.title === e.target.value);
-        if (hasExist.length) {
-          message.info('目录名或流程名重复!');
-          return;
+        if (node.type === 'process') {
+          const hasExist = Array.isArray(parent)
+            ? parent.filter(item => item.title === e.target.value)
+            : parent.children.filter(item => item.title === e.target.value);
+          console.log(hasExist);
+          if (hasExist.length) {
+            message.info('目录名或流程名重复!');
+            return;
+          }
+          node.title = e.target.value;
+          fs.rename(
+            `${process.cwd()}/project/${name}/${oldTitle}`,
+            `${process.cwd()}/project/${name}/${node.title}`,
+            err => {
+              if (err) {
+                message.error(err);
+              }
+            }
+          );
+          changeProcessTree([...tree]);
+          persistentStorage();
+          restoreCheckedTreeNode();
+        } else {
+          node.title = e.target.value;
+          changeProcessTree([...tree]);
+          persistentStorage();
+          restoreCheckedTreeNode();
         }
-        node.title = e.target.value;
-        changeProcessTree([...tree]);
-        persistentStorage();
-        restoreCheckedTreeNode();
       }}
     />
   );
@@ -161,11 +283,44 @@ export const renameNodeByKey = (
 };
 
 /**
- * 数据持久化保存到本地
+ * 检查和创建路径
+ * @param {} dirName 路径
+ */
+export function checkAndMakeDir(dirName) {
+  if (fs.existsSync(dirName)) {
+    return true;
+  } else {
+    if (checkAndMakeDir(path.dirname(dirName))) {
+      fs.mkdirSync(dirName);
+      return true;
+    }
+  }
+}
+
+/**
+ * 数据持久化保存到本地，按当前点击的流程保存
  * @param {*} processTree
  * @param {*} name
  */
-export const persistentStorage = (processTree, name) => {
+export const persistentStorage = (processTree, name, node) => {
+  // 遍历树
+  traverseTree(processTree, treeItem => {
+    // 匹配点击的流程
+    if (treeItem.key === node) {
+      console.log(treeItem);
+      if (treeItem.type === 'process') {
+        fs.writeFile(
+          `${process.cwd()}/project/${name}/${treeItem.title}/manifest.json`,
+          JSON.stringify(treeItem.data),
+          err => {
+            if (err) {
+              console.log(err);
+            }
+          }
+        );
+      }
+    }
+  });
   // 重新覆写processTree
   fs.readFile(`${process.cwd()}/project/${name}/manifest.json`, function(
     err,
@@ -173,11 +328,18 @@ export const persistentStorage = (processTree, name) => {
   ) {
     if (!err) {
       let description = JSON.parse(data.toString());
+      let tree = JSON.parse(JSON.stringify(processTree));
+      // 保存之前先把流程的data清空
+      traverseTree(tree, item => {
+        if (item.type === 'process') {
+          item.data = {};
+        }
+      });
       fs.writeFile(
         `${process.cwd()}/project/${name}/manifest.json`,
         JSON.stringify({
           ...description,
-          processTree
+          processTree: tree,
         }),
         function(err) {
           if (err) {
@@ -223,7 +385,13 @@ const getUniqueId = tree => {
  * @param {*} checkedTreeNode
  */
 
-export const newProcess = (type, name, processTree, checkedTreeNode) => {
+export const newProcess = (
+  type,
+  name,
+  processTree,
+  checkedTreeNode,
+  currentProject
+) => {
   let newProcessTree = undefined;
   const isDirNodeBool = isDirNode(processTree, checkedTreeNode);
   const isLeafNodeOrUndefined = checkedTreeNode === undefined || !isDirNodeBool;
@@ -243,12 +411,14 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         index: 0,
         style: {
           stroke: 'rgba(61, 109, 204, 1)',
-          fill: '#ecf5f6'
-        }
-      }
-    ]
+          fill: '#ecf5f6',
+        },
+      },
+    ],
   };
   if (type === 'process') {
+    console.log(type, name, currentProject, checkedTreeNode);
+    checkAndMakeDir(`${process.cwd()}/project/${currentProject}/${name}`);
     // 如果是作为根结点添加, 那么逻辑如下
     if (isLeafNodeOrUndefined) {
       newProcessTree = processTree.concat({
@@ -258,8 +428,8 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         //icon: <Icon type="edit" />,
         isLeaf: true,
         data: {
-          graphData: defaultGraphData
-        }
+          graphData: defaultGraphData,
+        },
       });
     } else {
       //在这个项目目录下新增
@@ -270,8 +440,8 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         //icon: <Icon type="edit" />,
         isLeaf: true,
         data: {
-          graphData: defaultGraphData
-        }
+          graphData: defaultGraphData,
+        },
       });
       newProcessTree = [...processTree];
       // 告知processTree 设置展开该结点
@@ -289,7 +459,7 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         key: uniqueid, // '0-' + processTree.length,
         type: 'dir',
         //icon: <Icon type="unordered-list" />,
-        children: []
+        children: [],
       });
     } else {
       isDirNodeBool.children.push({
@@ -297,12 +467,14 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
         key: uniqueid, // uniqueId('key_'),sDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'dir',
         //icon: <Icon type="unordered-list" />,
-        children: []
+        children: [],
       });
       newProcessTree = [...processTree];
     }
     changeProcessTree(newProcessTree);
   }
+  changeProcessTree(newProcessTree);
+  // return [newProcessTree, uniqueid];
   return newProcessTree;
 };
 
@@ -312,21 +484,64 @@ export const newProcess = (type, name, processTree, checkedTreeNode) => {
  * @param {*} title
  * @param {*} checkedTreeNode
  */
-export const isNameExist = (tree, title, checkedTreeNode) => {
+export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
   const isDirNodeBool = isDirNode(tree, checkedTreeNode);
-  // 不在同级下建目录或流程跳过检验
-  if (!isDirNodeBool) return false;
-  const children = isDirNodeBool.children;
-  return children.find(item => item.title === title);
+  console.log(isDirNodeBool);
+  const files = fs.readdirSync(`${process.cwd()}/project/${currentProject}`);
+  console.log(files);
+  return files.find(item => item === title);
+
+  // const isDirNodeBool = isDirNode(tree, checkedTreeNode);
+  // console.log(isDirNodeBool);
+  // // 不在同级下建目录或流程跳过检验
+  // if (!isDirNodeBool) return false;
+  // const children = isDirNodeBool.children;
+  // return children.find(item => item.title === title);
 };
 
+export const isDirNameExist = (
+  tree,
+  title,
+  checkedTreeNode,
+  currentProject
+) => {
+  console.log(tree, title, checkedTreeNode, currentProject);
+};
+
+/**
+ * 打开项目
+ * @param {*} name 项目名
+ */
 export const openProject = name => {
+  console.log('打开');
   fs.readFile(`${process.cwd()}/project/${name}/manifest.json`, function(
     err,
     data
   ) {
     if (!err) {
+      const dirs = fs.readdirSync(`${process.cwd()}/project/${name}`);
       const { processTree } = JSON.parse(data.toString());
+      // 遍历项目文件夹下面的流程文件夹，读取manifest.json里流程的数据，写入processTree
+      dirs.forEach(dirItem => {
+        if (dirItem !== 'manifest.json') {
+          try {
+            const data = JSON.parse(
+              fs.readFileSync(
+                `${process.cwd()}/project/${name}/${dirItem}/manifest.json`
+              )
+            );
+            // 以流程名为映射关系
+            traverseTree(processTree, treeItem => {
+              if (treeItem.title === dirItem) {
+                treeItem.data = data;
+              }
+            });
+          } catch (e) {
+            console.log('该流程没有内容');
+          }
+        }
+      });
+      console.log(processTree);
       changeProcessTree(processTree);
     } else {
       console.log(err);
@@ -380,4 +595,51 @@ export const existModifiedNode = processTree => {
   } finally {
     return flag;
   }
+};
+function deleteFolder(path) {
+  var files = [];
+  if (fs.existsSync(path)) {
+    files = fs.readdirSync(path);
+    files.forEach(function(file, index) {
+      var curPath = path + '/' + file;
+      if (fs.statSync(curPath).isDirectory()) {
+        // recurse
+        deleteFolder(curPath);
+      } else {
+        // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+}
+
+/**
+ * 下载发布流程到本地
+ */
+export const downProcessZipToLocal = (filePath, editorBlockPythonCode) => {
+  console.log(filePath, 'filePath');
+  try {
+    fs.mkdirSync(filePath);
+  } catch (err) {
+    console.log('文件夹已经存在');
+    deleteFolder(filePath);
+    fs.mkdirSync(filePath);
+  }
+  fs.writeFileSync(filePath + '/main.py', editorBlockPythonCode);
+  readDir(zip, filePath);
+  zip
+    .generateAsync({
+      // 设置压缩格式，开始打包
+      type: 'nodebuffer', // nodejs用
+      compression: 'DEFLATE', // 压缩算法
+      compressionOptions: {
+        // 压缩级别
+        level: 9,
+      },
+    })
+    .then(function(content) {
+      deleteFolder(filePath);
+      fs.writeFileSync(filePath + '.zip', content);
+    });
 };

@@ -68,7 +68,20 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
         break;
       case 'formJson':
         if (params) params += ', ';
-        params += item.enName + ' = ' + handleFormJsonGenerate(dataStructure);
+        const formJson = handleFormJsonGenerate(dataStructure);
+
+        if (formJson !== 'None') {
+          let temp = JSON.parse(formJson);
+          params +=
+            'variables = (' +
+            temp
+              .filter(item => !['submit-btn', 'cancel-btn'].includes(item.key))
+              .map(item => item.key)
+              .join(',') +
+            ',' +
+            '), ';
+        }
+        params += item.enName + ' = ' + formJson;
         break;
       default:
         if (params) params += ', ';

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 
-export default () => {
+export default isPreview => {
   const infoRef = useRef(null);
   const [width, setWidth] = useState(0);
   useEffect(() => {
@@ -15,6 +15,6 @@ export default () => {
     return () => {
       window.removeEventListener('resize', handleWindowResize);
     };
-  }, [infoRef]);
+  }, [infoRef, isPreview]);
   return [infoRef, width];
 };

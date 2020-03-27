@@ -66,7 +66,7 @@ const changeEditingProcessId = (state, currentCheckedTreeNode) => {
 
 const updateProcessTree = state => {
   const { processTree, graphDataMap, graphData } = state;
-  const node = findNodeByKey(processTree, state.currentEditingProcessId);
+  const node = findNodeByKey(processTree, state.currentCheckedTreeNode);
   //console.log(processTree, state, 'save');
   if (!node) return processTree;
   node.data = {

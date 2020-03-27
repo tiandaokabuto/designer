@@ -18,6 +18,10 @@
         border-color: #32a68d;
       }
     }
+    .interactive-collapse {
+      height: 100%;
+      overflow-y: auto;
+    }
   }
   &-container {
     flex: 1;
@@ -27,6 +31,36 @@
         height: 100% !important;
         overflow: auto;
         overflow-x: hidden;
+      }
+    }
+    .interactive-wrapper {
+      position: relative;
+      &:hover {
+        .interactive-wrapper-operation {
+          visibility: visible;
+        }
+      }
+      .interactive-placeholder {
+        position: absolute;
+        border: 1px dashed #32a67f;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        color: rgba(74, 192, 159, 1);
+        align-items: center;
+      }
+      &-operation {
+        visibility: hidden;
+        > .anticon {
+          margin-right: 12px;
+          cursor: pointer;
+        }
+        position: absolute;
+        right: 0;
+        top: -16px;
       }
     }
     .interactive-handler {
