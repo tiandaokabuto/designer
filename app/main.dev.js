@@ -36,7 +36,7 @@ appexpress.post('/upload', function(req, res) {
     if (targetId === undefined) return;
     mainWindow.webContents.send('updateXpath', {
       ...finallyResult.value,
-      targetId,
+      targetId
     });
     targetId = undefined;
   } catch (e) {
@@ -94,8 +94,8 @@ const createLoginWindow = () => {
     resizable: false,
     webPreferences: {
       nodeIntegration: true,
-      devTools: true,
-    },
+      devTools: true
+    }
   });
 
   loginWindow.setIcon(path.join(__dirname, 'small.png'));
@@ -119,14 +119,14 @@ const createMainWindow = () => {
     // movable: false, //可否移动
     webPreferences: {
       nodeIntegration: true,
-      devTools: true,
-    },
+      devTools: true
+    }
   });
 
   mainWindow.setIcon(path.join(__dirname, 'small.png'));
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
-
+  // mainWindow.webContents.openDevTools();
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
@@ -160,7 +160,7 @@ const createWindow = async () => {
 
   global.sharedObject = {
     token: undefined,
-    userName: '',
+    userName: ''
   };
 
   // 登录成功切换到主页面
@@ -183,7 +183,7 @@ const createWindow = async () => {
     dialog
       .showSaveDialog(mainWindow, {
         title: '流程另存为',
-        buttonLabel: '存储',
+        buttonLabel: '存储'
       })
       .then(({ filePath, canceled }) => {
         if (!canceled) {

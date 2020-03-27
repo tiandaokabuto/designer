@@ -212,30 +212,42 @@ export const renameNodeByKey = (
       autoFocus
       defaultValue={node.title}
       onBlur={e => {
+        const newTitle = e.target.value;
         if (node.type === 'process') {
-          const hasExist = Array.isArray(parent)
-            ? parent.filter(item => item.title === e.target.value)
-            : parent.children.filter(item => item.title === e.target.value);
-          console.log(hasExist);
-          if (hasExist.length) {
-            message.info('目录名或流程名重复!');
+          const dirs = fs.readdirSync(`${process.cwd()}/project/${name}`);
+          const item = dirs.find(item => newTitle === item);
+          if (!item) {
+            node.title = newTitle;
+            fs.rename(
+              `${process.cwd()}/project/${name}/${oldTitle}`,
+              `${process.cwd()}/project/${name}/${newTitle}`,
+              err => {
+                if (err) {
+                  message.error(err);
+                }
+              }
+            );
+            changeProcessTree([...tree]);
+            persistentStorage();
+            restoreCheckedTreeNode();
+          } else {
+            message.info('重复命名');
+            node.title = oldTitle;
+            changeProcessTree([...tree]);
+            persistentStorage();
+            restoreCheckedTreeNode();
             return;
           }
-          node.title = e.target.value;
-          fs.rename(
-            `${process.cwd()}/project/${name}/${oldTitle}`,
-            `${process.cwd()}/project/${name}/${node.title}`,
-            err => {
-              if (err) {
-                message.error(err);
-              }
-            }
-          );
-          changeProcessTree([...tree]);
-          persistentStorage();
-          restoreCheckedTreeNode();
+          // const hasExist = Array.isArray(parent)
+          //   ? parent.filter(item => item.title === e.target.value)
+          //   : parent.children.filter(item => item.title === e.target.value);
+          // console.log(hasExist);
+          // if (hasExist.length) {
+          //   message.info('目录名或流程名重复!');
+          //   return;
+          // }
         } else {
-          node.title = e.target.value;
+          node.title = newTitle;
           changeProcessTree([...tree]);
           persistentStorage();
           restoreCheckedTreeNode();
@@ -267,6 +279,7 @@ export function checkAndMakeDir(dirName) {
  * @param {*} name
  */
 export const persistentStorage = (processTree, name, node) => {
+  console.log(processTree, name, node, '-----保存');
   // 遍历树
   traverseTree(processTree, treeItem => {
     // 匹配点击的流程
