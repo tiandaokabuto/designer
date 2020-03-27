@@ -6,8 +6,8 @@ import store from '../../../../store';
 export default () => {
   return () => {
     const {
-      grapheditor: { processTree, currentProject },
+      grapheditor: { processTree, currentProject, currentCheckedTreeNode },
     } = store.getState();
-    persistentStorage(processTree, currentProject);
+    persistentStorage(processTree, currentProject, currentCheckedTreeNode);
   };
 };

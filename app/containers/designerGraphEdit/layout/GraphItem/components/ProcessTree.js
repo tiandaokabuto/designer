@@ -6,7 +6,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { ConfirmModal } from '../../../../common/components';
 import {
   changeProcessTree,
-  changeCheckedTreeNode,
+  changeCheckedTreeNode
 } from '../../../../reduxActions';
 import { resetGraphEditData } from '../../../../reduxActions';
 import Switcher from './Switcher';
@@ -15,7 +15,7 @@ import {
   deleteNodeByKey,
   renameNodeByKey,
   hasNodeModified,
-  setAllModifiedState,
+  setAllModifiedState
 } from '../../../../common/utils';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 import { fromTextArea } from 'codemirror';
@@ -32,7 +32,7 @@ const TreeNodeTitle = ({ title, type, hasModified }) => {
           verticalAlign: 'sub',
           display: 'inline-block',
           marginLeft: 8,
-          color: hasModified ? 'red' : '',
+          color: hasModified ? 'red' : ''
         }}
         className={hasModified ? 'hasModified' : 'notModified'}
       >
@@ -83,6 +83,7 @@ export default () => {
   const currentCheckedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
   );
+  const currentProject = useSelector(state => state.grapheditor.currentProject);
 
   const persistentStorage = usePersistentStorage();
 
@@ -156,13 +157,14 @@ export default () => {
   };
 
   const handleDelete = (key, persistentStorage) => {
+    console.log(currentProject);
     Modal.confirm({
       content: '请确认是否删除?',
       onOk() {
-        deleteNodeByKey(processTree, key);
+        deleteNodeByKey(processTree, currentProject, key);
         changeProcessTree([...processTree]);
         persistentStorage();
-      },
+      }
     });
   };
 
@@ -175,7 +177,8 @@ export default () => {
       cloneDeep(processTree),
       key,
       persistentStorage,
-      restoreCheckedTreeNode
+      restoreCheckedTreeNode,
+      currentProject
     );
   };
 
@@ -211,7 +214,7 @@ export default () => {
           setPosition({
             left: event.pageX + 40,
             top: event.pageY - 20,
-            node: node.props,
+            node: node.props
           });
         }}
         onDragEnter={onDragEnter}
