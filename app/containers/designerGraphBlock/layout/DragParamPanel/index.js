@@ -29,7 +29,9 @@ export default ({ current }) => {
     <div className="dragger-editor-parampanel">
       <Tabs className="dragger-editor-parampanel-tabs">
         <TabPane tab="属性" key="1">
-          {checkedBlock && <ParamPanel checkedBlock={checkedBlock} />}
+          {checkedBlock && (
+            <ParamPanel checkedBlock={checkedBlock} key={checkedBlock.id} />
+          )}
         </TabPane>
         <TabPane tab="变量" key="2">
           <VariablePanel blockNode={blockNode} />
