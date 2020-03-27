@@ -9,9 +9,14 @@ export default () => {
     state => state.grapheditor.editorBlockPythonCode
   );
 
-  const publishZip = descText => {
+  const publishZip = (descText, versionText) => {
     const process = require('process');
-    writeFile(`${process.cwd()}/python/test.py`, pythonCode, descText);
+    writeFile(
+      `${process.cwd()}/python/test.py`,
+      pythonCode,
+      descText,
+      versionText
+    );
   };
   return publishZip;
 };

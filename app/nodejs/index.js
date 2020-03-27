@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import { issueProcess } from './utils';
 import event, {
-  PYTHON_OUTPUT,
+  PYTHON_OUTPUT
 } from '../containers/designerGraphBlock/layout/eventCenter';
 
 const fs = require('fs');
@@ -40,7 +40,7 @@ function readDir(obj, nowPath) {
   });
 }
 
-export const startZIP = descText => {
+export const startZIP = (descText, versionText) => {
   const currPath = process.cwd();
   const targetDir = path.join(currPath, '/python');
   readDir(zip, targetDir);
@@ -51,8 +51,8 @@ export const startZIP = descText => {
       compression: 'DEFLATE', // 压缩算法
       compressionOptions: {
         // 压缩级别
-        level: 9,
-      },
+        level: 9
+      }
     })
     .then(function(content) {
       // try {
@@ -64,15 +64,15 @@ export const startZIP = descText => {
       // console.log('压缩完成...');
       // console.log('开始上传流程包...');
       // message.info('压缩完成，开始上传流程包');
-      issueProcess(content, descText);
+      issueProcess(content, descText, versionText);
     });
 };
 
-export const writeFile = (dirname, content, descText) => {
+export const writeFile = (dirname, content, descText, versionText) => {
   writeFileRecursive(dirname, content, err => {
     if (!err) {
       console.log('开始压缩...');
-      startZIP(descText);
+      startZIP(descText, versionText);
     } else {
       message.info('压缩失败...');
     }
