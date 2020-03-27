@@ -593,8 +593,35 @@ export const existModifiedNode = processTree => {
     return flag;
   }
 };
+function deleteFolder(path) {
+  var files = [];
+  if (fs.existsSync(path)) {
+    files = fs.readdirSync(path);
+    files.forEach(function(file, index) {
+      var curPath = path + '/' + file;
+      if (fs.statSync(curPath).isDirectory()) {
+        // recurse
+        deleteFolder(curPath);
+      } else {
+        // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+}
 
 /**
  * 下载发布流程到本地
  */
-export const downProcessZipToLocal = () => {};
+export const downProcessZipToLocal = (filePath, editorBlockPythonCode) => {
+  console.log(filePath, 'filePath');
+  try {
+    fs.mkdirSync(filePath);
+  } catch (err) {
+    console.log('文件夹已经存在');
+    deleteFolder(filePath);
+    fs.mkdirSync(filePath);
+  }
+  fs.writeFileSync(filePath + '/main.py', editorBlockPythonCode);
+};

@@ -14,7 +14,7 @@ import useGetDownloadPath from './useHooks/useGetDownloadPath';
 import useGetProcessName, {
   isEffectProcess,
 } from './useHooks/useGetProcessName';
-import { setAllModifiedState } from '../utils';
+import { setAllModifiedState, downProcessZipToLocal } from '../utils';
 import { updateCurrentPagePosition } from '../../reduxActions';
 import api from '../../../api';
 
@@ -292,7 +292,7 @@ export default memo(
                 onClick={() => {
                   setModalVisible(false);
                   transformProcessToPython();
-                  downloadPython();
+                  downloadPython(downProcessZipToLocal);
                 }}
               >
                 下载到本地
