@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Modal, Form, Input, Select, message } from 'antd';
 import { useSelector } from 'react-redux';
 
-import { newProcess, persistentStorage, isNameExist } from '../../utils';
+import {
+  newProcess,
+  persistentStorage,
+  isNameExist,
+  isDirNameExist
+} from '../../utils';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -19,13 +24,21 @@ export default ({ resetVisible, tag }) => {
   const checkedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
   );
+
   const processTree = useSelector(state => state.grapheditor.processTree);
   const currentProject = useSelector(state => state.grapheditor.currentProject);
+  // const currentCheckedTreeNode = useSelector(state => state.grapheditor.currentCheckedTreeNode);
 
-  /* ---------- 流程/项目新增逻辑 ----------- */
+  /* ---------- 流程/目录新增逻辑 ----------- */
   const handleAddProcessOrProject = () => {
+    const flag = isDirNameExist(
+      processTree,
+      name,
+      checkedTreeNode,
+      currentProject
+    );
     // 做流程名校验避免重复
-    if (isNameExist(processTree, name, checkedTreeNode)) {
+    if (isNameExist(processTree, name, checkedTreeNode, currentProject)) {
       return void message.info(
         `${tag === 'newprocess' ? '流程名' : '目录名'}重复,请重新填写!`
       );
@@ -34,13 +47,12 @@ export default ({ resetVisible, tag }) => {
       tag === 'newprocess' ? 'process' : 'dir',
       name,
       processTree,
-      checkedTreeNode
+      checkedTreeNode,
+      currentProject
     );
     setVisible(false);
     resetVisible(undefined);
-    setTimeout(() => {
-      persistentStorage(newProcessTree, currentProject);
-    }, 0);
+    persistentStorage(newProcessTree, currentProject, checkedTreeNode);
   };
   return (
     <Modal

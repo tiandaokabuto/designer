@@ -8,6 +8,7 @@ const process = require('process');
 export default () => {
   return () => {
     event.emit('clear_output');
+    console.log(`${process.cwd()}/../Python/python3_lib/python.exe`);
     const worker = exec(
       `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/python/temp.py`,
       {
