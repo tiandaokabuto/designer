@@ -67,20 +67,10 @@ export default memo(
         .then(res => res.data)
         .then(res => {
           const version = res.data;
-          if (res.message === '成功' && version) {
-            const words = version.split('.');
-            const lastWord = words[words.length - 1];
-            let newVersion = '';
-            for (let i = 0; i < words.length; i += 1) {
-              if (i !== words.length - 1) {
-                const word = words[i];
-                newVersion += word.concat('.');
-              } else {
-                newVersion += parseInt(lastWord, 10) + 1;
-              }
-            }
-            setVersionText(newVersion);
-            return newVersion;
+          if (res.code !== -1 && version) {
+            version.replace(/[\d]+$/, match => +match + 1);
+            setVersionText(version);
+            return version;
           }
           setVersionText('1.0.0');
           return false;
