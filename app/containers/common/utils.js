@@ -7,7 +7,7 @@ import moment from 'moment';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
-  clearGrapheditorData
+  clearGrapheditorData,
 } from '../reduxActions';
 import event from '../designerGraphBlock/layout/eventCenter';
 const fs = require('fs');
@@ -29,7 +29,7 @@ export const newProject = (name, callback) => {
       // 修改左侧自定义目录树
       changeProcessTree([]);
       const initialJson = {
-        processTree: []
+        processTree: [],
       };
       // 创建初始的描述文件
       fs.writeFile(
@@ -59,7 +59,7 @@ export const readAllFileName = path => {
       name,
       key,
       birthtime: new Date(status.birthtime).toISOString(),
-      mtime: new Date(status.mtime).toISOString()
+      mtime: new Date(status.mtime).toISOString(),
     });
   });
   return fileList;
@@ -336,7 +336,7 @@ export const persistentStorage = (processTree, name, node) => {
         `${process.cwd()}/project/${name}/manifest.json`,
         JSON.stringify({
           ...description,
-          processTree: tree
+          processTree: tree,
         }),
         function(err) {
           if (err) {
@@ -408,10 +408,10 @@ export const newProcess = (
         index: 0,
         style: {
           stroke: 'rgba(61, 109, 204, 1)',
-          fill: '#ecf5f6'
-        }
-      }
-    ]
+          fill: '#ecf5f6',
+        },
+      },
+    ],
   };
   if (type === 'process') {
     console.log(type, name, currentProject, checkedTreeNode);
@@ -424,14 +424,9 @@ export const newProcess = (
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
-<<<<<<< HEAD
         data: {
-          graphData: defaultGraphData
-        }
-=======
-        // hasModified: true,
-        data: {}
->>>>>>> 0ea925239f41898cf5a34d215f23644867197887
+          graphData: defaultGraphData,
+        },
       });
     } else {
       //在这个项目目录下新增
@@ -441,14 +436,9 @@ export const newProcess = (
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
-<<<<<<< HEAD
         data: {
-          graphData: defaultGraphData
-        }
-=======
-        // hasModified: true,
-        data: {}
->>>>>>> 0ea925239f41898cf5a34d215f23644867197887
+          graphData: defaultGraphData,
+        },
       });
       newProcessTree = [...processTree];
       // 告知processTree 设置展开该结点
@@ -466,7 +456,7 @@ export const newProcess = (
         key: uniqueid, // '0-' + processTree.length,
         type: 'dir',
         //icon: <Icon type="unordered-list" />,
-        children: []
+        children: [],
       });
     } else {
       isDirNodeBool.children.push({
@@ -474,7 +464,7 @@ export const newProcess = (
         key: uniqueid, // uniqueId('key_'),sDirNodeBool.key + '-' + isDirNodeBool.children.length,
         type: 'dir',
         //icon: <Icon type="unordered-list" />,
-        children: []
+        children: [],
       });
       newProcessTree = [...processTree];
     }
