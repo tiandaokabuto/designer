@@ -23,16 +23,10 @@ import NewProcess from './NewProcess';
 import './index.scss';
 
 const FormItem = Form.Item;
-<<<<<<< HEAD
 const { TextArea } = Input;
 const layout = {
   labelCol: { span: 3 },
   wrapperCol: { span: 21 },
-=======
-const formLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 6 },
->>>>>>> bcdb5fb4f093d9e583a5405716e0f59cb4bf4155
 };
 
 export default memo(
@@ -234,16 +228,12 @@ export default memo(
         description: '发布',
         type: 'cloud-upload',
         onClick: () => {
-<<<<<<< HEAD
           if (isEffectProcess()) {
             getProcessVersion(getProcessName());
             setModalVisible(true);
           } else {
             message.error('未选择流程');
           }
-=======
-          setModalVisible(true);
->>>>>>> bcdb5fb4f093d9e583a5405716e0f59cb4bf4155
         },
       },
       {
@@ -334,7 +324,7 @@ export default memo(
             </FormItem>
             <FormItem label="版本号" className="versionInput">
               <Input
-                className={versionTipVisible && 'errorFomat'}
+                className={versionTipVisible ? 'errorFomat' : ''}
                 placeholder="请输入版本号"
                 value={versionText}
                 onChange={e => {
