@@ -3,6 +3,7 @@ import { Flow, withPropsAPI } from 'gg-editor';
 import { useSelector } from 'react-redux';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
+import event from '../../../designerGraphBlock/layout/eventCenter';
 import FlowItemPanel from './components/FlowItemPanel';
 import ProcessBlockNode from '../RegisterNode/ProcessBlockNode';
 import StartNode from '../RegisterNode/StartNode';
@@ -14,7 +15,7 @@ import HighlightEditor from '../../useHooks/HighlightEditor';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
 
 import EditorChange, {
-  registerDataChange,
+  registerDataChange
 } from '../../useHooks/useEditorChange';
 
 import { isEdgeConnectWithRhombusNode } from '../../RPAcore/utils';
@@ -30,7 +31,7 @@ export default useInjectContext(
       synchroCodeBlock,
       changeCheckedGraphBlockId,
       updateCurrentEditingProcessBlock,
-      updateCurrentPagePosition,
+      updateCurrentPagePosition
     }) => {
       const { getSelected, executeCommand, update, save } = propsAPI;
       const graphData = useSelector(state => state.grapheditor.graphData);
@@ -51,6 +52,12 @@ export default useInjectContext(
       // 自适应当前画布的大小
       useEffect(() => {
         showHead && propsAPI.executeCommand('autoZoom');
+        event.addListener('undo', () => {
+          propsAPI.executeCommand('undo');
+        });
+        event.addListener('redo', () => {
+          propsAPI.executeCommand('redo');
+        });
       }, []);
 
       return (
@@ -68,7 +75,7 @@ export default useInjectContext(
             className="designergraph-container-flow"
             style={{
               background: showHead ? 'rgba(252, 252, 252, 1)' : '',
-              height: showHead ? '100%' : '',
+              height: showHead ? '100%' : ''
             }}
             onAfterChange={value => {
               // 将每次的状态更新保存下来
@@ -90,9 +97,9 @@ export default useInjectContext(
                     //     // 'clickCanvasSelected',
                     //   ],
                     // },
-                    default: ['drag-canvas', 'zoom-canvas'],
+                    default: ['drag-canvas', 'zoom-canvas']
                   }
-                : {}),
+                : {})
             }}
             onNodeClick={node => {
               const dataId = node.shape._attrs.dataId;
@@ -130,7 +137,7 @@ export default useInjectContext(
                 case 'edit':
                   updateCurrentPagePosition('block');
                   updateCurrentEditingProcessBlock(node.item.id);
-                  // FIXME...... 没有获取到最新的map 因为再次点击的过程中流程图是没有更新的
+
                   synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
                   setTimeout(() => {
                     history.push('/designerGraphBlock');
@@ -140,29 +147,7 @@ export default useInjectContext(
                 default:
                 // do nothing
               }
-
-              //const item = getSelected()[0];
-              //console.log(item, save()); // 很重要
-              // executeCommand(() => {
-              //   update(item, {
-              //     label: 'hhh',
-              //     style: {
-              //       fill: 'red',
-              //     },
-              //   });
-              // });
             }}
-            // onEdgeClick={edge => {
-            //   /** 点击边的时候判断是否触发label的添加 */
-            //   const model = edge.item.model;
-            //   if (
-            //     !showHead &&
-            //     isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
-            //   ) {
-            //     // setDrawerVisible(true);
-            //   }
-            //   // 判断当前的edge是否与判断结点项关联\
-            // }}
             onEdgeDoubleClick={edge => {
               const model = edge.item.model;
               /** 双击的时候判断是否触发右侧设置面板的出现 */

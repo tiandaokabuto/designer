@@ -7,6 +7,7 @@ import React, {
   useEffect,
 } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { useSelector } from 'react-redux';
 import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqueId from 'lodash/uniqueId';
@@ -19,6 +20,7 @@ import {
   useUpdateXpath,
   useVisibleDynamicUpdate,
   useWatchCmdDesc,
+  useTransformToPython,
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
@@ -58,6 +60,8 @@ const BasicStatement = useInjectContext(props => {
     PLACEHOLDER_STATEMENT,
   } = props;
 
+  const cards = useSelector(state => state.blockcode.cards);
+
   const hasLookTarget = useHasLookTarget(card);
 
   const cmdDesc = useWatchCmdDesc(card);
@@ -68,6 +72,8 @@ const BasicStatement = useInjectContext(props => {
     changeToEditableTemplate,
     save,
   ] = useVisibleDynamicUpdate(id, visibleTemplate, readOnly);
+
+  const handleEmitCodeTransform = useTransformToPython();
 
   const [className, setClassName, resetClassName] = useSetClassName();
 
@@ -114,6 +120,7 @@ const BasicStatement = useInjectContext(props => {
           <div
             className="cmd-operation"
             onClick={() => {
+              !card.layout && (card.layout = {});
               setVisible(true);
             }}
           >
@@ -123,6 +130,12 @@ const BasicStatement = useInjectContext(props => {
       default:
         return null;
     }
+  };
+
+  const saveLayoutChange = layout => {
+    if (!layout) return;
+    Object.assign(card.layout, layout);
+    handleEmitCodeTransform(cards);
   };
 
   return (
@@ -248,7 +261,12 @@ const BasicStatement = useInjectContext(props => {
         data-id={isTail ? '' : id}
         ref={dragImage}
       ></div>
-      <Interactive visible={visible} setVisible={setVisible} />
+      <Interactive
+        saveLayoutChange={saveLayoutChange}
+        interactiveCard={card}
+        visible={visible}
+        setVisible={setVisible}
+      />
     </div>
   );
 });

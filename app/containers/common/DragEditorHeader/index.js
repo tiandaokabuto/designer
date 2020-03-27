@@ -1,16 +1,15 @@
 import React, { useState, useEffect, memo, useMemo, useRef } from 'react';
-import { Icon, Modal, Form, Input, message } from 'antd';
+import { Icon, Modal, Form, Input, message, Button } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import event, {
-  PYTHON_EXECUTE,
-} from '../../designerGraphBlock/layout/eventCenter';
+import event from '../../designerGraphBlock/layout/eventCenter';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
 import IconFont from '../IconFont/index';
 import usePersistentStorage from './useHooks/usePersistentStorage';
 import useExecutePython from './useHooks/useExecutePython';
+import useGetDownloadPath from './useHooks/useGetDownloadPath';
 import { setAllModifiedState } from '../utils';
 import { updateCurrentPagePosition } from '../../reduxActions';
 
@@ -41,6 +40,8 @@ export default memo(
     const persistentStorage = usePersistentStorage();
 
     const handlePublishZip = usePublishProcessZip();
+
+    const downloadPython = useGetDownloadPath();
 
     const transformProcessToPython = useTransformProcessToPython();
 
@@ -140,12 +141,16 @@ export default memo(
       {
         description: '上一步',
         type: 'save',
-        disabled: true,
+        onClick: () => {
+          event.emit('undo');
+        },
       },
       {
         description: '下一步',
         type: 'save',
-        disabled: true,
+        onClick: () => {
+          event.emit('redo');
+        },
       },
       {
         description: '保存',
@@ -213,10 +218,39 @@ export default memo(
         <Modal
           visible={modalVisible}
           closable={false}
-          onOk={hanldePublishModalOk}
-          onCancel={() => {
-            setModalVisible(false);
-          }}
+          footer={
+            <div>
+              <Button
+                onClick={() => {
+                  setModalVisible(false);
+                }}
+              >
+                取消
+              </Button>
+              <Button
+                type="dashed"
+                onClick={() => {
+                  setModalVisible(false);
+                  transformProcessToPython();
+                  downloadPython();
+                }}
+              >
+                下载到本地
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => {
+                  hanldePublishModalOk();
+                }}
+              >
+                发布
+              </Button>
+            </div>
+          }
+          // onOk={hanldePublishModalOk}
+          // onCancel={() => {
+          //   setModalVisible(false);
+          // }}
         >
           <FormItem label="流程描述">
             <Input

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Input, Select } from 'antd';
 import { useSelector } from 'react-redux';
-import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
+import uniqueId from 'lodash/uniqueId';
 
 import { useTransformToPython } from '../../useHooks';
 import event from '../../eventCenter';
 
 import './ParamPanel.scss';
-import uniqueId from 'lodash/uniqueId';
 
 const { Option } = Select;
 
@@ -117,7 +116,7 @@ export default ({ checkedBlock }) => {
         <div className="parampanel-desc">
           <span>命令描述符</span>
           <Input
-            defaultValue={checkedBlock.cmdDesc}
+            value={checkedBlock.cmdDesc}
             onChange={e => {
               checkedBlock.cmdDesc = e.target.value;
               handleEmitCodeTransform(cards);

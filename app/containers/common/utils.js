@@ -393,6 +393,26 @@ export const newProcess = (
   const isDirNodeBool = isDirNode(processTree, checkedTreeNode);
   const isLeafNodeOrUndefined = checkedTreeNode === undefined || !isDirNodeBool;
   const uniqueid = getUniqueId(processTree);
+  // defaultGraphData: 新流程图加一个开始节点
+  const defaultGraphData = {
+    nodes: [
+      {
+        type: 'node',
+        size: '40*40',
+        shape: 'start-node',
+        color: '#FA8C16',
+        label: '开始',
+        x: 436,
+        y: 30,
+        id: 'startNode',
+        index: 0,
+        style: {
+          stroke: 'rgba(61, 109, 204, 1)',
+          fill: '#ecf5f6'
+        }
+      }
+    ]
+  };
   if (type === 'process') {
     console.log(type, name, currentProject, checkedTreeNode);
     checkAndMakeDir(`${process.cwd()}/project/${currentProject}/${name}`);
@@ -423,6 +443,8 @@ export const newProcess = (
       event.emit('expandKeys', isDirNodeBool.key);
     }
     clearGrapheditorData();
+    // 提前执行更新流程图操作，防止changeCheckedTreeNode无法查找到流程图的节点信息
+    changeProcessTree(newProcessTree);
     changeCheckedTreeNode(uniqueid);
   } else {
     // 支持嵌套目录
@@ -444,6 +466,7 @@ export const newProcess = (
       });
       newProcessTree = [...processTree];
     }
+    changeProcessTree(newProcessTree);
   }
   changeProcessTree(newProcessTree);
   // return [newProcessTree, uniqueid];
