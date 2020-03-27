@@ -167,7 +167,6 @@ export default ({ history, tag }) => {
           className="graphblock-header-operation"
           onClick={() => {
             const flag = existModifiedNode(processTree);
-            console.log(flag);
             if (flag) {
               setModalVisible(true);
             } else {
@@ -210,7 +209,9 @@ export default ({ history, tag }) => {
         onOk={() => {
           setAllModifiedState(processTree);
           persistentStorage();
-          handleWindowOperation('close');
+          setTimeout(() => {
+            handleWindowOperation('close');
+          }, 100);
         }}
       />
     </div>
