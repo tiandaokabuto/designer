@@ -470,6 +470,8 @@ export const newProcess = (
     }
     changeProcessTree(newProcessTree);
   }
+  changeProcessTree(newProcessTree);
+  // return [newProcessTree, uniqueid];
   return newProcessTree;
 };
 
