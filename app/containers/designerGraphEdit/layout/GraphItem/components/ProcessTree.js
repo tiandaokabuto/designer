@@ -105,7 +105,6 @@ export default () => {
     const dropPos = info.node.props.pos.split('-'); //
     const dropPosition =
       info.dropPosition - Number(dropPos[dropPos.length - 1]); // 位置
-    console.log(dropKey, dragKey, dropPos, dropPosition);
     const loop = (data, key, callback) => {
       data.forEach((item, index, arr) => {
         if (item.key === key) {
@@ -120,6 +119,8 @@ export default () => {
 
     traverseTree(data, item => {
       if (item.key === dropKey && item.type === 'dir') {
+        console.log(item, dropKey);
+        // Find dragObject
         let dragObj;
         loop(data, dragKey, (item, index, arr) => {
           arr.splice(index, 1);
@@ -156,12 +157,11 @@ export default () => {
             ar.splice(i + 1, 0, dragObj);
           }
         }
-        usePersistentStorage();
         changeProcessTree(data);
       }
     });
-    console.log('aaa');
-    // Find dragObject
+    console.log('---触发');
+    persistentStorage();
   };
 
   const handleDelete = (key, persistentStorage) => {
