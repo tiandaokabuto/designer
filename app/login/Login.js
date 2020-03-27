@@ -20,7 +20,7 @@ const Login = () => {
   const handleSignIn = () => {
     axios
       .post(api('signIn'), {
-        userName: userName,
+        userName,
         password: hex_sha1(password),
       })
       .then(json => {
@@ -44,7 +44,7 @@ const Login = () => {
         }
         return response.data;
       },
-      err => {
+      () => {
         message.error('ip或端口配置错误');
       }
     );
@@ -85,8 +85,16 @@ const Login = () => {
         style={{
           WebkitAppRegion: 'drag',
         }}
-      ></div>
+      />
       <div className="login-right">
+        <span
+          className="login-right-icon-close"
+          onClick={() => {
+            ipcRenderer.send('close');
+          }}
+        >
+          X
+        </span>
         <div className="login-right-title">欢迎使用RPA设计器</div>
         <div className="login-right-username">
           <div>用户名</div>

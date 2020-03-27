@@ -15,9 +15,6 @@ export default () => {
         encoding: 'buffer',
       }
     );
-    // const worker = exec(`python ${process.cwd()}/python/temp.py`, {
-    //   encoding: 'buffer',
-    // });
     worker.stdout.on('data', function(data) {
       const log = iconv.decode(data, 'cp936');
       event.emit(PYTHON_OUTPUT, log);

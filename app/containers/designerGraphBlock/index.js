@@ -20,17 +20,6 @@ export default useInjectContext(({ history }) => {
       <GraphBlockHeader />
       <DragEditorHeader type="block" />
       <div className="dragger-editor">
-        {/* <div
-          style={{
-            position: 'absolute',
-            top: 0,
-          }}
-          onClick={() => {
-            history.push('/');
-          }}
-        >
-          返回
-        </div> */}
         <DragItem />
         <DragContainer />
         <DragParamPanel />

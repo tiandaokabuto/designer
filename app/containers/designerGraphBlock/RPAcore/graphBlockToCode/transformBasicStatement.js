@@ -39,6 +39,19 @@ const handleNote = (cmdDesc, result, padding, dataStructure) => {
   }
 };
 
+const handleFormJsonGenerate = dataStructure => {
+  if (
+    dataStructure.layout &&
+    dataStructure.layout.data &&
+    dataStructure.layout.data.length
+  ) {
+    const data = dataStructure.layout.data;
+    const dataMap = dataStructure.layout.dataMap;
+    return JSON.stringify(data.map(item => dataMap[item.i]));
+  }
+  return 'None';
+};
+
 const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
   handleModuleImport(dataStructure, result, moduleMap);
   handleNote(dataStructure.cmdDesc, result, padding, dataStructure);
@@ -48,6 +61,14 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
     switch (item.enName) {
       case 'outPut':
         item.value && handleStatementOutput(item.value, '', result);
+        break;
+      case 'layout':
+        if (params) params += ', ';
+        params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
+        break;
+      case 'formJson':
+        if (params) params += ', ';
+        params += item.enName + ' = ' + handleFormJsonGenerate(dataStructure);
         break;
       default:
         if (params) params += ', ';
@@ -74,12 +95,6 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
       }
     });
   handleMainFnGeneration(dataStructure, params, result);
-
-  // fs.writeFileSync('./test.py', result.output);
-  // return '213';
-  // console.log(result.output);
 };
 
 export default transformBasicStatement;
-
-// transformBasicStatement(fake1);
