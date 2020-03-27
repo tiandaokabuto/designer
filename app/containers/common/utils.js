@@ -9,10 +9,13 @@ import {
   changeCheckedTreeNode,
   clearGrapheditorData,
 } from '../reduxActions';
+import { readDir } from '../../nodejs';
 import event from '../designerGraphBlock/layout/eventCenter';
 const fs = require('fs');
 const process = require('process');
 const path = require('path');
+const JSZIP = require('jszip');
+const zip = new JSZIP();
 
 /**
  * 新建项目
@@ -624,4 +627,19 @@ export const downProcessZipToLocal = (filePath, editorBlockPythonCode) => {
     fs.mkdirSync(filePath);
   }
   fs.writeFileSync(filePath + '/main.py', editorBlockPythonCode);
+  readDir(zip, filePath);
+  zip
+    .generateAsync({
+      // 设置压缩格式，开始打包
+      type: 'nodebuffer', // nodejs用
+      compression: 'DEFLATE', // 压缩算法
+      compressionOptions: {
+        // 压缩级别
+        level: 9,
+      },
+    })
+    .then(function(content) {
+      deleteFolder(filePath);
+      fs.writeFileSync(filePath + '.zip', content);
+    });
 };

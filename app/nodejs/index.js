@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import { issueProcess } from './utils';
 import event, {
-  PYTHON_OUTPUT
+  PYTHON_OUTPUT,
 } from '../containers/designerGraphBlock/layout/eventCenter';
 
 const fs = require('fs');
@@ -23,7 +23,7 @@ export const writeFileRecursive = function(path, buffer, callback) {
   });
 };
 
-function readDir(obj, nowPath) {
+export function readDir(obj, nowPath) {
   const files = fs.readdirSync(nowPath); // 读取目录中的所有文件及文件夹（同步操作）
   files.forEach(function(fileName, index) {
     // 遍历检测目录中的文件
@@ -51,8 +51,8 @@ export const startZIP = (descText, versionText) => {
       compression: 'DEFLATE', // 压缩算法
       compressionOptions: {
         // 压缩级别
-        level: 9
-      }
+        level: 9,
+      },
     })
     .then(function(content) {
       // try {
