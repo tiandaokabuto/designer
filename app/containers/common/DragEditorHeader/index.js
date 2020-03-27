@@ -2,6 +2,7 @@ import React, { useState, useEffect, memo, useMemo, useRef } from 'react';
 import { Icon, Modal, Form, Input, message, Button } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 import event from '../../designerGraphBlock/layout/eventCenter';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
@@ -10,17 +11,22 @@ import IconFont from '../IconFont/index';
 import usePersistentStorage from './useHooks/usePersistentStorage';
 import useExecutePython from './useHooks/useExecutePython';
 import useGetDownloadPath from './useHooks/useGetDownloadPath';
-import { setAllModifiedState } from '../utils';
+import useGetProcessName, {
+  isEffectProcess,
+} from './useHooks/useGetProcessName';
+import { setAllModifiedState, downProcessZipToLocal } from '../utils';
 import { updateCurrentPagePosition } from '../../reduxActions';
+import api from '../../../api';
 
 import NewProcess from './NewProcess';
 
 import './index.scss';
 
 const FormItem = Form.Item;
-const formLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 6 },
+const { TextArea } = Input;
+const layout = {
+  labelCol: { span: 3 },
+  wrapperCol: { span: 21 },
 };
 
 export default memo(
@@ -35,7 +41,9 @@ export default memo(
     processTreeRef.current = processTree;
 
     const [modalVisible, setModalVisible] = useState(false);
+    const [versionTipVisible, setVersionTipVisible] = useState(false);
     const [descText, setDescText] = useState('');
+    const [versionText, setVersionText] = useState('1.0.0'); // 默认值
 
     const persistentStorage = usePersistentStorage();
 
@@ -43,16 +51,63 @@ export default memo(
 
     const downloadPython = useGetDownloadPath();
 
+    const getProcessName = useGetProcessName();
+
     const transformProcessToPython = useTransformProcessToPython();
 
     const executePython = useExecutePython();
 
+    const getProcessVersion = processName => {
+      axios
+        .get(api('getProcessVersion'), {
+          params: {
+            processName,
+          },
+        })
+        .then(res => res.data)
+        .then(res => {
+          const version = res.data;
+          if (res.message === '成功' && version) {
+            const words = version.split('.');
+            const lastWord = words[words.length - 1];
+            let newVersion = '';
+            for (let i = 0; i < words.length; i += 1) {
+              if (i !== words.length - 1) {
+                const word = words[i];
+                newVersion += word.concat('.');
+              } else {
+                newVersion += parseInt(lastWord, 10) + 1;
+              }
+            }
+            setVersionText(newVersion);
+            return newVersion;
+          }
+          setVersionText('1.0.0');
+          return false;
+        })
+        .catch(err => console.log(err));
+    };
+
     const hanldePublishModalOk = () => {
-      setModalVisible(false);
-      transformProcessToPython();
-      setTimeout(() => {
-        handlePublishZip(descText);
-      }, 0);
+      if (versionTipVisible) {
+        message.error('版本格式错误，请检查您的版本号');
+      } else {
+        setModalVisible(false);
+        transformProcessToPython();
+        setTimeout(() => {
+          handlePublishZip(descText, versionText);
+        }, 0);
+      }
+    };
+
+    const handleVersionTextChange = version => {
+      const reg = /^([0]|[1-9][0-9]*)(\.([0]|[1-9][0-9]*)){1,2}$/;
+      setVersionText(version);
+      if (reg.test(version)) {
+        setVersionTipVisible(false);
+      } else {
+        setVersionTipVisible(true);
+      }
     };
 
     const handleOperation = () => {
@@ -173,7 +228,12 @@ export default memo(
         description: '发布',
         type: 'cloud-upload',
         onClick: () => {
-          setModalVisible(true);
+          if (isEffectProcess()) {
+            getProcessVersion(getProcessName());
+            setModalVisible(true);
+          } else {
+            message.error('未选择流程');
+          }
         },
       },
       {
@@ -216,8 +276,8 @@ export default memo(
           <NewProcess resetVisible={resetVisible} tag={visible} />
         )}
         <Modal
+          title="流程发布至控制台"
           visible={modalVisible}
-          closable={false}
           footer={
             <div>
               <Button
@@ -232,7 +292,7 @@ export default memo(
                 onClick={() => {
                   setModalVisible(false);
                   transformProcessToPython();
-                  downloadPython();
+                  downloadPython(downProcessZipToLocal);
                 }}
               >
                 下载到本地
@@ -252,14 +312,32 @@ export default memo(
           //   setModalVisible(false);
           // }}
         >
-          <FormItem label="流程描述">
-            <Input
-              placeholder="请输入流程描述"
-              onChange={e => {
-                setDescText(e.target.value);
-              }}
-            />
-          </FormItem>
+          <Form {...layout} labelAlign="left">
+            <FormItem label="描述">
+              <TextArea
+                placeholder="请输入流程描述"
+                autoSize={{ minRows: 6, maxRows: 8 }}
+                onChange={e => {
+                  setDescText(e.target.value);
+                }}
+              />
+            </FormItem>
+            <FormItem label="版本号" className="versionInput">
+              <Input
+                className={versionTipVisible ? 'errorFomat' : ''}
+                placeholder="请输入版本号"
+                value={versionText}
+                onChange={e => {
+                  handleVersionTextChange(e.target.value);
+                }}
+              />
+              {versionTipVisible && (
+                <span className="versionTip">
+                  版本号格式错误，版本号的格式为x.x或者x.x.x，x为正整数
+                </span>
+              )}
+            </FormItem>
+          </Form>
         </Modal>
       </div>
     );

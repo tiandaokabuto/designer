@@ -5,14 +5,15 @@ import store from '../store';
 import { findNodeByKey } from '../containers/common/utils';
 import api from '../api';
 
-const remote = require('electron').remote;
+const { remote } = require('electron');
 
-export const issueProcess = (content, descText) => {
+export const issueProcess = (content, descText, versionText) => {
   const {
-    grapheditor: { currentCheckedTreeNode, processTree },
+    grapheditor: { currentCheckedTreeNode, processTree }
   } = store.getState();
 
   if (!currentCheckedTreeNode) {
+    message.error('未选择流程');
     return;
   }
 
@@ -24,7 +25,7 @@ export const issueProcess = (content, descText) => {
     return;
   }
 
-  const token = remote.getGlobal('sharedObject').token;
+  const { token } = remote.getGlobal('sharedObject');
 
   const file = new File([content], 'upload.zip', { type: 'zip' });
   const formData = new FormData();
@@ -33,18 +34,22 @@ export const issueProcess = (content, descText) => {
   formData.append('processName', node.title);
   formData.append('desc', descText);
   formData.append('mainFile', 'test.py');
-  console.log(token);
+  formData.append('version', versionText);
   axios
     .post(api('issueProcess'), formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'datae-token': token,
-      },
+        'datae-token': token
+      }
     })
     .then(res => res.data)
     .then(json => {
       // message.success('发布成功');
       // console.log(json, '流程包上传成功');
       message.success('流程包发布成功');
-    });
+      return json;
+    })
+    .catch(err => console.log(err));
 };
+
+export default issueProcess;

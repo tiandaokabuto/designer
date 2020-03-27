@@ -9,10 +9,13 @@ import {
   changeCheckedTreeNode,
   clearGrapheditorData
 } from '../reduxActions';
+import { readDir } from '../../nodejs';
 import event from '../designerGraphBlock/layout/eventCenter';
 const fs = require('fs');
 const process = require('process');
 const path = require('path');
+const JSZIP = require('jszip');
+const zip = new JSZIP();
 
 /**
  * 新建项目
@@ -557,4 +560,51 @@ export const existModifiedNode = processTree => {
   } finally {
     return flag;
   }
+};
+function deleteFolder(path) {
+  var files = [];
+  if (fs.existsSync(path)) {
+    files = fs.readdirSync(path);
+    files.forEach(function(file, index) {
+      var curPath = path + '/' + file;
+      if (fs.statSync(curPath).isDirectory()) {
+        // recurse
+        deleteFolder(curPath);
+      } else {
+        // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+}
+
+/**
+ * 下载发布流程到本地
+ */
+export const downProcessZipToLocal = (filePath, editorBlockPythonCode) => {
+  console.log(filePath, 'filePath');
+  try {
+    fs.mkdirSync(filePath);
+  } catch (err) {
+    console.log('文件夹已经存在');
+    deleteFolder(filePath);
+    fs.mkdirSync(filePath);
+  }
+  fs.writeFileSync(filePath + '/main.py', editorBlockPythonCode);
+  readDir(zip, filePath);
+  zip
+    .generateAsync({
+      // 设置压缩格式，开始打包
+      type: 'nodebuffer', // nodejs用
+      compression: 'DEFLATE', // 压缩算法
+      compressionOptions: {
+        // 压缩级别
+        level: 9
+      }
+    })
+    .then(function(content) {
+      deleteFolder(filePath);
+      fs.writeFileSync(filePath + '.zip', content);
+    });
 };

@@ -23,7 +23,7 @@ export const writeFileRecursive = function(path, buffer, callback) {
   });
 };
 
-function readDir(obj, nowPath) {
+export function readDir(obj, nowPath) {
   const files = fs.readdirSync(nowPath); // 读取目录中的所有文件及文件夹（同步操作）
   files.forEach(function(fileName, index) {
     // 遍历检测目录中的文件
@@ -40,7 +40,7 @@ function readDir(obj, nowPath) {
   });
 }
 
-export const startZIP = descText => {
+export const startZIP = (descText, versionText) => {
   const currPath = process.cwd();
   const targetDir = path.join(currPath, '/python');
   readDir(zip, targetDir);
@@ -64,15 +64,15 @@ export const startZIP = descText => {
       // console.log('压缩完成...');
       // console.log('开始上传流程包...');
       // message.info('压缩完成，开始上传流程包');
-      issueProcess(content, descText);
+      issueProcess(content, descText, versionText);
     });
 };
 
-export const writeFile = (dirname, content, descText) => {
+export const writeFile = (dirname, content, descText, versionText) => {
   writeFileRecursive(dirname, content, err => {
     if (!err) {
       console.log('开始压缩...');
-      startZIP(descText);
+      startZIP(descText, versionText);
     } else {
       message.info('压缩失败...');
     }

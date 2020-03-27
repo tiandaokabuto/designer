@@ -11,8 +11,7 @@ export default () => {
       const {
         grapheditor: { editorBlockPythonCode },
       } = store.getState();
-      console.log(filePath, editorBlockPythonCode);
-      //TODO...
+      callback && callback(filePath, editorBlockPythonCode);
     });
   };
 };
