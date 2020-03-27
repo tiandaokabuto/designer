@@ -424,9 +424,14 @@ export const newProcess = (
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
+<<<<<<< HEAD
         data: {
           graphData: defaultGraphData
         }
+=======
+        // hasModified: true,
+        data: {}
+>>>>>>> 0ea925239f41898cf5a34d215f23644867197887
       });
     } else {
       //在这个项目目录下新增
@@ -436,9 +441,14 @@ export const newProcess = (
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
+<<<<<<< HEAD
         data: {
           graphData: defaultGraphData
         }
+=======
+        // hasModified: true,
+        data: {}
+>>>>>>> 0ea925239f41898cf5a34d215f23644867197887
       });
       newProcessTree = [...processTree];
       // 告知processTree 设置展开该结点
