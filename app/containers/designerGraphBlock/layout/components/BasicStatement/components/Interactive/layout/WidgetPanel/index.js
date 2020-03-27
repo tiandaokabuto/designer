@@ -71,7 +71,6 @@ export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
               type: 'image',
               desc: '提示信息，说明',
               value: '显示值',
-              key: '赋值的变量名',
             }}
           />
           <InteractiveControl
