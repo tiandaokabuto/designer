@@ -2,18 +2,20 @@
  * 最近打开项目列表
  */
 import React, { useState, useMemo } from 'react';
-import { Table, Button, Input, Icon, message } from 'antd';
+import { Table, Button, Input, Icon, message, Modal } from 'antd';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
 import GraphBlockHeader from '../common/GraphBlockHeader';
 import { SDIcon } from '../common/components';
 import RecentBackImg from '../images/recent_back.png';
+import CloseImg from '../images/close.png';
 
 import {
   newProject,
   openProject,
   readAllFileName,
   formatDateTime,
+  deleteFolderRecursive
 } from '../common/utils';
 import { changeCurrentProject, clearGrapheditorData } from '../reduxActions';
 
@@ -21,28 +23,48 @@ import './index.scss';
 
 export default useInjectContext(({ history }) => {
   const [name, setName] = useState('');
+  const [flag, setFlag] = useState(false);
+  const fileList = useMemo(() => {
+    return readAllFileName();
+  }, [flag]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const processs = require('process');
   const columns = [
     {
       title: '项目名称',
       dataIndex: 'name',
       render: title => {
         return <span style={{ color: 'rgba(50, 166, 127, 1)' }}>{title}</span>;
-      },
+      }
     },
     {
       title: '创建时间',
       dataIndex: 'birthtime',
-      render: formatDateTime,
+      render: formatDateTime
     },
     {
       title: '修改时间',
       dataIndex: 'mtime',
-      render: formatDateTime,
+      render: formatDateTime
     },
+    {
+      title: '',
+      dataIndex: 'action',
+      render: (text, record) => {
+        return (
+          <SDIcon
+            url={CloseImg}
+            onClick={e => {
+              e.stopPropagation();
+              console.log(record.name);
+              deleteFolderRecursive(`${process.cwd()}/project/${record.name}`);
+              setFlag(flag => !flag);
+            }}
+          ></SDIcon>
+        );
+      }
+    }
   ];
-  const fileList = useMemo(() => {
-    return readAllFileName();
-  }, []);
 
   const isJump = history.location.state && history.location.state.jump;
   return (
@@ -92,17 +114,18 @@ export default useInjectContext(({ history }) => {
             columns={columns}
             dataSource={fileList}
             scroll={{
-              y: 'calc(100vh - 327px)',
+              y: 'calc(100vh - 327px)'
             }}
             onRow={record => {
               return {
                 onClick: event => {
+                  console.log('点击行');
                   // 打开对应的项目
                   openProject(record.name);
                   changeCurrentProject(record.name);
                   clearGrapheditorData();
                   history.push('/designGraphEdit');
-                },
+                }
               };
             }}
           />

@@ -31,19 +31,13 @@ export default ({ resetVisible, tag }) => {
 
   /* ---------- 流程/目录新增逻辑 ----------- */
   const handleAddProcessOrProject = () => {
-    const flag = isDirNameExist(
-      processTree,
-      name,
-      checkedTreeNode,
-      currentProject
-    );
     // 做流程名校验避免重复
     if (isNameExist(processTree, name, checkedTreeNode, currentProject)) {
       return void message.info(
         `${tag === 'newprocess' ? '流程名' : '目录名'}重复,请重新填写!`
       );
     }
-    const newProcessTree = newProcess(
+    const [newProcessTree, uniqueid] = newProcess(
       tag === 'newprocess' ? 'process' : 'dir',
       name,
       processTree,
@@ -52,7 +46,7 @@ export default ({ resetVisible, tag }) => {
     );
     setVisible(false);
     resetVisible(undefined);
-    persistentStorage(newProcessTree, currentProject, checkedTreeNode);
+    persistentStorage(newProcessTree, currentProject, uniqueid);
   };
   return (
     <Modal

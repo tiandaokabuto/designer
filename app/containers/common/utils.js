@@ -102,14 +102,6 @@ export const findNodeByKey = (tree, key) => {
  * @param {*} key
  */
 export const deleteNodeByKey = (tree, name, key, parent = tree) => {
-  // console.log(tree, name, key);
-  // traverseTree(tree, treeItem => {
-  //   if (treeItem.key === key) {
-  //     deleteFolderRecursive(
-  //       `${process.cwd()}/project/${name}/${treeItem.title}`
-  //     );
-  //   }
-  // });
   for (const child of tree) {
     if (child.key === key) {
       if (Array.isArray(parent)) {
@@ -132,19 +124,6 @@ export const deleteNodeByKey = (tree, name, key, parent = tree) => {
             `${process.cwd()}/project/${name}/${target.title}`
           );
         }
-        // if (child.children) {
-        //   traverseTree(child.children, item => {
-        //     if (item.type === 'process') {
-        //       deleteFolderRecursive(
-        //         `${process.cwd()}/project/${name}/${item.title}`
-        //       );
-        //     }
-        //   });
-        // } else {
-        //   deleteFolderRecursive(
-        //     `${process.cwd()}/project/${name}/${child.title}`
-        //   );
-        // }
         parent.splice(index, 1); // 在tree中删掉该元素
       } else {
         console.log(key);
@@ -170,21 +149,6 @@ export const deleteNodeByKey = (tree, name, key, parent = tree) => {
             `${process.cwd()}/project/${name}/${target.title}`
           );
         }
-        // 把该目录下的全部流程都删除
-        // if (parent.children) {
-        //   console.log(parent.children);
-        //   traverseTree(parent.children, item => {
-        //     if (item.type === 'process') {
-        //       deleteFolderRecursive(
-        //         `${process.cwd()}/project/${name}/${item.title}`
-        //       );
-        //     }
-        //   });
-        // } else {
-        //   deleteFolderRecursive(
-        //     `${process.cwd()}/project/${name}/${child.title}`
-        //   );
-        // }
         parent.children.splice(index, 1);
       }
       return;
@@ -424,14 +388,9 @@ export const newProcess = (
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
-<<<<<<< HEAD
         data: {
           graphData: defaultGraphData
         }
-=======
-        // hasModified: true,
-        data: {}
->>>>>>> 0ea925239f41898cf5a34d215f23644867197887
       });
     } else {
       //在这个项目目录下新增
@@ -441,14 +400,9 @@ export const newProcess = (
         type: 'process',
         //icon: <Icon type="edit" />,
         isLeaf: true,
-<<<<<<< HEAD
         data: {
           graphData: defaultGraphData
         }
-=======
-        // hasModified: true,
-        data: {}
->>>>>>> 0ea925239f41898cf5a34d215f23644867197887
       });
       newProcessTree = [...processTree];
       // 告知processTree 设置展开该结点
@@ -481,8 +435,7 @@ export const newProcess = (
     changeProcessTree(newProcessTree);
   }
   changeProcessTree(newProcessTree);
-  // return [newProcessTree, uniqueid];
-  return newProcessTree;
+  return [newProcessTree, uniqueid];
 };
 
 /**
@@ -492,12 +445,9 @@ export const newProcess = (
  * @param {*} checkedTreeNode
  */
 export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
-  const isDirNodeBool = isDirNode(tree, checkedTreeNode);
-  console.log(isDirNodeBool);
+  console.log(checkedTreeNode);
   const files = fs.readdirSync(`${process.cwd()}/project/${currentProject}`);
-  console.log(files);
   return files.find(item => item === title);
-
   // const isDirNodeBool = isDirNode(tree, checkedTreeNode);
   // console.log(isDirNodeBool);
   // // 不在同级下建目录或流程跳过检验
@@ -529,7 +479,9 @@ export const openProject = name => {
       const dirs = fs.readdirSync(`${process.cwd()}/project/${name}`);
       const { processTree } = JSON.parse(data.toString());
       // 遍历项目文件夹下面的流程文件夹，读取manifest.json里流程的数据，写入processTree
+      // console.log(dirs);
       dirs.forEach(dirItem => {
+        // console.log(dirItem);
         if (dirItem !== 'manifest.json') {
           try {
             const data = JSON.parse(
@@ -537,6 +489,10 @@ export const openProject = name => {
                 `${process.cwd()}/project/${name}/${dirItem}/manifest.json`
               )
             );
+            if (dirItem === '1') {
+              console.log(data);
+            }
+
             // 以流程名为映射关系
             traverseTree(processTree, treeItem => {
               if (treeItem.title === dirItem) {
@@ -548,7 +504,6 @@ export const openProject = name => {
           }
         }
       });
-      console.log(processTree);
       changeProcessTree(processTree);
     } else {
       console.log(err);
