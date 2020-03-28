@@ -116,6 +116,7 @@ const Login = () => {
     handleSignIn();
   };
 
+>>>>>>> fix:xx
   useEffect(() => {
     if (isClickOfffLine && offLine) {
       handleClickSignIn();
