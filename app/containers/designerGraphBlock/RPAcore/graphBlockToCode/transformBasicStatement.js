@@ -67,7 +67,7 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
         const formJson = handleFormJsonGenerate(dataStructure);
 
         if (formJson !== 'None') {
-          let temp = JSON.parse(formJson);
+          const temp = JSON.parse(formJson);
           result.output +=
             '[' +
             temp
