@@ -62,18 +62,14 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
       case 'outPut':
         item.value && handleStatementOutput(item.value, '', result);
         break;
-      case 'layout':
-        if (params) params += ', ';
-        params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
-        break;
       case 'formJson':
         if (params) params += ', ';
         const formJson = handleFormJsonGenerate(dataStructure);
 
         if (formJson !== 'None') {
           let temp = JSON.parse(formJson);
-          params +=
-            'variables = [' +
+          result.output +=
+            '[' +
             temp
               .filter(
                 item =>
@@ -83,9 +79,14 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
               .map(item => item.key)
               .join(',') +
             ',' +
-            '], ';
+            '] = ';
         }
+
         params += item.enName + ' = ' + formJson;
+        break;
+      case 'layout':
+        if (params) params += ', ';
+        params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
         break;
       default:
         if (params) params += ', ';
