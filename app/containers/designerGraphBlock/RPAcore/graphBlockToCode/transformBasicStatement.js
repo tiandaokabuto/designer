@@ -80,6 +80,10 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
               .join(',') +
             ',' +
             '] = ';
+          params +=
+            'variables = [' +
+            temp.map(item => item.value || '').join(',') +
+            '], ';
         }
 
         params += item.enName + ' = ' + formJson;

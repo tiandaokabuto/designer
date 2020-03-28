@@ -18,18 +18,19 @@ const Login = () => {
   const [port, setPort] = useState(undefined);
 
   const handleSignIn = () => {
-    axios
-      .post(api('signIn'), {
-        userName,
-        password: hex_sha1(password),
-      })
-      .then(json => {
-        if (~json.code) {
-          remote.getGlobal('sharedObject').token = json.data.token;
-          remote.getGlobal('sharedObject').userName = json.data.userName;
-          ipcRenderer.send('loginSuccess');
-        }
-      });
+    ipcRenderer.send('loginSuccess');
+    // axios
+    //   .post(api('signIn'), {
+    //     userName,
+    //     password: hex_sha1(password),
+    //   })
+    //   .then(json => {
+    //     if (~json.code) {
+    //       remote.getGlobal('sharedObject').token = json.data.token;
+    //       remote.getGlobal('sharedObject').userName = json.data.userName;
+    //       ipcRenderer.send('loginSuccess');
+    //     }
+    //   });
   };
   useEffect(() => {
     axios.interceptors.response.use(
