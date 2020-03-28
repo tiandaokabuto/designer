@@ -117,6 +117,7 @@ const Login = () => {
     handleSignIn();
   };
 
+>>>>>>> fix:xx
   useEffect(() => {
     // 点击离线登录，使用已用的序列号进行自动登录
     if (isClickOfffLine && offLine && serialNumber === SERIAL_NUMBER_POSSWORK) {
