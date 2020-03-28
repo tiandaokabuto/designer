@@ -73,21 +73,17 @@ const Login = () => {
       ];
 
   const handleSignIn = () => {
-    if (offLine) {
-      remote.getGlobal('sharedObject').userName = '';
-      ipcRenderer.send('loginSuccess');
-    }
+    //ipcRenderer.send('loginSuccess');
     axios
       .post(api('signIn'), {
         userName,
         password: hex_sha1(password),
       })
       .then(json => {
-        if (json.code !== -1) {
+        if (~json.code) {
           remote.getGlobal('sharedObject').token = json.data.token;
           remote.getGlobal('sharedObject').userName = json.data.roleName;
           ipcRenderer.send('loginSuccess');
-          return true;
         }
         return false;
       })
