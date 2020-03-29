@@ -22,6 +22,8 @@ import NewProcess from './NewProcess';
 
 import './index.scss';
 
+const { remote } = require('electron');
+
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const layout = {
@@ -217,6 +219,7 @@ export default memo(
       {
         description: '发布',
         type: 'cloud-upload',
+        disabled: remote.getGlobal('sharedObject').userName === '',
         onClick: () => {
           if (isEffectProcess()) {
             getProcessVersion(getProcessName());
@@ -249,7 +252,9 @@ export default memo(
         {tools.map((tool, index) => (
           <span
             key={index}
-            onClick={tool.onClick || (() => {})}
+            onClick={() => {
+              if (!tool.disabled && tool.onClick) tool.onClick();
+            }}
             className={`drageditor-header-operation ${
               tool.disabled ? 'drageditor-header-operation__disabled' : ''
             }`}

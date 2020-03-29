@@ -101,6 +101,7 @@ const Login = () => {
   const handleClickSignIn = () => {
     if (offLine && serialNumber !== SERIAL_NUMBER_POSSWORK) {
       message.error('序列号错误');
+      return;
     }
     config.context = `http://${ip}:${port}`;
     writeGlobalConfig({
