@@ -39,7 +39,7 @@ export default ({ position, handleDelete, handleRename }) => {
         position: 'fixed',
         visibility: visible ? 'visible' : 'hidden',
         left: left,
-        top: top,
+        top: top
       }}
     >
       {isProcess && <div className="menuitem">运行此流程</div>}
