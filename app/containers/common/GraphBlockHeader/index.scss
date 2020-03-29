@@ -4,41 +4,54 @@
   height: 32px;
   line-height: 32px;
   background: rgba(51, 165, 138, 1);
+
   &-tools {
     span {
       margin: 0 12px;
       user-select: none;
       cursor: pointer;
+
       &:hover {
         background: #2e9975;
       }
     }
+
     .item-disabled {
       color: rgba(255, 255, 255, 0.35);
     }
   }
+
   &-title {
     font-weight: 500;
     color: rgba(255, 255, 255, 1);
     height: 18px;
     font-size: 18px;
   }
+
   &-user {
-    span:nth-of-type(1) {
-      font-weight: 400;
-      width: 98px;
+    &-name {
       display: inline-block;
-      margin-left: 9px;
+
+      span {
+        font-weight: 400;
+        width: 98px;
+        display: inline-block;
+        margin-left: 9px;
+      }
     }
+
     &-sign-out {
       margin: 0 24px 0 16px;
+      cursor: pointer;
     }
+
     .graphblock-header-operation {
       color: black;
       width: 32px;
       height: 16px;
     }
   }
+
   .cursor-pointer {
     cursor: pointer;
   }

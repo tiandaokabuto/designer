@@ -22,7 +22,7 @@ export const readGlobalConfig = callback => {
         path,
         JSON.stringify({
           ip: '172.168.201.90',
-          port: '9999',
+          port: '9999'
         }),
         function(err) {
           if (!err) {
@@ -31,8 +31,17 @@ export const readGlobalConfig = callback => {
         }
       );
     } else {
-      const { ip, port, userName, password } = JSON.parse(data.toString());
-      callback(ip, port, userName, password);
+      const { ip, port, userName, password, serialNumber } = JSON.parse(
+        data.toString()
+      );
+      callback(
+        ip,
+        port,
+        userName,
+        password,
+        serialNumber,
+        JSON.parse(data.toString()).offLine
+      );
     }
   });
 };
@@ -41,12 +50,12 @@ export const writeGlobalConfig = content => {
   const path = `${currPath}/globalconfig/config.json`;
   fs.readFile(path, function(err, data) {
     if (!err) {
-      const config = JSON.parse(data.toString());
+      const config = data.toString() ? JSON.parse(data.toString()) : {};
       fs.writeFile(
         path,
         JSON.stringify({
           ...config,
-          ...content,
+          ...content
         }),
         function() {}
       );

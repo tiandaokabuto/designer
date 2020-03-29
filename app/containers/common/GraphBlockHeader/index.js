@@ -144,8 +144,12 @@ export default ({ history, tag }) => {
           WebkitAppRegion: 'no-drag'
         }}
       >
-        <Icon type="user" />
-        <span>{userName}, 您好!</span>
+        {userName && (
+          <div className="graphblock-header-user-name">
+            <Icon type="user" />
+            <span>{userName}, 您好!</span>
+          </div>
+        )}
         <span
           className="graphblock-header-user-sign-out"
           onClick={handleSignOut}
