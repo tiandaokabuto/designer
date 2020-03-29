@@ -23,9 +23,11 @@ const Login = () => {
 
   // 保存离线登录的序列号和状态
   const [serialNumber, setSerialNumber] = useState('');
-  const [offLine, setOffLine] = useState(false);
-  const [isClickOfffLine, setIsClickOfffLine] = useState(false);
   const [liscense, setLiscense] = useState(true);
+  const [offLine, setOffLine] = useState(false);
+
+  // 是否点击切换离线状态，防止退出登录时切换成离线登录页面时发生的自动登录
+  const [isClickOfffLine, setIsClickOfffLine] = useState(false);
 
   const LOGIN_ONLINE = !offLine
     ? [
@@ -98,7 +100,7 @@ const Login = () => {
   const handleClickSignIn = () => {
     if (offLine && serialNumber !== SERIAL_NUMBER_POSSWORK) {
       message.error('序列号错误');
-      return;
+      return false;
     }
     config.context = `http://${ip}:${port}`;
     writeGlobalConfig({
@@ -113,7 +115,8 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (isClickOfffLine && offLine) {
+    // 点击离线登录，使用已用的序列号进行自动登录
+    if (isClickOfffLine && offLine && serialNumber === SERIAL_NUMBER_POSSWORK) {
       handleClickSignIn();
     }
   }, [isClickOfffLine, offLine]);
