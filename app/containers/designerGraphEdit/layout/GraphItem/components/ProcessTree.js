@@ -171,6 +171,7 @@ export default () => {
       onOk() {
         deleteNodeByKey(processTree, currentProject, key);
         changeProcessTree([...processTree]);
+        resetGraphEditData();
         persistentStorage();
       }
     });

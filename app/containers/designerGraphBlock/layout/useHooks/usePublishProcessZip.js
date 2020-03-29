@@ -9,8 +9,11 @@ export default () => {
     state => state.grapheditor.editorBlockPythonCode
   );
 
+  console.log(pythonCode, '+++');
+
   const publishZip = (descText, versionText) => {
     const process = require('process');
+    console.log(pythonCode, '---');
     writeFile(
       `${process.cwd()}/python/test.py`,
       pythonCode,
