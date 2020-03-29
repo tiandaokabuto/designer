@@ -1,11 +1,16 @@
 // @flow
 import * as React from 'react';
 import api, { config } from '../api';
+import { message } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 
 const { ipcRenderer, remote } = require('electron');
 import { readGlobalConfig } from '../login/utils';
+
+message.config({
+  maxCount: 2,
+});
 
 type Props = {
   children: React.Node,
