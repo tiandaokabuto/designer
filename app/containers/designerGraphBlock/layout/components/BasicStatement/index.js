@@ -4,7 +4,7 @@ import React, {
   useRef,
   useState,
   useCallback,
-  useEffect,
+  useEffect
 } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
@@ -20,7 +20,7 @@ import {
   useUpdateXpath,
   useVisibleDynamicUpdate,
   useWatchCmdDesc,
-  useTransformToPython,
+  useTransformToPython
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
@@ -38,8 +38,12 @@ const style = {
   backgroundClip: 'padding-box',
   cursor: 'move',
   position: 'relative',
-  marginRight: '8px',
+  marginRight: '8px'
 };
+
+const process = require('process');
+
+const { exec } = require('child_process');
 
 const BasicStatement = useInjectContext(props => {
   const {
@@ -57,7 +61,7 @@ const BasicStatement = useInjectContext(props => {
     useSetClassName,
     useDragSource,
     setIsDraggingNode,
-    PLACEHOLDER_STATEMENT,
+    PLACEHOLDER_STATEMENT
   } = props;
 
   const cards = useSelector(state => state.blockcode.cards);
@@ -70,7 +74,7 @@ const BasicStatement = useInjectContext(props => {
     canDrag,
     templateVisible,
     changeToEditableTemplate,
-    save,
+    save
   ] = useVisibleDynamicUpdate(id, visibleTemplate, readOnly);
 
   const handleEmitCodeTransform = useTransformToPython();
@@ -80,7 +84,7 @@ const BasicStatement = useInjectContext(props => {
   const opacity = useToggleOpacity({
     isDraggingNode,
     id,
-    index,
+    index
   });
 
   const [ref, drop] = useDropTarget({
@@ -92,13 +96,13 @@ const BasicStatement = useInjectContext(props => {
     className,
     moveCard,
     addCard,
-    index,
+    index
   });
 
   const [drag, dragImage] = useDragSource({
     setIsDraggingNode,
     props,
-    canDrag,
+    canDrag
   });
 
   const deleteNodeById = useDeleteNodeById(id);
@@ -143,7 +147,7 @@ const BasicStatement = useInjectContext(props => {
       ref={readOnly ? null : ref}
       style={{
         ...style,
-        opacity: opacity,
+        opacity: opacity
       }}
       className={className}
     >
@@ -216,12 +220,18 @@ const BasicStatement = useInjectContext(props => {
               <div
                 className="card-content-searchtarget"
                 style={{
-                  display: hasLookTarget ? '' : 'none',
+                  display: hasLookTarget ? '' : 'none'
                 }}
                 onClick={() => {
                   ipcRenderer.send('min');
                   ipcRenderer.send('start_server', id);
-
+                  if (card.cmdName === '获取窗口元素') {
+                    const worker = exec(
+                      `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/testHook.py`
+                      // `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/python/testHook.py`
+                      // `python ${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/testHook.py`
+                    );
+                  }
                   ipcRenderer.on(
                     'updateXpath',
                     (e, { xpath, imageData, targetId }) => {
