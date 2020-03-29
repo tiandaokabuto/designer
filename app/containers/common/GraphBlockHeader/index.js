@@ -50,31 +50,31 @@ export default ({ history, tag }) => {
         history.push({
           pathname: '/',
           state: {
-            jump: true,
-          },
+            jump: true
+          }
         });
-      },
+      }
     },
     {
       title: '编辑',
-      disabled: true,
+      disabled: true
     },
     {
       title: '运行',
-      disabled: true,
+      disabled: true
     },
     {
       title: '调试',
-      disabled: true,
+      disabled: true
     },
     {
       title: '工具',
-      disabled: true,
+      disabled: true
     },
     {
       title: '帮助',
-      disabled: true,
-    },
+      disabled: true
+    }
   ];
   const handleSignOut = () => {
     axios
@@ -91,7 +91,7 @@ export default ({ history, tag }) => {
     <div
       className="graphblock-header"
       style={{
-        WebkitAppRegion: 'drag',
+        WebkitAppRegion: 'drag'
       }}
       onDoubleClick={() => {
         handleWindowOperation('unmaximize');
@@ -101,7 +101,7 @@ export default ({ history, tag }) => {
         className="graphblock-header-tools"
         style={{
           WebkitAppRegion: 'no-drag',
-          display: tag === 'recentProject' ? 'none' : '',
+          display: tag === 'recentProject' ? 'none' : ''
         }}
       >
         {TOOLS_DESCRIPTION.map((tool, index) => {
@@ -133,7 +133,7 @@ export default ({ history, tag }) => {
       <div
         className="graphblock-header-title"
         style={{
-          marginLeft: tag === 'recentProject' ? 18 : 0,
+          marginLeft: tag === 'recentProject' ? 18 : 0
         }}
       >
         SD-RPA Studio
@@ -141,11 +141,15 @@ export default ({ history, tag }) => {
       <div
         className="graphblock-header-user"
         style={{
-          WebkitAppRegion: 'no-drag',
+          WebkitAppRegion: 'no-drag'
         }}
       >
-        <Icon type="user" />
-        <span>{userName}, 您好!</span>
+        {userName && (
+          <div className="graphblock-header-user-name">
+            <Icon type="user" />
+            <span>{userName}, 您好!</span>
+          </div>
+        )}
         <span
           className="graphblock-header-user-sign-out"
           onClick={handleSignOut}

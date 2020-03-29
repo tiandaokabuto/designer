@@ -1,14 +1,17 @@
 .login {
   display: flex;
   height: 100vh;
+
   &-left {
     flex-basis: 400px;
     background-image: url('../containers/images/login.png');
     background-size: cover;
   }
+
   &-right {
     flex-basis: 400px;
     padding: 56px 0 0 80px;
+
     &-icon {
       &-close {
         position: absolute;
@@ -17,29 +20,38 @@
         font-size: 20px;
         transform: rotateX(43deg);
         cursor: pointer;
+        color: #000;
+
         &:hover {
           color: #40a9ff;
         }
       }
     }
+
     &-title {
       margin-bottom: 56px;
       font-size: 14px;
+      color: #333;
+      font-weight: 500;
     }
+
     input {
       height: 40px;
       border: none;
       // border-bottom: 1px solid rgba(238, 238, 238, 1);
       border-radius: 0em;
       padding-left: 0;
+
       &:focus {
         box-shadow: none;
       }
     }
+
     button {
       border-radius: 32px;
       width: 80px;
     }
+
     &-username {
       width: 240px;
       margin-bottom: 16px;
@@ -57,6 +69,7 @@
         height: 1px;
         background-color: rgba(238, 238, 238, 1);
       }
+
       &:focus-within {
         &::after {
           transform-origin: left;
@@ -65,6 +78,7 @@
         }
       }
     }
+
     &-password {
       width: 240px;
       font-size: 12px;
@@ -82,12 +96,34 @@
         height: 1px;
         background-color: rgba(238, 238, 238, 1);
       }
+
       &:focus-within {
         &::after {
           transform-origin: left;
           width: 100%;
           left: 0;
         }
+      }
+    }
+
+    &-offline {
+      float: right;
+      margin-right: 80px;
+      color: #32A67F;
+
+      &:hover,
+      &:active,
+      &:focus {
+        color: #32A67F;
+      }
+    }
+
+    &-liscense {
+      margin-bottom: 2.28em;
+      color: #333333;
+
+      &-file {
+        color: #00A0E8;
       }
     }
   }
