@@ -117,7 +117,22 @@ const Login = () => {
     handleSignIn();
   };
 
->>>>>>> fix:xx
+  const handleClickSignIn = () => {
+    if (offLine && serialNumber !== SERIAL_NUMBER_POSSWORK) {
+      message.error('序列号错误');
+    }
+    config.context = `http://${ip}:${port}`;
+    writeGlobalConfig({
+      ip,
+      port,
+      userName,
+      password,
+      serialNumber,
+      offLine,
+    });
+    handleSignIn();
+  };
+
   useEffect(() => {
     // 点击离线登录，使用已用的序列号进行自动登录
     if (isClickOfffLine && offLine && serialNumber === SERIAL_NUMBER_POSSWORK) {
