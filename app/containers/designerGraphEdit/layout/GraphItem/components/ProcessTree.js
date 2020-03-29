@@ -6,7 +6,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { ConfirmModal } from '../../../../common/components';
 import {
   changeProcessTree,
-  changeCheckedTreeNode
+  changeCheckedTreeNode,
 } from '../../../../reduxActions';
 import { resetGraphEditData } from '../../../../reduxActions';
 import Switcher from './Switcher';
@@ -16,7 +16,7 @@ import {
   renameNodeByKey,
   hasNodeModified,
   setAllModifiedState,
-  traverseTree
+  traverseTree,
 } from '../../../../common/utils';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 import { fromTextArea } from 'codemirror';
@@ -33,7 +33,7 @@ const TreeNodeTitle = ({ title, type, hasModified }) => {
           verticalAlign: 'sub',
           display: 'inline-block',
           marginLeft: 8,
-          color: hasModified ? 'red' : ''
+          color: hasModified ? 'red' : '',
         }}
         className={hasModified ? 'hasModified' : 'notModified'}
       >
@@ -160,19 +160,17 @@ export default () => {
         changeProcessTree(data);
       }
     });
-    console.log('---触发');
     persistentStorage();
   };
 
   const handleDelete = (key, persistentStorage) => {
-    console.log(currentProject);
     Modal.confirm({
       content: '请确认是否删除?',
       onOk() {
         deleteNodeByKey(processTree, currentProject, key);
         changeProcessTree([...processTree]);
         persistentStorage();
-      }
+      },
     });
   };
 
@@ -222,7 +220,7 @@ export default () => {
           setPosition({
             left: event.pageX + 40,
             top: event.pageY - 20,
-            node: node.props
+            node: node.props,
           });
         }}
         onDragEnter={onDragEnter}
