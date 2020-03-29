@@ -84,7 +84,31 @@ const Login = () => {
           remote.getGlobal('sharedObject').userName = json.data.userName;
           ipcRenderer.send('loginSuccess');
         }
-      });
+        return false;
+      })
+      .catch(err => console.log(err));
+  };
+
+  const handleClickOffLine = () => {
+    setOffLine(!offLine);
+    setIsClickOfffLine(true);
+  };
+
+  const handleClickSignIn = () => {
+    if (offLine && serialNumber !== SERIAL_NUMBER_POSSWORK) {
+      message.error('序列号错误');
+      return;
+    }
+    config.context = `http://${ip}:${port}`;
+    writeGlobalConfig({
+      ip,
+      port,
+      userName,
+      password,
+      serialNumber,
+      offLine,
+    });
+    handleSignIn();
   };
 
   useEffect(() => {
