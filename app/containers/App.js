@@ -47,19 +47,26 @@ export default class App extends React.Component<Props> {
 
   refreshToken = () => {
     if (timerID) clearTimeout(timerID);
-    fs.appendFileSync(`${process.cwd()}\\tokenTime.txt`, `${moment().format('MMMM Do YYYY, h:mm:ss a')} ${token} \r\n`, err => {
-      if(err) {
-        console.log(err)
-      } else {
-        console.log('写入成功')
+    fs.appendFileSync(
+      `${process.cwd()}\\tokenTime.txt`,
+      `${moment().format('MMMM Do YYYY, h:mm:ss a')} ${token} \r\n`,
+      err => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log('写入成功');
+        }
       }
-    })
+    );
     timerID = setTimeout(() => {
-      axios.get(api('refreshToken')).then(res => {
-        console.log(token)
-      }).catch(e => {
-        console.log(token)
-      });
+      axios
+        .get(api('refreshToken'))
+        .then(res => {
+          console.log(token);
+        })
+        .catch(e => {
+          console.log(token);
+        });
       this.refreshToken();
     }, 1000 * 60 * 2);
   };
