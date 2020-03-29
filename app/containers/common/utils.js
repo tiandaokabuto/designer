@@ -228,6 +228,16 @@ export const renameNodeByKey = (
             restoreCheckedTreeNode();
             return;
           }
+<<<<<<< HEAD
+=======
+          // const hasExist = Array.isArray(parent)
+          //   ? parent.filter(item => item.title === e.target.value)
+          //   : parent.children.filter(item => item.title === e.target.value);
+          // if (hasExist.length) {
+          //   message.info('目录名或流程名重复!');
+          //   return;
+          // }
+>>>>>>> fix:解决删除流程之后画板没有清空的问题
         } else {
           node.title = newTitle;
           changeProcessTree([...tree]);
@@ -374,8 +384,12 @@ export const newProcess = (
     ],
   };
   if (type === 'process') {
+<<<<<<< HEAD
     console.log(type, name, currentProject, checkedTreeNode);
     checkAndMakeDir(PATH_CONFIG('project', `${currentProject}/${name}`));
+=======
+    checkAndMakeDir(`${process.cwd()}/project/${currentProject}/${name}`);
+>>>>>>> fix:解决删除流程之后画板没有清空的问题
     // 如果是作为根结点添加, 那么逻辑如下
     if (isLeafNodeOrUndefined) {
       newProcessTree = processTree.concat({
@@ -437,8 +451,12 @@ export const newProcess = (
  * @param {*} checkedTreeNode
  */
 export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
+<<<<<<< HEAD
   console.log(checkedTreeNode);
   const files = fs.readdirSync(PATH_CONFIG('project', currentProject));
+=======
+  const files = fs.readdirSync(`${process.cwd()}/project/${currentProject}`);
+>>>>>>> fix:解决删除流程之后画板没有清空的问题
   return files.find(item => item === title);
   // const isDirNodeBool = isDirNode(tree, checkedTreeNode);
   // // 不在同级下建目录或流程跳过检验
@@ -452,7 +470,11 @@ export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
  * @param {*} name 项目名
  */
 export const openProject = name => {
+<<<<<<< HEAD
   fs.readFile(PATH_CONFIG('project', `${name}/manifest.json`), function(
+=======
+  fs.readFile(`${process.cwd()}/project/${name}/manifest.json`, function(
+>>>>>>> fix:解决删除流程之后画板没有清空的问题
     err,
     data
   ) {
