@@ -24,11 +24,17 @@ const Login = () => {
   // 保存离线登录的序列号和状态
   const [serialNumber, setSerialNumber] = useState('');
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [liscense, setLiscense] = useState(true);
   const [offLine, setOffLine] = useState(false);
 
   // 是否点击切换离线状态，防止退出登录时切换成离线登录页面时发生的自动登录
   const [isClickOfffLine, setIsClickOfffLine] = useState(false);
+=======
+  const [offLine, setOffLine] = useState(false);
+  const [isClickOfffLine, setIsClickOfffLine] = useState(false);
+  const [liscense, setLiscense] = useState(true);
+>>>>>>> feat: 添加离线登录功能
 =======
   const [offLine, setOffLine] = useState(false);
   const [isClickOfffLine, setIsClickOfffLine] = useState(false);
@@ -42,6 +48,7 @@ const Login = () => {
           inputValue: userName,
           handleInputVauleChange: setUserName,
 <<<<<<< HEAD
+<<<<<<< HEAD
           label: '登录账号',
           placeholder: '请输入登录账号',
           formItemClassName: 'login-right-username',
@@ -50,11 +57,17 @@ const Login = () => {
           placeholder: '请输入用户名',
           formItemClassName: 'login-right-username'
 >>>>>>> feat: 添加离线登录功能
+=======
+          label: '用户名',
+          placeholder: '请输入用户名',
+          formItemClassName: 'login-right-username',
+>>>>>>> feat: 添加离线登录功能
         },
         {
           key: 'password',
           inputValue: password,
           handleInputVauleChange: setPassword,
+<<<<<<< HEAD
 <<<<<<< HEAD
           type: 'password',
           label: '密码',
@@ -65,6 +78,11 @@ const Login = () => {
           placeholder: '请输入密码',
           formItemClassName: 'login-right-password'
 >>>>>>> feat: 添加离线登录功能
+=======
+          label: '密码',
+          placeholder: '请输入密码',
+          formItemClassName: 'login-right-password',
+>>>>>>> feat: 添加离线登录功能
         },
         {
           key: 'ip',
@@ -72,9 +90,13 @@ const Login = () => {
           handleInputVauleChange: setIp,
           label: 'IP',
 <<<<<<< HEAD
+<<<<<<< HEAD
           placeholder: '请输入IP',
 =======
           placeholder: '请输入IP'
+>>>>>>> feat: 添加离线登录功能
+=======
+          placeholder: '请输入IP',
 >>>>>>> feat: 添加离线登录功能
         },
         {
@@ -83,11 +105,16 @@ const Login = () => {
           handleInputVauleChange: setPort,
           label: '端口',
 <<<<<<< HEAD
+<<<<<<< HEAD
           placeholder: '请输入端口',
         },
 =======
           placeholder: '请输入端口'
         }
+>>>>>>> feat: 添加离线登录功能
+=======
+          placeholder: '请输入端口',
+        },
 >>>>>>> feat: 添加离线登录功能
       ]
     : [
@@ -98,11 +125,16 @@ const Login = () => {
           label: '序列号',
           placeholder: '请输入序列号',
 <<<<<<< HEAD
+<<<<<<< HEAD
           formItemClassName: 'login-right-username',
         },
 =======
           formItemClassName: 'login-right-username'
         }
+>>>>>>> feat: 添加离线登录功能
+=======
+          formItemClassName: 'login-right-username',
+        },
 >>>>>>> feat: 添加离线登录功能
       ];
 
@@ -114,6 +146,7 @@ const Login = () => {
     axios
       .post(api('signIn'), {
         userName,
+<<<<<<< HEAD
         password: hex_sha1(password)
       })
       .then(json => {
@@ -129,17 +162,31 @@ const Login = () => {
           ipcRenderer.send('loginSuccess');
           return true;
 >>>>>>> feat: 添加离线登录功能
+=======
+        password: hex_sha1(password),
+      })
+      .then(json => {
+        if (json.code !== -1) {
+          remote.getGlobal('sharedObject').token = json.data.token;
+          remote.getGlobal('sharedObject').userName = json.data.userName;
+          ipcRenderer.send('loginSuccess');
+          return true;
+>>>>>>> feat: 添加离线登录功能
         }
         return false;
       })
       .catch(err => console.log(err));
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> feat: 添加离线登录功能
   };
 
   const handleClickOffLine = () => {
     setOffLine(!offLine);
     setIsClickOfffLine(true);
+<<<<<<< HEAD
   };
 
   const handleClickSignIn = () => {
@@ -216,6 +263,28 @@ const Login = () => {
   useEffect(() => {
     if (isClickOfffLine && offLine) {
 >>>>>>> feat: 添加离线登录功能
+=======
+  };
+
+  const handleClickSignIn = () => {
+    if (offLine && serialNumber !== SERIAL_NUMBER_POSSWORK) {
+      message.error('序列号错误');
+    }
+    config.context = `http://${ip}:${port}`;
+    writeGlobalConfig({
+      ip,
+      port,
+      userName,
+      password,
+      serialNumber,
+      offLine,
+    });
+    handleSignIn();
+  };
+
+  useEffect(() => {
+    if (isClickOfffLine && offLine) {
+>>>>>>> feat: 添加离线登录功能
       handleClickSignIn();
     }
   }, [isClickOfffLine, offLine]);
@@ -270,9 +339,13 @@ const Login = () => {
           password,
           serialNumber,
 <<<<<<< HEAD
+<<<<<<< HEAD
           offLine,
 =======
           offLine
+>>>>>>> feat: 添加离线登录功能
+=======
+          offLine,
 >>>>>>> feat: 添加离线登录功能
         });
         handleSignIn();
