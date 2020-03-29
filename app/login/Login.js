@@ -23,11 +23,17 @@ const Login = () => {
 
   // 保存离线登录的序列号和状态
   const [serialNumber, setSerialNumber] = useState('');
+<<<<<<< HEAD
   const [liscense, setLiscense] = useState(true);
   const [offLine, setOffLine] = useState(false);
 
   // 是否点击切换离线状态，防止退出登录时切换成离线登录页面时发生的自动登录
   const [isClickOfffLine, setIsClickOfffLine] = useState(false);
+=======
+  const [offLine, setOffLine] = useState(false);
+  const [isClickOfffLine, setIsClickOfffLine] = useState(false);
+  const [liscense, setLiscense] = useState(true);
+>>>>>>> feat: 添加离线登录功能
 
   const LOGIN_ONLINE = !offLine
     ? [
@@ -84,14 +90,23 @@ const Login = () => {
         password: hex_sha1(password),
       })
       .then(json => {
+<<<<<<< HEAD
         if (~json.code) {
           remote.getGlobal('sharedObject').token = json.data.token;
           remote.getGlobal('sharedObject').userName = json.data.userName;
           ipcRenderer.send('loginSuccess');
+=======
+        if (json.code !== -1) {
+          remote.getGlobal('sharedObject').token = json.data.token;
+          remote.getGlobal('sharedObject').userName = json.data.userName;
+          ipcRenderer.send('loginSuccess');
+          return true;
+>>>>>>> feat: 添加离线登录功能
         }
         return false;
       })
       .catch(err => console.log(err));
+<<<<<<< HEAD
   };
 
   const handleClickOffLine = () => {
@@ -119,6 +134,33 @@ const Login = () => {
   useEffect(() => {
     // 点击离线登录，使用已用的序列号进行自动登录
     if (isClickOfffLine && offLine && serialNumber === SERIAL_NUMBER_POSSWORK) {
+=======
+  };
+
+  const handleClickOffLine = () => {
+    setOffLine(!offLine);
+    setIsClickOfffLine(true);
+  };
+
+  const handleClickSignIn = () => {
+    if (offLine && serialNumber !== SERIAL_NUMBER_POSSWORK) {
+      message.error('序列号错误');
+    }
+    config.context = `http://${ip}:${port}`;
+    writeGlobalConfig({
+      ip,
+      port,
+      userName,
+      password,
+      serialNumber,
+      offLine,
+    });
+    handleSignIn();
+  };
+
+  useEffect(() => {
+    if (isClickOfffLine && offLine) {
+>>>>>>> feat: 添加离线登录功能
       handleClickSignIn();
     }
   }, [isClickOfffLine, offLine]);
