@@ -116,7 +116,22 @@ const Login = () => {
     handleSignIn();
   };
 
->>>>>>> fix:xx
+  const handleClickSignIn = () => {
+    if (offLine && serialNumber !== SERIAL_NUMBER_POSSWORK) {
+      message.error('序列号错误');
+    }
+    config.context = `http://${ip}:${port}`;
+    writeGlobalConfig({
+      ip,
+      port,
+      userName,
+      password,
+      serialNumber,
+      offLine,
+    });
+    handleSignIn();
+  };
+
   useEffect(() => {
     if (isClickOfffLine && offLine) {
       handleClickSignIn();
