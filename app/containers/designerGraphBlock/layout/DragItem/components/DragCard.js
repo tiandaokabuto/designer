@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import ItemTypes from '../../statementTypes';
 
-export default ({ item }) => {
+export default ({ item, node, addToRecentList }) => {
   const ref = useRef(null);
   const [{ isDragging }, drag] = useDrag({
     item: {
@@ -15,6 +15,11 @@ export default ({ item }) => {
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
+    end: (item, monitor) => {
+      if (monitor.didDrop()) {
+        addToRecentList(node);
+      }
+    },
   });
   drag(ref);
   return (
