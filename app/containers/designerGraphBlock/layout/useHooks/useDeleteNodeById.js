@@ -28,7 +28,6 @@ export default id => {
 
   useEffect(() => {
     const handleDeleteKeyDown = e => {
-      console.log('keyCode');
       if (e.keyCode === 46) {
         if (checkedId === id) {
           handleDeleteNodeById(id);

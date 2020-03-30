@@ -14,12 +14,24 @@ import {
 } from '../statementTags';
 import { traverseTree } from '../../../common/utils';
 
+import { query } from './PinYin';
+
 const { TreeNode } = Tree;
 const { Search } = Input;
 
 const canDisplay = (match, filter) => {
   if (!match) return false;
-  return match.toLocaleLowerCase().includes(filter.toLocaleLowerCase());
+  const newMatch = match.toLocaleLowerCase();
+  const newFilter = filter.toLocaleLowerCase();
+  let toMatch = '';
+  for (const char of newMatch) {
+    toMatch += char;
+    const queryList = query(toMatch);
+    if (queryList.includes(newFilter)) {
+      return true;
+    }
+  }
+  return false;
 };
 
 export default () => {
@@ -117,10 +129,10 @@ export default () => {
         />
       </div>
       <div className="dragger-editor-item-search">
-        <Search
+        <Input
           placeholder="请输入"
-          onSearch={value => {
-            setFilter(value);
+          onChange={e => {
+            setFilter(e.target.value);
           }}
         />
       </div>
