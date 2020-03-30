@@ -74,7 +74,10 @@ const Login = () => {
       ];
 
   const handleSignIn = () => {
-    //ipcRenderer.send('loginSuccess');
+    if (offLine) {
+      remote.getGlobal('sharedObject').userName = '';
+      ipcRenderer.send('loginSuccess');
+    }
     axios
       .post(api('signIn'), {
         userName,
