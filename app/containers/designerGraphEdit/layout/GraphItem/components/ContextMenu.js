@@ -42,7 +42,7 @@ export default ({ position, handleDelete, handleRename }) => {
         top: top,
       }}
     >
-      {isProcess && <div className="menuitem">运行此流程</div>}
+      {/* {isProcess && <div className="menuitem">运行此流程</div>} */}
 
       <div
         className="menuitem"
@@ -53,7 +53,7 @@ export default ({ position, handleDelete, handleRename }) => {
       >
         删除
       </div>
-      {isProcess && <div className="menuitem">另存为</div>}
+      {/* {isProcess && <div className="menuitem">另存为</div>} */}
 
       <div
         className="menuitem"
