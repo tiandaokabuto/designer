@@ -71,7 +71,7 @@ export default memo(
           let version = res.data;
           if (res.code !== -1 && version) {
             version = version.replace(/[\d]+$/, match => +match + 1);
-            setVersionText(version);
+            handleVersionTextChange(version);
             return version;
           }
           setVersionText('1.0.0');

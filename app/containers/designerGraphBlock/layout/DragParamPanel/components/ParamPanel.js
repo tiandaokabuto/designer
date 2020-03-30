@@ -112,7 +112,7 @@ export default ({ checkedBlock }) => {
 
   return (
     <div className="parampanel">
-      {checkedBlock && checkedBlock.cmdDesc && (
+      {checkedBlock && checkedBlock.cmdDesc !== undefined && (
         <div className="parampanel-desc">
           <span>命令描述符</span>
           <Input
@@ -120,6 +120,11 @@ export default ({ checkedBlock }) => {
             onChange={e => {
               checkedBlock.cmdDesc = e.target.value;
               handleEmitCodeTransform(cards);
+            }}
+            onKeyDown={e => {
+              if (e.keyCode === 46) {
+                e.nativeEvent.stopImmediatePropagation();
+              }
             }}
           />
         </div>
