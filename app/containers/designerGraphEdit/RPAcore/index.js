@@ -7,7 +7,7 @@ import {
   findNodeByLabelAndId,
   isCircleExist,
   findCommonTarget,
-  hasTwoEntryPortInProcessBlock,
+  hasTwoEntryPortInProcessBlock
 } from './utils';
 
 import { writeFileRecursive } from '../../../nodejs';
@@ -169,7 +169,7 @@ const transformEditorProcess = (
 
 export default (graphData, graphDataMap) => {
   const result = {
-    output: '',
+    output: ''
   };
   const beginId = findStartNode(graphData.nodes || []);
   if (beginId) {
