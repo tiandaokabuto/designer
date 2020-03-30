@@ -7,7 +7,7 @@ import moment from 'moment';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
-  clearGrapheditorData
+  clearGrapheditorData,
 } from '../reduxActions';
 import { readDir } from '../../nodejs';
 import event from '../designerGraphBlock/layout/eventCenter';
@@ -25,13 +25,14 @@ const zip = new JSZIP();
  * @param {*} callback 项目创建完成后的回调函数
  */
 export const newProject = (name, callback) => {
+  // clearGrapheditorData();
   fs.mkdir(PATH_CONFIG('project', name), { recursive: true }, function(err) {
     if (!err) {
       callback();
       // 修改左侧自定义目录树
       changeProcessTree([]);
       const initialJson = {
-        processTree: []
+        processTree: [],
       };
       // 创建初始的描述文件
       fs.writeFile(
@@ -62,7 +63,7 @@ export const readAllFileName = path => {
       name,
       key,
       birthtime: new Date(status.birthtime).toISOString(),
-      mtime: new Date(status.mtime).toISOString()
+      mtime: new Date(status.mtime).toISOString(),
     });
   });
   return fileList;
@@ -295,7 +296,7 @@ export const persistentStorage = (processTree, name, node) => {
         PATH_CONFIG('project', `${name}/manifest.json`),
         JSON.stringify({
           ...description,
-          processTree: tree
+          processTree: tree,
         }),
         function(err) {
           if (err) {
@@ -367,10 +368,10 @@ export const newProcess = (
         index: 0,
         style: {
           stroke: 'rgba(61, 109, 204, 1)',
-          fill: '#ecf5f6'
-        }
-      }
-    ]
+          fill: '#ecf5f6',
+        },
+      },
+    ],
   };
   if (type === 'process') {
     console.log(type, name, currentProject, checkedTreeNode);
@@ -383,8 +384,8 @@ export const newProcess = (
         type: 'process',
         isLeaf: true,
         data: {
-          graphData: defaultGraphData
-        }
+          graphData: defaultGraphData,
+        },
       });
     } else {
       //在这个项目目录下新增
@@ -394,8 +395,8 @@ export const newProcess = (
         type: 'process',
         isLeaf: true,
         data: {
-          graphData: defaultGraphData
-        }
+          graphData: defaultGraphData,
+        },
       });
       newProcessTree = [...processTree];
       // 告知processTree 设置展开该结点
@@ -412,14 +413,14 @@ export const newProcess = (
         title: name,
         key: uniqueid,
         type: 'dir',
-        children: []
+        children: [],
       });
     } else {
       isDirNodeBool.children.push({
         title: name,
         key: uniqueid,
         type: 'dir',
-        children: []
+        children: [],
       });
       newProcessTree = [...processTree];
     }
@@ -575,8 +576,8 @@ export const downProcessZipToLocal = (filePath, editorBlockPythonCode) => {
       compression: 'DEFLATE', // 压缩算法
       compressionOptions: {
         // 压缩级别
-        level: 9
-      }
+        level: 9,
+      },
     })
     .then(function(content) {
       deleteFolder(filePath);
