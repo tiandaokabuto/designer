@@ -51,6 +51,8 @@ export default useInjectContext(({ updateAutomicList }) => {
   // 右键菜单位置设定
   const [position, setPosition] = useState({});
 
+  const [dragCard, setDragCard] = useState([]);
+
   const filterTree = (treeData, filter, parent = [], expandedKeysTemp) => {
     if (!filter || !treeData) return treeData || [];
     treeData.forEach((child, index) => {
@@ -89,9 +91,12 @@ export default useInjectContext(({ updateAutomicList }) => {
   const renderTreeNode = (tree, filter) => {
     let treeData = cloneDeep(tree);
     let expandedKeysTemp = [];
-    treeData = filterTree(treeData, filter, [], expandedKeysTemp);
-
-    setExpandedKeys(expandedKeysTemp);
+    if (filter) {
+      treeData = filterTree(treeData, filter, [], expandedKeysTemp);
+      setExpandedKeys(expandedKeys => {
+        return Array.from(new Set([...expandedKeys, ...expandedKeysTemp]));
+      });
+    }
     traverseTree(treeData, node => {
       if (node.item) {
         node.title = <DragCard item={node.item} />;
@@ -102,7 +107,6 @@ export default useInjectContext(({ updateAutomicList }) => {
 
   const addToLovedList = key => {
     const node = findNodeByKey(atomicCList, key);
-    // console.log(node, atomicCList, updateAutomicList);
     if (favoriteList.some(item => item.key === key)) {
       message.info('已经在收藏列表');
       return;
@@ -124,8 +128,6 @@ export default useInjectContext(({ updateAutomicList }) => {
     setTreeData(renderTreeNode(atomicCList, filter));
   }, [atomicCList, filter]);
 
-  const [dragCard, setDragCard] = useState([]);
-
   return (
     <div className="dragger-editor-item">
       <div className="dragger-editor-item-title">
@@ -145,16 +147,8 @@ export default useInjectContext(({ updateAutomicList }) => {
           }}
         />
       </div>
-      {/* <Tree
-        showLine={true}
-        showIcon={true}
-        className="dragger-editor-item-tree"
-      >
-        {renderTreeNodes(atomicCList)}
-      </Tree> */}
       <Tree
         className="atomicCList-tree"
-        // selectable={false}
         expandedKeys={expandedKeys}
         onExpand={expandedKeys => {
           setExpandedKeys(expandedKeys);
