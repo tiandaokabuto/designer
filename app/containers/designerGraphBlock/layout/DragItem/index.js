@@ -1,18 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Input, Icon, Tree } from 'antd';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
+import { Input, Icon, Tree, message } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
+import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import cloneDeep from 'lodash/cloneDeep';
 
 import DragCard from './components/DragCard';
-// import Tree from './components/CustomeTreeNode';
+import ContextMenu from './components/ContextMenu';
 import event from '../eventCenter';
 import {
   BasicStatementTag,
   LoopStatementTag,
   ConditionalStatementTag,
 } from '../statementTags';
-import { traverseTree } from '../../../common/utils';
+import { traverseTree, findNodeByKey } from '../../../common/utils';
 
 import { query } from './PinYin';
 
@@ -34,8 +35,12 @@ const canDisplay = (match, filter) => {
   return false;
 };
 
-export default () => {
+export default useInjectContext(({ updateAutomicList }) => {
   const atomicCList = useSelector(state => state.blockcode.automicList);
+  const favoriteList = useMemo(() => {
+    const find = atomicCList.find(item => item.key === 'favorite');
+    return find ? find.children : [];
+  }, [atomicCList]);
 
   const [expandedKeys, setExpandedKeys] = useState([]);
 
@@ -93,6 +98,26 @@ export default () => {
       }
     });
     return treeData;
+  };
+
+  const addToLovedList = key => {
+    const node = findNodeByKey(atomicCList, key);
+    // console.log(node, atomicCList, updateAutomicList);
+    if (favoriteList.some(item => item.key === key)) {
+      message.info('已经在收藏列表');
+      return;
+    }
+    node.loved = true;
+    favoriteList.push(node);
+    updateAutomicList([...atomicCList]);
+  };
+
+  const removeFromLovedList = key => {
+    const node = findNodeByKey(atomicCList, key);
+    node.loved = false;
+    const index = favoriteList.findIndex(item => item.key === key);
+    favoriteList.splice(index, 1);
+    updateAutomicList([...atomicCList]);
   };
 
   useEffect(() => {
@@ -155,6 +180,13 @@ export default () => {
         }}
         treeData={treeData}
       ></Tree>
+      <ContextMenu
+        position={position}
+        addToLovedList={addToLovedList}
+        removeFromLovedList={removeFromLovedList}
+        // handleDelete={handleDelete}
+        // handleRename={handleRename}
+      />
     </div>
   );
-};
+});
