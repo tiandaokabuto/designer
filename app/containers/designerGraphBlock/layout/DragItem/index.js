@@ -43,25 +43,9 @@ export default () => {
 
   const [treeData, setTreeData] = useState([]);
 
-  // 渲染树节点
-  // const renderTreeNodes = (data, filter) =>
-  //   data.map(item => {
-  //     if (item.children) {
-  //       return (
-  //         <TreeNode
-  //           title={item.title}
-  //           key={item.key}
-  //           icon={item.icon}
-  //           depth={item.depth}
-  //           filter={filter}
-  //           dataRef={item}
-  //         >
-  //           {renderTreeNodes(item.children)}
-  //         </TreeNode>
-  //       );
-  //     }
-  //     return <TreeNode key={item.key} filter={filter} {...item} />;
-  //   });
+  // 右键菜单位置设定
+  const [position, setPosition] = useState({});
+
   const filterTree = (treeData, filter, parent = [], expandedKeysTemp) => {
     if (!filter || !treeData) return treeData || [];
     treeData.forEach((child, index) => {
@@ -149,6 +133,13 @@ export default () => {
         expandedKeys={expandedKeys}
         onExpand={expandedKeys => {
           setExpandedKeys(expandedKeys);
+        }}
+        onRightClick={({ event, node }) => {
+          setPosition({
+            left: event.pageX + 40,
+            top: event.pageY - 20,
+            node: node.props,
+          });
         }}
         onSelect={(_, e) => {
           const props = e.node.props;

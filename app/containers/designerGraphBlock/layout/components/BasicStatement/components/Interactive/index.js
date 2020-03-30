@@ -19,7 +19,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
 
   const INITIAL_WIDTH = {
     input: layout && (layout.cols || 4),
-    image: layout && (layout.cols < 4 ? 4 : layout.cols) / 4,
+    image: 1,
     'submit-btn': 1,
     'cancel-btn': 1,
   };
