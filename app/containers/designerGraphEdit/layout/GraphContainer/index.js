@@ -15,7 +15,7 @@ import HighlightEditor from '../../useHooks/HighlightEditor';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
 
 import EditorChange, {
-  registerDataChange
+  registerDataChange,
 } from '../../useHooks/useEditorChange';
 
 import { isEdgeConnectWithRhombusNode } from '../../RPAcore/utils';
@@ -31,7 +31,7 @@ export default useInjectContext(
       synchroCodeBlock,
       changeCheckedGraphBlockId,
       updateCurrentEditingProcessBlock,
-      updateCurrentPagePosition
+      updateCurrentPagePosition,
     }) => {
       const { getSelected, executeCommand, update, save } = propsAPI;
       const graphData = useSelector(state => state.grapheditor.graphData);
@@ -75,7 +75,7 @@ export default useInjectContext(
             className="designergraph-container-flow"
             style={{
               background: showHead ? 'rgba(252, 252, 252, 1)' : '',
-              height: showHead ? '100%' : ''
+              height: showHead ? '100%' : '',
             }}
             onAfterChange={value => {
               // 将每次的状态更新保存下来
@@ -97,9 +97,9 @@ export default useInjectContext(
                     //     // 'clickCanvasSelected',
                     //   ],
                     // },
-                    default: ['drag-canvas', 'zoom-canvas']
+                    default: ['drag-canvas', 'zoom-canvas'],
                   }
-                : {})
+                : {}),
             }}
             onNodeClick={node => {
               const dataId = node.shape._attrs.dataId;
@@ -148,17 +148,20 @@ export default useInjectContext(
                 // do nothing
               }
             }}
-            onEdgeDoubleClick={edge => {
-              const model = edge.item.model;
-              /** 双击的时候判断是否触发右侧设置面板的出现 */
-              if (
-                !showHead &&
-                isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
-              ) {
-                setDrawerVisible(true);
-              }
-              // console.log(edge)
-            }}
+            // onEdgeClick={edge => {
+            //   console.log(edge);
+            // }}
+            // onEdgeDoubleClick={edge => {
+            //   const model = edge.item.model;
+            //   /** 双击的时候判断是否触发右侧设置面板的出现 */
+            //   if (
+            //     !showHead &&
+            //     isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
+            //   ) {
+            //     setDrawerVisible(true);
+            //   }
+            //   // console.log(edge)
+            // }}
             onDoubleClick={(...args) => {
               console.log(...args);
             }}
