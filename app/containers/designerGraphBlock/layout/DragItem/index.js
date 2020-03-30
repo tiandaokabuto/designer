@@ -42,6 +42,11 @@ export default useInjectContext(({ updateAutomicList }) => {
     return find ? find.children : [];
   }, [atomicCList]);
 
+  const recentList = useMemo(() => {
+    const find = atomicCList.find(item => item.key === 'recent');
+    return find ? find.children : [];
+  }, [atomicCList]);
+
   const [expandedKeys, setExpandedKeys] = useState([]);
 
   const [filter, setFilter] = useState('');
@@ -88,6 +93,22 @@ export default useInjectContext(({ updateAutomicList }) => {
     });
   };
 
+  const addToRecentList = item => {
+    const index = recentList.findIndex(el => el.key === item.key);
+
+    if (index !== -1) {
+      const node = recentList.splice(index, 1);
+      recentList.unshift(...node);
+    } else {
+      if (recentList.length >= 10) {
+        recentList.pop();
+      }
+      recentList.unshift(item);
+    }
+
+    updateAutomicList([...atomicCList]);
+  };
+
   const renderTreeNode = (tree, filter) => {
     let treeData = cloneDeep(tree);
     let expandedKeysTemp = [];
@@ -99,7 +120,13 @@ export default useInjectContext(({ updateAutomicList }) => {
     }
     traverseTree(treeData, node => {
       if (node.item) {
-        node.title = <DragCard item={node.item} />;
+        node.title = (
+          <DragCard
+            item={node.item}
+            node={node}
+            addToRecentList={addToRecentList}
+          />
+        );
       }
     });
     return treeData;
