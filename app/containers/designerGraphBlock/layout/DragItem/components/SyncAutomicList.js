@@ -71,17 +71,20 @@ const readGlobalConfig = (callback, flag = false) => {
               key: 'favorite',
               title: '收藏',
               children: [],
+              returnTreeData: null,
             },
             {
               pKey: null,
               key: 'recent',
               title: '最近',
               children: [],
+              returnTreeData: null,
             },
             {
               pKey: null,
               key: 'aviable',
               title: '可用',
+              returnTreeData: null,
               children: automicListToTree(abilityTree, abilityStructure),
             },
           ];
