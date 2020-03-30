@@ -59,7 +59,7 @@ export default ({
           setVisible(false);
         }}
       >
-        {node.loved ? '从收藏中移除' : '添加到收藏'}
+        {node && node.loved ? '从收藏中移除' : '添加到收藏'}
       </div>
       {isProcess && <div className="menuitem">另存为</div>}
     </div>
