@@ -12,6 +12,7 @@ import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
+import PATH_CONFIG from '@/constants/localFilePath';
 
 import {
   useDropTarget,
@@ -226,11 +227,7 @@ const BasicStatement = useInjectContext(props => {
                   ipcRenderer.send('min');
                   ipcRenderer.send('start_server', id);
                   if (card.cmdName === '获取窗口元素') {
-                    const worker = exec(
-                      `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/testHook.py`
-                      // `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/python/testHook.py`
-                      // `python ${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/testHook.py`
-                    );
+                    const worker = exec(PATH_CONFIG('windowHook'));
                   }
                   ipcRenderer.on(
                     'updateXpath',

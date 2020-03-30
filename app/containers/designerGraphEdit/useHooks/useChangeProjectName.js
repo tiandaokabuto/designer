@@ -4,6 +4,8 @@ import { message } from 'antd';
 import { readAllFileName } from '../../common/utils';
 import { changeCurrentProject } from '../../reduxActions';
 
+import PATH_CONFIG from '@/constants/localFilePath';
+
 const fs = require('fs');
 
 export default () => {
@@ -15,8 +17,8 @@ export default () => {
     }
 
     fs.rename(
-      `${process.cwd()}/project/${current}`,
-      `${process.cwd()}/project/${change}`,
+      PATH_CONFIG('project', current),
+      PATH_CONFIG('project', change),
       function(err) {
         if (!err) {
           changeCurrentProject(change);

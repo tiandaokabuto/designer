@@ -35,7 +35,7 @@ const Login = () => {
           handleInputVauleChange: setUserName,
           label: '用户名',
           placeholder: '请输入用户名',
-          formItemClassName: 'login-right-username'
+          formItemClassName: 'login-right-username',
         },
         {
           key: 'password',
@@ -43,22 +43,22 @@ const Login = () => {
           handleInputVauleChange: setPassword,
           label: '密码',
           placeholder: '请输入密码',
-          formItemClassName: 'login-right-password'
+          formItemClassName: 'login-right-password',
         },
         {
           key: 'ip',
           inputValue: ip,
           handleInputVauleChange: setIp,
           label: 'IP',
-          placeholder: '请输入IP'
+          placeholder: '请输入IP',
         },
         {
           key: 'port',
           inputValue: port,
           handleInputVauleChange: setPort,
           label: '端口',
-          placeholder: '请输入端口'
-        }
+          placeholder: '请输入端口',
+        },
       ]
     : [
         {
@@ -67,26 +67,22 @@ const Login = () => {
           handleInputVauleChange: setSerialNumber,
           label: '序列号',
           placeholder: '请输入序列号',
-          formItemClassName: 'login-right-username'
-        }
+          formItemClassName: 'login-right-username',
+        },
       ];
 
   const handleSignIn = () => {
-    if (offLine) {
-      remote.getGlobal('sharedObject').userName = '';
-      ipcRenderer.send('loginSuccess');
-    }
+    //ipcRenderer.send('loginSuccess');
     axios
       .post(api('signIn'), {
         userName,
-        password: hex_sha1(password)
+        password: hex_sha1(password),
       })
       .then(json => {
-        if (json.code !== -1) {
+        if (~json.code) {
           remote.getGlobal('sharedObject').token = json.data.token;
           remote.getGlobal('sharedObject').userName = json.data.userName;
           ipcRenderer.send('loginSuccess');
-          return true;
         }
         return false;
       })
@@ -101,6 +97,7 @@ const Login = () => {
   const handleClickSignIn = () => {
     if (offLine && serialNumber !== SERIAL_NUMBER_POSSWORK) {
       message.error('序列号错误');
+      return;
     }
     config.context = `http://${ip}:${port}`;
     writeGlobalConfig({
@@ -109,7 +106,7 @@ const Login = () => {
       userName,
       password,
       serialNumber,
-      offLine
+      offLine,
     });
     handleSignIn();
   };
@@ -169,7 +166,7 @@ const Login = () => {
           userName,
           password,
           serialNumber,
-          offLine
+          offLine,
         });
         handleSignIn();
       }
@@ -183,7 +180,7 @@ const Login = () => {
       <div
         className="login-left"
         style={{
-          WebkitAppRegion: 'drag'
+          WebkitAppRegion: 'drag',
         }}
       />
       <div className="login-right">

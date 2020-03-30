@@ -10,12 +10,14 @@ import { SDIcon } from '../common/components';
 import RecentBackImg from '../images/recent_back.png';
 import CloseImg from '../images/close.png';
 
+import PATH_CONFIG from '@/constants/localFilePath';
+
 import {
   newProject,
   openProject,
   readAllFileName,
   formatDateTime,
-  deleteFolderRecursive
+  deleteFolderRecursive,
 } from '../common/utils';
 import {
   changeCurrentProject,
@@ -39,17 +41,17 @@ export default useInjectContext(({ history }) => {
       dataIndex: 'name',
       render: title => {
         return <span style={{ color: 'rgba(50, 166, 127, 1)' }}>{title}</span>;
-      }
+      },
     },
     {
       title: '创建时间',
       dataIndex: 'birthtime',
-      render: formatDateTime
+      render: formatDateTime,
     },
     {
       title: '修改时间',
       dataIndex: 'mtime',
-      render: formatDateTime
+      render: formatDateTime,
     },
     {
       title: '',
@@ -60,14 +62,13 @@ export default useInjectContext(({ history }) => {
             url={CloseImg}
             onClick={e => {
               e.stopPropagation();
-              console.log(record.name);
-              deleteFolderRecursive(`${process.cwd()}/project/${record.name}`);
+              deleteFolderRecursive(PATH_CONFIG('project', record.name));
               setFlag(flag => !flag);
             }}
           ></SDIcon>
         );
-      }
-    }
+      },
+    },
   ];
 
   const isJump = history.location.state && history.location.state.jump;
@@ -118,7 +119,7 @@ export default useInjectContext(({ history }) => {
             columns={columns}
             dataSource={fileList}
             scroll={{
-              y: 'calc(100vh - 327px)'
+              y: 'calc(100vh - 327px)',
             }}
             onRow={record => {
               return {
@@ -130,7 +131,7 @@ export default useInjectContext(({ history }) => {
                   // clearGrapheditorData();
                   resetGraphEditData();
                   history.push('/designGraphEdit');
-                }
+                },
               };
             }}
           />
