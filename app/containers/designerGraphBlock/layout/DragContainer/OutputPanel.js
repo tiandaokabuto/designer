@@ -23,7 +23,7 @@ export default memo(
           const outputDom = document.querySelector(
             '.dragger-editor-container-output'
           );
-          let originHeight = parseFloat(
+          const originHeight = parseFloat(
             window.getComputedStyle(outputDom).height
           );
           // if (originHeight <= 74 && offset < 0) return;
@@ -61,13 +61,11 @@ export default memo(
     const style =
       tag === 'graph'
         ? {
-            position: 'fixed',
-            width: '100%',
-            bottom: '0px',
-            overflow: 'auto',
             width: 'calc(100% - 478px)',
           }
-        : {};
+        : {
+            width: '100%',
+          };
     return (
       <div className="dragger-editor-container-output" style={{ ...style }}>
         <div
@@ -76,7 +74,7 @@ export default memo(
         ></div>
         <div>
           输出:
-          <br /> <pre>{output}</pre>
+          <br /> <pre style={{ display: 'inline' }}>{output}</pre>
         </div>
       </div>
     );
