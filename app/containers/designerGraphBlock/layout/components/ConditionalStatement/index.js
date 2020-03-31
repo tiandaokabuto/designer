@@ -9,6 +9,7 @@ import {
   useDropTarget,
   useDeleteNodeById,
   useVisibleDynamicUpdate,
+  useChangeCheckedBlockColor,
 } from '../../useHooks';
 
 import ItemTypes from '../../statementTypes';
@@ -45,6 +46,8 @@ const ConditionalStatement = useInjectContext(props => {
   } = props;
 
   const [isFold, setFold] = useState(false);
+
+  const [backgroundColor] = useChangeCheckedBlockColor(id);
 
   const [
     canDrag,
@@ -108,6 +111,7 @@ const ConditionalStatement = useInjectContext(props => {
         >
           <span
             key={uniqueId('visible_')}
+            data-id={id}
             onClick={e => {
               const anchor = e.target.dataset.anchor;
               changeToEditableTemplate(anchor);
@@ -123,7 +127,7 @@ const ConditionalStatement = useInjectContext(props => {
               }
             }}
             dangerouslySetInnerHTML={{ __html: templateVisible }}
-          ></span>
+          />
         </div>
         <div className="IFItem-header-operation">
           {!readOnly && (
@@ -143,7 +147,12 @@ const ConditionalStatement = useInjectContext(props => {
           />
         </div>
       </div>
-      <div className={`IFItem-content ifstatement-fold-${id}`}>
+      <div
+        className={`IFItem-content ifstatement-fold-${id}`}
+        style={{
+          backgroundColor,
+        }}
+      >
         <div className="IFItem-if">
           {card.ifChildren.map((subChildren, i) => {
             return renderStatement(subChildren, i);
