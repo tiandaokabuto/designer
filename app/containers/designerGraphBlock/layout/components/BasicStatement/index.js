@@ -22,6 +22,7 @@ import {
   useVisibleDynamicUpdate,
   useWatchCmdDesc,
   useTransformToPython,
+  useChangeCheckedBlockColor,
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
@@ -77,6 +78,8 @@ const BasicStatement = useInjectContext(props => {
     changeToEditableTemplate,
     save,
   ] = useVisibleDynamicUpdate(id, visibleTemplate, readOnly);
+
+  const [backgroundColor] = useChangeCheckedBlockColor(id);
 
   const handleEmitCodeTransform = useTransformToPython();
 
@@ -266,6 +269,9 @@ const BasicStatement = useInjectContext(props => {
       <div
         className={isTail ? 'card-mask card-mask__tail' : 'card-mask'}
         data-id={isTail ? '' : id}
+        style={{
+          backgroundColor: backgroundColor,
+        }}
         ref={dragImage}
       ></div>
       <Interactive

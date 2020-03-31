@@ -13,35 +13,39 @@ export default ({ className }) => {
     const handleClick = e => {
       const checkedId = e.target.getAttribute('data-id');
       if (checkedId) {
-        if (e.target.classList.contains('loopstatement-header-title')) {
-          // TODO...
-          dispatch({
-            type: CHANGE_CHECKEDID,
-            payload: checkedId,
-          });
-          return;
-        } else if (e.target.classList.contains('IFItem-header-title')) {
-          dispatch({
-            type: CHANGE_CHECKEDID,
-            payload: checkedId,
-          });
-          return;
-        }
-        if (prevChecked.dom) {
-          // 恢复之前选中的代码块
-          // prevChecked.dom.style.borderStyle = 'dashed';
-          prevChecked.dom.style.background = '#fff';
-        }
-        if (e.target.nextSibling) {
-          prevChecked.dom = e.target.nextSibling;
-          // e.target.nextSibling.style.borderStyle = 'solid';
-          e.target.nextSibling.style.background = '#DAF2ED';
+        dispatch({
+          type: CHANGE_CHECKEDID,
+          payload: checkedId,
+        });
+        // if (e.target.classList.contains('loopstatement-header-title')) {
+        //   // TODO...
+        //   dispatch({
+        //     type: CHANGE_CHECKEDID,
+        //     payload: checkedId,
+        //   });
+        //   return;
+        // } else if (e.target.classList.contains('IFItem-header-title')) {
+        //   dispatch({
+        //     type: CHANGE_CHECKEDID,
+        //     payload: checkedId,
+        //   });
+        //   return;
+        // }
+        // if (prevChecked.dom) {
+        //   // 恢复之前选中的代码块
+        //   // prevChecked.dom.style.borderStyle = 'dashed';
+        //   prevChecked.dom.style.background = '#fff';
+        // }
+        // if (e.target.nextSibling) {
+        //   prevChecked.dom = e.target.nextSibling;
+        //   // e.target.nextSibling.style.borderStyle = 'solid';
+        //   e.target.nextSibling.style.background = '#DAF2ED';
 
-          dispatch({
-            type: CHANGE_CHECKEDID,
-            payload: checkedId,
-          });
-        }
+        //   dispatch({
+        //     type: CHANGE_CHECKEDID,
+        //     payload: checkedId,
+        //   });
+        // }
       }
     };
     container.addEventListener('click', handleClick, false);

@@ -65,7 +65,30 @@ const readGlobalConfig = (callback, flag = false) => {
           const abilityStructure = await getAbialityStructure;
           const abilityTree = await getAbilityTree;
           message.info('刷新成功');
-          const treeData = automicListToTree(abilityTree, abilityStructure);
+          const treeData = [
+            {
+              pKey: null,
+              key: 'favorite',
+              title: '收藏',
+              children: [],
+              returnTreeData: null,
+            },
+            {
+              pKey: null,
+              key: 'recent',
+              title: '最近',
+              children: [],
+              returnTreeData: null,
+            },
+            {
+              pKey: null,
+              key: 'aviable',
+              title: '可用',
+              returnTreeData: null,
+              children: automicListToTree(abilityTree, abilityStructure),
+            },
+          ];
+
           writeGlobalConfig({
             automicList: treeData,
           });
@@ -84,42 +107,6 @@ const readGlobalConfig = (callback, flag = false) => {
           }
         });
 
-        const fakeData = [
-          {
-            title: '测试',
-            pKey: -1,
-            key: '1',
-            depth: 0,
-            children: [
-              {
-                title: '二层目录',
-                pKey: 1,
-                key: '2',
-                depth: 1,
-                children: [
-                  {
-                    pKey: 2,
-                    key: '3',
-                    depth: 2,
-                    item: {
-                      text: '测试---',
-                      $$typeof: 1,
-                    },
-                  },
-                ],
-              },
-              {
-                depth: 1,
-                item: {
-                  $$typeof: 1,
-                  text: '二级目录--结点',
-                },
-                pKey: 1,
-                key: '4',
-              },
-            ],
-          },
-        ];
         callback && callback(automicList);
       }
     }

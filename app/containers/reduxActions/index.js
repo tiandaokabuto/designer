@@ -12,7 +12,11 @@ import {
   RESET_ALLGRAPHEDITDATA,
   RESET_GRAPHERITORALLDATA,
 } from '../../actions/grapheditor';
-import { SYNCHRO_CODEBLOCK, CHANGE_AUTOMICLIST } from '../../actions/codeblock';
+import {
+  SYNCHRO_CODEBLOCK,
+  CHANGE_AUTOMICLIST,
+  CHANGE_CHECKEDID,
+} from '../../actions/codeblock';
 import {
   UPDATE_EXECUTEOUTPUT,
   UPDATE_CURRENTPAGEPOSITION,
@@ -20,6 +24,13 @@ import {
 import store from '../../store';
 
 const { dispatch } = store;
+
+export const updateCheckedBlockId = id => {
+  dispatch({
+    type: CHANGE_CHECKEDID,
+    payload: id,
+  });
+};
 
 /**
  * 修改当前所处的页面位置

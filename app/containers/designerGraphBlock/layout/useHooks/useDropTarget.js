@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 import { useDrop } from 'react-dnd';
+import uniqueId from 'lodash/uniqueId';
 
-import ItemTypes, { PLACEHOLDER_STATEMENT } from '../statementTypes';
+import ItemTypes, { PLACEHOLDER_STATEMENT, PREFIX_ID } from '../statementTypes';
 
 const useDropTarget = ({
   setClassName,
@@ -60,6 +61,7 @@ const useDropTarget = ({
       item.index = hoverIndex;
     },
     drop(item, monitor) {
+      const newId = uniqueId(PREFIX_ID);
       if (!ref.current) {
         return;
       }
@@ -71,9 +73,11 @@ const useDropTarget = ({
             ? index
             : index + 1,
           id,
-          item
+          item,
+          newId
         );
       }
+      return { newId };
     },
   });
 
