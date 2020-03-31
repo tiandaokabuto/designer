@@ -19,6 +19,7 @@ import { query } from './PinYin';
 
 const { TreeNode } = Tree;
 const { Search } = Input;
+const MAX_RENCENT_DEQUEUE_LENGTH = 10;
 
 const canDisplay = (match, filter) => {
   if (!match) return false;
@@ -100,7 +101,7 @@ export default useInjectContext(({ updateAutomicList }) => {
       const node = recentList.splice(index, 1);
       recentList.unshift(...node);
     } else {
-      if (recentList.length >= 10) {
+      if (recentList.length >= MAX_RENCENT_DEQUEUE_LENGTH) {
         recentList.pop();
       }
       recentList.unshift(item);
