@@ -303,9 +303,9 @@ export default memo(
             </div>
           }
           // onOk={hanldePublishModalOk}
-          // onCancel={() => {
-          //   setModalVisible(false);
-          // }}
+          onCancel={() => {
+            setModalVisible(false);
+          }}
         >
           <Form {...layout} labelAlign="left">
             <FormItem label="描述">
