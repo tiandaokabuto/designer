@@ -41,8 +41,8 @@ const Login = () => {
           key: 'name',
           inputValue: userName,
           handleInputVauleChange: setUserName,
-          label: '用户名',
-          placeholder: '请输入用户名',
+          label: '登录账号',
+          placeholder: '请输入登录账号',
           formItemClassName: 'login-right-username',
         },
         {
@@ -99,7 +99,7 @@ const Login = () => {
 =======
         if (json.code !== -1) {
           remote.getGlobal('sharedObject').token = json.data.token;
-          remote.getGlobal('sharedObject').userName = json.data.userName;
+          remote.getGlobal('sharedObject').userName = json.data.roleName;
           ipcRenderer.send('loginSuccess');
           return true;
 >>>>>>> feat: 添加离线登录功能
