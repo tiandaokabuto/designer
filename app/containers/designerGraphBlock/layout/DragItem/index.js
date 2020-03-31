@@ -108,13 +108,34 @@ export default () => {
   return (
     <div className="dragger-editor-item">
       <div className="dragger-editor-item-title">
-        <div>组件库</div>
-        <Icon
-          type="redo"
-          onClick={() => {
-            event.emit('update_list');
-          }}
-        />
+        <div className="dragger-editor-item-title-text">组件库</div>
+        <div className="dragger-editor-item-title-icons">
+          <Icon
+            type={
+              expandedKeys.length === treeData.length
+                ? 'minus-square'
+                : 'plus-square'
+            }
+            style={{ marginRight: '10px' }}
+            onClick={() => {
+              if (expandedKeys.length !== treeData.length) {
+                const data = [];
+                treeData.forEach((item, index) => {
+                  data.push(index + '');
+                });
+                setExpandedKeys(data);
+              } else {
+                setExpandedKeys([]);
+              }
+            }}
+          />
+          <Icon
+            type="redo"
+            onClick={() => {
+              event.emit('update_list');
+            }}
+          />
+        </div>
       </div>
       <div className="dragger-editor-item-search">
         <Search
@@ -136,6 +157,7 @@ export default () => {
         // selectable={false}
         expandedKeys={expandedKeys}
         onExpand={expandedKeys => {
+          console.log(expandedKeys);
           setExpandedKeys(expandedKeys);
         }}
         onSelect={(_, e) => {
