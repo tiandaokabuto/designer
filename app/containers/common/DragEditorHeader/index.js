@@ -110,10 +110,10 @@ export default memo(
     const handleOperation = () => {
       try {
         transformProcessToPython();
+        executePython();
       } catch (e) {
         message.error('代码转换出错，请检查流程图');
       }
-      executePython();
     };
 
     const TOOLS_DESCRIPTION_FOR_CODEBLOCK = useMemo(
