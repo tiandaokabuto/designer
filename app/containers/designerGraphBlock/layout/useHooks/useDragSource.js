@@ -34,7 +34,7 @@ export default ({
       /* eslint-disable */
       useLockContextMenu(true);
     },
-    end(monitor) {
+    end(item, monitor) {
       setIsDraggingNode({});
       // 解锁
       /* eslint-disable */

@@ -66,6 +66,8 @@ const BasicStatement = useInjectContext(props => {
 
   const cards = useSelector(state => state.blockcode.cards);
 
+  const checkedId = useSelector(state => state.blockcode.checkedId);
+
   const hasLookTarget = useHasLookTarget(card);
 
   const cmdDesc = useWatchCmdDesc(card);
@@ -141,6 +143,22 @@ const BasicStatement = useInjectContext(props => {
     Object.assign(card.layout, layout);
     handleEmitCodeTransform(cards);
   };
+
+  // ********************
+  const [backgroundColor, setBackgroundColor] = useState('#fff');
+  useEffect(() => {
+    console.log(checkedId, id);
+    if (checkedId && checkedId === id) {
+      if (backgroundColor === '#fff') {
+        setBackgroundColor('#DAF2ED');
+      }
+    }
+    if (!checkedId || checkedId !== id) {
+      if (backgroundColor === '#DAF2ED') {
+        setBackgroundColor('#fff');
+      }
+    }
+  }, [checkedId, id, backgroundColor]);
 
   return (
     <div
@@ -265,6 +283,9 @@ const BasicStatement = useInjectContext(props => {
       <div
         className={isTail ? 'card-mask card-mask__tail' : 'card-mask'}
         data-id={isTail ? '' : id}
+        style={{
+          backgroundColor: backgroundColor,
+        }}
         ref={dragImage}
       ></div>
       <Interactive
