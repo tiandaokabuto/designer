@@ -7,13 +7,15 @@ const LoginFromInput = ({
   handleInputVauleChange,
   label,
   placeholder,
-  formItemClassName
+  type,
+  formItemClassName,
 }) => {
   return (
     <div className={formItemClassName}>
       <div>{label}</div>
       <Input
         value={inputValue}
+        {...(type ? { type: 'password' } : {})}
         placeholder={placeholder}
         onChange={e => {
           handleInputVauleChange(e.target.value);
@@ -28,14 +30,14 @@ LoginFromInput.propTypes = {
   handleInputVauleChange: PropTypes.func.isRequired,
   label: PropTypes.string,
   placeholder: PropTypes.string,
-  formItemClassName: PropTypes.string
+  formItemClassName: PropTypes.string,
 };
 
 LoginFromInput.defaultProps = {
   inputValue: undefined,
   label: '',
   placeholder: '',
-  formItemClassName: ''
+  formItemClassName: '',
 };
 
 export default LoginFromInput;

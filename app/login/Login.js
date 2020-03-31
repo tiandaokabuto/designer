@@ -41,6 +41,7 @@ const Login = () => {
           key: 'password',
           inputValue: password,
           handleInputVauleChange: setPassword,
+          type: 'password',
           label: '密码',
           placeholder: '请输入密码',
           formItemClassName: 'login-right-password',
