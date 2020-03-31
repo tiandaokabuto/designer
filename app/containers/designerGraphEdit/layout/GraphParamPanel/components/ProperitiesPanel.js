@@ -1,6 +1,5 @@
 import React from 'react';
 import { Input } from 'antd';
-import { useSelector } from 'react-redux';
 import { withPropsAPI } from 'gg-editor';
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 
@@ -18,8 +17,28 @@ const FormItem = ({
   noticyBlockCodeChange,
 }) => {
   const handleLableChange = useDebounce(e => {
-    const value = e.target.value;
-    param.value = value;
+    const maxLength = 18;
+    let lableValue = e.target.value;
+    param.value = lableValue;
+    const labelLength = lableValue.length;
+    if (labelLength > maxLength / 2) {
+      let stringLengthCount = 0;
+      for (let i = 0; i < labelLength; i += 1) {
+        if (/[^\x00-\xff]/.test(lableValue[i])) {
+          stringLengthCount += 2;
+        } else {
+          stringLengthCount += 1;
+        }
+        if (stringLengthCount > maxLength) {
+          let newLableValue = lableValue.substring(0, i);
+          if (i < labelLength) {
+            newLableValue += '...';
+          }
+          lableValue = newLableValue;
+          break;
+        }
+      }
+    }
 
     const { executeCommand, update, save, find } = propsAPI;
     const item = find(checkedGraphBlockId);
@@ -32,10 +51,11 @@ const FormItem = ({
     }, 0);
     executeCommand(
       update(item, {
-        label: value,
+        label: lableValue,
       })
     );
   }, 333);
+
   return (
     <div
       style={{
