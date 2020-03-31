@@ -25,7 +25,7 @@ const zip = new JSZIP();
  * @param {*} callback 项目创建完成后的回调函数
  */
 export const newProject = (name, callback) => {
-  // clearGrapheditorData();
+  clearGrapheditorData();
   fs.mkdir(PATH_CONFIG('project', name), { recursive: true }, function(err) {
     if (!err) {
       callback();
@@ -567,7 +567,7 @@ export const downProcessZipToLocal = (filePath, editorBlockPythonCode) => {
     deleteFolder(filePath);
     fs.mkdirSync(filePath);
   }
-  fs.writeFileSync(filePath + '/main.py', editorBlockPythonCode);
+  fs.writeFileSync(filePath + '/test.py', editorBlockPythonCode);
   readDir(zip, filePath);
   zip
     .generateAsync({
