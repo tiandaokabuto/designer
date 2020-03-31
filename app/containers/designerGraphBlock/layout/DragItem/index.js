@@ -52,6 +52,8 @@ export default useInjectContext(
 
     const [expandedKeys, setExpandedKeys] = useState([]);
 
+    const [isAllExpand, setIsAllExpand] = useState(false);
+
     const [filter, setFilter] = useState('');
 
     const [treeData, setTreeData] = useState([]);
@@ -66,7 +68,7 @@ export default useInjectContext(
       treeData.forEach((child, index) => {
         if (!child.children) {
           // 原子能力结点
-          if (!canDisplay(child.item.text, filter)) {
+          if (!canDisplay(child.item && child.item.text, filter)) {
             // no match
             child.isFilter = true;
           } else {
@@ -168,21 +170,28 @@ export default useInjectContext(
           <div className="dragger-editor-item-title-text">组件库</div>
           <div className="dragger-editor-item-title-icons">
             <Icon
-              type={
-                expandedKeys.length === treeData.length
-                  ? 'minus-square'
-                  : 'plus-square'
-              }
+              type={isAllExpand ? 'minus-square' : 'plus-square'}
               style={{ marginRight: '10px' }}
               onClick={() => {
-                if (expandedKeys.length !== treeData.length) {
-                  const data = [];
-                  treeData.forEach((item, index) => {
-                    data.push(index + '');
+                const aviableData = treeData.find(
+                  item => item.key === 'aviable'
+                );
+                console.log(expandedKeys);
+                console.log(treeData);
+                console.log(aviableData);
+                if (
+                  expandedKeys.length !==
+                  treeData.length + aviableData.children.length
+                ) {
+                  const data = ['aviable', 'recent', 'favorite'];
+                  aviableData.children.forEach(item => {
+                    data.push(item.key);
                   });
                   setExpandedKeys(data);
+                  setIsAllExpand(true);
                 } else {
                   setExpandedKeys([]);
+                  setIsAllExpand(false);
                 }
               }}
             />

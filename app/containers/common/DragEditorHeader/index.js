@@ -85,10 +85,15 @@ export default memo(
         message.error('版本格式错误，请检查您的版本号');
       } else {
         setModalVisible(false);
-        transformProcessToPython();
-        setTimeout(() => {
-          handlePublishZip(descText, versionText);
-        }, 0);
+
+        try {
+          transformProcessToPython();
+          setTimeout(() => {
+            handlePublishZip(descText, versionText);
+          }, 0);
+        } catch (e) {
+          message.error('代码转换出错，请检查流程图');
+        }
       }
     };
 
@@ -103,7 +108,11 @@ export default memo(
     };
 
     const handleOperation = () => {
-      transformProcessToPython();
+      try {
+        transformProcessToPython();
+      } catch (e) {
+        message.error('代码转换出错，请检查流程图');
+      }
       executePython();
     };
 
