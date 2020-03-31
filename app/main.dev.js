@@ -25,18 +25,30 @@ appexpress.use(bodyParser.urlencoded({ extended: false }));
 // 本地监听8888端口 获取动态的xpath元素回填
 
 // --------------------------- express版本
+appexpress.post('/query', function(req, res) {
+  if (targetId === undefined) {
+    res.sendStatus(500);
+  } else {
+    res.sendStatus(200);
+  }
+});
 appexpress.post('/upload', function(req, res) {
   try {
     // const result = JSON.stringify(req.body);
     // const str = result.replace(/}}/, '}');
     // const finallyResult = str ? JSON.parse(str) : {};
     const finallyResult = req.body;
-    mainWindow.restore();
     //将结果通知给渲染进程
     if (targetId === undefined) {
       res.sendStatus(500);
       return;
     }
+
+    if (!finallyResult.value) {
+      return;
+    }
+
+    mainWindow.restore();
     mainWindow.webContents.send('updateXpath', {
       ...finallyResult.value,
       targetId,
