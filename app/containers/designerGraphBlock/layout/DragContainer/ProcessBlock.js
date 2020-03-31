@@ -1,8 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { InjectProvider } from 'react-hook-easier/lib/useInjectContext';
 
-import uniqueId from 'lodash/uniqueId';
-
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 import { useStore, useSelector, useDispatch } from 'react-redux';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
@@ -206,10 +204,7 @@ export default ({ readOnly = false }) => {
   );
 
   const addCard = useCallback(
-    (insertIndex, id, card) => {
-      // dispatch({
-      //   type: 'add-cards',
-      // });
+    (insertIndex, id, card, newId) => {
       const findId = id.replace(/-tail/, '');
       const isTail = isTailStatement(id);
       //setCards(cards => {
@@ -226,8 +221,9 @@ export default ({ readOnly = false }) => {
         // 包含循环语句的占位符和普通语句的情况
         currentLevel = findNodeLevelById(cards, findId, isTail);
       }
+
       /* eslint-disable */
-      const newNode = useNode(card, uniqueId(PREFIX_ID));
+      const newNode = useNode(card, newId);
       if (!currentLevel) {
         dispatch({
           type: CHANGE_CARDDATA,
