@@ -16,6 +16,7 @@ import {
 import { traverseTree, findNodeByKey } from '../../../common/utils';
 
 import { query } from './PinYin';
+import { saveAutomicList } from './utils';
 
 const { TreeNode } = Tree;
 const { Search } = Input;
@@ -109,6 +110,7 @@ export default useInjectContext(
       }
 
       updateAutomicList([...atomicCList]);
+      saveAutomicList(cloneDeep(atomicCList));
     };
 
     const renderTreeNode = (tree, filter) => {
@@ -144,6 +146,7 @@ export default useInjectContext(
       node.loved = true;
       favoriteList.push(node);
       updateAutomicList([...atomicCList]);
+      saveAutomicList(cloneDeep(atomicCList));
     };
 
     const removeFromLovedList = key => {
@@ -152,6 +155,7 @@ export default useInjectContext(
       const index = favoriteList.findIndex(item => item.key === key);
       favoriteList.splice(index, 1);
       updateAutomicList([...atomicCList]);
+      saveAutomicList(cloneDeep(atomicCList));
     };
 
     useEffect(() => {
