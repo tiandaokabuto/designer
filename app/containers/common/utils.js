@@ -567,7 +567,7 @@ export const downProcessZipToLocal = (filePath, editorBlockPythonCode) => {
     deleteFolder(filePath);
     fs.mkdirSync(filePath);
   }
-  fs.writeFileSync(filePath + '/main.py', editorBlockPythonCode);
+  fs.writeFileSync(filePath + '/test.py', editorBlockPythonCode);
   readDir(zip, filePath);
   zip
     .generateAsync({
