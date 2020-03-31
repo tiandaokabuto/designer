@@ -230,17 +230,25 @@ export default () => {
         treeData={transformTreeTitle(processTree)}
         selectedKeys={[currentCheckedTreeNode]}
         onSelect={(selectedKey, e) => {
-          const isModified = hasNodeModified(
-            processTree,
-            currentCheckedTreeNode
-          );
-          setSelectedKey(selectedKey[0]);
-          if (isModified) {
-            setModalVisible(true);
-          } else {
-            resetGraphEditData();
+          // const isModified = hasNodeModified(
+          //   processTree,
+          //   currentCheckedTreeNode
+          // );
+          if (currentCheckedTreeNode === undefined) {
+            setSelectedKey(selectedKey[0]);
             changeCheckedTreeNode(selectedKey[0]);
+          } else {
+            if (selectedKey.length !== 0) {
+              setSelectedKey(selectedKey[0]);
+              changeCheckedTreeNode(selectedKey[0]);
+            }
           }
+          // if (isModified) {
+          //   setModalVisible(true);
+          // } else {
+          //   resetGraphEditData();
+          //   changeCheckedTreeNode(selectedKey[0]);
+          // }
         }}
       />
       <ContextMenu
