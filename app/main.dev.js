@@ -33,10 +33,13 @@ appexpress.post('/upload', function(req, res) {
     const finallyResult = req.body;
     mainWindow.restore();
     //将结果通知给渲染进程
-    if (targetId === undefined) return;
+    if (targetId === undefined) {
+      res.sendStatus(500);
+      return;
+    }
     mainWindow.webContents.send('updateXpath', {
       ...finallyResult.value,
-      targetId
+      targetId,
     });
     targetId = undefined;
   } catch (e) {
@@ -94,8 +97,8 @@ const createLoginWindow = () => {
     resizable: false,
     webPreferences: {
       nodeIntegration: true,
-      devTools: true
-    }
+      devTools: true,
+    },
   });
 
   loginWindow.setIcon(path.join(__dirname, 'small.png'));
@@ -119,8 +122,8 @@ const createMainWindow = () => {
     // movable: false, //可否移动
     webPreferences: {
       nodeIntegration: true,
-      devTools: true
-    }
+      devTools: true,
+    },
   });
 
   mainWindow.setIcon(path.join(__dirname, 'small.png'));
@@ -160,7 +163,7 @@ const createWindow = async () => {
 
   global.sharedObject = {
     token: undefined,
-    userName: ''
+    userName: '',
   };
 
   // 登录成功切换到主页面
@@ -183,7 +186,7 @@ const createWindow = async () => {
     dialog
       .showSaveDialog(mainWindow, {
         title: '流程另存为',
-        buttonLabel: '存储'
+        buttonLabel: '存储',
       })
       .then(({ filePath, canceled }) => {
         if (!canceled) {
