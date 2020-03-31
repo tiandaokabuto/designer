@@ -19,7 +19,11 @@ import {
   formatDateTime,
   deleteFolderRecursive,
 } from '../common/utils';
-import { changeCurrentProject, clearGrapheditorData } from '../reduxActions';
+import {
+  changeCurrentProject,
+  clearGrapheditorData,
+  resetGraphEditData
+} from '../reduxActions';
 
 import './index.scss';
 
@@ -124,7 +128,8 @@ export default useInjectContext(({ history }) => {
                   // 打开对应的项目
                   openProject(record.name);
                   changeCurrentProject(record.name);
-                  clearGrapheditorData();
+                  // clearGrapheditorData();
+                  resetGraphEditData();
                   history.push('/designGraphEdit');
                 },
               };

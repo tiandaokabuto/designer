@@ -29,7 +29,6 @@ export const newProject = (name, callback) => {
   fs.mkdir(PATH_CONFIG('project', name), { recursive: true }, function(err) {
     if (!err) {
       callback();
-      console.log('创建成功');
       // 修改左侧自定义目录树
       changeProcessTree([]);
       const initialJson = {
@@ -111,7 +110,6 @@ export const deleteNodeByKey = (tree, name, key, parent = tree) => {
     if (child.key === key) {
       if (Array.isArray(parent)) {
         // parent为数组，parent = processTree时，在第一层
-        console.log(parent, 'isArray---true');
         // 父节点是否是数组
         let index = parent.findIndex(item => item.key === key); // 从数组中找到这个元素的index
         let target = parent.find(item => item.key === key);
@@ -131,16 +129,9 @@ export const deleteNodeByKey = (tree, name, key, parent = tree) => {
         }
         parent.splice(index, 1); // 在tree中删掉该元素
       } else {
-        console.log(key);
         // parent不是processTree的情况
-        console.log(JSON.parse(JSON.stringify(parent)), 'isArray---false');
-        console.log(
-          JSON.parse(JSON.stringify(parent.children)),
-          'isArray---false'
-        );
         let index = parent.children.findIndex(item => item.key === key);
         const target = parent.children.find(item => item.key === key);
-        console.log(target);
         if (target.children) {
           traverseTree(target.children, item => {
             if (item.type === 'process') {
@@ -159,8 +150,6 @@ export const deleteNodeByKey = (tree, name, key, parent = tree) => {
       return;
     }
     if (child.children) {
-      console.log('递归');
-      console.log(child);
       deleteNodeByKey(child.children, name, key, child);
     }
   }
@@ -208,7 +197,6 @@ export const renameNodeByKey = (
   const node = findNodeByKey(tree, key);
   const parent = findParentNodeByKey(tree, key) || [];
   const oldTitle = node.title;
-  console.log(node, parent, key, tree, name);
   node.title = (
     <Input
       autoFocus
@@ -277,7 +265,6 @@ export const persistentStorage = (processTree, name, node) => {
   traverseTree(processTree, treeItem => {
     // 匹配点击的流程
     if (treeItem.key === node) {
-      console.log(treeItem);
       if (treeItem.type === 'process') {
         fs.writeFile(
           PATH_CONFIG('project', `${name}/${treeItem.title}/manifest.json`),
@@ -454,20 +441,10 @@ export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
   const files = fs.readdirSync(PATH_CONFIG('project', currentProject));
   return files.find(item => item === title);
   // const isDirNodeBool = isDirNode(tree, checkedTreeNode);
-  // console.log(isDirNodeBool);
   // // 不在同级下建目录或流程跳过检验
   // if (!isDirNodeBool) return false;
   // const children = isDirNodeBool.children;
   // return children.find(item => item.title === title);
-};
-
-export const isDirNameExist = (
-  tree,
-  title,
-  checkedTreeNode,
-  currentProject
-) => {
-  console.log(tree, title, checkedTreeNode, currentProject);
 };
 
 /**
@@ -483,9 +460,7 @@ export const openProject = name => {
       const dirs = fs.readdirSync(PATH_CONFIG('project', name));
       const { processTree } = JSON.parse(data.toString());
       // 遍历项目文件夹下面的流程文件夹，读取manifest.json里流程的数据，写入processTree
-      // console.log(dirs);
       dirs.forEach(dirItem => {
-        // console.log(dirItem);
         if (dirItem !== 'manifest.json') {
           try {
             const data = JSON.parse(

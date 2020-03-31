@@ -12,6 +12,7 @@ import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
+import PATH_CONFIG from '@/constants/localFilePath';
 
 import {
   useDropTarget,

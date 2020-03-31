@@ -14,6 +14,7 @@ export default () => {
 
   const publishZip = (descText, versionText) => {
     const process = require('process');
+    console.log(pythonCode, '---');
     writeFile(
       `${process.cwd()}/python/test.py`,
       pythonCodeRef.current,

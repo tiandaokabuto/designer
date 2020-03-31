@@ -3,8 +3,12 @@ module.exports = {
   settings: {
     'import/resolver': {
       webpack: {
-        config: require.resolve('./configs/webpack.config.eslint.js')
-      }
-    }
-  }
-}
+        config: require.resolve('./configs/webpack.config.eslint.js'),
+      },
+    },
+  },
+  rules: {
+    'jsx-a11y/no-static-element-interactions': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off',
+  },
+};

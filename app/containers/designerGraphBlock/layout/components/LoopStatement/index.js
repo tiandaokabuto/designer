@@ -9,6 +9,7 @@ import {
   useDropTarget,
   useDeleteNodeById,
   useVisibleDynamicUpdate,
+  useChangeCheckedBlockColor,
 } from '../../useHooks';
 
 import ItemTypes from '../../statementTypes';
@@ -48,6 +49,8 @@ const LoopStatement = useInjectContext(props => {
   } = props;
 
   const [isFold, setFold] = useState(false);
+
+  const [backgroundColor] = useChangeCheckedBlockColor(id);
 
   const [
     canDrag,
@@ -103,7 +106,7 @@ const LoopStatement = useInjectContext(props => {
       ref={isFold ? null : dragImage}
       className={`loopstatement ${className}`}
     >
-      <div className="loopstatement-drag-mask"></div>
+      <div className="loopstatement-drag-mask" />
       <div
         className="loopstatement-fold-anchor"
         ref={ref}
@@ -118,6 +121,7 @@ const LoopStatement = useInjectContext(props => {
           ref={isFold ? dragImage : null}
         >
           <span
+            data-id={id}
             key={uniqueId('visible_')}
             onClick={e => {
               const anchor = e.target.dataset.anchor;
@@ -134,7 +138,7 @@ const LoopStatement = useInjectContext(props => {
               }
             }}
             dangerouslySetInnerHTML={{ __html: templateVisible }}
-          ></span>
+          />
         </div>
         {!readOnly && (
           <div className="loopstatement-header-operation">
@@ -148,7 +152,12 @@ const LoopStatement = useInjectContext(props => {
           </div>
         )}
       </div>
-      <div className={`loopstatement-content loopstatement-fold-${id}`}>
+      <div
+        className={`loopstatement-content loopstatement-fold-${id}`}
+        style={{
+          backgroundColor,
+        }}
+      >
         {card.children.map((subChildren, i) => renderStatement(subChildren, i))}
         {!readOnly &&
           renderTailStatement({

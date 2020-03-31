@@ -28,7 +28,6 @@ export const saveAutomicList = automicList => {
       }
     }
   });
-
   writeGlobalConfig({
     automicList,
   });

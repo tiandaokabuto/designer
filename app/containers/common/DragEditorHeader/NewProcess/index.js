@@ -2,12 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Modal, Form, Input, Select, message } from 'antd';
 import { useSelector } from 'react-redux';
 
-import {
-  newProcess,
-  persistentStorage,
-  isNameExist,
-  isDirNameExist
-} from '../../utils';
+import { newProcess, persistentStorage, isNameExist } from '../../utils';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
