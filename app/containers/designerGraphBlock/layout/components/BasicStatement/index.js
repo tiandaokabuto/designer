@@ -21,6 +21,7 @@ import {
   useVisibleDynamicUpdate,
   useWatchCmdDesc,
   useTransformToPython,
+  useChangeCheckedBlockColor,
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
@@ -66,8 +67,6 @@ const BasicStatement = useInjectContext(props => {
 
   const cards = useSelector(state => state.blockcode.cards);
 
-  const checkedId = useSelector(state => state.blockcode.checkedId);
-
   const hasLookTarget = useHasLookTarget(card);
 
   const cmdDesc = useWatchCmdDesc(card);
@@ -78,6 +77,8 @@ const BasicStatement = useInjectContext(props => {
     changeToEditableTemplate,
     save,
   ] = useVisibleDynamicUpdate(id, visibleTemplate, readOnly);
+
+  const [backgroundColor] = useChangeCheckedBlockColor(id);
 
   const handleEmitCodeTransform = useTransformToPython();
 
@@ -143,22 +144,6 @@ const BasicStatement = useInjectContext(props => {
     Object.assign(card.layout, layout);
     handleEmitCodeTransform(cards);
   };
-
-  // ********************
-  const [backgroundColor, setBackgroundColor] = useState('#fff');
-  useEffect(() => {
-    console.log(checkedId, id);
-    if (checkedId && checkedId === id) {
-      if (backgroundColor === '#fff') {
-        setBackgroundColor('#DAF2ED');
-      }
-    }
-    if (!checkedId || checkedId !== id) {
-      if (backgroundColor === '#DAF2ED') {
-        setBackgroundColor('#fff');
-      }
-    }
-  }, [checkedId, id, backgroundColor]);
 
   return (
     <div
