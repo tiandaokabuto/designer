@@ -173,20 +173,17 @@ export default useInjectContext(
               type={isAllExpand ? 'minus-square' : 'plus-square'}
               style={{ marginRight: '10px' }}
               onClick={() => {
-                const aviableData = treeData.find(
-                  item => item.key === 'aviable'
-                );
-                console.log(expandedKeys);
-                console.log(treeData);
-                console.log(aviableData);
-                if (
-                  expandedKeys.length !==
-                  treeData.length + aviableData.children.length
-                ) {
-                  const data = ['aviable', 'recent', 'favorite'];
-                  aviableData.children.forEach(item => {
+                // const aviableData = treeData.find(
+                //   item => item.key === 'aviable'
+                // );
+                // const data = ['aviable', 'recent', 'favorite'];
+                const data = [];
+                traverseTree(treeData, item => {
+                  if (item.children) {
                     data.push(item.key);
-                  });
+                  }
+                });
+                if (expandedKeys.length !== data.length) {
                   setExpandedKeys(data);
                   setIsAllExpand(true);
                 } else {
