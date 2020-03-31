@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 
 export default card => {
-  const [desc, setDesc] = useState(card.cmdDesc);
+  const [desc, setDesc] = useState(card._userDesc);
   useEffect(() => {
-    if (!card || !card.cmdDesc) return;
-    card._cmdDesc = card.cmdDesc;
-    Object.defineProperty(card, 'cmdDesc', {
+    const descriptor = Object.getOwnPropertyDescriptor(card, 'userDesc');
+    if (!card || card._userDesc || (descriptor && descriptor.get)) return;
+    card._userDesc = card.userDesc;
+    Object.defineProperty(card, 'userDesc', {
       get() {
-        return this._cmdDesc;
+        return this._userDesc;
       },
       set(value) {
-        this._cmdDesc = value;
+        this._userDesc = value;
         setDesc(value);
       },
     });
