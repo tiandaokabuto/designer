@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { Tooltip } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import ItemTypes from '../../statementTypes';
 
@@ -24,8 +25,10 @@ export default ({ item, node, addToRecentList, updateCheckedBlockId }) => {
   });
   drag(ref);
   return (
-    <div ref={ref} className="dragger-editor-item-statement">
-      {item.text}
-    </div>
+    <Tooltip placement="right" title={item.cmdDesc}>
+      <div ref={ref} className="dragger-editor-item-statement">
+        {item.text}
+      </div>
+    </Tooltip>
   );
 };

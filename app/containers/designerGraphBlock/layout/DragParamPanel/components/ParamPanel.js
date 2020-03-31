@@ -38,7 +38,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
               defaultValue={place}
               key={index}
               style={{
-                marginBottom: 8
+                marginBottom: 8,
               }}
               onChange={e => {
                 param.placeholder[index] = e.target.value;
@@ -112,13 +112,13 @@ export default ({ checkedBlock }) => {
 
   return (
     <div className="parampanel">
-      {checkedBlock && checkedBlock.cmdDesc !== undefined && (
+      {checkedBlock && (
         <div className="parampanel-desc">
           <span>命令描述符</span>
           <Input
-            defaultValue={checkedBlock.cmdDesc}
+            defaultValue={checkedBlock.userDesc}
             onChange={e => {
-              checkedBlock.cmdDesc = e.target.value;
+              checkedBlock.userDesc = e.target.value;
               handleEmitCodeTransform(cards);
             }}
             onKeyDown={e => {
