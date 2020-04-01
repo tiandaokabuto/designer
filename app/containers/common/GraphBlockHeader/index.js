@@ -7,6 +7,7 @@ import { ConfirmModal } from '../components';
 import NewProject from './NewProject';
 import api from '../../../api';
 import { existModifiedNode, setAllModifiedState } from '../utils';
+import { changeCheckedTreeNode } from '../../reduxActions';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
 const { ipcRenderer, remote } = require('electron');
 
@@ -43,6 +44,7 @@ export default ({ history, tag }) => {
   };
   const processTree = useSelector(state => state.grapheditor.processTree);
   const persistentStorage = usePersistentStorage();
+  const [hasModifiedNodes, setHasModifiedNodes] = useState([]);
   const TOOLS_DESCRIPTION = [
     {
       title: '项目',
@@ -178,7 +180,9 @@ export default ({ history, tag }) => {
           type="close"
           className="graphblock-header-operation"
           onClick={() => {
-            const flag = existModifiedNode(processTree);
+            const [flag, hasModifiedNodes] = existModifiedNode(processTree);
+            console.log(flag);
+            setHasModifiedNodes(hasModifiedNodes);
             if (flag) {
               setModalVisible(true);
             } else {
@@ -219,8 +223,13 @@ export default ({ history, tag }) => {
           handleWindowOperation('close');
         }}
         onOk={() => {
-          setAllModifiedState(processTree);
-          persistentStorage();
+          setAllModifiedState(processTree); // 把所有已修改的状态改为false
+          hasModifiedNodes.forEach(item => {
+            console.log(item);
+            changeCheckedTreeNode(item);
+            persistentStorage();
+          });
+          // persistentStorage(); // 保存当前正在修改的
           setTimeout(() => {
             handleWindowOperation('close');
           }, 100);

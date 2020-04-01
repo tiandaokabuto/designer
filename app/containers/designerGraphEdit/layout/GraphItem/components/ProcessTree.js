@@ -230,25 +230,33 @@ export default () => {
         treeData={transformTreeTitle(processTree)}
         selectedKeys={[currentCheckedTreeNode]}
         onSelect={(selectedKey, e) => {
-          // const isModified = hasNodeModified(
-          //   processTree,
-          //   currentCheckedTreeNode
-          // );
           if (currentCheckedTreeNode === undefined) {
             setSelectedKey(selectedKey[0]);
             changeCheckedTreeNode(selectedKey[0]);
           } else {
             if (selectedKey.length !== 0) {
-              setSelectedKey(selectedKey[0]);
-              changeCheckedTreeNode(selectedKey[0]);
+              console.log(currentCheckedTreeNode, '---当前选中'); // 当前选中的
+              console.log(selectedKey, '---点击'); // 下一步点击的
+              const isModified = hasNodeModified(
+                processTree,
+                currentCheckedTreeNode
+              );
+              console.log(isModified);
+              if (isModified) {
+                // 有更改
+                setSelectedKey(selectedKey[0]);
+                setModalVisible(true);
+                console.log(currentCheckedTreeNode, '---弹窗之后当前选中'); // 当前选中的
+                console.log(selectedKey, '---弹窗之后点击'); // 下一步点击的
+                // changeCheckedTreeNode(selectedKey[0]);
+              } else {
+                // resetGraphEditData();
+                // changeCheckedTreeNode(selectedKey[0]);
+                setSelectedKey(selectedKey[0]);
+                changeCheckedTreeNode(selectedKey[0]);
+              }
             }
           }
-          // if (isModified) {
-          //   setModalVisible(true);
-          // } else {
-          //   resetGraphEditData();
-          //   changeCheckedTreeNode(selectedKey[0]);
-          // }
         }}
       />
       <ContextMenu
@@ -268,11 +276,13 @@ export default () => {
           setModalVisible(false);
         }}
         onOk={() => {
-          resetGraphEditData();
-          setAllModifiedState(processTree);
-          persistentStorage();
-          changeCheckedTreeNode(selectedKey);
-          setModalVisible(false);
+          console.log(selectedKey, '---点确认之后的选中');
+          console.log(currentCheckedTreeNode, '---redux中的选中');
+          setAllModifiedState(processTree); // 把hasmodified改成false
+          persistentStorage(); // 保存currentCheckedTreeNode的内容
+          resetGraphEditData(); // 重设GraphEditData
+          changeCheckedTreeNode(selectedKey); // 修改当前选中
+          setModalVisible(false); // 关闭对话框
         }}
       />
     </div>
