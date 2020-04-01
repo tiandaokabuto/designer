@@ -45,6 +45,7 @@ app/style.css
 app/style.css.map
 dist
 project
+globalconfig
 python
 dll
 main.js
