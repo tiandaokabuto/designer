@@ -68,7 +68,11 @@ export default memo(
             width: '100%',
           };
     return (
-      <div className="dragger-editor-container-output" style={{ ...style }}>
+      <div
+        className="dragger-editor-container-output"
+        style={{ ...style }}
+        onMouseDown={e => e.preventDefault()}
+      >
         <div
           className="dragger-editor-container-output-anchor"
           onMouseDown={e => ((isMouseDown = true), (startOffset = e.pageY))}
