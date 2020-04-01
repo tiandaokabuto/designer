@@ -16,6 +16,7 @@ import useGetProcessName, {
 } from './useHooks/useGetProcessName';
 import {
   setAllModifiedState,
+  setNodeModifiedState,
   downProcessZipToLocal,
   traverseTree,
 } from '../utils';
@@ -45,6 +46,9 @@ export default memo(
     const currentCheckedTreeNode = useSelector(
       state => state.grapheditor.currentCheckedTreeNode
     );
+    const currentCheckedTreeNodeRef = useRef(null);
+    currentCheckedTreeNodeRef.current = currentCheckedTreeNode;
+
     const processTree = useSelector(state => state.grapheditor.processTree);
     const processTreeRef = useRef(null);
     processTreeRef.current = processTree;
@@ -220,7 +224,15 @@ export default memo(
         type: 'iconzhihang',
         onClick: () => {
           // 保存到本地
-          setAllModifiedState(processTreeRef.current);
+          console.log(
+            processTreeRef.current,
+            currentCheckedTreeNodeRef.current
+          );
+          // setAllModifiedState(processTreeRef.current);
+          setNodeModifiedState(
+            processTreeRef.current,
+            currentCheckedTreeNodeRef.current
+          );
           persistentStorage();
           message.success('保存成功');
         },
@@ -302,7 +314,7 @@ export default memo(
                 type="dashed"
                 onClick={() => {
                   setModalVisible(false);
-                  let processName = ''
+                  let processName = '';
                   try {
                     transformProcessToPython();
                     traverseTree(processTree, item => {
@@ -311,7 +323,12 @@ export default memo(
                       }
                     });
                     console.log(versionText, descText, processName);
-                    downloadPython(downProcessZipToLocal, processName, descText, versionText);
+                    downloadPython(
+                      downProcessZipToLocal,
+                      processName,
+                      descText,
+                      versionText
+                    );
                   } catch (e) {
                     message.error('代码转换出错，请检查流程图');
                   }

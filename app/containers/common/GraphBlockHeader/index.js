@@ -6,12 +6,13 @@ import { useSelector } from 'react-redux';
 import { ConfirmModal } from '../components';
 import NewProject from './NewProject';
 import api from '../../../api';
-import { existModifiedNode, setAllModifiedState } from '../utils';
+import { getModifiedNodes, setAllModifiedState } from '../utils';
 import { changeCheckedTreeNode } from '../../reduxActions';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
 const { ipcRenderer, remote } = require('electron');
 
 import './index.scss';
+import { useRef } from 'react';
 
 const generateMenu = arr => {
   return (
@@ -44,7 +45,9 @@ export default ({ history, tag }) => {
   };
   const processTree = useSelector(state => state.grapheditor.processTree);
   const persistentStorage = usePersistentStorage();
-  const [hasModifiedNodes, setHasModifiedNodes] = useState([]);
+  const modifiedNodesArr = useRef([]);
+  // const [modifiedNodesArr, setModifiedNodesArr] = useState([]);
+
   const TOOLS_DESCRIPTION = [
     {
       title: '项目',
@@ -180,30 +183,14 @@ export default ({ history, tag }) => {
           type="close"
           className="graphblock-header-operation"
           onClick={() => {
-            const [flag, hasModifiedNodes] = existModifiedNode(processTree);
-            console.log(flag);
-            setHasModifiedNodes(hasModifiedNodes);
-            if (flag) {
+            modifiedNodesArr.current = getModifiedNodes(processTree);
+            // console.log(modifiedNodesArr);
+            // setModifiedNodesArr(arr);
+            if (modifiedNodesArr.current.length !== 0) {
               setModalVisible(true);
             } else {
               handleWindowOperation('close');
             }
-            // if (flag) {
-            //   Modal.confirm({
-            //     content: '工作区内容尚未保存, 请确认是否保存?',
-            //     onOk() {
-            //       setAllModifiedState(processTree);
-            //       persistentStorage();
-            //       handleWindowOperation('close');
-            //     },
-            //     onCancel() {
-            //       handleWindowOperation('close');
-            //     },
-            //   });
-            // } else {
-            //   handleWindowOperation('close');
-            // }
-            // handleWindowOperation('close')
           }}
         />
       </div>
@@ -223,13 +210,13 @@ export default ({ history, tag }) => {
           handleWindowOperation('close');
         }}
         onOk={() => {
+          console.log(modifiedNodesArr.current);
           setAllModifiedState(processTree); // 把所有已修改的状态改为false
-          hasModifiedNodes.forEach(item => {
-            console.log(item);
-            changeCheckedTreeNode(item);
-            persistentStorage();
-          });
-          // persistentStorage(); // 保存当前正在修改的
+          // modifiedNodesArr.forEach(item => {
+          //   changeCheckedTreeNode(item);
+          //   persistentStorage();
+          // });
+          persistentStorage(modifiedNodesArr.current); // 保存当前正在修改的
           setTimeout(() => {
             handleWindowOperation('close');
           }, 100);
