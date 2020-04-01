@@ -10,17 +10,28 @@ const LoginFromInput = ({
   type,
   formItemClassName,
 }) => {
+  const { Password } = Input;
+
   return (
     <div className={formItemClassName}>
       <div>{label}</div>
-      <Input
-        value={inputValue}
-        {...(type ? { type: 'password' } : {})}
-        placeholder={placeholder}
-        onChange={e => {
-          handleInputVauleChange(e.target.value);
-        }}
-      />
+      {type === 'password' ? (
+        <Password
+          value={inputValue}
+          placeholder={placeholder}
+          onChange={e => {
+            handleInputVauleChange(e.target.value);
+          }}
+        />
+      ) : (
+        <Input
+          value={inputValue}
+          placeholder={placeholder}
+          onChange={e => {
+            handleInputVauleChange(e.target.value);
+          }}
+        />
+      )}
     </div>
   );
 };

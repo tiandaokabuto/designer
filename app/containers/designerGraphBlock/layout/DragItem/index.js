@@ -27,6 +27,7 @@ const canDisplay = (match, filter) => {
   const newMatch = match.toLocaleLowerCase();
   const newFilter = filter.toLocaleLowerCase();
   let toMatch = '';
+  if (newMatch.includes(newFilter)) return true;
   for (const char of newMatch) {
     toMatch += char;
     const queryList = query(toMatch);
