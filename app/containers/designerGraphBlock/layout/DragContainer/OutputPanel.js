@@ -62,6 +62,7 @@ export default memo(
       tag === 'graph'
         ? {
             width: 'calc(100% - 478px)',
+            position: 'absolute',
           }
         : {
             width: '100%',
@@ -71,7 +72,7 @@ export default memo(
         <div
           className="dragger-editor-container-output-anchor"
           onMouseDown={e => ((isMouseDown = true), (startOffset = e.pageY))}
-        ></div>
+        />
         <div>
           输出:
           <br /> <pre style={{ display: 'inline' }}>{output}</pre>

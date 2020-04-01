@@ -20,8 +20,7 @@
 .dragger-editor-container-output {
   height: 60px;
   background: white;
-  border-top: 1px solid #CCCCCC;
-  position: absolute;
+  border-top: 1px solid #cccccc;
   bottom: 0px;
   overflow: auto;
   &-anchor {
@@ -30,6 +29,5 @@
     cursor: row-resize;
     width: inherit;
   }
-  background:linear-gradient(180deg,#F2F2F2
-  0%,#E4E5E6 100%);
+  background: linear-gradient(180deg, #f2f2f2 0%, #e4e5e6 100%);
 }
