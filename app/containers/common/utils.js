@@ -563,7 +563,13 @@ function deleteFolder(path) {
 /**
  * 下载发布流程到本地
  */
-export const downProcessZipToLocal = (filePath, editorBlockPythonCode) => {
+export const downProcessZipToLocal = (
+  filePath,
+  editorBlockPythonCode,
+  processName,
+  descText,
+  versionText
+) => {
   console.log(filePath, 'filePath');
   try {
     fs.mkdirSync(filePath);
@@ -573,6 +579,14 @@ export const downProcessZipToLocal = (filePath, editorBlockPythonCode) => {
     fs.mkdirSync(filePath);
   }
   fs.writeFileSync(filePath + '/test.py', editorBlockPythonCode);
+  fs.writeFileSync(
+    filePath + '/manifest.json',
+    JSON.stringify({
+      processName,
+      descText,
+      versionText,
+    })
+  );
   readDir(zip, filePath);
   zip
     .generateAsync({
