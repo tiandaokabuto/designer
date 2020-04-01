@@ -3,11 +3,11 @@ import { persistentStorage } from '../../utils';
 
 import store from '../../../../store';
 
-export default () => {
-  return () => {
+export default arr => {
+  return arr => {
     const {
       grapheditor: { processTree, currentProject, currentCheckedTreeNode },
     } = store.getState();
-    persistentStorage(processTree, currentProject, currentCheckedTreeNode);
+    persistentStorage(arr, processTree, currentProject, currentCheckedTreeNode);
   };
 };
