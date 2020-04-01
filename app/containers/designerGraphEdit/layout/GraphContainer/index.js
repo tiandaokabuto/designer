@@ -11,14 +11,12 @@ import EndNode from '../RegisterNode/EndNode';
 import RhombusNode from '../RegisterNode/RhombusNode';
 
 import EditorDrawer from './components/EditorDrawer';
-import HighlightEditor from '../../useHooks/HighlightEditor';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
 
 import EditorChange, {
   registerDataChange,
 } from '../../useHooks/useEditorChange';
 
-import { isEdgeConnectWithRhombusNode } from '../../RPAcore/utils';
 import { findNodeByKey } from '../../../common/utils';
 
 export default useInjectContext(
@@ -52,12 +50,18 @@ export default useInjectContext(
       // 自适应当前画布的大小
       useEffect(() => {
         showHead && propsAPI.executeCommand('autoZoom');
-        event.addListener('undo', () => {
-          propsAPI.executeCommand('undo');
-        });
-        event.addListener('redo', () => {
-          propsAPI.executeCommand('redo');
-        });
+        const handleUndo = () => {
+          executeCommand('undo');
+        };
+        const handleRedo = () => {
+          executeCommand('redo');
+        };
+        event.addListener('undo', handleUndo);
+        event.addListener('redo', handleRedo);
+        return () => {
+          event.removeListener('undo', handleUndo);
+          event.removeListener('redo', handleRedo);
+        };
       }, []);
 
       return (
