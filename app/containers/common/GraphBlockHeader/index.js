@@ -36,7 +36,7 @@ const handleWindowOperation = op => {
 
 export default ({ history, tag }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const userName = remote.getGlobal('sharedObject').userName;
+  const globalUserName = remote.getGlobal('sharedObject').userName;
   const [visible, setVisible] = useState(undefined);
   const resetVisible = () => {
     setVisible(undefined);
@@ -77,14 +77,22 @@ export default ({ history, tag }) => {
     },
   ];
   const handleSignOut = () => {
+    if (!globalUserName) {
+      // 离线模式
+      ipcRenderer.send('signOut');
+      return true;
+    }
     axios
       .get(api('signOut'))
       .then(res => res.data)
       .then(json => {
         if (~json.code) {
           ipcRenderer.send('signOut');
+          return true;
         }
-      });
+        return false;
+      })
+      .catch(err => console.log(err));
   };
 
   return (
@@ -144,10 +152,10 @@ export default ({ history, tag }) => {
           WebkitAppRegion: 'no-drag',
         }}
       >
-        {userName && (
+        {globalUserName && (
           <div className="graphblock-header-user-name">
             <Icon type="user" />
-            <span>{userName}, 您好!</span>
+            <span>{globalUserName}, 您好!</span>
           </div>
         )}
         <span
