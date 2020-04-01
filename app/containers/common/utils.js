@@ -261,6 +261,7 @@ export function checkAndMakeDir(dirName) {
  * @param {*} name
  */
 export const persistentStorage = (processTree, name, node) => {
+  console.log(node, '---保存的node');
   // 遍历树
   traverseTree(processTree, treeItem => {
     // 匹配点击的流程
@@ -525,16 +526,20 @@ export const setAllModifiedState = (processTree, state = false) => {
 
 export const existModifiedNode = processTree => {
   let flag = false;
+  const hasModifiedNodes = [];
   // FIXME...
   try {
     traverseTree(processTree, node => {
-      flag = node.hasModified;
-      if (flag) throw new Error('flag has been true');
+      flag = node.hasModified || flag;
+      if (flag) {
+        hasModifiedNodes.push(node.key);
+      }
+      // if (flag) throw new Error('flag has been true');
     });
   } catch (err) {
     console.log(err);
   } finally {
-    return flag;
+    return [flag, hasModifiedNodes];
   }
 };
 function deleteFolder(path) {
