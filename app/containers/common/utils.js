@@ -570,11 +570,11 @@ export const getModifiedNodes = processTree => {
   return modifiedNodesArr;
 };
 function deleteFolder(path) {
-  const files = [];
+  let files = [];
   if (fs.existsSync(path)) {
     files = fs.readdirSync(path);
     files.forEach(function(file, index) {
-      const curPath = path + '/' + file;
+      let curPath = path + '/' + file;
       if (fs.statSync(curPath).isDirectory()) {
         // recurse
         deleteFolder(curPath);
