@@ -256,11 +256,7 @@ export default memo(
       {
         description: '导出',
         type: 'upload',
-        disabled: false,
-        onClick: () => {
-          console.log(handleScreenCapture);
-          handleScreenCapture();
-        },
+        disabled: true,
       },
       {
         description: '控制台',
