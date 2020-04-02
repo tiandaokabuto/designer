@@ -208,12 +208,7 @@ export default ({ history, tag }) => {
           handleWindowOperation('close');
         }}
         onOk={() => {
-          console.log(modifiedNodesArr.current);
           setAllModifiedState(processTree); // 把所有已修改的状态改为false
-          // modifiedNodesArr.forEach(item => {
-          //   changeCheckedTreeNode(item);
-          //   persistentStorage();
-          // });
           persistentStorage(modifiedNodesArr.current); // 保存当前正在修改的
           setTimeout(() => {
             handleWindowOperation('close');

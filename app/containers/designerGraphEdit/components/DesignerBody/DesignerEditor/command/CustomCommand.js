@@ -20,8 +20,6 @@ class CustomCommand extends React.Component {
 
       // 正向命令逻辑
       execute(/* editor */) {
-        console.log('执行正向命令');
-        console.log('获取可用方法：', history);
         history.push('/designerGraphBlock');
       },
 

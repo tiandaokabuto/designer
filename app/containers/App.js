@@ -64,14 +64,9 @@ export default class App extends React.Component<Props> {
       }
     );
     timerID = setTimeout(() => {
-      axios
-        .get(api('refreshToken'))
-        .then(res => {
-          console.log(token);
-        })
-        .catch(e => {
-          console.log(token);
-        });
+      axios.get(api('refreshToken')).catch(e => {
+        console.log(e);
+      });
       this.refreshToken();
     }, 1000 * 60 * 2);
   };

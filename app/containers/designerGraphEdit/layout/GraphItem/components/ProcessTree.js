@@ -92,7 +92,6 @@ export default () => {
   // 右键菜单位置设定
   const [position, setPosition] = useState({});
   const onDragEnter = info => {
-    console.log(info);
     // expandedKeys 需要受控时设置
     // this.setState({
     //   expandedKeys: info.expandedKeys,
@@ -100,7 +99,6 @@ export default () => {
   };
 
   const onDrop = info => {
-    console.log(info);
     const dropKey = info.node.props.eventKey; // 释放的元素
     const dragKey = info.dragNode.props.eventKey; // 拖动的元素
     const dropPos = info.node.props.pos.split('-'); //
@@ -120,7 +118,6 @@ export default () => {
 
     traverseTree(data, item => {
       if (item.key === dropKey && item.type === 'dir') {
-        console.log(item, dropKey);
         // Find dragObject
         let dragObj;
         loop(data, dragKey, (item, index, arr) => {
@@ -203,8 +200,6 @@ export default () => {
     };
   }, [setExpandedKeys]);
 
-  // console.log(expandedKeys, processTree);
-
   return (
     <div>
       <Tree
@@ -269,8 +264,6 @@ export default () => {
           setModalVisible(false);
         }}
         onOk={() => {
-          // console.log(selectedKey, '---点确认之后的选中');
-          // console.log(currentCheckedTreeNode, '---redux中的选中');
           setNodeModifiedState(processTree, currentCheckedTreeNode); // 把hasmodified改成false
           persistentStorage(); // 保存currentCheckedTreeNode的内容
           resetGraphEditData(); // 重设GraphEditData

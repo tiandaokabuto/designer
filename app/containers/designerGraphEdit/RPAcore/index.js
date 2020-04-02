@@ -7,7 +7,7 @@ import {
   findNodeByLabelAndId,
   isCircleExist,
   findCommonTarget,
-  hasTwoEntryPortInProcessBlock
+  hasTwoEntryPortInProcessBlock,
 } from './utils';
 
 import { writeFileRecursive } from '../../../nodejs';
@@ -34,7 +34,7 @@ const transformEditorProcess = (
     case 'processblock':
       // 停止解析
       // 找到对应的流程块结点的数据结构
-      console.log(blockData, 'blockData');
+
       const variable = blockData.variable || [];
       const funcName = `RPA_${currentId}`; //uniqueId('RPA_');
       result.output =
@@ -169,7 +169,7 @@ const transformEditorProcess = (
 
 export default (graphData, graphDataMap) => {
   const result = {
-    output: ''
+    output: '',
   };
   const beginId = findStartNode(graphData.nodes || []);
   if (beginId) {

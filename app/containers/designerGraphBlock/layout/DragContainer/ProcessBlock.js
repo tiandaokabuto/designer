@@ -56,10 +56,6 @@ const style = {
 
 const MENU_TYPE = 'MULTI';
 
-function handleClick(e, data, target) {
-  console.log(data, data.target.getAttribute('data-id'));
-}
-
 export default ({ readOnly = false }) => {
   // 注册点击事件
   const event = !readOnly
@@ -337,14 +333,14 @@ export default ({ readOnly = false }) => {
             setIsDraggingNode,
           })}
       </div>
-      <ContextMenu id={MENU_TYPE}>
+      {/* <ContextMenu id={MENU_TYPE}>
         <MenuItem onClick={handleClick} data={{ action: 'Added' }}>
           Add 1 count
         </MenuItem>
         <MenuItem onClick={handleClick} data={{ action: 'Removed' }}>
           Remove 1 count
         </MenuItem>
-      </ContextMenu>
+      </ContextMenu> */}
     </InjectProvider>
   );
 };

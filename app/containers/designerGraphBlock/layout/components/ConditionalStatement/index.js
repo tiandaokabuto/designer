@@ -135,7 +135,6 @@ const ConditionalStatement = useInjectContext(props => {
               type="delete"
               onClick={() => {
                 deleteNodeById(id);
-                console.log('删除 -->', id);
               }}
             />
           )}

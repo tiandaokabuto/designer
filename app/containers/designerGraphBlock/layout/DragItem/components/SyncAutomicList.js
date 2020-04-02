@@ -104,7 +104,6 @@ const readGlobalConfig = (callback, flag = false) => {
           });
           callback && callback(treeData);
         } catch (err) {
-          console.log(err);
           message.info('刷新失败');
           callback && callback([]);
         }

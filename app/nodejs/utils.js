@@ -9,7 +9,7 @@ const { remote } = require('electron');
 
 export const issueProcess = (content, descText, versionText) => {
   const {
-    grapheditor: { currentCheckedTreeNode, processTree }
+    grapheditor: { currentCheckedTreeNode, processTree },
   } = store.getState();
 
   if (!currentCheckedTreeNode) {
@@ -39,13 +39,11 @@ export const issueProcess = (content, descText, versionText) => {
     .post(api('issueProcess'), formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'datae-token': token
-      }
+        'datae-token': token,
+      },
     })
     .then(res => res.data)
     .then(json => {
-      // message.success('发布成功');
-      // console.log(json, '流程包上传成功');
       message.success('流程包发布成功');
       return json;
     })
