@@ -41,8 +41,7 @@ class DetailForm extends React.Component {
         }
 
         const item = getSelected()[0];
-        console.log(values);
-        console.log(item);
+
         if (!item) {
           return;
         }

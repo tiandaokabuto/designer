@@ -92,7 +92,6 @@ export default () => {
   // 右键菜单位置设定
   const [position, setPosition] = useState({});
   const onDragEnter = info => {
-    console.log(info);
     // expandedKeys 需要受控时设置
     // this.setState({
     //   expandedKeys: info.expandedKeys,
@@ -100,7 +99,6 @@ export default () => {
   };
 
   const onDrop = info => {
-    console.log(info);
     const dropKey = info.node.props.eventKey; // 释放的元素
     const dragKey = info.dragNode.props.eventKey; // 拖动的元素
     const dropPos = info.node.props.pos.split('-'); //

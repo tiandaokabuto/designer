@@ -101,7 +101,6 @@ class NodeHandler {
   };
 
   apiAction = command => {
-    //console.log(command, this.propsAPI);
     setTimeout(() => {
       this.propsAPI.executeCommand(command);
     }, 0);

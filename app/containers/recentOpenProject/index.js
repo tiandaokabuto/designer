@@ -22,7 +22,7 @@ import {
 import {
   changeCurrentProject,
   clearGrapheditorData,
-  resetGraphEditData
+  resetGraphEditData,
 } from '../reduxActions';
 
 import './index.scss';
@@ -124,7 +124,6 @@ export default useInjectContext(({ history }) => {
             onRow={record => {
               return {
                 onClick: event => {
-                  console.log('点击行');
                   // 打开对应的项目
                   openProject(record.name);
                   changeCurrentProject(record.name);
