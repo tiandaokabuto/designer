@@ -184,8 +184,6 @@ export default ({ history, tag }) => {
           className="graphblock-header-operation"
           onClick={() => {
             modifiedNodesArr.current = getModifiedNodes(processTree);
-            // console.log(modifiedNodesArr);
-            // setModifiedNodesArr(arr);
             if (modifiedNodesArr.current.length !== 0) {
               setModalVisible(true);
             } else {
