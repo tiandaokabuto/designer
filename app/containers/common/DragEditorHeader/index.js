@@ -22,6 +22,7 @@ import {
 } from '../utils';
 import { updateCurrentPagePosition } from '../../reduxActions';
 import api from '../../../api';
+import { handleScreenCapture } from '@/containers/shared';
 
 import NewProcess from './NewProcess';
 
@@ -255,7 +256,11 @@ export default memo(
       {
         description: '导出',
         type: 'upload',
-        disabled: true,
+        disabled: false,
+        onClick: () => {
+          console.log(handleScreenCapture);
+          handleScreenCapture();
+        },
       },
       {
         description: '控制台',
