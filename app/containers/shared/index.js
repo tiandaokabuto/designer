@@ -1,5 +1,5 @@
 export const handleScreenCapture = () => {
-  new Promise(resolve => {
+  return new Promise(resolve => {
     const { execFile } = require('child_process');
     const screen_window = execFile(
       __dirname + './electron_screenshot/PrintScr.exe'
