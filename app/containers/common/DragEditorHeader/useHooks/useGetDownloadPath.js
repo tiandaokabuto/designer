@@ -5,8 +5,6 @@ const { ipcRenderer } = require('electron');
  */
 export default () => {
   return (callback, processName, descText, versionText) => {
-    console.log(processName, descText, versionText);
-    console.log('选择文件夹');
     ipcRenderer.send('open-directory-dialog', 'openDirectory');
     ipcRenderer.on('selectedItem', (e, filePath) => {
       const {

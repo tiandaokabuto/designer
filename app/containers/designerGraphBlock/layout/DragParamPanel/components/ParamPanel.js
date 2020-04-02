@@ -48,7 +48,6 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
                   ` % (${param.placeholder
                     .filter(item => item !== undefined)
                     .join(', ')})`;
-                console.log(param.value);
                 handleEmitCodeTransform(cards);
               }}
             />

@@ -27,7 +27,7 @@ export function readDir(obj, nowPath) {
   const files = fs.readdirSync(nowPath); // 读取目录中的所有文件及文件夹（同步操作）
   files.forEach(function(fileName, index) {
     // 遍历检测目录中的文件
-    // console.log(fileName, index); //打印当前读取的文件名
+
     const fillPath = `${nowPath}/${fileName}`;
     const file = fs.statSync(fillPath); // 获取一个文件的属性
     if (file.isDirectory()) {
@@ -55,15 +55,6 @@ export const startZIP = (descText, versionText) => {
       },
     })
     .then(function(content) {
-      // try {
-      //   fs.unlinkSync(`${currPath}/python/zip`);
-      // } catch (err) {}
-
-      // fs.mkdirSync(`${currPath}/python/zip`);
-      // fs.writeFileSync(`${currPath}/python/zip/result.zip`, content, 'utf-8'); // 将打包的内容写入 当前目录下的 result.zip 中
-      // console.log('压缩完成...');
-      // console.log('开始上传流程包...');
-      // message.info('压缩完成，开始上传流程包');
       issueProcess(content, descText, versionText);
     });
 };

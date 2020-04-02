@@ -15,9 +15,7 @@ export default ({ layout: { column, row } = { column: 2, row: 3 } }) => {
   return (
     <InjectProvider
       value={{
-        onDrop: () => {
-          console.log('drop触发');
-        },
+        onDrop: () => {},
       }}
     >
       <div className="interactive-container-layout">

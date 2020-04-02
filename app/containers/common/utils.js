@@ -266,10 +266,7 @@ export const persistentStorage = (
   name,
   node
 ) => {
-  console.log(modifiedNodesArr);
-  console.log(node, '---保存时点击的node');
   let tree = JSON.parse(JSON.stringify(processTree));
-  console.log(processTree);
   if (modifiedNodesArr) {
     traverseTree(tree, treeItem => {
       if (treeItem.type === 'process') {
@@ -321,7 +318,6 @@ export const persistentStorage = (
           if (err) {
             console.error(err);
           }
-          console.log('----------新增成功-------------');
         }
       );
     }
@@ -392,7 +388,6 @@ export const newProcess = (
     ],
   };
   if (type === 'process') {
-    console.log(type, name, currentProject, checkedTreeNode);
     checkAndMakeDir(PATH_CONFIG('project', `${currentProject}/${name}`));
     // 如果是作为根结点添加, 那么逻辑如下
     if (isLeafNodeOrUndefined) {
@@ -455,7 +450,6 @@ export const newProcess = (
  * @param {*} checkedTreeNode
  */
 export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
-  console.log(checkedTreeNode);
   const files = fs.readdirSync(PATH_CONFIG('project', currentProject));
   return files.find(item => item === title);
   // const isDirNodeBool = isDirNode(tree, checkedTreeNode);
@@ -486,9 +480,6 @@ export const openProject = name => {
                 PATH_CONFIG('project', `${name}/${dirItem}/manifest.json`)
               )
             );
-            if (dirItem === '1') {
-              console.log(data);
-            }
 
             // 以流程名为映射关系
             traverseTree(processTree, treeItem => {
@@ -551,16 +542,6 @@ export const setNodeModifiedState = (processTree, checkedNode) => {
 };
 
 export const getModifiedNodes = processTree => {
-  // let flag = false;
-  // FIXME...
-  // try {
-  //   flag = node.hasModified
-  //   if (flag) throw new Error('flag has been true');
-  // } catch (err) {
-  //   console.log(err);
-  // } finally {
-  //   return flag;
-  // }
   const modifiedNodesArr = [];
   traverseTree(processTree, node => {
     if (node.hasModified) {
@@ -597,11 +578,9 @@ export const downProcessZipToLocal = (
   descText,
   versionText
 ) => {
-  console.log(filePath, 'filePath');
   try {
     fs.mkdirSync(filePath);
   } catch (err) {
-    console.log('文件夹已经存在');
     deleteFolder(filePath);
     fs.mkdirSync(filePath);
   }
