@@ -184,12 +184,10 @@ export default ({ history, tag }) => {
           className="graphblock-header-operation"
           onClick={() => {
             modifiedNodesArr.current = getModifiedNodes(processTree);
-            // console.log(modifiedNodesArr);
-            // setModifiedNodesArr(arr);
             if (modifiedNodesArr.current.length !== 0) {
               setModalVisible(true);
             } else {
-              // handleWindowOperation('close');
+              handleWindowOperation('close');
             }
           }}
         />
@@ -218,7 +216,7 @@ export default ({ history, tag }) => {
           // });
           persistentStorage(modifiedNodesArr.current); // 保存当前正在修改的
           setTimeout(() => {
-            // handleWindowOperation('close');
+            handleWindowOperation('close');
           }, 100);
         }}
       />
