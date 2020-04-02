@@ -65,21 +65,31 @@ const readGlobalConfig = (callback, flag = false) => {
           const abilityStructure = await getAbialityStructure;
           const abilityTree = await getAbilityTree;
           message.info('刷新成功');
+          const prevPending = automicList
+            ? automicList.filter(item =>
+                ['favorite', 'recent'].includes(item.key)
+              )
+            : [];
           const treeData = [
-            {
-              pKey: null,
-              key: 'favorite',
-              title: '收藏',
-              children: [],
-              returnTreeData: null,
-            },
-            {
-              pKey: null,
-              key: 'recent',
-              title: '最近',
-              children: [],
-              returnTreeData: null,
-            },
+            ...(prevPending.length
+              ? prevPending
+              : [
+                  {
+                    pKey: null,
+                    key: 'favorite',
+                    title: '收藏',
+                    children: [],
+                    returnTreeData: null,
+                  },
+                  {
+                    pKey: null,
+                    key: 'recent',
+                    title: '最近',
+                    children: [],
+                    returnTreeData: null,
+                  },
+                ]),
+
             {
               pKey: null,
               key: 'aviable',

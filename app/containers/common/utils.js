@@ -260,25 +260,44 @@ export function checkAndMakeDir(dirName) {
  * @param {*} processTree
  * @param {*} name
  */
-export const persistentStorage = (processTree, name, node) => {
-  console.log(node, '---保存的node');
-  // 遍历树
-  traverseTree(processTree, treeItem => {
-    // 匹配点击的流程
-    if (treeItem.key === node) {
+export const persistentStorage = (
+  modifiedNodesArr,
+  processTree,
+  name,
+  node
+) => {
+  console.log(modifiedNodesArr);
+  console.log(node, '---保存时点击的node');
+  let tree = JSON.parse(JSON.stringify(processTree));
+  console.log(processTree);
+  if (modifiedNodesArr) {
+    traverseTree(tree, treeItem => {
       if (treeItem.type === 'process') {
-        fs.writeFile(
-          PATH_CONFIG('project', `${name}/${treeItem.title}/manifest.json`),
-          JSON.stringify(treeItem.data),
-          err => {
-            if (err) {
-              console.log(err);
-            }
-          }
-        );
+        const find = modifiedNodesArr.find(item => item === treeItem.key);
+        if (find) {
+          fs.writeFileSync(
+            PATH_CONFIG('project', `${name}/${treeItem.title}/manifest.json`),
+            JSON.stringify(treeItem.data)
+          );
+        }
+        treeItem.data = {};
       }
-    }
-  });
+    });
+  } else {
+    // 遍历树
+    traverseTree(tree, treeItem => {
+      // 匹配点击的流程
+      if (treeItem.type === 'process') {
+        if (treeItem.key === node) {
+          fs.writeFileSync(
+            PATH_CONFIG('project', `${name}/${treeItem.title}/manifest.json`),
+            JSON.stringify(treeItem.data)
+          );
+          treeItem.data = {};
+        }
+      }
+    });
+  }
   // 重新覆写processTree
   fs.readFile(PATH_CONFIG('project', `${name}/manifest.json`), function(
     err,
@@ -286,13 +305,12 @@ export const persistentStorage = (processTree, name, node) => {
   ) {
     if (!err) {
       let description = JSON.parse(data.toString());
-      let tree = JSON.parse(JSON.stringify(processTree));
       // 保存之前先把流程的data清空
-      traverseTree(tree, item => {
-        if (item.type === 'process') {
-          item.data = {};
-        }
-      });
+      // traverseTree(tree, item => {
+      //   if (item.type === 'process') {
+      //     item.data = {};
+      //   }
+      // });
       fs.writeFile(
         PATH_CONFIG('project', `${name}/manifest.json`),
         JSON.stringify({
@@ -303,7 +321,6 @@ export const persistentStorage = (processTree, name, node) => {
           if (err) {
             console.error(err);
           }
-
           console.log('----------新增成功-------------');
         }
       );
@@ -524,30 +541,40 @@ export const setAllModifiedState = (processTree, state = false) => {
   changeProcessTree([...processTree]);
 };
 
-export const existModifiedNode = processTree => {
-  let flag = false;
-  const hasModifiedNodes = [];
+export const setNodeModifiedState = (processTree, checkedNode) => {
+  traverseTree(processTree, node => {
+    if (node.key === checkedNode) {
+      node.hasModified = false;
+    }
+  });
+  changeProcessTree([...processTree]);
+};
+
+export const getModifiedNodes = processTree => {
+  // let flag = false;
   // FIXME...
-  try {
-    traverseTree(processTree, node => {
-      flag = node.hasModified || flag;
-      if (flag) {
-        hasModifiedNodes.push(node.key);
-      }
-      // if (flag) throw new Error('flag has been true');
-    });
-  } catch (err) {
-    console.log(err);
-  } finally {
-    return [flag, hasModifiedNodes];
-  }
+  // try {
+  //   flag = node.hasModified
+  //   if (flag) throw new Error('flag has been true');
+  // } catch (err) {
+  //   console.log(err);
+  // } finally {
+  //   return flag;
+  // }
+  const modifiedNodesArr = [];
+  traverseTree(processTree, node => {
+    if (node.hasModified) {
+      modifiedNodesArr.push(node.key);
+    }
+  });
+  return modifiedNodesArr;
 };
 function deleteFolder(path) {
-  var files = [];
+  let files = [];
   if (fs.existsSync(path)) {
     files = fs.readdirSync(path);
     files.forEach(function(file, index) {
-      var curPath = path + '/' + file;
+      let curPath = path + '/' + file;
       if (fs.statSync(curPath).isDirectory()) {
         // recurse
         deleteFolder(curPath);

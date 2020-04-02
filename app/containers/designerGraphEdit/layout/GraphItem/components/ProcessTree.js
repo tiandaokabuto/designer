@@ -16,6 +16,7 @@ import {
   renameNodeByKey,
   hasNodeModified,
   setAllModifiedState,
+  setNodeModifiedState,
   traverseTree,
 } from '../../../../common/utils';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
@@ -235,23 +236,15 @@ export default () => {
             changeCheckedTreeNode(selectedKey[0]);
           } else {
             if (selectedKey.length !== 0) {
-              console.log(currentCheckedTreeNode, '---当前选中'); // 当前选中的
-              console.log(selectedKey, '---点击'); // 下一步点击的
               const isModified = hasNodeModified(
                 processTree,
                 currentCheckedTreeNode
               );
-              console.log(isModified);
               if (isModified) {
                 // 有更改
                 setSelectedKey(selectedKey[0]);
                 setModalVisible(true);
-                console.log(currentCheckedTreeNode, '---弹窗之后当前选中'); // 当前选中的
-                console.log(selectedKey, '---弹窗之后点击'); // 下一步点击的
-                // changeCheckedTreeNode(selectedKey[0]);
               } else {
-                // resetGraphEditData();
-                // changeCheckedTreeNode(selectedKey[0]);
                 setSelectedKey(selectedKey[0]);
                 changeCheckedTreeNode(selectedKey[0]);
               }
@@ -276,9 +269,9 @@ export default () => {
           setModalVisible(false);
         }}
         onOk={() => {
-          console.log(selectedKey, '---点确认之后的选中');
-          console.log(currentCheckedTreeNode, '---redux中的选中');
-          setAllModifiedState(processTree); // 把hasmodified改成false
+          // console.log(selectedKey, '---点确认之后的选中');
+          // console.log(currentCheckedTreeNode, '---redux中的选中');
+          setNodeModifiedState(processTree, currentCheckedTreeNode); // 把hasmodified改成false
           persistentStorage(); // 保存currentCheckedTreeNode的内容
           resetGraphEditData(); // 重设GraphEditData
           changeCheckedTreeNode(selectedKey); // 修改当前选中
