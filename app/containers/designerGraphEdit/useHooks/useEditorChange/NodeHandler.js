@@ -34,7 +34,7 @@ class NodeHandler {
             {
               cnName: '输入参数',
               enName: 'param',
-              value: '',
+              value: [],
               default: '',
             },
             {
