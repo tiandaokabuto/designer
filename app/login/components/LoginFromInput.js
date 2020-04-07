@@ -12,8 +12,10 @@ const LoginFromInput = ({
   type,
   formItemClassName,
 }) => {
+  const formItemContentClass = `login-right-form-item ${formItemClassName}`;
+
   return (
-    <div className={formItemClassName}>
+    <div className={formItemContentClass}>
       <div>{label}</div>
       {type === 'password' ? (
         <Password
