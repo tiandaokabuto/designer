@@ -34,14 +34,17 @@ const transformEditorProcess = (
     case 'processblock':
       // 停止解析
       // 找到对应的流程块结点的数据结构
-
+      const params = blockData['properties'][1].value;
       const variable = blockData.variable || [];
       const funcName = `RPA_${currentId}`; //uniqueId('RPA_');
       result.output =
-        `def ${funcName}(*argv, **kw):\n${transformVariable(
-          variable
-        )}${transformBlockToCode(blockData.cards || [], 1).output || '\n'}` +
-        result.output;
+        `def ${funcName}(${params
+          .filter(item => item.name)
+          .map(item => item.name)
+          .join(',')}):\n${transformVariable(variable)}${transformBlockToCode(
+          blockData.cards || [],
+          1
+        ).output || '\n'}` + result.output;
       // 如果跟循环有关系需要添加循环语句
       if (hasTwoEntryPortInProcessBlock(graphData.edges, currentId)) {
         result.output += `${padding(depth)}while True:\n`;
@@ -50,11 +53,13 @@ const transformEditorProcess = (
 
       // 如果跟循环没有关系的话就直接执行当前的代码块
       // 解析当前模块传入的参数和返回的参数
-      const params = blockData['properties'][1].value;
       const return_string = blockData['properties'][2].value;
       result.output += `${padding(depth)}${
         return_string ? return_string + ' = ' : ''
-      }${funcName}(${params})\n`;
+      }${funcName}(${params
+        .filter(item => item.name)
+        .map(item => item.name + ' = ' + item.value)
+        .join(',')})\n`;
       const next = findTargetIdBySourceId(graphData.edges, currentId);
       next &&
         transformEditorProcess(

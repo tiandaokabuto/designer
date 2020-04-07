@@ -21,5 +21,9 @@ export default () => {
       const log = iconv.decode(err, 'cp936');
       event.emit(PYTHON_OUTPUT, log);
     });
+    worker.on('error', error => {
+      const log = iconv.decode(error, 'cp936');
+      event.emit(PYTHON_OUTPUT, log);
+    });
   };
 };

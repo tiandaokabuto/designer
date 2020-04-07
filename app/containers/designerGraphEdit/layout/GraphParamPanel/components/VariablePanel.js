@@ -7,7 +7,7 @@ import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/
 
 import './VariablePanel.scss';
 
-export default ({ blockNode }) => {
+export default ({ blockNode, label = '设置变量' }) => {
   const [flag, forceUpdate] = useForceUpdate();
   const noticyChange = useNoticyBlockCodeChange();
 
@@ -29,7 +29,7 @@ export default ({ blockNode }) => {
   return (
     <div className="variablePanel">
       <div className="variablePanel-title">
-        <span>设置变量</span>
+        <span>{label}</span>
         <Icon
           type="plus"
           className="variablePanel-btn"
