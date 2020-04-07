@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Tabs } from 'antd';
 import { useSelector } from 'react-redux';
 import GGEditor from 'gg-editor';
@@ -24,6 +24,13 @@ export default ({ current }) => {
   const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
 
   const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
+  const inputParams = useMemo(
+    () =>
+      blockNode.properties &&
+      Array.isArray(blockNode.properties) &&
+      blockNode.properties.find(item => item.enName === 'param').value,
+    [blockNode]
+  );
 
   return (
     <div className="dragger-editor-parampanel">
@@ -34,6 +41,13 @@ export default ({ current }) => {
           )}
         </TabPane>
         <TabPane tab="变量" key="2">
+          <VariablePanel
+            blockNode={{
+              variable: inputParams,
+            }}
+            label="输入参数"
+            disabled={true}
+          />
           <VariablePanel blockNode={blockNode} />
         </TabPane>
         <TabPane tab="流程图" key="3">
