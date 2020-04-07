@@ -119,6 +119,13 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     }));
   };
 
+  const handleProview = isStatic => {
+    setLayout(layout => ({
+      ...layout,
+      data: layout.data.map(item => ({ ...item, static: isStatic })),
+    }));
+  };
+
   return (
     <Modal
       visible={visible}
@@ -140,6 +147,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
           </Button>
           <Button
             onClick={() => {
+              handleProview(!isPreview);
               setIsPreview(preview => !preview);
             }}
           >

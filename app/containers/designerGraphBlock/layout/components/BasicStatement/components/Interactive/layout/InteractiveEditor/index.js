@@ -83,6 +83,7 @@ export default ({
           <div key={gridItem.i}>
             <InteractiveWrapper
               gridItem={gridItem}
+              isPreview={isPreview}
               handleControlDelete={handleControlDelete}
               text={dataMap[gridItem.i].label}
             >

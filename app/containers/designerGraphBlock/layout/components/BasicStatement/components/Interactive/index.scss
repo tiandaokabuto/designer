@@ -33,13 +33,15 @@
         overflow-x: hidden;
       }
     }
-    .interactive-wrapper {
-      position: relative;
+    .interactive-wrapper-preview {
       &:hover {
         .interactive-wrapper-operation {
           visibility: visible;
         }
       }
+    }
+    .interactive-wrapper {
+      position: relative;
       .interactive-placeholder {
         position: absolute;
         border: 1px dashed #32a67f;
