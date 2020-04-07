@@ -98,6 +98,7 @@ export default withPropsAPI(
           if (param.enName === 'param') {
             return (
               <VariablePanel
+                key={index}
                 blockNode={{
                   variable: param.value,
                 }}
