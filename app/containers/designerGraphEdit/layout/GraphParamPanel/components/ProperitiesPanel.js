@@ -3,6 +3,7 @@ import { Input } from 'antd';
 import { withPropsAPI } from 'gg-editor';
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 
+import VariablePanel from './VariablePanel';
 import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
 
 import {
@@ -94,6 +95,17 @@ export default withPropsAPI(
     return (
       <div key={checkedGraphBlockId}>
         {(blockNode.properties || []).map((param, index) => {
+          if (param.enName === 'param') {
+            return (
+              <VariablePanel
+                blockNode={{
+                  variable: param.value,
+                }}
+                label="输入参数"
+              />
+            );
+          }
+
           return (
             <FormItem
               param={param}

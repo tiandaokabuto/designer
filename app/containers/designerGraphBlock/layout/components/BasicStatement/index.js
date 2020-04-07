@@ -216,7 +216,6 @@ const BasicStatement = useInjectContext(props => {
                   type="delete"
                   onClick={() => {
                     deleteNodeById(id);
-                    console.log('删除 -->', id);
                   }}
                 />
               </div>
@@ -237,7 +236,6 @@ const BasicStatement = useInjectContext(props => {
                   ipcRenderer.on(
                     'updateXpath',
                     (e, { xpath, imageData, targetId }) => {
-                      console.log(xpath, imageData, targetId);
                       if (xpath === undefined) return;
                       // 接收到xpath并作出更新
                       if (targetId !== id) return;

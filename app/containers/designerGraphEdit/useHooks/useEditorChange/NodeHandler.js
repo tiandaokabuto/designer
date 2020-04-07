@@ -34,7 +34,7 @@ class NodeHandler {
             {
               cnName: '输入参数',
               enName: 'param',
-              value: '',
+              value: [],
               default: '',
             },
             {
@@ -101,7 +101,6 @@ class NodeHandler {
   };
 
   apiAction = command => {
-    //console.log(command, this.propsAPI);
     setTimeout(() => {
       this.propsAPI.executeCommand(command);
     }, 0);

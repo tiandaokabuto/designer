@@ -5,12 +5,20 @@ const Placeholder = ({ text }) => {
   return <div className="interactive-placeholder">新增{text}</div>;
 };
 
-export default ({ children, gridItem, handleControlDelete, text }) => {
+export default ({
+  children,
+  gridItem,
+  handleControlDelete,
+  text,
+  isPreview,
+}) => {
   const isPlaceholder = gridItem.i.includes('preset');
 
   return (
     <div
-      className="interactive-wrapper"
+      className={`interactive-wrapper ${
+        isPreview ? '' : 'interactive-wrapper-preview'
+      }`}
       data-id={gridItem.i}
       style={{
         width: '100%',

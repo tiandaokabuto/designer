@@ -22,6 +22,7 @@ import {
 } from '../utils';
 import { updateCurrentPagePosition } from '../../reduxActions';
 import api from '../../../api';
+import { handleScreenCapture } from '@/containers/shared';
 
 import NewProcess from './NewProcess';
 
@@ -224,11 +225,6 @@ export default memo(
         type: 'iconzhihang',
         onClick: () => {
           // 保存到本地
-          console.log(
-            processTreeRef.current,
-            currentCheckedTreeNodeRef.current
-          );
-          // setAllModifiedState(processTreeRef.current);
           setNodeModifiedState(
             processTreeRef.current,
             currentCheckedTreeNodeRef.current
@@ -322,7 +318,6 @@ export default memo(
                         processName = item.title;
                       }
                     });
-                    console.log(versionText, descText, processName);
                     downloadPython(
                       downProcessZipToLocal,
                       processName,

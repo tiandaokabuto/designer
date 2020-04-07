@@ -8,12 +8,7 @@ export default ({ item }) => {
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
-    // canDrag: () => {
-    //   return canDrag;
-    // },
-    begin(monitor) {
-      console.log('drag');
-    },
+    begin(monitor) {},
     end(monitor) {},
   });
   return [drag, dragImage];

@@ -32,6 +32,12 @@ export default class App extends React.Component<Props> {
   }
 
   init = () => {
+    window.addEventListener('offline', () => {
+      console.log('断网了');
+    });
+    window.addEventListener('online', () => {
+      console.log('冲浪');
+    });
     axios.interceptors.request.use(
       config => {
         config.headers = {
@@ -63,14 +69,9 @@ export default class App extends React.Component<Props> {
       }
     );
     timerID = setTimeout(() => {
-      axios
-        .get(api('refreshToken'))
-        .then(res => {
-          console.log(token);
-        })
-        .catch(e => {
-          console.log(token);
-        });
+      axios.get(api('refreshToken')).catch(e => {
+        console.log(e);
+      });
       this.refreshToken();
     }, 1000 * 60 * 2);
   };

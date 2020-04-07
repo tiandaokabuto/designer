@@ -58,7 +58,6 @@ appexpress.post('/upload', function(req, res) {
     targetId = undefined;
   } catch (e) {
     // 处理错误
-    console.log('err---', e);
     res.sendStatus(200);
   }
 

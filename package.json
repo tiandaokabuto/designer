@@ -272,6 +272,7 @@
     "codemirror": "^5.51.0",
     "connected-react-router": "^6.6.1",
     "core-js": "^3.5.0",
+    "crypto-js": "^4.0.0",
     "devtron": "^1.4.0",
     "electron-debug": "^3.0.1",
     "electron-log": "^4.0.0",

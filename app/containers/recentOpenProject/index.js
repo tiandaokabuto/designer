@@ -8,6 +8,7 @@ import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import GraphBlockHeader from '../common/GraphBlockHeader';
 import { SDIcon } from '../common/components';
 import RecentBackImg from '../images/recent_back.png';
+import DiffImg from '../images/diff.png';
 import CloseImg from '../images/close.png';
 
 import PATH_CONFIG from '@/constants/localFilePath';
@@ -16,13 +17,13 @@ import {
   newProject,
   openProject,
   readAllFileName,
-  formatDateTime,
+  formatDateTime as FormatDateTime,
   deleteFolderRecursive,
 } from '../common/utils';
 import {
   changeCurrentProject,
   clearGrapheditorData,
-  resetGraphEditData
+  resetGraphEditData,
 } from '../reduxActions';
 
 import './index.scss';
@@ -39,6 +40,8 @@ export default useInjectContext(({ history }) => {
     {
       title: '项目名称',
       dataIndex: 'name',
+      width: '50%',
+      ellipsis: true,
       render: title => {
         return <span style={{ color: 'rgba(50, 166, 127, 1)' }}>{title}</span>;
       },
@@ -46,29 +49,48 @@ export default useInjectContext(({ history }) => {
     {
       title: '创建时间',
       dataIndex: 'birthtime',
-      render: formatDateTime,
+      ellipsis: true,
+      width: '50%',
+      render: FormatDateTime,
     },
     {
       title: '修改时间',
       dataIndex: 'mtime',
-      render: formatDateTime,
-    },
-    {
-      title: '',
-      dataIndex: 'action',
+      ellipsis: true,
+      width: '200px',
       render: (text, record) => {
         return (
-          <SDIcon
-            url={CloseImg}
-            onClick={e => {
-              e.stopPropagation();
-              deleteFolderRecursive(PATH_CONFIG('project', record.name));
-              setFlag(flag => !flag);
-            }}
-          ></SDIcon>
+          <div>
+            <FormatDateTime />
+            <SDIcon
+              style={{ marginLeft: '10px' }}
+              url={CloseImg}
+              onClick={e => {
+                e.stopPropagation();
+                deleteFolderRecursive(PATH_CONFIG('project', record.name));
+                setFlag(flag => !flag);
+              }}
+            ></SDIcon>
+          </div>
         );
       },
     },
+    // {
+    //   title: '',
+    //   dataIndex: 'action',
+    //   render: (text, record) => {
+    //     return (
+    //       <SDIcon
+    //         url={CloseImg}
+    //         onClick={e => {
+    //           e.stopPropagation();
+    //           deleteFolderRecursive(PATH_CONFIG('project', record.name));
+    //           setFlag(flag => !flag);
+    //         }}
+    //       ></SDIcon>
+    //     );
+    //   },
+    // },
   ];
 
   const isJump = history.location.state && history.location.state.jump;
@@ -98,6 +120,11 @@ export default useInjectContext(({ history }) => {
             />
             <Button
               type="primary"
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
               onClick={() => {
                 if (!name) {
                   message.info('请填写项目名称');
@@ -111,6 +138,7 @@ export default useInjectContext(({ history }) => {
                 }, 0);
               }}
             >
+              <img src={DiffImg} style={{ marginRight: '14px' }}></img>
               新建项目
             </Button>
           </div>
@@ -119,12 +147,12 @@ export default useInjectContext(({ history }) => {
             columns={columns}
             dataSource={fileList}
             scroll={{
-              y: 'calc(100vh - 327px)',
+              y: 'calc(100vh - 400px)',
             }}
+            ellipsis={true}
             onRow={record => {
               return {
                 onClick: event => {
-                  console.log('点击行');
                   // 打开对应的项目
                   openProject(record.name);
                   changeCurrentProject(record.name);

@@ -152,23 +152,6 @@ export default useInjectContext(
                 // do nothing
               }
             }}
-            // onEdgeClick={edge => {
-            //   console.log(edge);
-            // }}
-            // onEdgeDoubleClick={edge => {
-            //   const model = edge.item.model;
-            //   /** 双击的时候判断是否触发右侧设置面板的出现 */
-            //   if (
-            //     !showHead &&
-            //     isEdgeConnectWithRhombusNode(edge.item.dataMap, model.source)
-            //   ) {
-            //     setDrawerVisible(true);
-            //   }
-            //   // console.log(edge)
-            // }}
-            onDoubleClick={(...args) => {
-              console.log(...args);
-            }}
             noEndEdge={false}
           />
           <EditorDrawer
