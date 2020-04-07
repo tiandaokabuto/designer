@@ -1,6 +1,7 @@
-export { hex_sha1 } from './hex_sha1';
+const CryptoJS = require('crypto-js'); //引用AES源码js
 
 const fs = require('fs');
+
 const currPath = process.cwd();
 
 const writeFileRecursive = function(path, buffer, callback) {
@@ -14,6 +15,28 @@ const writeFileRecursive = function(path, buffer, callback) {
   });
 };
 
+// 加密方法
+const encryptKey = '**********'; // 秘钥
+const argEncryptByDES = message => {
+  const keyHex = CryptoJS.enc.Utf8.parse(encryptKey);
+  const ciphertext = CryptoJS.enc.Utf8.parse(message);
+  const encrypted = CryptoJS.DES.encrypt(ciphertext, keyHex, {
+    mode: CryptoJS.mode.ECB,
+    padding: CryptoJS.pad.Pkcs7,
+  });
+  return encrypted.toString();
+};
+
+// 单个参数des解密
+const argDecryptByDES = message => {
+  const keyHex = CryptoJS.enc.Utf8.parse(encryptKey);
+  const decrypted = CryptoJS.DES.decrypt(message, keyHex, {
+    mode: CryptoJS.mode.ECB,
+    padding: CryptoJS.pad.Pkcs7,
+  });
+  return decrypted.toString(CryptoJS.enc.Utf8);
+};
+
 export const readGlobalConfig = callback => {
   const path = `${currPath}/globalconfig/config.json`;
   fs.readFile(path, function(err, data) {
@@ -22,7 +45,7 @@ export const readGlobalConfig = callback => {
         path,
         JSON.stringify({
           ip: '172.168.201.90',
-          port: '9999'
+          port: '9999',
         }),
         function(err) {
           if (!err) {
@@ -55,10 +78,17 @@ export const writeGlobalConfig = content => {
         path,
         JSON.stringify({
           ...config,
-          ...content
+          ...content,
         }),
         function() {}
       );
     }
   });
 };
+
+export const encrypt = {
+  argEncryptByDES,
+  argDecryptByDES,
+};
+
+export { hex_sha1 } from './hex_sha1';

@@ -3,14 +3,20 @@ import { Button, Checkbox, message } from 'antd';
 import axios from 'axios';
 
 import api, { config } from '../api';
-import { hex_sha1, readGlobalConfig, writeGlobalConfig } from './utils';
+import {
+  encrypt,
+  hex_sha1,
+  readGlobalConfig,
+  writeGlobalConfig,
+} from './utils';
 import LoginFromInput from './components/LoginFromInput';
 
 const { ipcRenderer, remote } = require('electron');
 
 import './login.scss';
 
-const SERIAL_NUMBER_POSSWORK = hex_sha1('2020-12-31');
+const validDay = '2020-12-31';
+const SERIAL_NUMBER_POSSWORK = encrypt.argEncryptByDES(validDay);
 console.log(SERIAL_NUMBER_POSSWORK);
 
 const Login = () => {
@@ -74,6 +80,19 @@ const Login = () => {
         },
       ];
 
+  const checkSerialNumberValid = userSerialNumber => {
+    let decryptSerialNumber = encrypt.argDecryptByDES(userSerialNumber);
+    const validSystemDay = validDay.replace(/-/g, '');
+    decryptSerialNumber = decryptSerialNumber.replace(/-/g, '');
+    if (/[^0-9]/.test(decryptSerialNumber) || decryptSerialNumber === '') {
+      return false;
+    }
+    if (decryptSerialNumber.length === 8) {
+      return decryptSerialNumber <= validSystemDay;
+    }
+    return false;
+  };
+
   const handleSignIn = () => {
     if (offLine) {
       remote.getGlobal('sharedObject').userName = '';
@@ -101,7 +120,7 @@ const Login = () => {
   };
 
   const handleClickSignIn = () => {
-    if (offLine && serialNumber !== SERIAL_NUMBER_POSSWORK) {
+    if (offLine && !checkSerialNumberValid(serialNumber)) {
       message.error('序列号错误');
       return false;
     }
@@ -119,7 +138,7 @@ const Login = () => {
 
   useEffect(() => {
     // 点击离线登录，使用已用的序列号进行自动登录
-    if (isClickOfffLine && offLine && serialNumber === SERIAL_NUMBER_POSSWORK) {
+    if (isClickOfffLine && offLine && checkSerialNumberValid(serialNumber)) {
       handleClickSignIn();
     }
   }, [isClickOfffLine, offLine]);

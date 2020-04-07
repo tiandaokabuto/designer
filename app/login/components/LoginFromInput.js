@@ -2,6 +2,8 @@ import React from 'react';
 import { Input } from 'antd';
 import PropTypes from 'prop-types';
 
+const { Password } = Input;
+
 const LoginFromInput = ({
   inputValue,
   handleInputVauleChange,
@@ -10,8 +12,6 @@ const LoginFromInput = ({
   type,
   formItemClassName,
 }) => {
-  const { Password } = Input;
-
   return (
     <div className={formItemClassName}>
       <div>{label}</div>
