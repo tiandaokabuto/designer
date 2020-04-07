@@ -28,7 +28,6 @@ export default class App extends React.Component<Props> {
     ipcRenderer.on('updateIpAndPort', () => {
       readGlobalConfig(this.resetConfig);
     });
-
     this.init();
   }
 

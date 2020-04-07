@@ -38,6 +38,7 @@ appexpress.post('/upload', function(req, res) {
     // const str = result.replace(/}}/, '}');
     // const finallyResult = str ? JSON.parse(str) : {};
     const finallyResult = req.body;
+
     //将结果通知给渲染进程
     if (targetId === undefined) {
       res.sendStatus(500);
@@ -49,6 +50,7 @@ appexpress.post('/upload', function(req, res) {
     }
 
     mainWindow.restore();
+    console.log(finallyResult.value);
     mainWindow.webContents.send('updateXpath', {
       ...finallyResult.value,
       targetId,
