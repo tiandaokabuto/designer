@@ -7,7 +7,12 @@ import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/
 
 import './VariablePanel.scss';
 
-export default ({ blockNode, label = '设置变量', disabled }) => {
+export default ({
+  blockNode,
+  label = '设置变量',
+  disabled,
+  handleEmitCodeTransform,
+}) => {
   const [flag, forceUpdate] = useForceUpdate();
   const noticyChange = useNoticyBlockCodeChange();
 
@@ -56,6 +61,7 @@ export default ({ blockNode, label = '设置变量', disabled }) => {
                 onChange={e => {
                   varibale.name = e.target.value;
                   noticyChange();
+                  handleEmitCodeTransform && handleEmitCodeTransform();
                 }}
               />
               {disabled ? (
@@ -64,10 +70,10 @@ export default ({ blockNode, label = '设置变量', disabled }) => {
                 <Input
                   placeholder="值"
                   value={varibale.value}
-                  // key={uniqueId('variable_')}
                   onChange={e => {
                     varibale.value = e.target.value;
                     noticyChange();
+                    handleEmitCodeTransform && handleEmitCodeTransform();
                   }}
                 />
               )}

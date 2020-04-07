@@ -3,6 +3,7 @@ import { Tabs } from 'antd';
 import { useSelector } from 'react-redux';
 import GGEditor from 'gg-editor';
 
+import { useTransformToPython } from '../useHooks';
 import ParamPanel from './components/ParamPanel';
 import { findNodeById } from '../shared/utils';
 import GraphContainer from '../../../designerGraphEdit/layout/GraphContainer';
@@ -17,6 +18,9 @@ const getCheckedBlock = (cards, checkedId) => {
 export default ({ current }) => {
   const data = useSelector(state => state.blockcode);
   const checkedBlock = getCheckedBlock(data.cards, data.checkedId);
+  const cards = useSelector(state => state.blockcode.cards);
+
+  const handleEmitCodeTransform = useTransformToPython();
 
   const checkedGraphBlockId = useSelector(
     state => state.grapheditor.checkedGraphBlockId
@@ -37,7 +41,12 @@ export default ({ current }) => {
       <Tabs className="dragger-editor-parampanel-tabs">
         <TabPane tab="属性" key="1">
           {checkedBlock && (
-            <ParamPanel checkedBlock={checkedBlock} key={checkedBlock.id} />
+            <ParamPanel
+              checkedBlock={checkedBlock}
+              handleEmitCodeTransform={handleEmitCodeTransform}
+              key={checkedBlock.id}
+              cards={cards}
+            />
           )}
         </TabPane>
         <TabPane tab="变量" key="2">
@@ -45,10 +54,14 @@ export default ({ current }) => {
             blockNode={{
               variable: inputParams,
             }}
+            handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
             label="输入参数"
             disabled={true}
           />
-          <VariablePanel blockNode={blockNode} />
+          <VariablePanel
+            blockNode={blockNode}
+            handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+          />
         </TabPane>
         <TabPane tab="流程图" key="3">
           <GGEditor>

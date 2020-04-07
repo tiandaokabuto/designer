@@ -3,7 +3,6 @@ import { Input, Select } from 'antd';
 import { useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 
-import { useTransformToPython } from '../../useHooks';
 import event from '../../eventCenter';
 
 import './ParamPanel.scss';
@@ -92,9 +91,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
   }
 };
 
-export default ({ checkedBlock }) => {
-  const cards = useSelector(state => state.blockcode.cards);
-  const handleEmitCodeTransform = useTransformToPython();
+export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const [flag, setFlag] = useState(false);
   useEffect(() => {
     const handleForceUpdate = () => {
