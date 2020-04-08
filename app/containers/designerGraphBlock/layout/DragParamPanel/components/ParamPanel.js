@@ -16,6 +16,12 @@ const getComponentType = (
   keyFlag,
   aiHintList = {}
 ) => {
+  const stopDeleteKeyDown = e => {
+    if (e.keyCode === 46) {
+      e.nativeEvent.stopImmediatePropagation();
+    }
+  };
+
   // 针对一些特殊的情况需要作出特殊的处理
 
   if (param.enName === 'sqlStr') {
@@ -35,6 +41,7 @@ const getComponentType = (
             }
             handleEmitCodeTransform(cards);
           }}
+          onKeyDown={e => stopDeleteKeyDown(e)}
         />
         请填写替换变量
         {param.placeholder.map((place, index) => {
@@ -55,6 +62,7 @@ const getComponentType = (
                     .join(', ')})`;
                 handleEmitCodeTransform(cards);
               }}
+              onKeyDown={e => stopDeleteKeyDown(e)}
             />
           );
         })}
@@ -91,6 +99,7 @@ const getComponentType = (
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
           }}
+          onKeyDown={e => stopDeleteKeyDown(e)}
         />
       );
     case 1:
@@ -144,11 +153,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
               checkedBlock.userDesc = e.target.value;
               handleEmitCodeTransform(cards);
             }}
-            onKeyDown={e => {
-              if (e.keyCode === 46) {
-                e.nativeEvent.stopImmediatePropagation();
-              }
-            }}
+            onKeyDown={e => stopDeleteKeyDown(e)}
           />
         </div>
       )}

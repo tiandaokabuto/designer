@@ -1,12 +1,15 @@
 // @flow
 import * as React from 'react';
-import api, { config } from '../api';
 import { message } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 
+import api, { config } from '../api';
+import { hex_sha1, readGlobalConfig } from '../login/utils';
+
 const { ipcRenderer, remote } = require('electron');
-import { readGlobalConfig } from '../login/utils';
+const fs = require('fs');
+const process = require('process');
 
 message.config({
   maxCount: 2,
@@ -17,9 +20,8 @@ type Props = {
 };
 
 let timerID = null;
-const fs = require('fs');
-const process = require('process');
 const token = remote.getGlobal('sharedObject').token;
+const key = 'refresh';
 
 export default class App extends React.Component<Props> {
   props: Props;
@@ -28,8 +30,16 @@ export default class App extends React.Component<Props> {
     ipcRenderer.on('updateIpAndPort', () => {
       readGlobalConfig(this.resetConfig);
     });
-
+    this.showReconnentTip = false;
+    this.loginData = {};
     this.init();
+    window.addEventListener('offline', this.handleOffLine);
+    window.addEventListener('online', this.handleReconnet);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('offline', this.handleOffLine);
+    window.removeEventListener('online', this.handleReconnet);
   }
 
   init = () => {
@@ -48,6 +58,50 @@ export default class App extends React.Component<Props> {
     );
     // 配置定时刷新接口
     this.refreshToken();
+
+    // 初始化用户数据，用于断网重连
+    const callback = (ip, port, userName, password, serialNumber, offLine) => {
+      this.loginData.offLine = offLine;
+      if (!offLine) {
+        this.loginData.userName = userName;
+        this.loginData.password = password;
+      }
+    };
+    readGlobalConfig(callback);
+  };
+
+  handleOffLine = () => {
+    if (!this.showReconnentTip && !this.loginData.offLine) {
+      this.showReconnentTip = true;
+      message.loading({
+        content: '网络重连中...',
+        key,
+        duration: 0,
+      });
+    }
+  };
+
+  handleReconnet = () => {
+    if (this.showReconnentTip && !this.loginData.offLine) {
+      axios
+        .post(api('signIn'), {
+          userName: this.loginData.userName,
+          password: hex_sha1(this.loginData.password),
+        })
+        .then(json => json.data)
+        .then(json => {
+          if (~json.code) {
+            remote.getGlobal('sharedObject').token = json.data.token;
+            message.success({ content: '连接成功', key, duration: 2 });
+            this.showReconnentTip = false;
+            return true;
+          }
+          return false;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   };
 
   refreshToken = () => {
@@ -64,8 +118,8 @@ export default class App extends React.Component<Props> {
       }
     );
     timerID = setTimeout(() => {
-      axios.get(api('refreshToken')).catch(e => {
-        console.log(e);
+      axios.get(api('refreshToken')).catch(error => {
+        console.log(error);
       });
       this.refreshToken();
     }, 1000 * 60 * 2);

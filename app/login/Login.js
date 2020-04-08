@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import './login.scss';
+
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button, Checkbox, message } from 'antd';
 import axios from 'axios';
 
@@ -12,8 +14,6 @@ import {
 import LoginFromInput from './components/LoginFromInput';
 
 const { ipcRenderer, remote } = require('electron');
-
-import './login.scss';
 
 const validDay = '2020-12-31';
 const SERIAL_NUMBER_POSSWORK = encrypt.argEncryptByDES(validDay);
@@ -35,6 +35,15 @@ const Login = () => {
   // 是否点击切换离线状态，防止退出登录时切换成离线登录页面时发生的自动登录
   const [isClickOfffLine, setIsClickOfffLine] = useState(false);
 
+  // 是否登录成功
+  const [showTip, setShowTip] = useState(false);
+
+  // 登录按钮是否可用
+  const memoizedDisable = useMemo(() => {
+    if (offLine) return serialNumber === '';
+    return userName === '' || password === '';
+  }, [offLine, serialNumber, userName, password]);
+
   const LOGIN_ONLINE = !offLine
     ? [
         {
@@ -43,7 +52,6 @@ const Login = () => {
           handleInputVauleChange: setUserName,
           label: '登录账号',
           placeholder: '请输入登录账号',
-          formItemClassName: 'login-right-username',
         },
         {
           key: 'password',
@@ -52,14 +60,13 @@ const Login = () => {
           type: 'password',
           label: '密码',
           placeholder: '请输入密码',
-          formItemClassName: 'login-right-password',
         },
         {
           key: 'ip',
           inputValue: ip,
           handleInputVauleChange: setIp,
-          label: 'IP',
-          placeholder: '请输入IP',
+          label: 'IP地址',
+          placeholder: '请输入IP地址',
         },
         {
           key: 'port',
@@ -76,7 +83,7 @@ const Login = () => {
           handleInputVauleChange: setSerialNumber,
           label: '序列号',
           placeholder: '请输入序列号',
-          formItemClassName: 'login-right-username',
+          formItemClassName: 'login-right-serial',
         },
       ];
 
@@ -97,6 +104,7 @@ const Login = () => {
     if (offLine) {
       remote.getGlobal('sharedObject').userName = '';
       ipcRenderer.send('loginSuccess');
+      setShowTip(false);
     }
     axios
       .post(api('signIn'), {
@@ -108,10 +116,16 @@ const Login = () => {
           remote.getGlobal('sharedObject').token = json.data.token;
           remote.getGlobal('sharedObject').userName = json.data.roleName;
           ipcRenderer.send('loginSuccess');
+          setShowTip(false);
+          return true;
         }
+        setShowTip(true);
         return false;
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        setShowTip(false);
+        console.log(err);
+      });
   };
 
   const handleClickOffLine = () => {
@@ -145,17 +159,7 @@ const Login = () => {
 
   useEffect(() => {
     axios.interceptors.response.use(
-      response => {
-        // 如果存在返回码
-        if (response && response.data.code) {
-          if (response.data.code !== -1) {
-            // message.success(response.data.msg);
-          } else {
-            message.error(response.data.message);
-          }
-        }
-        return response.data;
-      },
+      response => response.data,
       () => {
         message.error('ip或端口配置错误');
       }
@@ -175,7 +179,7 @@ const Login = () => {
       setPort(port);
       setUserName(userName);
       setPassword(password);
-      setSerialNumber(serialNumberFromFile);
+      if (serialNumberFromFile) setSerialNumber(serialNumberFromFile);
       const globalUserName = remote.getGlobal('sharedObject').userName;
       if (globalUserName === '') setOffLine(OffLineFromFile);
     };
@@ -237,8 +241,18 @@ const Login = () => {
             </Checkbox>
           </p>
         )}
+        <span
+          className="login-right-tip"
+          style={{
+            display: offLine ? 'none' : '',
+            color: showTip ? '#ff3333' : 'transparent',
+          }}
+        >
+          {offLine ? '' : '* 帐号不存在或密码错误，请重新输入'}
+        </span>
         <Button
-          disabled={offLine && serialNumber === ''}
+          disabled={memoizedDisable}
+          className="login-right-primary-button"
           onClick={() => {
             handleClickSignIn();
           }}
