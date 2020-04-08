@@ -9,6 +9,12 @@ import './ParamPanel.scss';
 
 const { Option } = Select;
 
+const stopDeleteKeyDown = e => {
+  if (e.keyCode === 46) {
+    e.nativeEvent.stopImmediatePropagation();
+  }
+};
+
 const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
   // 针对一些特殊的情况需要作出特殊的处理
 
@@ -29,6 +35,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
             }
             handleEmitCodeTransform(cards);
           }}
+          onKeyDown={e => stopDeleteKeyDown(e)}
         />
         请填写替换变量
         {param.placeholder.map((place, index) => {
@@ -49,6 +56,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
                     .join(', ')})`;
                 handleEmitCodeTransform(cards);
               }}
+              onKeyDown={e => stopDeleteKeyDown(e)}
             />
           );
         })}
@@ -65,6 +73,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
           }}
+          onKeyDown={e => stopDeleteKeyDown(e)}
         />
       );
     case 1:
@@ -117,11 +126,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
               checkedBlock.userDesc = e.target.value;
               handleEmitCodeTransform(cards);
             }}
-            onKeyDown={e => {
-              if (e.keyCode === 46) {
-                e.nativeEvent.stopImmediatePropagation();
-              }
-            }}
+            onKeyDown={e => stopDeleteKeyDown(e)}
           />
         </div>
       )}
