@@ -64,21 +64,25 @@ const getComponentType = (
   switch (param.componentType) {
     case 0:
       if (param.enName !== 'outPut') {
-        console.log(aiHintList, param);
+        // console.log(aiHintList, param);
         const dataSource =
           param.paramType &&
           Array.isArray(param.paramType) &&
           param.paramType.reduce((prev, next) => {
             return prev.concat(
-              aiHintList[next] ? aiHintList[next].map(item => item.value) : []
+              aiHintList[next]
+                ? [...new Set(aiHintList[next].map(item => item.value))]
+                : []
             );
           }, []);
-        console.log(dataSource);
+        // console.log(dataSource);
         return (
           <AutoComplete
+            defaultValue={String(param.value || param.default)}
             dataSource={dataSource || []}
             onChange={value => {
-              console.log(value);
+              param.value = value;
+              handleEmitCodeTransform(cards);
             }}
           />
         );
