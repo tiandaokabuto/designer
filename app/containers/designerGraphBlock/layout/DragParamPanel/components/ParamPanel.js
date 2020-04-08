@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Input, Select } from 'antd';
+import { Input, Select, AutoComplete } from 'antd';
 import { useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 
@@ -9,7 +9,13 @@ import './ParamPanel.scss';
 
 const { Option } = Select;
 
-const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
+const getComponentType = (
+  param,
+  handleEmitCodeTransform,
+  cards,
+  keyFlag,
+  aiHintList = {}
+) => {
   // 针对一些特殊的情况需要作出特殊的处理
 
   if (param.enName === 'sqlStr') {
@@ -57,6 +63,26 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
   }
   switch (param.componentType) {
     case 0:
+      if (param.enName !== 'outPut') {
+        console.log(aiHintList, param);
+        const dataSource =
+          param.paramType &&
+          Array.isArray(param.paramType) &&
+          param.paramType.reduce((prev, next) => {
+            return prev.concat(
+              aiHintList[next] ? aiHintList[next].map(item => item.value) : []
+            );
+          }, []);
+        console.log(dataSource);
+        return (
+          <AutoComplete
+            dataSource={dataSource || []}
+            onChange={value => {
+              console.log(value);
+            }}
+          />
+        );
+      }
       return (
         <Input
           defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
@@ -93,6 +119,7 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const [flag, setFlag] = useState(false);
+  const aiHintList = useSelector(state => state.blockcode.aiHintList);
   useEffect(() => {
     const handleForceUpdate = () => {
       setFlag(true);
@@ -134,7 +161,13 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                 {param.cnName}
               </span>
               <div style={{ flex: 1, overflow: 'hidden' }}>
-                {getComponentType(param, handleEmitCodeTransform, cards, flag)}
+                {getComponentType(
+                  param,
+                  handleEmitCodeTransform,
+                  cards,
+                  flag,
+                  aiHintList
+                )}
               </div>
             </div>
           );

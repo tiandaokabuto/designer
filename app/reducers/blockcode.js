@@ -18,7 +18,7 @@ const defaultState = {
   checkedId: undefined,
   pythonCode: '',
   automicList: [],
-  aiHintList: [],
+  aiHintList: {},
 };
 
 export default (state = defaultState, action) => {
