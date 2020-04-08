@@ -85,6 +85,7 @@ export default ({
                   className="variablePanel-btn"
                   onClick={() => {
                     handleVariableDelete(index);
+                    handleEmitCodeTransform && handleEmitCodeTransform();
                   }}
                 />
               )}
