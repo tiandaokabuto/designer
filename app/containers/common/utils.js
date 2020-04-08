@@ -627,7 +627,7 @@ export const exportCustomProcessBlock = () => {
       fs.mkdirSync(filePath);
     }
     fs.writeFileSync(
-      filePath + './manifest.json',
+      filePath + '/manifest.json',
       JSON.stringify(data),
       function(err) {
         console.log(err);
