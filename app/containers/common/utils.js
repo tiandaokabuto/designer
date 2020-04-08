@@ -378,7 +378,6 @@ export const newProcess = (
         label: '开始',
         x: 436,
         y: 30,
-        id: 'startNode',
         index: 0,
         style: {
           stroke: 'rgba(61, 109, 204, 1)',
