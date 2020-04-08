@@ -620,11 +620,34 @@ export const exportCustomProcessBlock = () => {
 
   const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
   getDownloadPath(filePath => {
-    fs.writeFileSync(filePath + '.json', JSON.stringify(data), function(err) {
-      console.log(err);
-      if (!err) {
-        message.success('导出成功');
+    try {
+      fs.mkdirSync(filePath);
+    } catch (err) {
+      deleteFolder(filePath);
+      fs.mkdirSync(filePath);
+    }
+    fs.writeFileSync(
+      filePath + './manifest.json',
+      JSON.stringify(data),
+      function(err) {
+        console.log(err);
       }
-    });
+    );
+    readDir(zip, filePath);
+    zip
+      .generateAsync({
+        // 设置压缩格式，开始打包
+        type: 'nodebuffer', // nodejs用
+        compression: 'DEFLATE', // 压缩算法
+        compressionOptions: {
+          // 压缩级别
+          level: 9,
+        },
+      })
+      .then(function(content) {
+        deleteFolder(filePath);
+        fs.writeFileSync(filePath + '.zip', content);
+        message.success('导出成功');
+      });
   });
 };

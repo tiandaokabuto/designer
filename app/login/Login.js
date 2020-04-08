@@ -101,7 +101,7 @@ const Login = () => {
   };
 
   const handleSignIn = () => {
-    ipcRenderer.send('loginSuccess');
+    //ipcRenderer.send('loginSuccess');
     if (offLine) {
       remote.getGlobal('sharedObject').userName = '';
       ipcRenderer.send('loginSuccess');
