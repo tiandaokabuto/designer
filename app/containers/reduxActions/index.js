@@ -16,6 +16,7 @@ import {
   SYNCHRO_CODEBLOCK,
   CHANGE_AUTOMICLIST,
   CHANGE_CHECKEDID,
+  CHANGE_AIHINTLIST,
 } from '../../actions/codeblock';
 import {
   UPDATE_EXECUTEOUTPUT,
@@ -24,6 +25,13 @@ import {
 import store from '../../store';
 
 const { dispatch } = store;
+
+export const updateAIHintList = list => {
+  dispatch({
+    type: CHANGE_AIHINTLIST,
+    payload: list,
+  });
+};
 
 export const updateCheckedBlockId = id => {
   dispatch({
