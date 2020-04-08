@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useRef } from 'react';
 import {
   NodeMenu,
   EdgeMenu,
@@ -7,17 +7,35 @@ import {
   CanvasMenu,
   ContextMenu,
 } from 'gg-editor';
+import { useSelector } from 'react-redux';
+import uniqueId from 'lodash/uniqueId';
 import MenuItem from './MenuItem';
 
 import './index.scss';
 
 const FlowContextMenu = () => {
+  const checkedGraphBlockId = useSelector(
+    state => state.grapheditor.checkedGraphBlockId
+  );
+  const graphData = useSelector(state => state.grapheditor.graphData);
+
+  const model = useMemo(() => {
+    if (graphData.nodes && checkedGraphBlockId) {
+      return graphData.nodes.find(item => item.id === checkedGraphBlockId);
+    }
+    return {};
+  }, [checkedGraphBlockId, graphData]);
+
   return (
     <ContextMenu className="contextMenu">
       <NodeMenu>
         <MenuItem command="copy" text="复制" />
         <MenuItem command="delete" text="删除" />
+        {model && model.shape === 'processblock' && (
+          <MenuItem command="导出到本地" text="导出到本地" />
+        )}
       </NodeMenu>
+
       <EdgeMenu>
         <MenuItem command="delete" text="删除" />
       </EdgeMenu>
