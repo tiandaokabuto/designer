@@ -93,6 +93,7 @@ const LoopStatement = useInjectContext(props => {
     props,
     setIsDraggingNode,
     isFold,
+    canDrag,
     handleLoopStatementFlod: handleStatementFlod,
   });
 
