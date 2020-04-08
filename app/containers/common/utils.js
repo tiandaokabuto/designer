@@ -4,6 +4,9 @@ import { useSelector } from 'react-redux';
 import { Input, message, Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import moment from 'moment';
+
+import store from '../../store';
+import useGetDownloadPath from './DragEditorHeader/useHooks/useGetDownloadPath';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
@@ -607,4 +610,21 @@ export const downProcessZipToLocal = (
       deleteFolder(filePath);
       fs.writeFileSync(filePath + '.zip', content);
     });
+};
+
+export const exportCustomProcessBlock = () => {
+  const getDownloadPath = useGetDownloadPath();
+  const {
+    grapheditor: { graphDataMap, checkedGraphBlockId },
+  } = store.getState();
+
+  const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
+  getDownloadPath(filePath => {
+    fs.writeFileSync(filePath + '.json', JSON.stringify(data), function(err) {
+      console.log(err);
+      if (!err) {
+        message.success('导出成功');
+      }
+    });
+  });
 };

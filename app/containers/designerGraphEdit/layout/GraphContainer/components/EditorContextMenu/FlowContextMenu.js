@@ -14,7 +14,6 @@ import MenuItem from './MenuItem';
 import './index.scss';
 
 const FlowContextMenu = () => {
-<<<<<<< HEAD
   // const checkedGraphBlockId = useSelector(
   //   state => state.grapheditor.checkedGraphBlockId
   // );
@@ -26,32 +25,13 @@ const FlowContextMenu = () => {
   //   }
   //   return {};
   // }, [checkedGraphBlockId, graphData]);
-=======
-  const checkedGraphBlockId = useSelector(
-    state => state.grapheditor.checkedGraphBlockId
-  );
-  const graphData = useSelector(state => state.grapheditor.graphData);
-
-  const model = useMemo(() => {
-    if (graphData.nodes && checkedGraphBlockId) {
-      return graphData.nodes.find(item => item.id === checkedGraphBlockId);
-    }
-    return {};
-  }, [checkedGraphBlockId, graphData]);
->>>>>>> c12b5cb7384310eac5699896c48a508115e36022
 
   return (
     <ContextMenu className="contextMenu">
       <NodeMenu>
         <MenuItem command="copy" text="复制" />
         <MenuItem command="delete" text="删除" />
-<<<<<<< HEAD
         <MenuItem command="导出到本地" text="导出到本地" />
-=======
-        {model && model.shape === 'processblock' && (
-          <MenuItem command="导出到本地" text="导出到本地" />
-        )}
->>>>>>> c12b5cb7384310eac5699896c48a508115e36022
       </NodeMenu>
 
       <EdgeMenu>
