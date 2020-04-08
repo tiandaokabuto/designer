@@ -1,3 +1,5 @@
+import './login.scss';
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Button, Checkbox, message } from 'antd';
 import axios from 'axios';
@@ -12,8 +14,6 @@ import {
 import LoginFromInput from './components/LoginFromInput';
 
 const { ipcRenderer, remote } = require('electron');
-
-import './login.scss';
 
 const validDay = '2020-12-31';
 const SERIAL_NUMBER_POSSWORK = encrypt.argEncryptByDES(validDay);
@@ -179,7 +179,7 @@ const Login = () => {
       setPort(port);
       setUserName(userName);
       setPassword(password);
-      setSerialNumber(serialNumberFromFile);
+      if (serialNumberFromFile) setSerialNumber(serialNumberFromFile);
       const globalUserName = remote.getGlobal('sharedObject').userName;
       if (globalUserName === '') setOffLine(OffLineFromFile);
     };
