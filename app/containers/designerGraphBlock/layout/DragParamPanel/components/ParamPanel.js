@@ -75,12 +75,42 @@ const getComponentType = (
                 : []
             );
           }, []);
-        // console.log(dataSource);
+        const depList =
+          (param.paramType &&
+            Array.isArray(param.paramType) &&
+            param.paramType.reduce((prev, next) => {
+              return prev.concat(aiHintList[next] || []);
+            }, [])) ||
+          [];
+
         return (
           <AutoComplete
+            key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
             defaultValue={String(param.value || param.default)}
             dataSource={dataSource || []}
+            onSelect={value => {
+              const handleWatchChange = value => {
+                param.value = value;
+              };
+              const dep = depList.find(item => item.value === value);
+              if (dep) {
+                if (dep.listeners) {
+                  dep.listeners.push(handleWatchChange);
+                } else {
+                  dep.listeners = [handleWatchChange];
+                }
+                param.watchDep = dep;
+                param.handleWatchChange = handleWatchChange;
+              }
+            }}
             onChange={value => {
+              if (param.watchDep) {
+                if (param.watchDep.listeners) {
+                  param.watchDep.listeners = param.watchDep.listeners.filter(
+                    item => item !== param.handleWatchChange
+                  );
+                }
+              }
               param.value = value;
               handleEmitCodeTransform(cards);
             }}
@@ -94,6 +124,11 @@ const getComponentType = (
           onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
+            if (param.listeners) {
+              param.listeners.forEach(callback => {
+                callback(e.target.value);
+              });
+            }
           }}
         />
       );

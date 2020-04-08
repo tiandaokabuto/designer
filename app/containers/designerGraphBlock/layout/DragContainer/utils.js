@@ -23,7 +23,6 @@ export const changeAIHintList = cards => {
       node.properties.required &&
       (output = node.properties.required.find(item => item.enName === 'outPut'))
     ) {
-      console.log(output);
       if (output.paramType && Array.isArray(output.paramType)) {
         output.paramType.forEach(type => {
           if (!aiHintList[type]) {
