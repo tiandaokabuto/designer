@@ -1,16 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { Input, Select } from 'antd';
-import { useSelector } from 'react-redux';
+import { Input, Select, AutoComplete } from 'antd';
 import uniqueId from 'lodash/uniqueId';
+import axios from 'axios';
 
 import event from '../../eventCenter';
+import api, { config } from '../../../../../api';
 
 import './ParamPanel.scss';
 
 const { Option } = Select;
+const { TextArea } = Input;
+
+const componentType = {
+  INPUT: 0,
+  SELECT: 1,
+};
 
 const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
   // 针对一些特殊的情况需要作出特殊的处理
+  const [dataSource, setDataSource] = useState([]);
+
+  if (param.enName === 'name' && dataSource.length === 0) {
+    axios
+      .get(api('getControllerParam'))
+      .then(json => json.data)
+      .then(json => {
+        const data = json.data;
+        if (json.code !== -1 && data) {
+          setDataSource(data.map(item => item.name));
+          return true;
+        }
+        return false;
+      })
+      .catch(err => console.log(err));
+  }
+
+  const handleChangeValue = (value, param, cards) => {
+    param.value = value;
+    handleEmitCodeTransform(cards);
+  };
 
   if (param.enName === 'sqlStr') {
     return (
@@ -56,18 +84,36 @@ const getComponentType = (param, handleEmitCodeTransform, cards, keyFlag) => {
     );
   }
   switch (param.componentType) {
-    case 0:
+    case componentType.INPUT:
       return (
-        <Input
+        /*  <Input
           defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
           key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
           onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
           }}
-        />
+        /> */
+        <AutoComplete
+          defaultValue={param.value || param.default}
+          key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
+          onChange={value => {
+            handleChangeValue(value, param, cards);
+          }}
+          onSelect={value => {
+            handleChangeValue(value, param, cards);
+          }}
+          dataSource={dataSource}
+          filterOption={(inputValue, option) =>
+            option.props.children
+              .toUpperCase()
+              .indexOf(inputValue.toUpperCase()) !== -1
+          }
+        >
+          <TextArea className="custom" />
+        </AutoComplete>
       );
-    case 1:
+    case componentType.SELECT:
       return (
         <Select
           style={{ width: '100%' }}
