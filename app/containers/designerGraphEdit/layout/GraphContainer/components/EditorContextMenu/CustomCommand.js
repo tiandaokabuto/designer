@@ -11,7 +11,11 @@ class CustomCommand extends React.Component {
 
     const config = {
       // 是否进入列队，默认为 true
+<<<<<<< HEAD
       queue: false,
+=======
+      queue: true,
+>>>>>>> c12b5cb7384310eac5699896c48a508115e36022
 
       // 命令是否可用
       enable(/* editor */) {
