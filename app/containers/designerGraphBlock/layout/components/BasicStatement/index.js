@@ -146,8 +146,6 @@ const BasicStatement = useInjectContext(props => {
     handleEmitCodeTransform(cards);
   };
 
-  console.log(card);
-
   return (
     <div
       ref={readOnly ? null : ref}
