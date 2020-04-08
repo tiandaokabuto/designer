@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Input, Select, AutoComplete } from 'antd';
-import { useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
+import axios from 'axios';
 
 import event from '../../eventCenter';
+import api, { config } from '../../../../../api';
 
 import './ParamPanel.scss';
 
 const { Option } = Select;
+const { TextArea } = Input;
+
+const componentType = {
+  INPUT: 0,
+  SELECT: 1,
+};
 
 const getComponentType = (
   param,
@@ -23,6 +30,27 @@ const getComponentType = (
   };
 
   // 针对一些特殊的情况需要作出特殊的处理
+  const [dataSource, setDataSource] = useState([]);
+
+  if (param.enName === 'name' && dataSource.length === 0) {
+    axios
+      .get(api('getControllerParam'))
+      .then(json => json.data)
+      .then(json => {
+        const data = json.data;
+        if (json.code !== -1 && data) {
+          setDataSource(data.map(item => item.name));
+          return true;
+        }
+        return false;
+      })
+      .catch(err => console.log(err));
+  }
+
+  const handleChangeValue = (value, param, cards) => {
+    param.value = value;
+    handleEmitCodeTransform(cards);
+  };
 
   if (param.enName === 'sqlStr') {
     return (
@@ -70,39 +98,36 @@ const getComponentType = (
     );
   }
   switch (param.componentType) {
-    case 0:
-      if (param.enName !== 'outPut') {
-        console.log(aiHintList, param);
-        const dataSource =
-          param.paramType &&
-          Array.isArray(param.paramType) &&
-          param.paramType.reduce((prev, next) => {
-            return prev.concat(
-              aiHintList[next] ? aiHintList[next].map(item => item.value) : []
-            );
-          }, []);
-        console.log(dataSource);
-        return (
-          <AutoComplete
-            dataSource={dataSource || []}
-            onChange={value => {
-              console.log(value);
-            }}
-          />
-        );
-      }
+    case componentType.INPUT:
       return (
-        <Input
+        /*  <Input
           defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
           key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
           onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
           }}
-          onKeyDown={e => stopDeleteKeyDown(e)}
-        />
+        /> */
+        <AutoComplete
+          defaultValue={param.value || param.default}
+          key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
+          onChange={value => {
+            handleChangeValue(value, param, cards);
+          }}
+          onSelect={value => {
+            handleChangeValue(value, param, cards);
+          }}
+          dataSource={dataSource}
+          filterOption={(inputValue, option) =>
+            option.props.children
+              .toUpperCase()
+              .indexOf(inputValue.toUpperCase()) !== -1
+          }
+        >
+          <TextArea className="custom" onKeyDown={e => stopDeleteKeyDown(e)} />
+        </AutoComplete>
       );
-    case 1:
+    case componentType.SELECT:
       return (
         <Select
           style={{ width: '100%' }}
