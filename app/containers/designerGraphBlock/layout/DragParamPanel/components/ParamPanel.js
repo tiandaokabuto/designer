@@ -9,10 +9,35 @@ import './ParamPanel.scss';
 
 const { Option } = Select;
 
+// Number（数字）
+// String（字符串）
+// List（列表）
+// Dictionary（字典）
+// bool（布尔
+
 const typeOf = value => {
   if (/['"]/.test(value)) {
     return 'String';
+  } else if (/^True$|^False$/.test(value)) {
+    return 'Boolean';
+  } else if (/^[0-9]+$/.test(value)) {
+    return 'Number';
+  } else if (/\[|\]/.test(value)) {
+    return 'List';
+  } else if (/\{|\}/.test(value)) {
+    return 'Dictionary';
+  } else {
+    return undefined;
   }
+};
+
+const removeDuplicateItem = (aiHintList, item) => {
+  Object.values(aiHintList).forEach(list => {
+    const index = list.findIndex(child => child === item);
+    if (index !== -1) {
+      list.splice(index, 1);
+    }
+  });
 };
 
 const getComponentType = (
@@ -76,7 +101,11 @@ const getComponentType = (
           param.paramType.reduce((prev, next) => {
             return prev.concat(
               aiHintList[next]
-                ? [...new Set(aiHintList[next].map(item => item.value))]
+                ? [
+                    ...new Set(
+                      aiHintList[next].map(item => item.value).filter(Boolean)
+                    ),
+                  ]
                 : []
             );
           }, []);
@@ -180,7 +209,19 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   }, [graphDataMap, checkedGraphBlockId]);
 
   console.log(aiHintList, variableList);
-  variableList.forEach(item => {});
+  variableList.forEach(item => {
+    if (item.name && item.value) {
+      const type = typeOf(item.value);
+      if (type === undefined) return;
+      removeDuplicateItem(aiHintList, item);
+      if (aiHintList[type]) {
+        if (aiHintList[type].find(el => el === item)) return;
+        aiHintList[type].push(item);
+      } else {
+        aiHintList[type] = [item];
+      }
+    }
+  });
 
   useEffect(() => {
     const handleForceUpdate = () => {
@@ -194,6 +235,17 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
       event.removeListener('forceUpdate', handleForceUpdate);
     };
   }, []);
+
+  useEffect(() => {
+    const handleVariableDelete = item => {
+      console.log('kkkkkkkkk');
+      removeDuplicateItem(aiHintList, item);
+    };
+    event.addListener('varibaleDelete', handleVariableDelete);
+    return () => {
+      event.removeListener('varibaleDelete', handleVariableDelete);
+    };
+  }, [aiHintList]);
 
   return (
     <div className="parampanel">
