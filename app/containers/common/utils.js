@@ -4,8 +4,6 @@ import { useSelector } from 'react-redux';
 import { Input, message, Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import moment from 'moment';
-
-import store from '../../store';
 import useGetDownloadPath from './DragEditorHeader/useHooks/useGetDownloadPath';
 import {
   changeProcessTree,
@@ -801,7 +799,12 @@ export const addToReuse = () => {
   const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
   console.log(data); // 数据
   const title = data.properties[0].value; // 标题
-  const item = moduleTree.find(item => item.title === title); //树中是否存在该流程块
+  // const item = moduleTree.find(item => item.title === title); //树中是否存在该流程块
+  const files = fs.readdirSync(
+    PATH_CONFIG('project', `${currentProject}/${currentProject}_module`)
+  );
+  const item = files.find(item => item === `${title}.json`);
+  console.log(item);
   if (!item) {
     // 把流程块数据写入文件
     fs.writeFileSync(
