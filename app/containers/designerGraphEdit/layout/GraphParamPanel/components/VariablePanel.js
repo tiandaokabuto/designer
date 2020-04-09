@@ -73,6 +73,11 @@ export default ({
                   value={varibale.value}
                   onChange={e => {
                     varibale.value = e.target.value;
+                    if (varibale.listeners) {
+                      varibale.listeners.forEach(callback => {
+                        callback(e.target.value);
+                      });
+                    }
                     noticyChange();
                     handleEmitCodeTransform && handleEmitCodeTransform();
                   }}
