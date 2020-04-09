@@ -36,6 +36,6 @@ export const changeAIHintList = cards => {
       }
     }
   });
-  console.log(aiHintList);
+
   updateAIHintList(aiHintList);
 };
