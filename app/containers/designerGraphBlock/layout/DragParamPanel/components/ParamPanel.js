@@ -126,18 +126,8 @@ const getComponentType = (
               param.value = value;
               handleEmitCodeTransform(cards);
             }}
-            // filterOption={(inputValue, option) =>
-            //   option.props.children
-            //     .toUpperCase()
-            //     .indexOf(inputValue.toUpperCase()) !== -1
-            // }
           >
-            <TextArea
-              // placeholder="input here"
-              className="custom"
-              style={{ height: 32 }}
-              // onKeyPress={this.handleKeyPress}
-            />
+            <TextArea className="custom" style={{ height: 32 }} />
           </AutoComplete>
         );
       }
