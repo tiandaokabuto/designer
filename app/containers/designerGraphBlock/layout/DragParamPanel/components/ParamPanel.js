@@ -64,7 +64,6 @@ const getComponentType = (
   switch (param.componentType) {
     case 0:
       if (param.enName !== 'outPut') {
-        // console.log(aiHintList, param);
         const dataSource =
           param.paramType &&
           Array.isArray(param.paramType) &&
