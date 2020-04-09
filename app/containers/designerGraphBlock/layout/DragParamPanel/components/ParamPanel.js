@@ -26,6 +26,17 @@ const getMutiplyValue = (item, type) => {
   return [];
 };
 
+const getVariableList = item => {
+  const tempOutput =
+    typeof item === 'string'
+      ? item.replace(/\(|\)/g, '')
+      : item.value.replace(/\(|\)/g, '');
+  if (tempOutput) {
+    return tempOutput.split(',');
+  }
+  return [];
+};
+
 const getComponentType = (
   param,
   handleEmitCodeTransform,
@@ -121,20 +132,36 @@ const getComponentType = (
               const handleWatchChange = value => {
                 param.value = value;
               };
+              const handleMutiply = value => {
+                param.value = getVariableList(value)[param.mutiplyIndex];
+              };
               const dep = depList.find(item => {
                 if (item.isVariable) {
                   return item.name === value;
                 }
+                if (item.isMutiply) {
+                  return item.value
+                    .replace(/\)|\(/g, '')
+                    .split(',')
+                    .find(child => child === value);
+                }
                 return item.value === value;
               });
+
               if (dep) {
+                const handleChange = dep.isMutiply
+                  ? handleMutiply
+                  : handleWatchChange;
+                console.log(dep, 'dep');
                 if (dep.listeners) {
-                  dep.listeners.push(handleWatchChange);
+                  dep.listeners.push(handleChange);
                 } else {
-                  dep.listeners = [handleWatchChange];
+                  dep.listeners = [handleChange];
                 }
+                const variableList = getVariableList(dep);
                 param.watchDep = dep;
-                param.handleWatchChange = handleWatchChange;
+                param.mutiplyIndex = variableList.findIndex(el => el === value);
+                param.handleWatchChange = handleChange;
               }
             }}
             onChange={value => {
