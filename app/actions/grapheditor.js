@@ -13,3 +13,7 @@ export const SYNCHRO_GRAPHDATATOPROCESSTREE = 'synchro_graphDataToProcessTree';
 export const CHANGE_CURRENTEDITINGPROCESSID = 'currentEditingProcessId';
 export const RESET_ALLGRAPHEDITDATA = 'reset_allGraphEditData';
 export const RESET_GRAPHERITORALLDATA = 'reset_grapheditoralldata';
+export const CHANGE_MODULE_TREE = 'change_module_tree';
+export const CHANGE_CHECKED_MODULE_TREE_NODE =
+  'change_checked_module_tree_node';
+export const CHANGE_TREE_TAB = 'change_tree_tab';

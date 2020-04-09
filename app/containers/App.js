@@ -53,6 +53,12 @@ export default class App extends React.Component<Props> {
   }
 
   init = () => {
+    window.addEventListener('offline', () => {
+      console.log('断网了');
+    });
+    window.addEventListener('online', () => {
+      console.log('冲浪');
+    });
     axios.interceptors.request.use(
       config => {
         config.headers = {

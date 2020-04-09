@@ -9,6 +9,7 @@ import ProcessBlockNode from '../RegisterNode/ProcessBlockNode';
 import StartNode from '../RegisterNode/StartNode';
 import EndNode from '../RegisterNode/EndNode';
 import RhombusNode from '../RegisterNode/RhombusNode';
+import ReuseCommand from './components/EditorContextMenu/ReuseCommand';
 import CustomCommand from './components/EditorContextMenu/CustomCommand';
 
 import EditorDrawer from './components/EditorDrawer';
@@ -166,6 +167,7 @@ export default useInjectContext(
           <EndNode />
           <RhombusNode />
           <EditorChange />
+          <ReuseCommand />
           {/* <HighlightEditor /> */}
           <CustomCommand />
           <OutputPanel tag="graph" />
