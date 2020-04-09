@@ -51,8 +51,6 @@ export default () => {
     return [];
   }, [graphDataMap, checkedGraphBlockId]);
 
-  console.log(aiHintList, variableList);
-
   variableList.forEach(item => {
     if (item.name && item.value) {
       const type = typeOf(item.value);
