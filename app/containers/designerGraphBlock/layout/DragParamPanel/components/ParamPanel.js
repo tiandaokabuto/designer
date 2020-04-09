@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Input, Select, AutoComplete } from 'antd';
 import { useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
@@ -8,6 +8,12 @@ import event from '../../eventCenter';
 import './ParamPanel.scss';
 
 const { Option } = Select;
+
+const typeOf = value => {
+  if (/['"]/.test(value)) {
+    return 'String';
+  }
+};
 
 const getComponentType = (
   param,
@@ -158,6 +164,24 @@ const getComponentType = (
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const [flag, setFlag] = useState(false);
   const aiHintList = useSelector(state => state.blockcode.aiHintList);
+
+  const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+
+  const checkedGraphBlockId = useSelector(
+    state => state.grapheditor.checkedGraphBlockId
+  );
+
+  const variableList = useMemo(() => {
+    if (graphDataMap && checkedGraphBlockId) {
+      const variable = graphDataMap.get(checkedGraphBlockId).variable || [];
+      return variable;
+    }
+    return [];
+  }, [graphDataMap, checkedGraphBlockId]);
+
+  console.log(aiHintList, variableList);
+  variableList.forEach(item => {});
+
   useEffect(() => {
     const handleForceUpdate = () => {
       setFlag(true);
