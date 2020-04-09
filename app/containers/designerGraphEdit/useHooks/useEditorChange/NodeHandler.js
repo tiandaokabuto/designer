@@ -52,6 +52,12 @@ class NodeHandler {
           shape: 'rhombus-node',
           properties: [
             {
+              cnName: '标签名称',
+              enName: 'label',
+              value: '判断',
+              default: '',
+            },
+            {
               cnName: '分支条件',
               enName: 'condition',
               value: '',
