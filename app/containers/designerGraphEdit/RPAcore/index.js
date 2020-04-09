@@ -41,9 +41,10 @@ const transformEditorProcess = (
         `def ${funcName}(${params
           .filter(item => item.name)
           .map(item => item.name)
-          .join(',')}):\n${transformVariable(variable)}${transformBlockToCode(
+          .join(',')}):\n${transformBlockToCode(
           blockData.cards || [],
-          1
+          1,
+          blockData
         ).output || '\n'}` + result.output;
       // 如果跟循环有关系需要添加循环语句
       if (hasTwoEntryPortInProcessBlock(graphData.edges, currentId)) {

@@ -11,6 +11,44 @@
   &-right {
     flex-basis: 400px;
     padding: 56px 0 0 80px;
+    color: #333;
+
+    &-form {
+      &-item {
+        margin-bottom: 16px;
+        width: 240px;
+        position: relative;
+
+        div {
+          line-height: 16px;
+          font-size: 12px;
+        }
+
+        &::after {
+          content: '';
+          transition: width 0.5s linear;
+          transform-origin: right;
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          width: 0;
+          height: 1px;
+          background-color: rgba(238, 238, 238, 1);
+        }
+
+        &:focus-within {
+          &::after {
+            transform-origin: left;
+            width: 100%;
+            left: 0;
+          }
+        }
+
+        &:last-of-type {
+          margin-bottom: 10px;
+        }
+      }
+    }
 
     &-icon {
       &-close {
@@ -29,7 +67,7 @@
     }
 
     &-title {
-      margin-bottom: 56px;
+      margin-bottom: 40px;
       font-size: 14px;
       color: #333;
       font-weight: 500;
@@ -52,69 +90,29 @@
       width: 80px;
     }
 
-    &-username {
-      width: 240px;
-      margin-bottom: 16px;
-      font-size: 12px;
-      position: relative;
-
-      &::after {
-        content: '';
-        transition: width 0.5s linear;
-        transform-origin: right;
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 0;
-        height: 1px;
-        background-color: rgba(238, 238, 238, 1);
-      }
-
-      &:focus-within {
-        &::after {
-          transform-origin: left;
-          width: 100%;
-          left: 0;
-        }
-      }
-    }
-
-    &-password {
-      width: 240px;
-      font-size: 12px;
-      margin-bottom: 16px;
-      position: relative;
-
-      &::after {
-        content: '';
-        transition: width 0.5s linear;
-        transform-origin: right;
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 0;
-        height: 1px;
-        background-color: rgba(238, 238, 238, 1);
-      }
-
-      &:focus-within {
-        &::after {
-          transform-origin: left;
-          width: 100%;
-          left: 0;
-        }
+    &-primary-button {
+      border: #32a67f;
+      background-color: #32a67f;
+      color: #ffffff;
+      &:active,
+      &.active,
+      &:hover,
+      &:focus {
+        border: #32a67f;
+        background-color: #32a67f;
+        color: #ffffff;
       }
     }
 
     &-offline {
       float: right;
       margin-right: 80px;
-      color: #32A67F;
+      color: #32a67f;
 
       &:hover,
       &:active,
       &:focus {
-        color: #32A67F;
+        color: #32a67f;
       }
     }
 
@@ -123,12 +121,43 @@
       color: #333333;
 
       &-file {
-        color: #00A0E8;
+        color: #00a0e8;
       }
+    }
+
+    &-tip {
+      display: block;
+      position: relative;
+      font-size: 12px;
+      color: #ff3333;
+      line-height: 12px;
+      margin-bottom: 10px;
     }
   }
 }
 
+.login-right .login-right-serial {
+  margin-bottom: 16px;
+}
+
 :root {
   margin: 0;
+}
+
+.ant-btn-disabled,
+.ant-btn.disabled,
+.ant-btn[disabled],
+.ant-btn-disabled:hover,
+.ant-btn.disabled:hover,
+.ant-btn[disabled]:hover,
+.ant-btn-disabled:focus,
+.ant-btn.disabled:focus,
+.ant-btn[disabled]:focus,
+.ant-btn-disabled:active,
+.ant-btn.disabled:active,
+.ant-btn[disabled]:active,
+.ant-btn-disabled.active,
+.ant-btn.disabled.active,
+.ant-btn[disabled].active {
+  color: #ffffff;
 }

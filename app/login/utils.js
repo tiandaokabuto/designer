@@ -37,6 +37,18 @@ const argDecryptByDES = message => {
   return decrypted.toString(CryptoJS.enc.Utf8);
 };
 
+// 获取用户电脑时间
+export const getUserDay = () => {
+  let date = new Date();
+  let month = date.getMonth() + 1;
+  month = month > 9 ? month : '0'.concat(month);
+  let day = date.getDate();
+  day = day > 9 ? day : '0'.concat(day);
+  const seperator = '-';
+  date = date.getFullYear() + seperator + month + seperator + day;
+  return date;
+};
+
 export const readGlobalConfig = callback => {
   const path = `${currPath}/globalconfig/config.json`;
   fs.readFile(path, function(err, data) {
@@ -54,16 +66,22 @@ export const readGlobalConfig = callback => {
         }
       );
     } else {
-      const { ip, port, userName, password, serialNumber } = JSON.parse(
-        data.toString()
-      );
+      const {
+        ip,
+        port,
+        userName,
+        password,
+        serialNumber,
+        userDay,
+      } = JSON.parse(data.toString());
       callback(
         ip,
         port,
         userName,
         password,
         serialNumber,
-        JSON.parse(data.toString()).offLine
+        JSON.parse(data.toString()).offLine,
+        userDay
       );
     }
   });

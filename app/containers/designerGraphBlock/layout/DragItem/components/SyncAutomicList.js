@@ -99,6 +99,8 @@ const readGlobalConfig = (callback, flag = false) => {
             },
           ];
 
+          console.log(treeData);
+
           writeGlobalConfig({
             automicList: treeData,
           });

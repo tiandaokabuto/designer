@@ -101,8 +101,20 @@ const transformModuleImport = (result, moduleMap, depth) => {
   result.output = prefix + '\n' + result.output;
 };
 
-export default (dataStructure, depth = 0) => {
+const transformModuleVariable = (result, depth, variable) => {
+  if (Array.isArray(variable)) {
+    result.output += `${variable
+      .filter(item => item.name && item.value)
+      .map(item => paddingStart(depth) + item.name + ' = ' + item.value)
+      .join('\n')}\n`;
+  }
+};
+
+export default (dataStructure, depth = 0, blockNode) => {
   result.output = '';
+  if (blockNode) {
+    transformModuleVariable(result, depth, blockNode.variable || []);
+  }
   moduleMap.clear();
   transformBlockToCodeImpl(dataStructure, depth);
   transformModuleImport(result, moduleMap, depth);

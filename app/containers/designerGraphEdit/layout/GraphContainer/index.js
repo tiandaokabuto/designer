@@ -10,6 +10,7 @@ import StartNode from '../RegisterNode/StartNode';
 import EndNode from '../RegisterNode/EndNode';
 import RhombusNode from '../RegisterNode/RhombusNode';
 import ReuseCommand from './components/EditorContextMenu/ReuseCommand';
+import CustomCommand from './components/EditorContextMenu/CustomCommand';
 
 import EditorDrawer from './components/EditorDrawer';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
@@ -122,13 +123,15 @@ export default useInjectContext(
                     updateCurrentPagePosition('block');
                   }, 200);
                 }
-                setTimeout(() => {
-                  changeCheckedGraphBlockId(node.item.model.id);
-                  synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
-                }, 0);
+                // setTimeout(() => {
+                //   //changeCheckedGraphBlockId(node.item.model.id);
+                //   // synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
+                // }, 0);
 
                 changeCheckedGraphBlockId(node.item.model.id);
                 synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
+              } else {
+                changeCheckedGraphBlockId(node.item.model.id);
               }
 
               /**
@@ -166,6 +169,7 @@ export default useInjectContext(
           <EditorChange />
           <ReuseCommand />
           {/* <HighlightEditor /> */}
+          <CustomCommand />
           <OutputPanel tag="graph" />
         </div>
       );

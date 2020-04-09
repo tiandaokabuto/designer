@@ -4,6 +4,9 @@ import { useSelector } from 'react-redux';
 import { Input, message, Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import moment from 'moment';
+
+import store from '../../store';
+import useGetDownloadPath from './DragEditorHeader/useHooks/useGetDownloadPath';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
@@ -514,7 +517,6 @@ export const newProcess = (
         label: '开始',
         x: 436,
         y: 30,
-        id: 'startNode',
         index: 0,
         style: {
           stroke: 'rgba(61, 109, 204, 1)',
@@ -850,4 +852,43 @@ export const addToReuse = () => {
   } else {
     message.info('已存在同名的流程块');
   }
+};
+export const exportCustomProcessBlock = () => {
+  const getDownloadPath = useGetDownloadPath();
+  const {
+    grapheditor: { graphDataMap, checkedGraphBlockId },
+  } = store.getState();
+
+  const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
+  getDownloadPath(filePath => {
+    try {
+      fs.mkdirSync(filePath);
+    } catch (err) {
+      deleteFolder(filePath);
+      fs.mkdirSync(filePath);
+    }
+    fs.writeFileSync(
+      filePath + '/manifest.json',
+      JSON.stringify(data),
+      function(err) {
+        console.log(err);
+      }
+    );
+    readDir(zip, filePath);
+    zip
+      .generateAsync({
+        // 设置压缩格式，开始打包
+        type: 'nodebuffer', // nodejs用
+        compression: 'DEFLATE', // 压缩算法
+        compressionOptions: {
+          // 压缩级别
+          level: 9,
+        },
+      })
+      .then(function(content) {
+        deleteFolder(filePath);
+        fs.writeFileSync(filePath + '.zip', content);
+        message.success('导出成功');
+      });
+  });
 };

@@ -18,7 +18,20 @@ const FormItem = ({
   noticyBlockCodeChange,
 }) => {
   const handleLableChange = useDebounce(e => {
-    const maxLength = 18;
+    const { executeCommand, update, save, find } = propsAPI;
+    const item = find(checkedGraphBlockId);
+    if (!item) {
+      return;
+    }
+    // 流程块的最大文本长度
+    let maxLength = 18;
+    if (
+      item.dataMap[item.id] &&
+      item.dataMap[item.id].shape === 'rhombus-node'
+    ) {
+      // 判断块的最大文本长度
+      maxLength = 4;
+    }
     let lableValue = e.target.value;
     param.value = lableValue;
     const labelLength = lableValue.length;
@@ -39,12 +52,6 @@ const FormItem = ({
           break;
         }
       }
-    }
-
-    const { executeCommand, update, save, find } = propsAPI;
-    const item = find(checkedGraphBlockId);
-    if (!item) {
-      return;
     }
     setTimeout(() => {
       updateGraphData(save());
@@ -98,6 +105,7 @@ export default withPropsAPI(
           if (param.enName === 'param') {
             return (
               <VariablePanel
+                key={index}
                 blockNode={{
                   variable: param.value,
                 }}

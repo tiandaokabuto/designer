@@ -8,6 +8,7 @@ import {
   CHANGE_PYTHONCODE,
   SYNCHRO_CODEBLOCK,
   CHANGE_AUTOMICLIST,
+  CHANGE_AIHINTLIST,
 } from '../actions/codeblock';
 
 import { synchroGraphDataMap } from '../containers/reduxActions';
@@ -17,10 +18,16 @@ const defaultState = {
   checkedId: undefined,
   pythonCode: '',
   automicList: [],
+  aiHintList: {},
 };
 
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case CHANGE_AIHINTLIST:
+      return {
+        ...state,
+        aiHintList: action.payload,
+      };
     case CHANGE_AUTOMICLIST:
       return {
         ...state,

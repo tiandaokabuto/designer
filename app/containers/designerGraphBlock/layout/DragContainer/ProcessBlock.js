@@ -29,6 +29,7 @@ import {
   isMainProcessPlaceholder,
   isConditionalStatementPlaceholder,
 } from '../shared/utils';
+import { changeAIHintList } from './utils';
 
 import {
   useToggleOpacity,
@@ -300,6 +301,9 @@ export default ({ readOnly = false }) => {
     if (currentPagePositionRef.current !== 'editor') {
       handleEmitCodeTransform(cards);
     }
+
+    // 生成智能匹配的变量Map
+    changeAIHintList(cards);
   }, [cards]);
   return (
     <InjectProvider

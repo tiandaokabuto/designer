@@ -7,7 +7,12 @@ import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/
 
 import './VariablePanel.scss';
 
-export default ({ blockNode, label = '设置变量' }) => {
+export default ({
+  blockNode,
+  label = '设置变量',
+  disabled,
+  handleEmitCodeTransform,
+}) => {
   const [flag, forceUpdate] = useForceUpdate();
   const noticyChange = useNoticyBlockCodeChange();
 
@@ -30,13 +35,17 @@ export default ({ blockNode, label = '设置变量' }) => {
     <div className="variablePanel">
       <div className="variablePanel-title">
         <span>{label}</span>
-        <Icon
-          type="plus"
-          className="variablePanel-btn"
-          onClick={() => {
-            handleVariableAdd();
-          }}
-        />
+        {disabled ? (
+          <span></span>
+        ) : (
+          <Icon
+            type="plus"
+            className="variablePanel-btn"
+            onClick={() => {
+              handleVariableAdd();
+            }}
+          />
+        )}
       </div>
       <div className="variablePanel-container">
         <span>变量名</span>
@@ -52,24 +61,34 @@ export default ({ blockNode, label = '设置变量' }) => {
                 onChange={e => {
                   varibale.name = e.target.value;
                   noticyChange();
+                  handleEmitCodeTransform && handleEmitCodeTransform();
                 }}
               />
-              <Input
-                placeholder="值"
-                value={varibale.value}
-                // key={uniqueId('variable_')}
-                onChange={e => {
-                  varibale.value = e.target.value;
-                  noticyChange();
-                }}
-              />
-              <Icon
-                type="delete"
-                className="variablePanel-btn"
-                onClick={() => {
-                  handleVariableDelete(index);
-                }}
-              />
+              {disabled ? (
+                <span style={{ marginLeft: 6 }}>{varibale.value}</span>
+              ) : (
+                <Input
+                  placeholder="值"
+                  value={varibale.value}
+                  onChange={e => {
+                    varibale.value = e.target.value;
+                    noticyChange();
+                    handleEmitCodeTransform && handleEmitCodeTransform();
+                  }}
+                />
+              )}
+              {disabled ? (
+                <span></span>
+              ) : (
+                <Icon
+                  type="delete"
+                  className="variablePanel-btn"
+                  onClick={() => {
+                    handleVariableDelete(index);
+                    handleEmitCodeTransform && handleEmitCodeTransform();
+                  }}
+                />
+              )}
             </Fragment>
           );
         })}
