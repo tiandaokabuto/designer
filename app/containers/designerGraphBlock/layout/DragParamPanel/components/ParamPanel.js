@@ -9,6 +9,7 @@ import { useAIHintWatch } from '../../useHooks';
 import './ParamPanel.scss';
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 const getComponentType = (
   param,
@@ -125,7 +126,19 @@ const getComponentType = (
               param.value = value;
               handleEmitCodeTransform(cards);
             }}
-          />
+            // filterOption={(inputValue, option) =>
+            //   option.props.children
+            //     .toUpperCase()
+            //     .indexOf(inputValue.toUpperCase()) !== -1
+            // }
+          >
+            <TextArea
+              // placeholder="input here"
+              className="custom"
+              style={{ height: 32 }}
+              // onKeyPress={this.handleKeyPress}
+            />
+          </AutoComplete>
         );
       }
       return (
