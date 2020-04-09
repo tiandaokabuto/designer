@@ -122,7 +122,9 @@ const getComponentType = (
           filterOption={(inputValue, option) =>
             option.props.children
               .toUpperCase()
-              .indexOf(inputValue.toUpperCase()) !== -1
+              .indexOf(inputValue.toUpperCase()) !== -1 ||
+            inputValue === '""' ||
+            inputValue === "''"
           }
         >
           <TextArea className="custom" onKeyDown={e => stopDeleteKeyDown(e)} />
