@@ -17,6 +17,12 @@ const componentType = {
   SELECT: 1,
 };
 
+const stopDeleteKeyDown = e => {
+  if (e.keyCode === 46) {
+    e.nativeEvent.stopImmediatePropagation();
+  }
+};
+
 const getComponentType = (
   param,
   handleEmitCodeTransform,
@@ -24,12 +30,6 @@ const getComponentType = (
   keyFlag,
   aiHintList = {}
 ) => {
-  const stopDeleteKeyDown = e => {
-    if (e.keyCode === 46) {
-      e.nativeEvent.stopImmediatePropagation();
-    }
-  };
-
   // 针对一些特殊的情况需要作出特殊的处理
   const [dataSource, setDataSource] = useState([]);
 
