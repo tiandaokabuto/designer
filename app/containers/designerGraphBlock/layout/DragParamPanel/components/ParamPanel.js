@@ -73,7 +73,9 @@ const getComponentType = (
               aiHintList[next]
                 ? [
                     ...new Set(
-                      aiHintList[next].map(item => item.value).filter(Boolean)
+                      aiHintList[next]
+                        .map(item => (item.isVariable ? item.name : item.value))
+                        .filter(Boolean)
                     ),
                   ]
                 : []
@@ -96,7 +98,12 @@ const getComponentType = (
               const handleWatchChange = value => {
                 param.value = value;
               };
-              const dep = depList.find(item => item.value === value);
+              const dep = depList.find(item => {
+                if (item.isVariable) {
+                  return item.name === value;
+                }
+                return item.value === value;
+              });
               if (dep) {
                 if (dep.listeners) {
                   dep.listeners.push(handleWatchChange);
