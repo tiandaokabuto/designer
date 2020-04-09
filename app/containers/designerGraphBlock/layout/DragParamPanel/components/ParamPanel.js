@@ -11,6 +11,21 @@ import './ParamPanel.scss';
 const { Option } = Select;
 const { TextArea } = Input;
 
+const getMutiplyValue = (item, type) => {
+  const tempOutput = item.value.replace(/\(|\)/g, '');
+  const result = [];
+  if (tempOutput) {
+    const variableList = tempOutput.split(',');
+    item.paramType.forEach((group, index) => {
+      if (group.find(el => el === type)) {
+        result.push(variableList[index]);
+      }
+    });
+    return result;
+  }
+  return [];
+};
+
 const getComponentType = (
   param,
   handleEmitCodeTransform,
@@ -75,7 +90,14 @@ const getComponentType = (
                 ? [
                     ...new Set(
                       aiHintList[next]
-                        .map(item => (item.isVariable ? item.name : item.value))
+                        .map(item =>
+                          item.isVariable
+                            ? item.name
+                            : item.isMutiply
+                            ? getMutiplyValue(item, next)
+                            : item.value
+                        )
+                        .flat()
                         .filter(Boolean)
                     ),
                   ]

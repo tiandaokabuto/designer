@@ -24,18 +24,43 @@ export const changeAIHintList = cards => {
       (output = node.properties.required.find(item => item.enName === 'outPut'))
     ) {
       if (output.paramType && Array.isArray(output.paramType)) {
-        output.paramType.forEach(type => {
-          if (!aiHintList[type]) {
-            aiHintList[type] = [output];
-          } else {
-            if (!aiHintList[type].filter(item => item === output).length) {
-              aiHintList[type].push(output);
+        if (output.paramType.find(Array.isArray)) {
+          if (output.value) {
+            const tempOutput = output.value.replace(/\(|\)/g, '');
+            const variableList = tempOutput.split(',');
+            if (tempOutput && variableList.length) {
+              output.isMutiply = true;
+              output.paramType.forEach((item, index) => {
+                item.forEach(type => {
+                  if (!aiHintList[type]) {
+                    aiHintList[type] = [output];
+                  } else {
+                    if (
+                      !aiHintList[type].filter(item => item === output).length
+                    ) {
+                      aiHintList[type].push(output);
+                    }
+                  }
+                });
+              });
             }
           }
-        });
+        } else {
+          output.paramType.forEach(type => {
+            if (!aiHintList[type]) {
+              aiHintList[type] = [output];
+            } else {
+              if (!aiHintList[type].filter(item => item === output).length) {
+                aiHintList[type].push(output);
+              }
+            }
+          });
+        }
       }
     }
   });
+
+  console.log(aiHintList);
 
   updateAIHintList(aiHintList);
 };
