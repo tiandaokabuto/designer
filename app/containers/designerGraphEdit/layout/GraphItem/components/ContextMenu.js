@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
+import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
 
 import './ContextMenu.scss';
 
@@ -9,8 +11,10 @@ export default ({ position, handleDelete, handleRename }) => {
   const isMount = useRef(false);
 
   const isProcess = node && node.type === 'process';
+  const treeTab = useSelector(state => state.grapheditor.treeTab);
 
   const persistentStorage = usePersistentStorage();
+  const persistentModuleStorage = usePersistentModuleStorage();
   useEffect(() => {
     if (!isMount.current) {
       isMount.current = true;
@@ -47,7 +51,11 @@ export default ({ position, handleDelete, handleRename }) => {
       <div
         className="menuitem"
         onClick={() => {
-          handleDelete(node.eventKey, persistentStorage);
+          if (treeTab !== 'processModule') {
+            handleDelete(node.eventKey, persistentStorage);
+          } else {
+            handleDelete(node.eventKey, persistentModuleStorage);
+          }
           setVisible(false);
         }}
       >
@@ -58,7 +66,11 @@ export default ({ position, handleDelete, handleRename }) => {
       <div
         className="menuitem"
         onClick={() => {
-          handleRename(node.eventKey, persistentStorage);
+          if (treeTab !== 'processModule') {
+            handleRename(node.eventKey, persistentStorage);
+          } else {
+            handleRename(node.eventKey, persistentModuleStorage);
+          }
           setVisible(false);
         }}
       >

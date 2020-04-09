@@ -7,8 +7,11 @@ import moment from 'moment';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
+  changeModuleTree,
+  changeCheckedModuleTreeNode,
   clearGrapheditorData,
 } from '../reduxActions';
+import store from '../../store';
 import { readDir } from '../../nodejs';
 import event from '../designerGraphBlock/layout/eventCenter';
 import PATH_CONFIG from '@/constants/localFilePath';
@@ -28,19 +31,31 @@ export const newProject = (name, callback) => {
   clearGrapheditorData();
   fs.mkdir(PATH_CONFIG('project', name), { recursive: true }, function(err) {
     if (!err) {
-      callback();
       // 修改左侧自定义目录树
       changeProcessTree([]);
-      const initialJson = {
+      const initialProcessTreeJson = {
         processTree: [],
       };
       // 创建初始的描述文件
-      fs.writeFile(
+      fs.writeFileSync(
         PATH_CONFIG('project', name + '/manifest.json'),
-
-        JSON.stringify(initialJson),
+        JSON.stringify(initialProcessTreeJson)
+      );
+      fs.mkdir(
+        PATH_CONFIG('project', `${name}/${name}_module`),
+        { recursive: true },
         function(err) {
-          console.log(err);
+          callback();
+          // 修改流程块树
+          changeModuleTree([]);
+          const initialModuleTreeJson = {
+            moduleTree: [],
+          };
+          // 创建流程块树的描述文件
+          fs.writeFileSync(
+            PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
+            JSON.stringify(initialModuleTreeJson)
+          );
         }
       );
     }
@@ -105,7 +120,7 @@ export const findNodeByKey = (tree, key) => {
  * @param {*} tree
  * @param {*} key
  */
-export const deleteNodeByKey = (tree, name, key, parent = tree) => {
+export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
   for (const child of tree) {
     if (child.key === key) {
       if (Array.isArray(parent)) {
@@ -117,15 +132,33 @@ export const deleteNodeByKey = (tree, name, key, parent = tree) => {
         if (target.children) {
           traverseTree(target.children, item => {
             if (item.type === 'process') {
-              deleteFolderRecursive(
-                PATH_CONFIG('project', `${name}/${item.title}`)
-              );
+              if (type === 'process') {
+                deleteFolderRecursive(
+                  PATH_CONFIG('project', `${name}/${item.title}`)
+                );
+              } else {
+                fs.unlinkSync(
+                  PATH_CONFIG(
+                    'project',
+                    `${name}/${name}_module/${item.title}.json`
+                  )
+                );
+              }
             }
           });
         } else {
-          deleteFolderRecursive(
-            PATH_CONFIG('project', `${name}/${target.title}`)
-          );
+          if (type === 'process') {
+            deleteFolderRecursive(
+              PATH_CONFIG('project', `${name}/${target.title}`)
+            );
+          } else {
+            fs.unlinkSync(
+              PATH_CONFIG(
+                'project',
+                `${name}/${name}_module/${target.title}.json`
+              )
+            );
+          }
         }
         parent.splice(index, 1); // 在tree中删掉该元素
       } else {
@@ -135,22 +168,40 @@ export const deleteNodeByKey = (tree, name, key, parent = tree) => {
         if (target.children) {
           traverseTree(target.children, item => {
             if (item.type === 'process') {
-              deleteFolderRecursive(
-                PATH_CONFIG('project', `${name}/${item.title}`)
-              );
+              if (type === 'process') {
+                deleteFolderRecursive(
+                  PATH_CONFIG('project', `${name}/${item.title}`)
+                );
+              } else {
+                fs.unlinkSync(
+                  PATH_CONFIG(
+                    'project',
+                    `${name}/${name}_module/${item.title}.json`
+                  )
+                );
+              }
             }
           });
         } else {
-          deleteFolderRecursive(
-            PATH_CONFIG('project', `${name}/${target.title}`)
-          );
+          if (type === 'process') {
+            deleteFolderRecursive(
+              PATH_CONFIG('project', `${name}/${target.title}`)
+            );
+          } else {
+            fs.unlinkSync(
+              PATH_CONFIG(
+                'project',
+                `${name}/${name}_module/${target.title}.json`
+              )
+            );
+          }
         }
         parent.children.splice(index, 1);
       }
       return;
     }
     if (child.children) {
-      deleteNodeByKey(child.children, name, key, child);
+      deleteNodeByKey(type, child.children, name, key, child);
     }
   }
 };
@@ -192,52 +243,107 @@ export const renameNodeByKey = (
   key,
   persistentStorage,
   restoreCheckedTreeNode,
-  name
+  name,
+  type
 ) => {
   const node = findNodeByKey(tree, key);
-  const parent = findParentNodeByKey(tree, key) || [];
+  // const parent = findParentNodeByKey(tree, key) || [];
   const oldTitle = node.title;
-  node.title = (
-    <Input
-      autoFocus
-      defaultValue={node.title}
-      onBlur={e => {
-        const newTitle = e.target.value;
-        if (node.type === 'process') {
-          const dirs = fs.readdirSync(PATH_CONFIG('project', name));
-          const item = dirs.find(item => newTitle === item);
-          if (!item) {
-            node.title = newTitle;
-            fs.rename(
-              PATH_CONFIG('project', `${name}/${oldTitle}`),
-              PATH_CONFIG('project', `${name}/${newTitle}`),
-              err => {
-                if (err) {
-                  message.error(err);
+  console.log(node);
+  console.log(persistentStorage);
+  if (type === 'process') {
+    node.title = (
+      <Input
+        autoFocus
+        defaultValue={node.title}
+        onBlur={e => {
+          const newTitle = e.target.value;
+          if (node.type === 'process') {
+            const dirs = fs.readdirSync(PATH_CONFIG('project', name));
+            const item = dirs.find(item => newTitle === item);
+            if (!item) {
+              node.title = newTitle;
+              fs.rename(
+                PATH_CONFIG('project', `${name}/${oldTitle}`),
+                PATH_CONFIG('project', `${name}/${newTitle}`),
+                err => {
+                  if (err) {
+                    message.error(err);
+                  }
                 }
-              }
-            );
-            changeProcessTree([...tree]);
-            persistentStorage();
-            restoreCheckedTreeNode();
+              );
+              changeProcessTree([...tree]);
+              persistentStorage();
+              restoreCheckedTreeNode();
+            } else {
+              message.info('重复命名');
+              node.title = oldTitle;
+              changeProcessTree([...tree]);
+              persistentStorage();
+              restoreCheckedTreeNode();
+              return;
+            }
           } else {
-            message.info('重复命名');
-            node.title = oldTitle;
+            node.title = newTitle;
             changeProcessTree([...tree]);
             persistentStorage();
             restoreCheckedTreeNode();
-            return;
           }
-        } else {
-          node.title = newTitle;
-          changeProcessTree([...tree]);
-          persistentStorage();
-          restoreCheckedTreeNode();
-        }
-      }}
-    />
-  );
-  changeProcessTree([...tree]);
+        }}
+      />
+    );
+    changeProcessTree([...tree]);
+  } else {
+    node.title = (
+      <Input
+        autoFocus
+        defaultValue={node.title}
+        onBlur={e => {
+          const newTitle = e.target.value;
+          if (node.type === 'process') {
+            const dirs = fs.readdirSync(
+              PATH_CONFIG('project', `${name}/${name}_module`)
+            );
+            const item = dirs.find(item => `${newTitle}.json` === item);
+            if (!item) {
+              node.title = newTitle;
+              fs.rename(
+                PATH_CONFIG(
+                  'project',
+                  `${name}/${name}_module/${oldTitle}.json`
+                ),
+                PATH_CONFIG(
+                  'project',
+                  `${name}/${name}_module/${newTitle}.json`
+                ),
+                err => {
+                  if (err) {
+                    message.error(err);
+                  }
+                }
+              );
+              changeModuleTree([...tree]);
+              persistentStorage();
+              restoreCheckedTreeNode();
+            } else {
+              message.info('重复命名');
+              node.title = oldTitle;
+              changeModuleTree([...tree]);
+              persistentStorage();
+              restoreCheckedTreeNode();
+              return;
+            }
+          } else {
+            node.title = newTitle;
+            changeModuleTree([...tree]);
+            persistentStorage();
+            restoreCheckedTreeNode();
+          }
+        }}
+      />
+    );
+    changeModuleTree([...tree]);
+  }
 };
 
 /**
@@ -302,12 +408,6 @@ export const persistentStorage = (
   ) {
     if (!err) {
       let description = JSON.parse(data.toString());
-      // 保存之前先把流程的data清空
-      // traverseTree(tree, item => {
-      //   if (item.type === 'process') {
-      //     item.data = {};
-      //   }
-      // });
       fs.writeFile(
         PATH_CONFIG('project', `${name}/manifest.json`),
         JSON.stringify({
@@ -322,6 +422,30 @@ export const persistentStorage = (
       );
     }
   });
+};
+
+export const persistentModuleStorage = (moduleTree, name, node) => {
+  // let tree = JSON.parse(JSON.stringify(moduleTree));
+  fs.readFile(
+    PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
+    function(err, data) {
+      if (!err) {
+        let description = JSON.parse(data.toString());
+        fs.writeFile(
+          PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
+          JSON.stringify({
+            ...description,
+            moduleTree,
+          }),
+          function(err) {
+            if (err) {
+              console.error(err);
+            }
+          }
+        );
+      }
+    }
+  );
 };
 
 export const hasDuplicateKey = (tree, new_key) => {
@@ -341,6 +465,18 @@ const getUniqueId = tree => {
   while (true) {
     if (hasDuplicateKey(tree, new_key)) {
       new_key = uniqueId('key_');
+      continue;
+    } else {
+      return new_key;
+    }
+  }
+};
+
+const getModuleUniqueId = tree => {
+  let new_key = uniqueId('key_module_');
+  while (true) {
+    if (hasDuplicateKey(tree, new_key)) {
+      new_key = uniqueId('key_module_');
       continue;
     } else {
       return new_key;
@@ -443,6 +579,37 @@ export const newProcess = (
   return [newProcessTree, uniqueid];
 };
 
+export const newModuleDir = (
+  name,
+  moduleTree,
+  checkedModuleTreeNode,
+  currentProject
+) => {
+  let newModuleTree = undefined;
+  const uniqueid = getModuleUniqueId(moduleTree);
+  const isDirNodeBool = isDirNode(moduleTree, checkedModuleTreeNode);
+  const isLeafNodeOrUndefined =
+    checkedModuleTreeNode === undefined || !isDirNodeBool;
+  if (isLeafNodeOrUndefined) {
+    newModuleTree = moduleTree.concat({
+      title: name,
+      key: uniqueid,
+      type: 'dir',
+      children: [],
+    });
+  } else {
+    isDirNodeBool.children.push({
+      title: name,
+      key: uniqueid,
+      type: 'dir',
+      children: [],
+    });
+    newModuleTree = [...moduleTree];
+  }
+  changeModuleTree(newModuleTree);
+  return [newModuleTree, uniqueid];
+};
+
 /**
  * 校验流程名是否重复
  * @param {*} tree
@@ -473,7 +640,7 @@ export const openProject = name => {
       const { processTree } = JSON.parse(data.toString());
       // 遍历项目文件夹下面的流程文件夹，读取manifest.json里流程的数据，写入processTree
       dirs.forEach(dirItem => {
-        if (dirItem !== 'manifest.json') {
+        if (dirItem !== 'manifest.json' && dirItem !== `${name}_module`) {
           try {
             const data = JSON.parse(
               fs.readFileSync(
@@ -493,6 +660,14 @@ export const openProject = name => {
         }
       });
       changeProcessTree(processTree);
+      fs.readFile(
+        PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
+        function(err, data) {
+          const { moduleTree } = JSON.parse(data.toString());
+          console.log(moduleTree);
+          changeModuleTree(moduleTree);
+        }
+      );
     } else {
       console.log(err);
     }
@@ -608,4 +783,71 @@ export const downProcessZipToLocal = (
       deleteFolder(filePath);
       fs.writeFileSync(filePath + '.zip', content);
     });
+};
+
+export const addToReuse = () => {
+  const {
+    grapheditor: {
+      graphDataMap,
+      checkedGraphBlockId,
+      moduleTree,
+      currentProject,
+    },
+  } = store.getState();
+  // console.log(graphDataMap, checkedGraphBlockId);
+  // console.log(graphDataMap.get(checkedGraphBlockId));
+  const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
+  console.log(data); // 数据
+  const title = data.properties[0].value; // 标题
+  const item = moduleTree.find(item => item.title === title); //树中是否存在该流程块
+  if (!item) {
+    // 把流程块数据写入文件
+    fs.writeFileSync(
+      PATH_CONFIG(
+        'project',
+        `${currentProject}/${currentProject}_module/${title}.json`
+      ),
+      JSON.stringify({
+        graphDataMap: JSON.stringify(data),
+      })
+    );
+    const newModuleTree = [...moduleTree];
+    newModuleTree.push({
+      title: title,
+      type: 'process',
+      key: getModuleUniqueId(moduleTree),
+      graphDataMap: {},
+    });
+    changeModuleTree(newModuleTree);
+    console.log(newModuleTree);
+    fs.readFile(
+      PATH_CONFIG(
+        'project',
+        `${currentProject}/${currentProject}_module/manifest.json`
+      ),
+      function(err, data) {
+        if (!err) {
+          let description = JSON.parse(data.toString());
+          console.log(description);
+          fs.writeFile(
+            PATH_CONFIG(
+              'project',
+              `${currentProject}/${currentProject}_module/manifest.json`
+            ),
+            JSON.stringify({
+              ...description,
+              moduleTree: newModuleTree,
+            }),
+            function(err) {
+              if (err) {
+                console.error(err);
+              }
+            }
+          );
+        }
+      }
+    );
+  } else {
+    message.info('已存在同名的流程块');
+  }
 };

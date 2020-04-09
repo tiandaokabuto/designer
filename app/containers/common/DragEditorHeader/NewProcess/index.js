@@ -2,7 +2,13 @@ import React, { useState, useRef } from 'react';
 import { Modal, Form, Input, Select, message } from 'antd';
 import { useSelector } from 'react-redux';
 
-import { newProcess, persistentStorage, isNameExist } from '../../utils';
+import {
+  newProcess,
+  newModuleDir,
+  persistentStorage,
+  isNameExist,
+  persistentModuleStorage,
+} from '../../utils';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -19,29 +25,46 @@ export default ({ resetVisible, tag }) => {
   const checkedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
   );
-
+  const checkedModuleTreeNode = useSelector(
+    state => state.grapheditor.currentCheckedModuleTreeNode
+  );
+  const treeTab = useSelector(state => state.grapheditor.treeTab);
+  const moduleTree = useSelector(state => state.grapheditor.moduleTree);
   const processTree = useSelector(state => state.grapheditor.processTree);
   const currentProject = useSelector(state => state.grapheditor.currentProject);
   // const currentCheckedTreeNode = useSelector(state => state.grapheditor.currentCheckedTreeNode);
 
   /* ---------- 流程/目录新增逻辑 ----------- */
   const handleAddProcessOrProject = () => {
-    // 做流程名校验避免重复
-    if (isNameExist(processTree, name, checkedTreeNode, currentProject)) {
-      return void message.info(
-        `${tag === 'newprocess' ? '流程名' : '目录名'}重复,请重新填写!`
+    if (treeTab !== 'processModule') {
+      // 做流程名校验避免重复
+      if (isNameExist(processTree, name, checkedTreeNode, currentProject)) {
+        return void message.info(
+          `${tag === 'newprocess' ? '流程名' : '目录名'}重复,请重新填写!`
+        );
+      }
+      const [newProcessTree, uniqueid] = newProcess(
+        tag === 'newprocess' ? 'process' : 'dir',
+        name,
+        processTree,
+        checkedTreeNode,
+        currentProject
       );
+      setVisible(false);
+      resetVisible(undefined);
+      persistentStorage(undefined, newProcessTree, currentProject, uniqueid);
+    } else {
+      const [newModuleTree, uniqueid] = newModuleDir(
+        name,
+        moduleTree,
+        checkedModuleTreeNode,
+        currentProject
+      );
+      setVisible(false);
+      resetVisible(undefined);
+      persistentModuleStorage(newModuleTree, currentProject, uniqueid);
+      console.log('选择了流程块');
     }
-    const [newProcessTree, uniqueid] = newProcess(
-      tag === 'newprocess' ? 'process' : 'dir',
-      name,
-      processTree,
-      checkedTreeNode,
-      currentProject
-    );
-    setVisible(false);
-    resetVisible(undefined);
-    persistentStorage(undefined, newProcessTree, currentProject, uniqueid);
   };
   return (
     <Modal

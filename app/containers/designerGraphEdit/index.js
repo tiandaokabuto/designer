@@ -4,6 +4,7 @@ import GGEditor, { Flow, RegisterNode } from 'gg-editor';
 import GraphBlockHeader from '../common/GraphBlockHeader';
 import DragEditorHeader from '../common/DragEditorHeader';
 import FlowContextMenu from './layout/GraphContainer/components/EditorContextMenu/FlowContextMenu';
+import ReuseCommand from './layout/GraphContainer/components/EditorContextMenu/ReuseCommand';
 
 import GraphContainer from './layout/GraphContainer';
 import GraphItem from './layout/GraphItem';
@@ -29,6 +30,7 @@ export default () => {
         <GraphContainer history={history} />
         <GraphParamPanel />
         <FlowContextMenu />
+        {/* <ReuseCommand /> */}
       </GGEditor>
     </Fragment>
   );

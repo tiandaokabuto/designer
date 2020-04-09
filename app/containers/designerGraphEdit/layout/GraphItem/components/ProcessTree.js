@@ -7,6 +7,8 @@ import { ConfirmModal } from '../../../../common/components';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
+  changeModuleTree,
+  changeCheckedModuleTreeNode,
 } from '../../../../reduxActions';
 import { resetGraphEditData } from '../../../../reduxActions';
 import Switcher from './Switcher';
@@ -18,8 +20,10 @@ import {
   setAllModifiedState,
   setNodeModifiedState,
   traverseTree,
+  persistentModuleStorage,
 } from '../../../../common/utils';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
+import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
 import { fromTextArea } from 'codemirror';
 import event from '../../../../designerGraphBlock/layout/eventCenter';
 
@@ -77,17 +81,22 @@ const transformTreeTitle = processTree => {
   return result;
 };
 
-export default () => {
+export default ({ type }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedKey, setSelectedKey] = useState('');
   const [expandedKeys, setExpandedKeys] = useState([]);
   const processTree = useSelector(state => state.grapheditor.processTree);
+  const moduleTree = useSelector(state => state.grapheditor.moduleTree);
   const currentCheckedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
+  );
+  const currentCheckedModuleTreeNode = useSelector(
+    state => state.grapheditor.currentCheckedModuleTreeNode
   );
   const currentProject = useSelector(state => state.grapheditor.currentProject);
 
   const persistentStorage = usePersistentStorage();
+  const persistentModuleStorage = usePersistentModuleStorage();
 
   // 右键菜单位置设定
   const [position, setPosition] = useState({});
@@ -114,77 +123,155 @@ export default () => {
         }
       });
     };
-    const data = [...processTree];
+    if (type === 'process') {
+      const data = [...processTree];
+      traverseTree(data, item => {
+        if (item.key === dropKey && item.type === 'dir') {
+          // Find dragObject
+          let dragObj;
+          loop(data, dragKey, (item, index, arr) => {
+            arr.splice(index, 1);
+            dragObj = item;
+          });
 
-    traverseTree(data, item => {
-      if (item.key === dropKey && item.type === 'dir') {
-        // Find dragObject
-        let dragObj;
-        loop(data, dragKey, (item, index, arr) => {
-          arr.splice(index, 1);
-          dragObj = item;
-        });
-
-        if (!info.dropToGap) {
-          // Drop on the content
-          loop(data, dropKey, item => {
-            item.children = item.children || [];
-            // where to insert 示例添加到尾部，可以是随意位置
-            item.children.push(dragObj);
-          });
-        } else if (
-          (info.node.props.children || []).length > 0 && // Has children
-          info.node.props.expanded && // Is expanded
-          dropPosition === 1 // On the bottom gap
-        ) {
-          loop(data, dropKey, item => {
-            item.children = item.children || [];
-            // where to insert 示例添加到头部，可以是随意位置
-            item.children.unshift(dragObj);
-          });
-        } else {
-          let ar;
-          let i;
-          loop(data, dropKey, (item, index, arr) => {
-            ar = arr;
-            i = index;
-          });
-          if (dropPosition === -1) {
-            ar.splice(i, 0, dragObj);
+          if (!info.dropToGap) {
+            // Drop on the content
+            loop(data, dropKey, item => {
+              item.children = item.children || [];
+              // where to insert 示例添加到尾部，可以是随意位置
+              item.children.push(dragObj);
+            });
+          } else if (
+            (info.node.props.children || []).length > 0 && // Has children
+            info.node.props.expanded && // Is expanded
+            dropPosition === 1 // On the bottom gap
+          ) {
+            loop(data, dropKey, item => {
+              item.children = item.children || [];
+              // where to insert 示例添加到头部，可以是随意位置
+              item.children.unshift(dragObj);
+            });
           } else {
-            ar.splice(i + 1, 0, dragObj);
+            let ar;
+            let i;
+            loop(data, dropKey, (item, index, arr) => {
+              ar = arr;
+              i = index;
+            });
+            if (dropPosition === -1) {
+              ar.splice(i, 0, dragObj);
+            } else {
+              ar.splice(i + 1, 0, dragObj);
+            }
           }
+          changeProcessTree(data);
         }
-        changeProcessTree(data);
-      }
-    });
-    persistentStorage();
+      });
+      persistentStorage();
+    } else {
+      const data = [...moduleTree];
+      traverseTree(data, item => {
+        if (item.key === dropKey && item.type === 'dir') {
+          // Find dragObject
+          let dragObj;
+          loop(data, dragKey, (item, index, arr) => {
+            arr.splice(index, 1);
+            dragObj = item;
+          });
+
+          if (!info.dropToGap) {
+            // Drop on the content
+            loop(data, dropKey, item => {
+              item.children = item.children || [];
+              // where to insert 示例添加到尾部，可以是随意位置
+              item.children.push(dragObj);
+            });
+          } else if (
+            (info.node.props.children || []).length > 0 && // Has children
+            info.node.props.expanded && // Is expanded
+            dropPosition === 1 // On the bottom gap
+          ) {
+            loop(data, dropKey, item => {
+              item.children = item.children || [];
+              // where to insert 示例添加到头部，可以是随意位置
+              item.children.unshift(dragObj);
+            });
+          } else {
+            let ar;
+            let i;
+            loop(data, dropKey, (item, index, arr) => {
+              ar = arr;
+              i = index;
+            });
+            if (dropPosition === -1) {
+              ar.splice(i, 0, dragObj);
+            } else {
+              ar.splice(i + 1, 0, dragObj);
+            }
+          }
+          changeModuleTree(data);
+        }
+      });
+      persistentModuleStorage(
+        data,
+        currentProject,
+        currentCheckedModuleTreeNode
+      );
+    }
   };
 
   const handleDelete = (key, persistentStorage) => {
-    Modal.confirm({
-      content: '请确认是否删除?',
-      onOk() {
-        deleteNodeByKey(processTree, currentProject, key);
-        changeProcessTree([...processTree]);
-        resetGraphEditData();
-        persistentStorage();
-      },
-    });
+    if (type === 'process') {
+      Modal.confirm({
+        content: '请确认是否删除?',
+        onOk() {
+          deleteNodeByKey(type, processTree, currentProject, key);
+          changeProcessTree([...processTree]);
+          resetGraphEditData();
+          persistentStorage();
+        },
+      });
+    } else {
+      Modal.confirm({
+        content: '请确认是否删除?',
+        onOk() {
+          deleteNodeByKey(type, moduleTree, currentProject, key);
+          changeModuleTree([...moduleTree]);
+          // resetGraphEditData();
+          persistentStorage();
+        },
+      });
+    }
   };
 
   const handleRename = (key, persistentStorage) => {
-    const restoreCheckedTreeNode = () => {
-      changeCheckedTreeNode(currentCheckedTreeNode);
-    };
-    changeCheckedTreeNode(undefined);
-    renameNodeByKey(
-      cloneDeep(processTree),
-      key,
-      persistentStorage,
-      restoreCheckedTreeNode,
-      currentProject
-    );
+    if (type === 'process') {
+      const restoreCheckedTreeNode = () => {
+        changeCheckedTreeNode(currentCheckedTreeNode);
+      };
+      changeCheckedTreeNode(undefined);
+      renameNodeByKey(
+        cloneDeep(processTree),
+        key,
+        persistentStorage,
+        restoreCheckedTreeNode,
+        currentProject,
+        type
+      );
+    } else {
+      const restoreCheckedTreeNode = () => {
+        changeCheckedModuleTreeNode(currentCheckedModuleTreeNode);
+      };
+      changeCheckedModuleTreeNode(undefined);
+      renameNodeByKey(
+        cloneDeep(moduleTree),
+        key,
+        persistentStorage,
+        restoreCheckedTreeNode,
+        currentProject,
+        type
+      );
+    }
   };
 
   useEffect(() => {
@@ -201,7 +288,11 @@ export default () => {
   }, [setExpandedKeys]);
 
   return (
-    <div>
+    <div
+      style={{
+        height: '50vh',
+      }}
+    >
       <Tree
         className="draggable-tree"
         expandedKeys={expandedKeys}
@@ -223,25 +314,46 @@ export default () => {
         onDragEnter={onDragEnter}
         onDrop={onDrop}
         //treeData={processTree}
-        treeData={transformTreeTitle(processTree)}
-        selectedKeys={[currentCheckedTreeNode]}
+        treeData={
+          type === 'process'
+            ? transformTreeTitle(processTree)
+            : transformTreeTitle(moduleTree)
+        }
+        selectedKeys={
+          type === 'process'
+            ? [currentCheckedTreeNode]
+            : [currentCheckedModuleTreeNode]
+        }
         onSelect={(selectedKey, e) => {
-          if (currentCheckedTreeNode === undefined) {
-            setSelectedKey(selectedKey[0]);
-            changeCheckedTreeNode(selectedKey[0]);
+          console.log(selectedKey);
+          if (type === 'process') {
+            if (currentCheckedTreeNode === undefined) {
+              setSelectedKey(selectedKey[0]);
+              changeCheckedTreeNode(selectedKey[0]);
+            } else {
+              if (selectedKey.length !== 0) {
+                const isModified = hasNodeModified(
+                  processTree,
+                  currentCheckedTreeNode
+                );
+                if (isModified) {
+                  // 有更改
+                  setSelectedKey(selectedKey[0]);
+                  setModalVisible(true);
+                } else {
+                  setSelectedKey(selectedKey[0]);
+                  changeCheckedTreeNode(selectedKey[0]);
+                }
+              }
+            }
           } else {
-            if (selectedKey.length !== 0) {
-              const isModified = hasNodeModified(
-                processTree,
-                currentCheckedTreeNode
-              );
-              if (isModified) {
-                // 有更改
+            if (currentCheckedModuleTreeNode === undefined) {
+              setSelectedKey(selectedKey[0]);
+              changeCheckedModuleTreeNode(selectedKey[0]);
+            } else {
+              if (selectedKey.length !== 0) {
                 setSelectedKey(selectedKey[0]);
-                setModalVisible(true);
-              } else {
-                setSelectedKey(selectedKey[0]);
-                changeCheckedTreeNode(selectedKey[0]);
+                changeCheckedModuleTreeNode(selectedKey[0]);
               }
             }
           }

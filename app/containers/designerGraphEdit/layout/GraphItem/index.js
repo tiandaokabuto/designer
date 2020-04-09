@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Icon, Input } from 'antd';
+import { Icon, Input, Tabs } from 'antd';
 import { useSelector } from 'react-redux';
 
 import ProcessTree from './components/ProcessTree';
 import { useChangeProjectName } from '../../useHooks';
+import { changeTreeTab } from '../../../reduxActions';
 
+const { TabPane } = Tabs;
 export default () => {
   const currentProject = useSelector(state => state.grapheditor.currentProject);
   const changeProjectName = useChangeProjectName();
@@ -37,7 +39,22 @@ export default () => {
           }}
         />
       </div>
-      <ProcessTree />
+      <Tabs
+        defaultActiveKey="process"
+        className="dragger-editor-container-tabs"
+        tabPosition="bottom"
+        onChange={key => {
+          changeTreeTab(key);
+        }}
+      >
+        <TabPane tab="流程" key="process">
+          <ProcessTree type={'process'} />
+        </TabPane>
+        <TabPane tab="流程块" key="processModule">
+          <ProcessTree type={'processModule'} />
+        </TabPane>
+      </Tabs>
+
       {/* <Tree>{renderTreeNodes(processTree)}</Tree> */}
     </div>
   );

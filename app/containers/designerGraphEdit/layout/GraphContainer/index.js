@@ -9,6 +9,7 @@ import ProcessBlockNode from '../RegisterNode/ProcessBlockNode';
 import StartNode from '../RegisterNode/StartNode';
 import EndNode from '../RegisterNode/EndNode';
 import RhombusNode from '../RegisterNode/RhombusNode';
+import ReuseCommand from './components/EditorContextMenu/ReuseCommand';
 
 import EditorDrawer from './components/EditorDrawer';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
@@ -163,6 +164,7 @@ export default useInjectContext(
           <EndNode />
           <RhombusNode />
           <EditorChange />
+          <ReuseCommand />
           {/* <HighlightEditor /> */}
           <OutputPanel tag="graph" />
         </div>

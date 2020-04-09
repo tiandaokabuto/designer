@@ -50,6 +50,8 @@ export default memo(
     const currentCheckedTreeNodeRef = useRef(null);
     currentCheckedTreeNodeRef.current = currentCheckedTreeNode;
 
+    const treeTab = useSelector(state => state.grapheditor.treeTab);
+
     const processTree = useSelector(state => state.grapheditor.processTree);
     const processTreeRef = useRef(null);
     processTreeRef.current = processTree;
