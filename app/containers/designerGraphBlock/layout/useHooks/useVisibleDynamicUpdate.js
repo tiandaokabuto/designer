@@ -28,12 +28,16 @@ export default (id, visibleTemplate) => {
       );
     const updateTemplate = template => {
       let result = template.replace(/({{.*?}})/g, (_, ...args) => {
-        const find = proxyList.find(item => args[0].includes(item.enName));
-        return (
-          `<span data-anchor=${find.enName} class="template_span ${
-            find.value === '' ? 'template_span__empty' : ''
-          }">${find.value}</span>` || ''
-        );
+        const find = proxyList.find(item => {
+          return args[0].includes(item.enName);
+        });
+        if (find) {
+          return (
+            `<span data-anchor=${find.enName} class="template_span ${
+              find.value === '' ? 'template_span__empty' : ''
+            }">${find.value}</span>` || ''
+          );
+        }
       });
       setNewVisible(result);
     };
