@@ -4,6 +4,7 @@ import uniqueId from 'lodash/uniqueId';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
 import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
+import event from '../../../../designerGraphBlock/layout/eventCenter';
 
 import './VariablePanel.scss';
 
@@ -51,7 +52,7 @@ export default ({
         <span>变量名</span>
         <span>值</span>
         <span></span>
-        {variableList.map((varibale, index) => {
+        {(variableList || []).map((varibale, index) => {
           return (
             <Fragment key={index}>
               <Input
@@ -60,6 +61,13 @@ export default ({
                 // key={uniqueId('variable_')}
                 onChange={e => {
                   varibale.name = e.target.value;
+                  if (varibale.listeners) {
+                    varibale.listeners.forEach(callback => {
+                      if (typeof callback === 'function') {
+                        callback(e.target.value);
+                      }
+                    });
+                  }
                   noticyChange();
                   handleEmitCodeTransform && handleEmitCodeTransform();
                 }}
@@ -86,6 +94,7 @@ export default ({
                   onClick={() => {
                     handleVariableDelete(index);
                     handleEmitCodeTransform && handleEmitCodeTransform();
+                    event.emit('varibaleDelete', varibale);
                   }}
                 />
               )}

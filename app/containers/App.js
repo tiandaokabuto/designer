@@ -35,6 +35,16 @@ export default class App extends React.Component<Props> {
     this.init();
     window.addEventListener('offline', this.handleOffLine);
     window.addEventListener('online', this.handleReconnet);
+
+    // 初始化用户数据，用于断网重连
+    const callback = (ip, port, userName, password, serialNumber, offLine) => {
+      this.loginData.offLine = offLine;
+      if (!offLine) {
+        this.loginData.userName = userName;
+        this.loginData.password = password;
+      }
+    };
+    readGlobalConfig(callback);
   }
 
   componentWillUnmount() {
@@ -64,16 +74,6 @@ export default class App extends React.Component<Props> {
     );
     // 配置定时刷新接口
     this.refreshToken();
-
-    // 初始化用户数据，用于断网重连
-    const callback = (ip, port, userName, password, serialNumber, offLine) => {
-      this.loginData.offLine = offLine;
-      if (!offLine) {
-        this.loginData.userName = userName;
-        this.loginData.password = password;
-      }
-    };
-    readGlobalConfig(callback);
   };
 
   handleOffLine = () => {

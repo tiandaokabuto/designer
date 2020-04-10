@@ -1,0 +1,181 @@
+{
+  "shape": "processblock",
+  "properties": [
+    {
+      "cnName": "标签名称",
+      "enName": "label",
+      "value": "流程块",
+      "default": ""
+    },
+    { "cnName": "输入参数", "enName": "param", "value": [], "default": "" },
+    { "cnName": "流程块返回", "enName": "output", "value": "", "default": "" }
+  ],
+  "variable": [],
+  "cards": [
+    {
+      "outPut": "hWeb",
+      "outPutDesc": "成功返回浏览器对象,失败返回None",
+      "cmdDesc": "启动一个新的Chrome浏览器窗口，启动后可以对这个浏览器进行操作",
+      "visible": "打开浏览器",
+      "module": "sendiRPA",
+      "cmdName": "打开浏览器",
+      "main": "openBrowser",
+      "$$typeof": 1,
+      "text": "打开浏览器",
+      "visibleTemplate": "打开浏览器,并返回对象到{{outPut}}",
+      "pkg": "Browser",
+      "properties": {
+        "optional": [
+          {
+            "paramType": [],
+            "componentType": 1,
+            "default": "False",
+            "cnName": "是否在后台运行",
+            "enName": "runInBackground",
+            "valueMapping": [
+              { "name": "是", "value": "True" },
+              { "name": "否", "value": "False" }
+            ],
+            "value": "",
+            "desc": "是否以隐藏方式（全程看不到浏览器界面）运行浏览器"
+          },
+          {
+            "paramType": ["Number"],
+            "componentType": 0,
+            "default": 1,
+            "cnName": "执行前延时",
+            "enName": "delayBefore",
+            "valueMapping": [],
+            "value": "",
+            "desc": "执行动作前延时x秒"
+          },
+          {
+            "paramType": ["Number"],
+            "componentType": 0,
+            "default": 1,
+            "cnName": "执行后延时",
+            "enName": "delayAfter",
+            "valueMapping": [],
+            "value": "",
+            "desc": "执行动作后延时x秒"
+          },
+          {
+            "paramType": [],
+            "componentType": 1,
+            "default": "True",
+            "cnName": "执行失败是否继续",
+            "enName": "continue_On_Failure",
+            "valueMapping": [
+              { "name": "是", "value": "True" },
+              { "name": "否", "value": "False" }
+            ],
+            "value": "",
+            "desc": "该步骤执行失败之后是否继续执行下一个操作"
+          }
+        ],
+        "required": [
+          {
+            "paramType": ["hWeb"],
+            "componentType": 0,
+            "default": "",
+            "cnName": "输出到",
+            "enName": "outPut",
+            "value": "hWeb24",
+            "desc": "成功返回浏览器对象,失败返回None",
+            "_value": "hWeb24",
+            "listeners": [null, null],
+            "attachedId": "node_82"
+          }
+        ]
+      },
+      "id": "node_82"
+    },
+    {
+      "outPut": "suc",
+      "outPutDesc": "成功返回True,失败返回False",
+      "cmdDesc": "关闭浏览器窗口",
+      "visible": "关闭浏览器",
+      "module": "sendiRPA",
+      "cmdName": "关闭浏览器",
+      "main": "closeBrowser",
+      "$$typeof": 1,
+      "text": "关闭浏览器",
+      "visibleTemplate": "关闭浏览器{{_browser}}",
+      "pkg": "Browser",
+      "properties": {
+        "optional": [
+          {
+            "paramType": ["Number"],
+            "componentType": 0,
+            "default": 1,
+            "cnName": "执行前延时",
+            "enName": "delayBefore",
+            "valueMapping": [],
+            "value": "",
+            "desc": "执行动作前延时x秒"
+          },
+          {
+            "paramType": ["Number"],
+            "componentType": 0,
+            "default": 1,
+            "cnName": "执行后延时",
+            "enName": "delayAfter",
+            "valueMapping": [],
+            "value": "",
+            "desc": "执行动作后延时x秒"
+          },
+          {
+            "paramType": [],
+            "componentType": 1,
+            "default": "True",
+            "cnName": "执行失败是否继续",
+            "enName": "continue_On_Failure",
+            "valueMapping": [
+              { "name": "是", "value": "True" },
+              { "name": "否", "value": "False" }
+            ],
+            "value": "",
+            "desc": "该步骤执行失败之后是否继续执行下一个操作"
+          }
+        ],
+        "required": [
+          {
+            "paramType": ["bool"],
+            "componentType": 0,
+            "default": "",
+            "cnName": "输出到",
+            "enName": "outPut",
+            "value": "suc",
+            "desc": "成功返回True,失败返回False",
+            "attachedId": "node_90"
+          },
+          {
+            "paramType": ["hWeb"],
+            "componentType": 0,
+            "default": "",
+            "cnName": "浏览器对象",
+            "enName": "_browser",
+            "value": "hWeb24",
+            "desc": "从【打开浏览器】原子能力中获取到的浏览器对象",
+            "_value": "hWeb24",
+            "watchDep": {
+              "paramType": ["hWeb"],
+              "componentType": 0,
+              "default": "",
+              "cnName": "输出到",
+              "enName": "outPut",
+              "value": "hWeb24",
+              "desc": "成功返回浏览器对象,失败返回None",
+              "_value": "hWeb24",
+              "listeners": [null, null],
+              "attachedId": "node_82"
+            },
+            "stickedTo": "node_82",
+            "mutiplyIndex": 0
+          }
+        ]
+      },
+      "id": "node_90"
+    }
+  ]
+}

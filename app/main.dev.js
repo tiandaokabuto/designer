@@ -195,17 +195,38 @@ const createWindow = async () => {
   });
 
   // 选择文件存储路径
-  ipcMain.on('open-directory-dialog', function(event, p) {
-    dialog
-      .showSaveDialog(mainWindow, {
-        title: '流程另存为',
-        buttonLabel: '存储',
-      })
-      .then(({ filePath, canceled }) => {
-        if (!canceled) {
-          event.sender.send('selectedItem', filePath);
-        }
-      });
+  ipcMain.on('open-directory-dialog', function(
+    event,
+    func,
+    label = '存储',
+    properties = []
+  ) {
+    dialog[func](mainWindow, {
+      title: '流程另存为',
+      buttonLabel: label,
+      properties,
+    }).then(({ filePath, filePaths, canceled }) => {
+      if (!canceled) {
+        console.log(filePath, 'filePath');
+        event.sender.send('selectedItem', filePath || filePaths);
+      }
+    });
+  });
+
+  ipcMain.on('choose-directory-dialog', function(
+    event,
+    func,
+    label = '存储',
+    properties = []
+  ) {
+    dialog[func](mainWindow, {
+      buttonLabel: label,
+      properties,
+    }).then(({ filePaths, canceled }) => {
+      if (!canceled) {
+        event.sender.send('chooseItem', filePaths);
+      }
+    });
   });
 
   // 创建登录窗口
