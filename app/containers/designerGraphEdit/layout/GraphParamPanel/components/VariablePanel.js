@@ -52,7 +52,7 @@ export default ({
         <span>变量名</span>
         <span>值</span>
         <span></span>
-        {variableList.map((varibale, index) => {
+        {(variableList || []).map((varibale, index) => {
           return (
             <Fragment key={index}>
               <Input
