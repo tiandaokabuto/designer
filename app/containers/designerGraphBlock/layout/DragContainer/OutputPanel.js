@@ -2,7 +2,10 @@ import React, { useEffect, useState, memo } from 'react';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
+import { Icon } from 'antd';
+
 import event, { PYTHON_OUTPUT } from '../eventCenter';
+import Tags from './components/Tags';
 
 let isMouseDown = false;
 let startOffset = 0;
@@ -73,14 +76,18 @@ export default memo(
         style={{ ...style }}
         onMouseDown={e => e.preventDefault()}
       >
-        <div
-          className="dragger-editor-container-output-anchor"
-          onMouseDown={e => ((isMouseDown = true), (startOffset = e.pageY))}
-        />
-        <div>
-          输出:
-          <br /> <pre style={{ display: 'inline' }}>{output}</pre>
+        <div className="dragger-editor-container-output-title">
+          <span>输出:</span>
+          <div
+            className="dragger-editor-container-output-anchor"
+            onMouseDown={e => ((isMouseDown = true), (startOffset = e.pageY))}
+          >
+            <Icon type="caret-up" style={{ marginBottom: '-3px' }} />
+            <Icon type="caret-down" />
+          </div>
+          <Tags className="dragger-editor-container-output-tages" />
         </div>
+        <pre className="dragger-editor-container-output-content">{output}</pre>
       </div>
     );
   })
