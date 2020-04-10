@@ -11,6 +11,12 @@ import './ParamPanel.scss';
 const { Option } = Select;
 const { TextArea } = Input;
 
+const COMPONENT_TYPE = {
+  INPUT: 0,
+  SELECT: 1,
+  FILEPATHINPUT: 2,
+};
+
 const getMutiplyValue = (item, type) => {
   const tempOutput = item.value.replace(/\(|\)/g, '');
   const result = [];
@@ -37,6 +43,12 @@ const getVariableList = item => {
   return [];
 };
 
+const stopDeleteKeyDown = e => {
+  if (e.keyCode === 46) {
+    e.nativeEvent.stopImmediatePropagation();
+  }
+};
+
 const getComponentType = (
   param,
   handleEmitCodeTransform,
@@ -45,7 +57,7 @@ const getComponentType = (
   aiHintList = {}
 ) => {
   // 针对一些特殊的情况需要作出特殊的处理
-
+  console.log(param, '文件路径');
   if (param.enName === 'sqlStr') {
     return (
       <div className="sqlstr">
@@ -63,6 +75,7 @@ const getComponentType = (
             }
             handleEmitCodeTransform(cards);
           }}
+          onKeyDown={e => stopDeleteKeyDown(e)}
         />
         请填写替换变量
         {param.placeholder.map((place, index) => {
@@ -83,6 +96,7 @@ const getComponentType = (
                     .join(', ')})`;
                 handleEmitCodeTransform(cards);
               }}
+              onKeyDown={e => stopDeleteKeyDown(e)}
             />
           );
         })}
@@ -90,7 +104,7 @@ const getComponentType = (
     );
   }
   switch (param.componentType) {
-    case 0:
+    case COMPONENT_TYPE.INPUT:
       if (param.enName !== 'outPut') {
         const dataSource =
           param.paramType &&
@@ -175,7 +189,11 @@ const getComponentType = (
               handleEmitCodeTransform(cards);
             }}
           >
-            <TextArea className="custom" style={{ height: 32 }} />
+            <TextArea
+              className="custom"
+              style={{ height: 32 }}
+              onKeyDown={e => stopDeleteKeyDown(e)}
+            />
           </AutoComplete>
         );
       }
@@ -194,9 +212,10 @@ const getComponentType = (
               });
             }
           }}
+          onKeyDown={e => stopDeleteKeyDown(e)}
         />
       );
-    case 1:
+    case COMPONENT_TYPE.SELECT:
       return (
         <Select
           style={{ width: '100%' }}
@@ -216,7 +235,7 @@ const getComponentType = (
         </Select>
       );
     default:
-      return <Input />;
+      return '待开发...';
   }
 };
 
