@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Input, Select, AutoComplete } from 'antd';
 import { useSelector } from 'react-redux';
 import { Input, Select, AutoComplete } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import axios from 'axios';
 
 import event from '../../eventCenter';
+import { useAIHintWatch, useAppendDataSource } from '../../useHooks';
 import api, { config } from '../../../../../api';
 
 import './ParamPanel.scss';
@@ -12,9 +14,36 @@ import './ParamPanel.scss';
 const { Option } = Select;
 const { TextArea } = Input;
 
-const componentType = {
+const COMPONENT_TYPE = {
   INPUT: 0,
   SELECT: 1,
+  FILEPATHINPUT: 2,
+};
+
+const getMutiplyValue = (item, type) => {
+  const tempOutput = item.value.replace(/\(|\)/g, '');
+  const result = [];
+  if (tempOutput) {
+    const variableList = tempOutput.split(',');
+    item.paramType.forEach((group, index) => {
+      if (group.find(el => el === type)) {
+        result.push(variableList[index]);
+      }
+    });
+    return result;
+  }
+  return [];
+};
+
+const getVariableList = item => {
+  const tempOutput =
+    typeof item === 'string'
+      ? item.replace(/\(|\)/g, '')
+      : item.value.replace(/\(|\)/g, '');
+  if (tempOutput) {
+    return tempOutput.split(',');
+  }
+  return [];
 };
 
 const stopDeleteKeyDown = e => {
@@ -30,29 +59,9 @@ const getComponentType = (
   keyFlag,
   aiHintList = {}
 ) => {
+  // 任务数据下拉列表
+  const [appendDataSource] = useAppendDataSource(param);
   // 针对一些特殊的情况需要作出特殊的处理
-  const [dataSource, setDataSource] = useState([]);
-
-  if (param.enName === 'name' && dataSource.length === 0) {
-    axios
-      .get(api('getControllerParam'))
-      .then(json => json.data)
-      .then(json => {
-        const data = json.data;
-        if (json.code !== -1 && data) {
-          setDataSource(data.map(item => item.name));
-          return true;
-        }
-        return false;
-      })
-      .catch(err => console.log(err));
-  }
-
-  const handleChangeValue = (value, param, cards) => {
-    param.value = value;
-    handleEmitCodeTransform(cards);
-  };
-
   if (param.enName === 'sqlStr') {
     return (
       <div className="sqlstr">
@@ -99,38 +108,118 @@ const getComponentType = (
     );
   }
   switch (param.componentType) {
-    case componentType.INPUT:
+    case COMPONENT_TYPE.INPUT:
+      if (param.enName !== 'outPut') {
+        const dataSource =
+          param.paramType &&
+          Array.isArray(param.paramType) &&
+          param.paramType.reduce((prev, next) => {
+            return prev.concat(
+              aiHintList[next]
+                ? [
+                    ...new Set(
+                      aiHintList[next]
+                        .map(item =>
+                          item.isVariable
+                            ? item.name
+                            : item.isMutiply
+                            ? getMutiplyValue(item, next)
+                            : item.value
+                        )
+                        .flat()
+                        .filter(Boolean)
+                    ),
+                  ]
+                : []
+            );
+          }, []);
+        const depList =
+          (param.paramType &&
+            Array.isArray(param.paramType) &&
+            param.paramType.reduce((prev, next) => {
+              return prev.concat(aiHintList[next] || []);
+            }, [])) ||
+          [];
+
+        return (
+          <AutoComplete
+            key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
+            defaultValue={String(param.value || param.default)}
+            dataSource={(dataSource || []).concat(appendDataSource)}
+            onSelect={value => {
+              const handleWatchChange = value => {
+                param.value = value;
+              };
+              const handleMutiply = value => {
+                param.value = getVariableList(value)[param.mutiplyIndex];
+              };
+              const dep = depList.find(item => {
+                if (item.isVariable) {
+                  return item.name === value;
+                }
+                if (item.isMutiply) {
+                  return item.value
+                    .replace(/\)|\(/g, '')
+                    .split(',')
+                    .find(child => child === value);
+                }
+                return item.value === value;
+              });
+
+              if (dep) {
+                const handleChange = dep.isMutiply
+                  ? handleMutiply
+                  : handleWatchChange;
+                if (dep.listeners) {
+                  dep.listeners.push(handleChange);
+                } else {
+                  dep.listeners = [handleChange];
+                }
+                const variableList = getVariableList(dep);
+                param.watchDep = dep;
+                param.mutiplyIndex = variableList.findIndex(el => el === value);
+                param.handleWatchChange = handleChange;
+              }
+            }}
+            onChange={value => {
+              if (param.watchDep) {
+                if (param.watchDep.listeners) {
+                  param.watchDep.listeners = param.watchDep.listeners.filter(
+                    item => item !== param.handleWatchChange
+                  );
+                }
+              }
+              param.value = value;
+              handleEmitCodeTransform(cards);
+            }}
+          >
+            <TextArea
+              className="custom"
+              style={{ height: 32 }}
+              onKeyDown={e => stopDeleteKeyDown(e)}
+            />
+          </AutoComplete>
+        );
+      }
       return (
-        /*  <Input
+        <Input
           defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
           key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
           onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
+            if (param.listeners) {
+              param.listeners.forEach(callback => {
+                if (typeof callback === 'function') {
+                  callback(e.target.value);
+                }
+              });
+            }
           }}
-        /> */
-        <AutoComplete
-          defaultValue={param.value || param.default}
-          key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
-          onChange={value => {
-            handleChangeValue(value, param, cards);
-          }}
-          onSelect={value => {
-            handleChangeValue(value, param, cards);
-          }}
-          dataSource={dataSource}
-          filterOption={(inputValue, option) =>
-            option.props.children
-              .toUpperCase()
-              .indexOf(inputValue.toUpperCase()) !== -1 ||
-            inputValue === '""' ||
-            inputValue === "''"
-          }
-        >
-          <TextArea className="custom" onKeyDown={e => stopDeleteKeyDown(e)} />
-        </AutoComplete>
+          onKeyDown={e => stopDeleteKeyDown(e)}
+        />
       );
-    case componentType.SELECT:
+    case COMPONENT_TYPE.SELECT:
       return (
         <Select
           style={{ width: '100%' }}
@@ -150,13 +239,15 @@ const getComponentType = (
         </Select>
       );
     default:
-      return <Input />;
+      return '待开发...';
   }
 };
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const [flag, setFlag] = useState(false);
-  const aiHintList = useSelector(state => state.blockcode.aiHintList);
+
+  const [aiHintList] = useAIHintWatch();
+
   useEffect(() => {
     const handleForceUpdate = () => {
       setFlag(true);

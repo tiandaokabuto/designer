@@ -4,6 +4,7 @@ import uniqueId from 'lodash/uniqueId';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
 import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
+import event from '../../../../designerGraphBlock/layout/eventCenter';
 
 import './VariablePanel.scss';
 
@@ -60,6 +61,13 @@ export default ({
                 // key={uniqueId('variable_')}
                 onChange={e => {
                   varibale.name = e.target.value;
+                  if (varibale.listeners) {
+                    varibale.listeners.forEach(callback => {
+                      if (typeof callback === 'function') {
+                        callback(e.target.value);
+                      }
+                    });
+                  }
                   noticyChange();
                   handleEmitCodeTransform && handleEmitCodeTransform();
                 }}
@@ -85,7 +93,11 @@ export default ({
                   className="variablePanel-btn"
                   onClick={() => {
                     handleVariableDelete(index);
+<<<<<<< HEAD
                     handleEmitCodeTransform && handleEmitCodeTransform();
+=======
+                    event.emit('varibaleDelete', varibale);
+>>>>>>> 81cf9da4fa5ffb4a02b338316f573a63bc32d6c0
                   }}
                 />
               )}
