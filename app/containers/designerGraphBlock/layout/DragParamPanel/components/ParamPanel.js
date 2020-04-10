@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Input, Select, AutoComplete } from 'antd';
 import { useSelector } from 'react-redux';
-import { Input, Select, AutoComplete } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import axios from 'axios';
 
