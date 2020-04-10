@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Input, Select, AutoComplete, Button } from 'antd';
 import { useSelector } from 'react-redux';
+import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 import uniqueId from 'lodash/uniqueId';
 import axios from 'axios';
 
@@ -59,7 +60,8 @@ const getComponentType = (
   handleEmitCodeTransform,
   cards,
   keyFlag,
-  aiHintList = {}
+  aiHintList = {},
+  setFlag
 ) => {
   // 任务数据下拉列表
   const [appendDataSource] = useAppendDataSource(param);
@@ -244,9 +246,11 @@ const getComponentType = (
       return (
         <div className="parampanel-choosePath">
           <Input
+            key={keyFlag ? uniqueId('key_') : ''}
             defaultValue={param.value || param.default}
             onChange={e => {
               param.value = e.target.value;
+
               handleEmitCodeTransform(cards);
             }}
           />
@@ -259,7 +263,15 @@ const getComponentType = (
                 ['openFile']
               );
               const handleFilePath = (e, filePath) => {
-                console.log(filePath);
+                if (filePath && filePath.length) {
+                  setFlag(true);
+                  setTimeout(() => {
+                    setFlag(false);
+                  }, 50);
+                  param.value = `"${filePath[0]}"`;
+                  // forceUpdate();
+                  handleEmitCodeTransform(cards);
+                }
               };
               if (!listen) {
                 listen = true;
@@ -323,7 +335,8 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                   handleEmitCodeTransform,
                   cards,
                   flag,
-                  aiHintList
+                  aiHintList,
+                  setFlag
                 )}
               </div>
             </div>
@@ -339,7 +352,14 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                 {param.cnName}
               </span>
               <div style={{ flex: 1, overflow: 'hidden' }}>
-                {getComponentType(param, handleEmitCodeTransform, cards, flag)}
+                {getComponentType(
+                  param,
+                  handleEmitCodeTransform,
+                  cards,
+                  flag,
+                  {},
+                  setFlag
+                )}
               </div>
             </div>
           );
