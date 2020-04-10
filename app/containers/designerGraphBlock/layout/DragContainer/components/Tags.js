@@ -8,14 +8,13 @@ const { CheckableTag } = Tag;
 const tages = ({ className }) => {
   const tagsFromServer = [
     { label: 'DEBUG', icon: 'warning', fill: '#0060bf' },
-    { label: 'INFO', icon: 'message', fill: '#dca607' },
+    { label: 'INFO', icon: 'info-circle', fill: '#dca607' },
     { label: 'WARN', icon: 'exclamation-circle', fill: '#ff6a00' },
     { label: 'ERROR', icon: 'close-circle', fill: '#ea5154' },
   ];
   const [selectedTags, setSelectedTags] = useState('DEBUG');
 
   const handleChange = (label, checked) => {
-    console.log('You are interested in: ', label);
     if (checked) {
       setSelectedTags(label);
     }
