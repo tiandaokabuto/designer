@@ -1,32 +1,19 @@
 import { Tag, Icon } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import './Tages.scss';
 
 const { CheckableTag } = Tag;
 
-const tages = ({ className }) => {
-  const tagsFromServer = [
-    { label: 'DEBUG', icon: 'warning', fill: '#0060bf' },
-    { label: 'INFO', icon: 'info-circle', fill: '#dca607' },
-    { label: 'WARN', icon: 'exclamation-circle', fill: '#ff6a00' },
-    { label: 'ERROR', icon: 'close-circle', fill: '#ea5154' },
-  ];
-  const [selectedTags, setSelectedTags] = useState('DEBUG');
-
-  const handleChange = (label, checked) => {
-    if (checked) {
-      setSelectedTags(label);
-    }
-  };
-
+const Tags = ({ tagsData, className, selectedTags, handleChange }) => {
   return (
     <div className={className}>
-      {tagsFromServer.map(({ label, icon, fill }) => (
+      {tagsData.map(({ label, icon, fill }) => (
         <CheckableTag
           key={label}
           checked={selectedTags === label}
-          onChange={checked => handleChange(label, checked)}
+          onChange={checked => handleChange(checked, label)}
         >
           <Icon type={icon} style={{ color: fill }} />
           <span className={`${className}-label`}>{label}</span>
@@ -36,4 +23,15 @@ const tages = ({ className }) => {
   );
 };
 
-export default tages;
+Tags.propTypes = {
+  tagsData: PropTypes.arrayOf(PropTypes.object).isRequired,
+  className: PropTypes.string,
+  selectedTags: PropTypes.string,
+  handleChange: PropTypes.func.isRequired,
+};
+Tags.defaultProps = {
+  className: '',
+  selectedTags: '',
+};
+
+export default Tags;
