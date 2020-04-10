@@ -30,6 +30,7 @@ const FlowContextMenu = () => {
     <ContextMenu className="contextMenu">
       <NodeMenu>
         <MenuItem command="copy" text="复制" />
+        <MenuItem command="添加到复用" text="添加到复用" />
         <MenuItem command="delete" text="删除" />
         <MenuItem command="导出到本地" text="导出到本地" />
       </NodeMenu>

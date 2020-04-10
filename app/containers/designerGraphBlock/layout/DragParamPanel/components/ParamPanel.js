@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Input, Select, AutoComplete, Button } from 'antd';
 import { useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
+import axios from 'axios';
 
 import event from '../../eventCenter';
 import { useAIHintWatch, useAppendDataSource } from '../../useHooks';
@@ -304,11 +305,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
               checkedBlock.userDesc = e.target.value;
               handleEmitCodeTransform(cards);
             }}
-            onKeyDown={e => {
-              if (e.keyCode === 46) {
-                e.nativeEvent.stopImmediatePropagation();
-              }
-            }}
+            onKeyDown={e => stopDeleteKeyDown(e)}
           />
         </div>
       )}

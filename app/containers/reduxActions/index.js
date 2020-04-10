@@ -11,6 +11,9 @@ import {
   SYNCHRO_GRAPHDATATOPROCESSTREE,
   RESET_ALLGRAPHEDITDATA,
   RESET_GRAPHERITORALLDATA,
+  CHANGE_MODULE_TREE,
+  CHANGE_CHECKED_MODULE_TREE_NODE,
+  CHANGE_TREE_TAB,
 } from '../../actions/grapheditor';
 import {
   SYNCHRO_CODEBLOCK,
@@ -176,6 +179,35 @@ export const changeCheckedTreeNode = checkedTreeNode => {
   dispatch({
     type: CHANGE_CHECKEDTREENODE,
     payload: checkedTreeNode,
+  });
+};
+
+/**
+ * 更新复用流程块的树
+ * @param {*} moduleTree
+ */
+export const changeModuleTree = (moduleTree = []) => {
+  dispatch({
+    type: CHANGE_MODULE_TREE,
+    payload: moduleTree,
+  });
+};
+
+/**
+ * 当前选中的复用流程块
+ * @param {*} checkedModuleTreeNode
+ */
+export const changeCheckedModuleTreeNode = checkedModuleTreeNode => {
+  dispatch({
+    type: CHANGE_CHECKED_MODULE_TREE_NODE,
+    payload: checkedModuleTreeNode,
+  });
+};
+
+export const changeTreeTab = tab => {
+  dispatch({
+    type: CHANGE_TREE_TAB,
+    payload: tab,
   });
 };
 

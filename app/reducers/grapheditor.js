@@ -14,6 +14,9 @@ import {
   CHANGE_CURRENTEDITINGPROCESSID,
   RESET_ALLGRAPHEDITDATA,
   RESET_GRAPHERITORALLDATA,
+  CHANGE_CHECKED_MODULE_TREE_NODE,
+  CHANGE_MODULE_TREE,
+  CHANGE_TREE_TAB,
 } from '../actions/grapheditor';
 
 import { isDirNode, findNodeByKey } from '../containers/common/utils';
@@ -24,7 +27,10 @@ const defaultState = {
   currentEditingId: undefined, // 当前编辑的是哪个流程块
   checkedGraphBlockId: undefined,
   editorBlockPythonCode: '',
+  treeTab: '',
   processTree: [], // 当前项目的自定义流程树结构
+  moduleTree: [], // 当前项目的复用流程块树结构
+  currentCheckedModuleTreeNode: undefined, // 当前选中的复用块
   currentEditingProcessId: undefined, // 当前编辑的是项目下的哪个流程
   currentCheckedTreeNode: undefined,
   currentProject: undefined,
@@ -88,6 +94,7 @@ export default (state = defaultState, action) => {
         checkedGraphBlockId: undefined,
         editorBlockPythonCode: '',
         processTree: [], // 当前项目的自定义流程树结构
+        currentCheckedModuleTreeNode: undefined, // 当前选中的复用块
         currentEditingProcessId: undefined, // 当前编辑的是项目下的哪个流程
         currentCheckedTreeNode: undefined,
       };
@@ -143,6 +150,21 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         processTree: action.payload,
+      };
+    case CHANGE_MODULE_TREE:
+      return {
+        ...state,
+        moduleTree: action.payload,
+      };
+    case CHANGE_CHECKED_MODULE_TREE_NODE:
+      return {
+        ...state,
+        currentCheckedModuleTreeNode: action.payload,
+      };
+    case CHANGE_TREE_TAB:
+      return {
+        ...state,
+        treeTab: action.payload,
       };
     case CHANGE_CHECKEDTREENODE:
       return {

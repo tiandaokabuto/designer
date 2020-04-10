@@ -228,7 +228,9 @@ const BasicStatement = useInjectContext(props => {
                 onClick={() => {
                   ipcRenderer.send('min');
                   ipcRenderer.send('start_server', id);
-                  if (card.cmdName === '获取窗口元素') {
+                  console.log(card);
+                  if (card.cmdName === '鼠标-点击目标') {
+                    console.log(PATH_CONFIG('windowHook'));
                     const worker = exec(PATH_CONFIG('windowHook'));
                   }
                   ipcRenderer.on(

@@ -2,6 +2,16 @@ $btn_backgroundColor: rgba(42, 140, 108, 1);
 .ant-btn-primary {
   background: $btn_backgroundColor;
   color: white;
+  border: none;
+  &:hover {
+    background: #32a67f;
+    outline: none;
+  }
+
+  &:focus {
+    background: #32a67f;
+    outline: none;
+  }
 }
 
 .ant-pagination-item-active {
@@ -14,4 +24,11 @@ $btn_backgroundColor: rgba(42, 140, 108, 1);
       border-color: rgba(50, 166, 127, 1) !important;
     }
   }
+}
+.ant-table-thead > tr > th {
+  color: #adadad;
+  background: white;
+}
+.ant-table-pagination.ant-pagination {
+  float: left;
 }
