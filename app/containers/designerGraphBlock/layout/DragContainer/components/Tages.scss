@@ -1,5 +1,4 @@
 .dragger-editor-container-output-tages {
-  display: inline-block;
   float: right;
   color: #2e2e2e;
   .ant-tag-checkable-checked,
@@ -7,10 +6,6 @@
     background-color: transparent;
     border: 1px solid #cccccc;
     border-radius: 12px;
-  }
-  .ant-tag-checkable:not(.ant-tag-checkable-checked):hover {
-    color: #2e2e2e;
-    opacity: 1;
   }
   span {
     color: #2e2e2e;

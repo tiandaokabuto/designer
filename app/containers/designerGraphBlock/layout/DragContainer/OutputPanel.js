@@ -10,6 +10,13 @@ import Tags from './components/Tags';
 let isMouseDown = false;
 let startOffset = 0;
 
+const tagsFromServer = [
+  { label: 'DEBUG', icon: 'warning', fill: '#0060bf' },
+  { label: 'INFO', icon: 'info-circle', fill: '#dca607' },
+  { label: 'WARN', icon: 'exclamation-circle', fill: '#ff6a00' },
+  { label: 'ERROR', icon: 'close-circle', fill: '#ea5154' },
+];
+
 export default memo(
   useInjectContext(({ tag, updateExecuteOutput }) => {
     const executeOutput = useSelector(
@@ -17,6 +24,8 @@ export default memo(
     );
 
     const [output, setOutput] = useState(executeOutput);
+    const [selectedTags, setSelectedTags] = useState('DEBUG');
+
     useEffect(() => {
       const handleAnchorMouseMove = useThrottle(e => {
         if (isMouseDown) {
@@ -71,21 +80,29 @@ export default memo(
             width: '100%',
           };
     return (
-      <div
-        className="dragger-editor-container-output"
-        style={{ ...style }}
-        onMouseDown={e => e.preventDefault()}
-      >
+      <div className="dragger-editor-container-output" style={{ ...style }}>
         <div className="dragger-editor-container-output-title">
           <span>输出:</span>
           <div
             className="dragger-editor-container-output-anchor"
-            onMouseDown={e => ((isMouseDown = true), (startOffset = e.pageY))}
+            onMouseDown={e => {
+              isMouseDown = true;
+              startOffset = e.pageY;
+            }}
           >
             <Icon type="caret-up" style={{ marginBottom: '-3px' }} />
             <Icon type="caret-down" />
           </div>
-          <Tags className="dragger-editor-container-output-tages" />
+          <Tags
+            className="dragger-editor-container-output-tages"
+            tagsData={tagsFromServer}
+            selectedTags={selectedTags}
+            handleChange={(checked, selectedTagLabel) => {
+              if (checked) {
+                setSelectedTags(selectedTagLabel);
+              }
+            }}
+          />
         </div>
         <pre className="dragger-editor-container-output-content">{output}</pre>
       </div>
