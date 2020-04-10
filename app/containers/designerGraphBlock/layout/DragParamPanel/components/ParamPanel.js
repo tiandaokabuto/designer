@@ -1,16 +1,19 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Input, Select, AutoComplete } from 'antd';
+import { Input, Select, AutoComplete, Button } from 'antd';
 import { useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 
 import event from '../../eventCenter';
 import { useAIHintWatch, useAppendDataSource } from '../../useHooks';
 import api, { config } from '../../../../../api';
+const { ipcRenderer } = require('electron');
 
 import './ParamPanel.scss';
 
 const { Option } = Select;
 const { TextArea } = Input;
+
+let listen = false;
 
 const COMPONENT_TYPE = {
   INPUT: 0,
@@ -235,6 +238,37 @@ const getComponentType = (
               </Option>
             ))}
         </Select>
+      );
+    case COMPONENT_TYPE.FILEPATHINPUT:
+      return (
+        <div className="parampanel-choosePath">
+          <Input
+            defaultValue={param.value || param.default}
+            onChange={e => {
+              param.value = e.target.value;
+              handleEmitCodeTransform(cards);
+            }}
+          />
+          <Button
+            onClick={() => {
+              ipcRenderer.send(
+                'choose-directory-dialog',
+                'showOpenDialog',
+                '选择',
+                ['openFile']
+              );
+              const handleFilePath = (e, filePath) => {
+                console.log(filePath);
+              };
+              if (!listen) {
+                listen = true;
+                ipcRenderer.on('chooseItem', handleFilePath);
+              }
+            }}
+          >
+            选择
+          </Button>
+        </div>
       );
     default:
       return '待开发...';
