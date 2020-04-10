@@ -13,3 +13,4 @@ export { default as useNoticyBlockCodeChange } from './useNoticyBlockCodeChange'
 export { default as useWatchCmdDesc } from './useWatchCmdDesc';
 export { default as useChangeCheckedBlockColor } from './useChangeCheckedBlockColor';
 export { default as useAIHintWatch } from './useAIHintWatch';
+export { default as useAppendDataSource } from './useAppendDataSource';

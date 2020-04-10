@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 
 import event from '../../eventCenter';
-import { useAIHintWatch } from '../../useHooks';
+import { useAIHintWatch, useAppendDataSource } from '../../useHooks';
+import api, { config } from '../../../../../api';
 
 import './ParamPanel.scss';
 
@@ -56,8 +57,9 @@ const getComponentType = (
   keyFlag,
   aiHintList = {}
 ) => {
+  // 任务数据下拉列表
+  const [appendDataSource] = useAppendDataSource(param);
   // 针对一些特殊的情况需要作出特殊的处理
-  console.log(param, '文件路径');
   if (param.enName === 'sqlStr') {
     return (
       <div className="sqlstr">
