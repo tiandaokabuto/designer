@@ -5,6 +5,7 @@ import {
   setGraphDataMap,
   updateGraphData,
   synchroGraphDataToProcessTree,
+  changeSavingModuleData,
 } from '../../../reduxActions';
 
 import { changeModifyState } from '../../../common/utils';
@@ -19,33 +20,42 @@ class NodeHandler {
   }
 
   handleNodeChange = description => {
+    console.log(description);
     if (description.action === 'add') {
       if (description.model.shape === 'processblock') {
         const key = description.item.id;
-        setGraphDataMap(key, {
-          shape: 'processblock',
-          properties: [
-            {
-              cnName: '标签名称',
-              enName: 'label',
-              value: '流程块',
-              default: '',
-            },
-            {
-              cnName: '输入参数',
-              enName: 'param',
-              value: [],
-              default: '',
-            },
-            {
-              cnName: '流程块返回',
-              enName: 'output',
-              value: '',
-              default: '',
-            },
-          ],
-          variable: [],
-        });
+        const {
+          grapheditor: { savingModuleData },
+        } = store.getState();
+        if (savingModuleData) {
+          setGraphDataMap(key, savingModuleData);
+          changeSavingModuleData(undefined);
+        } else {
+          setGraphDataMap(key, {
+            shape: 'processblock',
+            properties: [
+              {
+                cnName: '标签名称',
+                enName: 'label',
+                value: '流程块',
+                default: '',
+              },
+              {
+                cnName: '输入参数',
+                enName: 'param',
+                value: [],
+                default: '',
+              },
+              {
+                cnName: '流程块返回',
+                enName: 'output',
+                value: '',
+                default: '',
+              },
+            ],
+            variable: [],
+          });
+        }
       } else if (description.model.shape === 'rhombus-node') {
         const key = description.item.id;
         setGraphDataMap(key, {

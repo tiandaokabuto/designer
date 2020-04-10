@@ -11,6 +11,7 @@ import {
   changeModuleTree,
   changeCheckedModuleTreeNode,
   clearGrapheditorData,
+  changeSavingModuleData,
 } from '../reduxActions';
 import store from '../../store';
 import { readDir } from '../../nodejs';
@@ -660,12 +661,25 @@ export const openProject = name => {
         }
       });
       changeProcessTree(processTree);
+      checkAndMakeDir(PATH_CONFIG('project', `${name}/${name}_module`));
       fs.readFile(
         PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
         function(err, data) {
-          const { moduleTree } = JSON.parse(data.toString());
-          console.log(moduleTree);
-          changeModuleTree(moduleTree);
+          if (!err) {
+            const { moduleTree } = JSON.parse(data.toString());
+            console.log(moduleTree);
+            changeModuleTree(moduleTree);
+          } else {
+            changeModuleTree([]);
+            const initialModuleTreeJson = {
+              moduleTree: [],
+            };
+            // 创建流程块树的描述文件
+            fs.writeFileSync(
+              PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
+              JSON.stringify(initialModuleTreeJson)
+            );
+          }
         }
       );
     } else {
@@ -794,12 +808,9 @@ export const addToReuse = () => {
       currentProject,
     },
   } = store.getState();
-  // console.log(graphDataMap, checkedGraphBlockId);
-  // console.log(graphDataMap.get(checkedGraphBlockId));
   const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
   console.log(data); // 数据
   const title = data.properties[0].value; // 标题
-  // const item = moduleTree.find(item => item.title === title); //树中是否存在该流程块
   const files = fs.readdirSync(
     PATH_CONFIG('project', `${currentProject}/${currentProject}_module`)
   );
@@ -813,7 +824,7 @@ export const addToReuse = () => {
         `${currentProject}/${currentProject}_module/${title}.json`
       ),
       JSON.stringify({
-        graphDataMap: JSON.stringify(data),
+        graphDataMap: data,
       })
     );
     const newModuleTree = [...moduleTree];
@@ -856,6 +867,7 @@ export const addToReuse = () => {
     message.info('已存在同名的流程块');
   }
 };
+
 export const exportCustomProcessBlock = () => {
   const getDownloadPath = useGetDownloadPath();
   const {
@@ -894,4 +906,16 @@ export const exportCustomProcessBlock = () => {
         message.success('导出成功');
       });
   });
+};
+
+export const copyModule = () => {
+  const {
+    grapheditor: {
+      graphDataMap, // 数据map
+      checkedGraphBlockId, // 当前流程块的id
+      currentProject,
+    },
+  } = store.getState();
+  const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
+  changeSavingModuleData(data);
 };

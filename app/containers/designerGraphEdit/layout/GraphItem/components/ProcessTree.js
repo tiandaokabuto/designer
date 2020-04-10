@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Tree, Modal, Icon } from 'antd';
 import { useSelector } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
+import { ItemPanel, Item } from 'gg-editor';
 
 import { ConfirmModal } from '../../../../common/components';
 import {
@@ -56,11 +57,29 @@ const transformTreeTitle = processTree => {
       if (child.type === 'process') {
         // child.hasModified = false;
         child.title = (
+          // <div draggable={false}>
+          //   <Item
+          //     type="node"
+          //     size="184*56"
+          //     shape="processblock"
+          //     icon="http://bpic.588ku.com/element_origin_min_pic/00/92/88/9056f24073c4c87.jpg"
+          //     model={{
+          //       color: '#1890FF',
+          //       label: 'a',
+          //       style: {
+          //         stroke: 'rgba(61, 109, 204, 1)',
+          //         fill: '#ecf5f6',
+          //       },
+          //     }}
+          //   >
           <TreeNodeTitle
             title={child.title}
             hasModified={child.hasModified}
             type="cluster"
           />
+          // </Item>
+          // {/* </ItemPanel> */}
+          // </div>
         );
       } else {
         // child.hasModified = false;
@@ -101,6 +120,7 @@ export default ({ type }) => {
   // 右键菜单位置设定
   const [position, setPosition] = useState({});
   const onDragEnter = info => {
+    console.log(info);
     // expandedKeys 需要受控时设置
     // this.setState({
     //   expandedKeys: info.expandedKeys,
@@ -287,7 +307,7 @@ export default ({ type }) => {
     };
   }, [setExpandedKeys]);
 
-  return (
+  return type === 'process' ? (
     <div
       style={{
         height: '50vh',
@@ -314,51 +334,98 @@ export default ({ type }) => {
         onDragEnter={onDragEnter}
         onDrop={onDrop}
         //treeData={processTree}
-        treeData={
-          type === 'process'
-            ? transformTreeTitle(processTree)
-            : transformTreeTitle(moduleTree)
-        }
-        selectedKeys={
-          type === 'process'
-            ? [currentCheckedTreeNode]
-            : [currentCheckedModuleTreeNode]
-        }
+        treeData={transformTreeTitle(processTree)}
+        selectedKeys={[currentCheckedTreeNode]}
         onSelect={(selectedKey, e) => {
-          console.log(selectedKey);
-          if (type === 'process') {
-            if (currentCheckedTreeNode === undefined) {
-              setSelectedKey(selectedKey[0]);
-              changeCheckedTreeNode(selectedKey[0]);
-            } else {
-              if (selectedKey.length !== 0) {
-                const isModified = hasNodeModified(
-                  processTree,
-                  currentCheckedTreeNode
-                );
-                if (isModified) {
-                  // 有更改
-                  setSelectedKey(selectedKey[0]);
-                  setModalVisible(true);
-                } else {
-                  setSelectedKey(selectedKey[0]);
-                  changeCheckedTreeNode(selectedKey[0]);
-                }
-              }
-            }
+          if (currentCheckedTreeNode === undefined) {
+            setSelectedKey(selectedKey[0]);
+            changeCheckedTreeNode(selectedKey[0]);
           } else {
-            if (currentCheckedModuleTreeNode === undefined) {
-              setSelectedKey(selectedKey[0]);
-              changeCheckedModuleTreeNode(selectedKey[0]);
-            } else {
-              if (selectedKey.length !== 0) {
+            if (selectedKey.length !== 0) {
+              const isModified = hasNodeModified(
+                processTree,
+                currentCheckedTreeNode
+              );
+              if (isModified) {
+                // 有更改
                 setSelectedKey(selectedKey[0]);
-                changeCheckedModuleTreeNode(selectedKey[0]);
+                setModalVisible(true);
+              } else {
+                setSelectedKey(selectedKey[0]);
+                changeCheckedTreeNode(selectedKey[0]);
               }
             }
           }
         }}
       />
+      <ContextMenu
+        position={position}
+        handleDelete={handleDelete}
+        handleRename={handleRename}
+      />
+      <ConfirmModal
+        visible={modalVisible}
+        content="请确认是否保存?"
+        onCancel={() => {
+          setModalVisible(false);
+        }}
+        onCancelOk={() => {
+          resetGraphEditData();
+          changeCheckedTreeNode(selectedKey);
+          setModalVisible(false);
+        }}
+        onOk={() => {
+          setNodeModifiedState(processTree, currentCheckedTreeNode); // 把hasmodified改成false
+          persistentStorage(); // 保存currentCheckedTreeNode的内容
+          resetGraphEditData(); // 重设GraphEditData
+          changeCheckedTreeNode(selectedKey); // 修改当前选中
+          setModalVisible(false); // 关闭对话框
+        }}
+      />
+    </div>
+  ) : (
+    <div
+      style={{
+        height: '50vh',
+      }}
+    >
+      {/* <ItemPanel> */}
+      <Tree
+        className="draggable-tree"
+        expandedKeys={expandedKeys}
+        defaultExpandAll={true}
+        switcherIcon={<Switcher />}
+        showIcon={true}
+        draggable
+        blockNode
+        onExpand={expandKeys => {
+          setExpandedKeys(expandKeys);
+        }}
+        onRightClick={({ event, node }) => {
+          setPosition({
+            left: event.pageX + 40,
+            top: event.pageY - 20,
+            node: node.props,
+          });
+        }}
+        onDragEnter={onDragEnter}
+        onDrop={onDrop}
+        //treeData={processTree}
+        treeData={transformTreeTitle(moduleTree)}
+        selectedKeys={[currentCheckedModuleTreeNode]}
+        onSelect={(selectedKey, e) => {
+          if (currentCheckedModuleTreeNode === undefined) {
+            setSelectedKey(selectedKey[0]);
+            changeCheckedModuleTreeNode(selectedKey[0]);
+          } else {
+            if (selectedKey.length !== 0) {
+              setSelectedKey(selectedKey[0]);
+              changeCheckedModuleTreeNode(selectedKey[0]);
+            }
+          }
+        }}
+      />
+      {/* </ItemPanel> */}
       <ContextMenu
         position={position}
         handleDelete={handleDelete}

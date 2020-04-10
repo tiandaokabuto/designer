@@ -39,7 +39,6 @@ const FlowContextMenu = () => {
         <MenuItem command="delete" text="删除" />
       </EdgeMenu>
       <GroupMenu>
-        <MenuItem command="copy" text="复制" />
         <MenuItem command="delete" text="删除" />
         <MenuItem command="unGroup" icon="ungroup" text="Ungroup" />
       </GroupMenu>

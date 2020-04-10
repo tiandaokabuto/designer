@@ -19,7 +19,7 @@ import EditorChange, {
   registerDataChange,
 } from '../../useHooks/useEditorChange';
 
-import { findNodeByKey } from '../../../common/utils';
+import { findNodeByKey, copyModule } from '../../../common/utils';
 
 export default useInjectContext(
   withPropsAPI(
@@ -154,6 +154,17 @@ export default useInjectContext(
                   break;
                 default:
                 // do nothing
+              }
+            }}
+            onContextMenu={node => {
+              // console.log($0.firstChild.textContent);
+              const arr = document.getElementsByClassName('command');
+              for (let i = 0; i < arr.length; i++) {
+                if (arr[i].innerText === '复制') {
+                  arr[i].addEventListener('click', () => {
+                    copyModule();
+                  });
+                }
               }
             }}
             noEndEdge={false}

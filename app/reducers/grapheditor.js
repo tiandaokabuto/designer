@@ -17,6 +17,7 @@ import {
   CHANGE_CHECKED_MODULE_TREE_NODE,
   CHANGE_MODULE_TREE,
   CHANGE_TREE_TAB,
+  CHANGE_SAVING_MODULE_DATA,
 } from '../actions/grapheditor';
 
 import { isDirNode, findNodeByKey } from '../containers/common/utils';
@@ -34,6 +35,7 @@ const defaultState = {
   currentEditingProcessId: undefined, // 当前编辑的是项目下的哪个流程
   currentCheckedTreeNode: undefined,
   currentProject: undefined,
+  savingModuleData: undefined,
 };
 
 const objChangeMap = obj => {
@@ -165,6 +167,11 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         treeTab: action.payload,
+      };
+    case CHANGE_SAVING_MODULE_DATA:
+      return {
+        ...state,
+        savingModuleData: action.payload,
       };
     case CHANGE_CHECKEDTREENODE:
       return {

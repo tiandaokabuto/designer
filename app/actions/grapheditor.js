@@ -17,3 +17,4 @@ export const CHANGE_MODULE_TREE = 'change_module_tree';
 export const CHANGE_CHECKED_MODULE_TREE_NODE =
   'change_checked_module_tree_node';
 export const CHANGE_TREE_TAB = 'change_tree_tab';
+export const CHANGE_SAVING_MODULE_DATA = 'change_saving_module_data';
