@@ -152,7 +152,6 @@ const getComponentType = (
                 const handleChange = dep.isMutiply
                   ? handleMutiply
                   : handleWatchChange;
-                console.log(dep, 'dep');
                 if (dep.listeners) {
                   dep.listeners.push(handleChange);
                 } else {
@@ -189,7 +188,9 @@ const getComponentType = (
             handleEmitCodeTransform(cards);
             if (param.listeners) {
               param.listeners.forEach(callback => {
-                callback(e.target.value);
+                if (typeof callback === 'function') {
+                  callback(e.target.value);
+                }
               });
             }
           }}
