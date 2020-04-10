@@ -47,9 +47,9 @@ export default class RhombusNode extends Component {
         group.addShape('text', {
           attrs: {
             text: label,
-            x: -12,
+            x: 0,
             y: 5,
-            textAlign: 'start',
+            textAlign: 'center',
             textBaseline: 'top',
             fill: 'rgba(0,0,0,0.65)',
           },
