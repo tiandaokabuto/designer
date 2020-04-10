@@ -32,10 +32,18 @@ export default class App extends React.Component<Props> {
     });
     this.showReconnentTip = false;
     this.loginData = {};
+    this.timerId = null;
     this.init();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('offline', this.handleOffLine);
+    window.removeEventListener('online', this.handleReconnet);
+  }
+
+  init = () => {
     window.addEventListener('offline', this.handleOffLine);
     window.addEventListener('online', this.handleReconnet);
-
     // 初始化用户数据，用于断网重连
     const callback = (ip, port, userName, password, serialNumber, offLine) => {
       this.loginData.offLine = offLine;
@@ -45,20 +53,7 @@ export default class App extends React.Component<Props> {
       }
     };
     readGlobalConfig(callback);
-  }
 
-  componentWillUnmount() {
-    window.removeEventListener('offline', this.handleOffLine);
-    window.removeEventListener('online', this.handleReconnet);
-  }
-
-  init = () => {
-    window.addEventListener('offline', () => {
-      console.log('断网了');
-    });
-    window.addEventListener('online', () => {
-      console.log('冲浪');
-    });
     axios.interceptors.request.use(
       config => {
         config.headers = {
@@ -78,6 +73,7 @@ export default class App extends React.Component<Props> {
 
   handleOffLine = () => {
     if (!this.showReconnentTip && !this.loginData.offLine) {
+      if (this.timerId) clearInterval(this.timerId);
       this.showReconnentTip = true;
       message.loading({
         content: '网络重连中...',
@@ -89,25 +85,33 @@ export default class App extends React.Component<Props> {
 
   handleReconnet = () => {
     if (this.showReconnentTip && !this.loginData.offLine) {
-      axios
-        .post(api('signIn'), {
-          userName: this.loginData.userName,
-          password: hex_sha1(this.loginData.password),
-        })
-        .then(json => json.data)
-        .then(json => {
-          if (~json.code) {
-            remote.getGlobal('sharedObject').token = json.data.token;
-            message.success({ content: '连接成功', key, duration: 2 });
-            this.showReconnentTip = false;
-            return true;
-          }
-          return false;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.reconnet();
     }
+  };
+
+  reconnet = () => {
+    axios
+      .post(api('signIn'), {
+        userName: this.loginData.userName,
+        password: hex_sha1(this.loginData.password),
+      })
+      .then(json => json.data)
+      .then(json => {
+        if (~json.code) {
+          remote.getGlobal('sharedObject').token = json.data.token;
+          message.success({ content: '连接成功', key, duration: 2 });
+          this.showReconnentTip = false;
+          if (this.timerId) clearInterval(this.timerId);
+          return true;
+        }
+        return false;
+      })
+      .catch(err => {
+        if (!this.timerId) {
+          this.timerId = setInterval(this.reconnet, 10000);
+        }
+        console.log(err);
+      });
   };
 
   refreshToken = () => {
