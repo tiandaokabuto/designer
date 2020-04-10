@@ -143,7 +143,7 @@ const getComponentType = (
           <AutoComplete
             key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
             defaultValue={String(param.value || param.default)}
-            dataSource={dataSource || []}
+            dataSource={(dataSource || []).concat(appendDataSource)}
             onSelect={value => {
               const handleWatchChange = value => {
                 param.value = value;
