@@ -22,6 +22,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     image: 1,
     'submit-btn': 1,
     'cancel-btn': 1,
+    'file-upload': layout && (layout.cols || 4),
   };
 
   const INITIAL_HEIGHT = {
@@ -29,6 +30,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     image: 3,
     'submit-btn': 1,
     'cancel-btn': 1,
+    'file-upload': 1,
   };
 
   const noticyChange = useNoticyBlockCodeChange();

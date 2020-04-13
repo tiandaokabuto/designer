@@ -7,6 +7,7 @@ import { useGetDomWidth } from '../../useHooks';
 import BasicInputComponent from './components/BasicInputComponent';
 import ImageComponent from './components/ImageComponent';
 import BasicButton from './components/BasicButton';
+import FileUpload from './components/FileUpload';
 
 import { isLocked } from '../WidgetPanel';
 
@@ -32,6 +33,8 @@ export default ({
         return <BasicButton type="primary" desc={desc} i={gridItem.i} />;
       case 'cancel-btn':
         return <BasicButton desc={desc} i={gridItem.i} />;
+      case 'file-upload':
+        return <FileUpload desc={desc} i={gridItem.i} />;
       default:
         return 'other';
     }
