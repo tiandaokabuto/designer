@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from 'react';
+import React, { useEffect, useState, memo, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
@@ -24,6 +24,7 @@ export default memo(
     );
 
     const [output, setOutput] = useState(executeOutput);
+    const [filter, setFilter] = useState('a');
     const [selectedTags, setSelectedTags] = useState('DEBUG');
 
     useEffect(() => {
@@ -79,6 +80,25 @@ export default memo(
         : {
             width: '100%',
           };
+    console.log(output.split('\n'));
+    const transformOutput = useMemo(() => {
+      const outputList = output.split('\n').filter(Boolean);
+      return outputList.map(item => (
+        <>
+          <span
+            dangerouslySetInnerHTML={{
+              __html: filter
+                ? item.replace(
+                    filter,
+                    match => `<span style="color:red">${match}</span>`
+                  )
+                : item,
+            }}
+          ></span>
+          <br />
+        </>
+      ));
+    }, [output, filter]);
     return (
       <div className="dragger-editor-container-output" style={{ ...style }}>
         <div className="dragger-editor-container-output-title">
@@ -104,7 +124,10 @@ export default memo(
             }}
           />
         </div>
-        <pre className="dragger-editor-container-output-content">{output}</pre>
+        {/* <pre className="dragger-editor-container-output-content">{output}</pre> */}
+        <pre className="dragger-editor-container-output-content">
+          {transformOutput}
+        </pre>
       </div>
     );
   })

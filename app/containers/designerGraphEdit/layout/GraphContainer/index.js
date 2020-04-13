@@ -167,6 +167,20 @@ export default useInjectContext(
                 }
               }
             }}
+            onDoubleClick={node => {
+              if (
+                node.item &&
+                ['processblock'].includes(node.item.model.shape)
+              ) {
+                updateCurrentPagePosition('block');
+                updateCurrentEditingProcessBlock(node.item.id);
+
+                synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
+                setTimeout(() => {
+                  history.push('/designerGraphBlock');
+                }, 0);
+              }
+            }}
             noEndEdge={false}
           />
           <EditorDrawer
