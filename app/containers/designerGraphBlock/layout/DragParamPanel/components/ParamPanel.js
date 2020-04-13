@@ -70,7 +70,7 @@ const getComponentType = (
         setTimeout(() => {
           setFlag(false);
         }, 50);
-        param.value = `"${filePath[0]}"`;
+        param.value = `"${filePath[0].replace(/\//g, '\\\\')}"`;
         // forceUpdate();
         handleEmitCodeTransform(cards);
       }
