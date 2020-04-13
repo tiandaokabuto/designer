@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { Input, Select, AutoComplete, Button } from 'antd';
 import { useSelector } from 'react-redux';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
@@ -14,8 +14,6 @@ import './ParamPanel.scss';
 
 const { Option } = Select;
 const { TextArea } = Input;
-
-let listen = false;
 
 const COMPONENT_TYPE = {
   INPUT: 0,
@@ -55,6 +53,8 @@ const stopDeleteKeyDown = e => {
   }
 };
 
+let listener = null;
+
 const getComponentType = (
   param,
   handleEmitCodeTransform,
@@ -63,6 +63,20 @@ const getComponentType = (
   aiHintList = {},
   setFlag
 ) => {
+  const handleFilePath = useCallback(
+    (e, filePath) => {
+      if (listener === param && filePath && filePath.length) {
+        setFlag(true);
+        setTimeout(() => {
+          setFlag(false);
+        }, 50);
+        param.value = `"${filePath[0].replace(/\//g, '\\\\')}"`;
+        // forceUpdate();
+        handleEmitCodeTransform(cards);
+      }
+    },
+    [param]
+  );
   // 任务数据下拉列表
   const [appendDataSource] = useAppendDataSource(param);
   // 针对一些特殊的情况需要作出特殊的处理
@@ -256,27 +270,15 @@ const getComponentType = (
           />
           <Button
             onClick={() => {
+              listener = param;
+              ipcRenderer.removeListener('chooseItem', handleFilePath);
               ipcRenderer.send(
                 'choose-directory-dialog',
                 'showOpenDialog',
                 '选择',
                 ['openFile']
               );
-              const handleFilePath = (e, filePath) => {
-                if (filePath && filePath.length) {
-                  setFlag(true);
-                  setTimeout(() => {
-                    setFlag(false);
-                  }, 50);
-                  param.value = `"${filePath[0]}"`;
-                  // forceUpdate();
-                  handleEmitCodeTransform(cards);
-                }
-              };
-              if (!listen) {
-                listen = true;
-                ipcRenderer.on('chooseItem', handleFilePath);
-              }
+              ipcRenderer.on('chooseItem', handleFilePath);
             }}
           >
             选择
