@@ -148,7 +148,6 @@ const BasicStatement = useInjectContext(props => {
             className="cmd-operation"
             onClick={() => {
               setCodeVisible(true);
-              console.log('hhh');
             }}
           >
             编写代码
