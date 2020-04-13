@@ -68,6 +68,12 @@ const getComponentType = (
   setFlag,
   handleValidate
 ) => {
+  useEffect(() => {
+    handleValidate({
+      value: param.value,
+    });
+  }, []);
+
   const handleFilePath = useCallback(
     (e, filePath) => {
       if (listener === param && filePath && filePath.length) {
