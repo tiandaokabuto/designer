@@ -31,7 +31,8 @@ export default ({
     noticyChange();
     forceUpdate();
   };
-  if (variableList === null) return null;
+  if (variableList === null || !Array.isArray(variableList)) return null;
+
   return (
     <div className="variablePanel">
       <div className="variablePanel-title">
