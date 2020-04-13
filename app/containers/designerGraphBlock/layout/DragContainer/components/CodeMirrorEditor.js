@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, memo } from 'react';
+import React, { useEffect, useRef, memo, useImperativeHandle } from 'react';
 import CodeMirror from 'codemirror';
 import { useDispatch, useSelector } from 'react-redux';
 import useUpdateEffect from 'react-hook-easier/lib/useUpdateEffect';
@@ -28,10 +28,16 @@ import 'codemirror/addon/fold/comment-fold.js';
 import 'codemirror/addon/edit/closebrackets.js';
 import 'codemirror/addon/edit/matchbrackets.js';
 
-export default memo(({ value }) => {
+export default React.forwardRef(({ value }, ref) => {
   const codeMirrorRef = useRef(null);
   const dispatch = useDispatch();
-  // const pythonCode = useSelector(state => state.blockcode.pythonCode);
+
+  useImperativeHandle(ref, () => {
+    return {
+      codeMirrorRef,
+    };
+  });
+
   useEffect(() => {
     var el = document.getElementById('editor');
     var version = '# version: Python3\n\n';
@@ -76,6 +82,7 @@ export default memo(({ value }) => {
 
   useEffect(() => {
     codeMirrorRef.current.setOption('value', value);
+    console.log(codeMirrorRef.current);
   }, [value]);
 
   return (

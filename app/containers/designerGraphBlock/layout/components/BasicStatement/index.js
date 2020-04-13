@@ -300,7 +300,11 @@ const BasicStatement = useInjectContext(props => {
         visible={visible}
         setVisible={setVisible}
       />
-      <CodeBlock visible={codeVisible} setVisible={setCodeVisible} />
+      <CodeBlock
+        visible={codeVisible}
+        setVisible={setCodeVisible}
+        interactiveCard={card}
+      />
     </div>
   );
 });
