@@ -14,3 +14,4 @@ export { default as useWatchCmdDesc } from './useWatchCmdDesc';
 export { default as useChangeCheckedBlockColor } from './useChangeCheckedBlockColor';
 export { default as useAIHintWatch } from './useAIHintWatch';
 export { default as useAppendDataSource } from './useAppendDataSource';
+export { default as useVerifyInput } from './useVerifyInput';

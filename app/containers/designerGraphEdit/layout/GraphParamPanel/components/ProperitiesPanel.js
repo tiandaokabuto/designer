@@ -30,7 +30,7 @@ const FormItem = ({
       item.dataMap[item.id].shape === 'rhombus-node'
     ) {
       // 判断块的最大文本长度
-      maxLength = 4;
+      maxLength = 9;
     }
     let lableValue = e.target.value;
     param.value = lableValue;
