@@ -295,7 +295,7 @@ const getComponentType = (
           <Button
             onClick={() => {
               listener = param;
-              ipcRenderer.removeListener('chooseItem', handleFilePath);
+              ipcRenderer.removeAllListeners('chooseItem');
               ipcRenderer.send(
                 'choose-directory-dialog',
                 'showOpenDialog',

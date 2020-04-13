@@ -29,6 +29,8 @@ import NewProcess from './NewProcess';
 import './index.scss';
 
 const { remote, ipcRenderer } = require('electron');
+const fs = require('fs');
+const JSZip = require('jszip');
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -36,7 +38,6 @@ const layout = {
   labelCol: { span: 3 },
   wrapperCol: { span: 21 },
 };
-let listen = false;
 
 export default memo(
   withRouter(({ history, type }) => {
@@ -259,7 +260,24 @@ export default memo(
         description: '导入',
         type: 'upload',
         // disabled: true,
-        onClick: () => {},
+        onClick: () => {
+          const handleFilePath = (e, filePath) => {
+            const adm_zip = require('adm-zip');
+            const unzip = new adm_zip(filePath[0]);
+            const entry = unzip.getEntry('manifest.json');
+            const str = unzip.readAsText(entry, 'utf8');
+            console.log(str);
+            console.log(filePath[0].match);
+          };
+          ipcRenderer.removeAllListeners('chooseItem');
+          ipcRenderer.send(
+            'choose-directory-dialog',
+            'showOpenDialog',
+            '选择',
+            ['openFile']
+          );
+          ipcRenderer.on('chooseItem', handleFilePath);
+        },
       },
       {
         description: '控制台',
