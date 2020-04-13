@@ -67,6 +67,29 @@ export default class App extends React.Component<Props> {
         return Promise.reject(error);
       }
     );
+
+    // 401拦截器
+    axios.interceptors.response.use(
+      response => {
+        return response;
+      },
+      error => {
+        if (error.response) {
+          // 2秒后重连
+          const time = 2000;
+          switch (error.response.status) {
+            case 401:
+              // 返回 401 清除token信息并跳转到登录页面
+              this.handleOffLine();
+              setTimeout(this.handleReconnet, time);
+              break;
+            default:
+              break;
+          }
+        }
+      }
+    );
+
     // 配置定时刷新接口
     this.refreshToken();
   };
