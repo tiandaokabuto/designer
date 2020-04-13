@@ -15,6 +15,7 @@ import {
 import event from '../../eventCenter';
 
 const fs = require('fs');
+
 const currPath = process.cwd();
 
 const DEFAULT_STYLE = {
@@ -53,17 +54,41 @@ const readGlobalConfig = (callback, flag = false) => {
       const { automicList, ip } = JSON.parse(data.toString());
       if (flag || !automicList) {
         // 调起接口 返回数据 TODO...
-        const getAbialityStructure = (() => {
-          return axios.get(api('selectCodeJson')).then(res => res.data.data);
-        })();
+        const getAbialityStructure = () => {
+          return axios
+            .get(api('selectCodeJson'))
+            .then(res => {
+              if (res && res.data) return res.data;
+              throw res;
+            })
+            .then(res => {
+              if (res && res.data) return res.data;
+              throw res;
+            })
+            .catch(error => {
+              throw error;
+            });
+        };
 
-        const getAbilityTree = (() => {
-          return axios.get(api('selectMenuJson')).then(res => res.data.data);
-        })();
+        const getAbilityTree = () => {
+          return axios
+            .get(api('selectMenuJson'))
+            .then(res => {
+              if (res && res.data) return res.data;
+              throw res;
+            })
+            .then(res => {
+              if (res && res.data) return res.data;
+              throw res;
+            })
+            .catch(error => {
+              throw error;
+            });
+        };
 
         try {
-          const abilityStructure = await getAbialityStructure;
-          const abilityTree = await getAbilityTree;
+          const abilityStructure = await getAbialityStructure();
+          const abilityTree = await getAbilityTree();
           message.info('刷新成功');
           const prevPending = automicList
             ? automicList.filter(item =>
@@ -99,8 +124,6 @@ const readGlobalConfig = (callback, flag = false) => {
             },
           ];
 
-          console.log(treeData);
-
           writeGlobalConfig({
             automicList: treeData,
           });
@@ -130,17 +153,18 @@ export default class SyncAutomicList extends Component {
     readGlobalConfig(this.updateAutomicList);
     event.addListener('update_list', this.handleUpdate);
   }
+
+  componentWillUnmount() {
+    event.removeListener('update_list', this.handleUpdate);
+  }
+
   handleUpdate = () => {
     readGlobalConfig(this.updateAutomicList, true);
   };
 
   updateAutomicList = treeData => {
-    updateAutomicList(treeData);
+    if (treeData.length > 0) updateAutomicList(treeData);
   };
-
-  componentWillUnmount() {
-    event.removeListener('update_list', this.handleUpdate);
-  }
 
   render() {
     return null;
