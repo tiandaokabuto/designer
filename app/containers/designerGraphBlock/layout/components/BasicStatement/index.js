@@ -7,13 +7,14 @@ import React, {
   useEffect,
 } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import PATH_CONFIG from '@/constants/localFilePath';
 
+import { CHANGE_CHECKEDID } from '../../../../../actions/codeblock';
 import {
   useDropTarget,
   useHasLookTarget,
@@ -65,6 +66,8 @@ const BasicStatement = useInjectContext(props => {
     setIsDraggingNode,
     PLACEHOLDER_STATEMENT,
   } = props;
+
+  const dispatch = useDispatch();
 
   const cards = useSelector(state => state.blockcode.cards);
 
@@ -226,11 +229,13 @@ const BasicStatement = useInjectContext(props => {
                   display: hasLookTarget ? '' : 'none',
                 }}
                 onClick={() => {
+                  dispatch({
+                    type: CHANGE_CHECKEDID,
+                    payload: id,
+                  });
                   ipcRenderer.send('min');
                   ipcRenderer.send('start_server', id);
-                  console.log(card);
                   if (card.cmdName === '鼠标-点击目标') {
-                    console.log(PATH_CONFIG('windowHook'));
                     const worker = exec(PATH_CONFIG('windowHook'));
                   }
                   ipcRenderer.on(
