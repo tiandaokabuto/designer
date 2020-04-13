@@ -28,6 +28,7 @@ import {
 
 import { BasicStatementTag } from '../../statementTags';
 import Interactive from './components/Interactive';
+import CodeBlock from './components/CodeBlock';
 import ItemTypes from '../../statementTypes';
 
 const { ipcRenderer } = require('electron');
@@ -124,6 +125,9 @@ const BasicStatement = useInjectContext(props => {
   // 人机交互能力逻辑
   const [visible, setVisible] = useState(false);
 
+  // 代码块编写逻辑
+  const [codeVisible, setCodeVisible] = useState(false);
+
   const generateEditOperation = card => {
     switch (card.cmdName) {
       case '人机交互':
@@ -136,6 +140,18 @@ const BasicStatement = useInjectContext(props => {
             }}
           >
             交互设计
+          </div>
+        );
+      case '代码块':
+        return (
+          <div
+            className="cmd-operation"
+            onClick={() => {
+              setCodeVisible(true);
+              console.log('hhh');
+            }}
+          >
+            编写代码
           </div>
         );
       default:
@@ -285,6 +301,7 @@ const BasicStatement = useInjectContext(props => {
         visible={visible}
         setVisible={setVisible}
       />
+      <CodeBlock visible={codeVisible} setVisible={setCodeVisible} />
     </div>
   );
 });
