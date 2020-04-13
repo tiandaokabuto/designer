@@ -6,13 +6,15 @@ import {
   updateGraphData,
   synchroGraphDataToProcessTree,
   changeSavingModuleData,
+  changeMovingModuleNode,
 } from '../../../reduxActions';
-
+import PATH_CONFIG from '@/constants/localFilePath';
 import { changeModifyState } from '../../../common/utils';
 
 import store from '../../../../store';
 
 const canLink = () => {};
+const fs = require('fs');
 
 class NodeHandler {
   constructor(propsAPI) {
@@ -25,11 +27,28 @@ class NodeHandler {
       if (description.model.shape === 'processblock') {
         const key = description.item.id;
         const {
-          grapheditor: { savingModuleData },
+          grapheditor: { savingModuleData, movingModuleNode, currentProject },
         } = store.getState();
         if (savingModuleData) {
           setGraphDataMap(key, savingModuleData);
           changeSavingModuleData(undefined);
+        } else if (movingModuleNode) {
+          console.log(movingModuleNode);
+          fs.readFile(
+            PATH_CONFIG(
+              'project',
+              `${currentProject}/${currentProject}_module/${movingModuleNode.title}.json`
+            ),
+            (err, data) => {
+              if (!err) {
+                const { graphDataMap } = JSON.parse(data.toString());
+                setGraphDataMap(key, graphDataMap);
+              } else {
+                console.log(err);
+              }
+            }
+          );
+          changeMovingModuleNode(undefined);
         } else {
           setGraphDataMap(key, {
             shape: 'processblock',

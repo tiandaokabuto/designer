@@ -9,6 +9,7 @@ import { changeTreeTab } from '../../../reduxActions';
 const { TabPane } = Tabs;
 export default () => {
   const currentProject = useSelector(state => state.grapheditor.currentProject);
+  const treeTab = useSelector(state => state.grapheditor.treeTab);
   const changeProjectName = useChangeProjectName();
   const [editVisible, setEditVisible] = useState(false);
   return (
@@ -40,7 +41,7 @@ export default () => {
         />
       </div>
       <Tabs
-        defaultActiveKey="process"
+        defaultActiveKey={treeTab}
         className="dragger-editor-container-tabs"
         tabPosition="bottom"
         onChange={key => {

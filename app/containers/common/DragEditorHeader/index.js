@@ -28,7 +28,7 @@ import NewProcess from './NewProcess';
 
 import './index.scss';
 
-const { remote } = require('electron');
+const { remote, ipcRenderer } = require('electron');
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -36,6 +36,7 @@ const layout = {
   labelCol: { span: 3 },
   wrapperCol: { span: 21 },
 };
+let listen = false;
 
 export default memo(
   withRouter(({ history, type }) => {
@@ -64,8 +65,6 @@ export default memo(
     const persistentStorage = usePersistentStorage();
 
     const handlePublishZip = usePublishProcessZip();
-
-    const downloadPython = useGetDownloadPath();
 
     const getProcessName = useGetProcessName();
 
@@ -126,6 +125,7 @@ export default memo(
         transformProcessToPython();
         executePython();
       } catch (e) {
+        console.log(e);
         message.error('代码转换出错，请检查流程图');
       }
     };
