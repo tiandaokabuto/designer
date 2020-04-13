@@ -80,7 +80,7 @@ export default memo(
         : {
             width: '100%',
           };
-    console.log(output.split('\n'));
+
     const transformOutput = useMemo(() => {
       const outputList = output.split('\n').filter(Boolean);
       return outputList.map(item => (

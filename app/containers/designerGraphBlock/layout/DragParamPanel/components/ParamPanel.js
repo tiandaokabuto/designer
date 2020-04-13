@@ -6,7 +6,11 @@ import uniqueId from 'lodash/uniqueId';
 import axios from 'axios';
 
 import event from '../../eventCenter';
-import { useAIHintWatch, useAppendDataSource } from '../../useHooks';
+import {
+  useAIHintWatch,
+  useAppendDataSource,
+  useVerifyInput,
+} from '../../useHooks';
 import api, { config } from '../../../../../api';
 const { ipcRenderer } = require('electron');
 
@@ -61,8 +65,15 @@ const getComponentType = (
   cards,
   keyFlag,
   aiHintList = {},
-  setFlag
+  setFlag,
+  handleValidate
 ) => {
+  useEffect(() => {
+    handleValidate({
+      value: param.value,
+    });
+  }, []);
+
   const handleFilePath = useCallback(
     (e, filePath) => {
       if (listener === param && filePath && filePath.length) {
@@ -151,13 +162,20 @@ const getComponentType = (
                 : []
             );
           }, []);
+        const paramType = param.paramType;
         const depList =
-          (param.paramType &&
-            Array.isArray(param.paramType) &&
-            param.paramType.reduce((prev, next) => {
+          (paramType &&
+            Array.isArray(paramType) &&
+            paramType.reduce((prev, next) => {
               return prev.concat(aiHintList[next] || []);
             }, [])) ||
           [];
+
+        const needTextArea =
+          paramType === 0 ||
+          (Array.isArray(paramType) &&
+            paramType.length === 1 &&
+            paramType[0] === 'Number');
 
         return (
           <AutoComplete
@@ -209,13 +227,19 @@ const getComponentType = (
               }
               param.value = value;
               handleEmitCodeTransform(cards);
+              // 验证
+              handleValidate({
+                value,
+              });
             }}
           >
-            <TextArea
-              className="custom"
-              style={{ height: 32 }}
-              onKeyDown={e => stopDeleteKeyDown(e)}
-            />
+            {!needTextArea ? (
+              <TextArea
+                className="custom"
+                style={{ height: 32 }}
+                onKeyDown={e => stopDeleteKeyDown(e)}
+              />
+            ) : null}
           </AutoComplete>
         );
       }
@@ -290,6 +314,38 @@ const getComponentType = (
   }
 };
 
+const ParamItem = ({
+  param,
+  handleEmitCodeTransform,
+  cards,
+  flag,
+  aiHintList,
+  setFlag,
+}) => {
+  const [err, message, handleValidate] = useVerifyInput(param);
+  return (
+    <React.Fragment>
+      <div className="parampanel-item">
+        <span className="param-title" title={param.desc}>
+          {param.cnName}
+        </span>
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          {getComponentType(
+            param,
+            handleEmitCodeTransform,
+            cards,
+            flag,
+            aiHintList,
+            setFlag,
+            handleValidate
+          )}
+        </div>
+      </div>
+      {err && <span style={{ color: 'red' }}>{message}</span>}
+    </React.Fragment>
+  );
+};
+
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const [flag, setFlag] = useState(false);
 
@@ -327,21 +383,15 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
       <div className="parampanel-content">
         {(checkedBlock.properties.required || []).map((param, index) => {
           return (
-            <div key={checkedBlock.id + index} className="parampanel-item">
-              <span className="param-title" title={param.desc}>
-                {param.cnName}
-              </span>
-              <div style={{ flex: 1, overflow: 'hidden' }}>
-                {getComponentType(
-                  param,
-                  handleEmitCodeTransform,
-                  cards,
-                  flag,
-                  aiHintList,
-                  setFlag
-                )}
-              </div>
-            </div>
+            <ParamItem
+              key={checkedBlock.id + index}
+              param={param}
+              handleEmitCodeTransform={handleEmitCodeTransform}
+              cards={cards}
+              flag={flag}
+              aiHintList={aiHintList}
+              setFlag={setFlag}
+            />
           );
         })}
       </div>
@@ -349,21 +399,15 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
       <div className="parampanel-content">
         {(checkedBlock.properties.optional || []).map((param, index) => {
           return (
-            <div key={checkedBlock.id + index} className="parampanel-item">
-              <span className="param-title" title={param.desc}>
-                {param.cnName}
-              </span>
-              <div style={{ flex: 1, overflow: 'hidden' }}>
-                {getComponentType(
-                  param,
-                  handleEmitCodeTransform,
-                  cards,
-                  flag,
-                  {},
-                  setFlag
-                )}
-              </div>
-            </div>
+            <ParamItem
+              key={checkedBlock.id + index}
+              param={param}
+              handleEmitCodeTransform={handleEmitCodeTransform}
+              cards={cards}
+              flag={flag}
+              aiHintList={aiHintList}
+              setFlag={setFlag}
+            />
           );
         })}
       </div>

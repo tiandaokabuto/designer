@@ -99,15 +99,13 @@ const readGlobalConfig = (callback, flag = false) => {
             },
           ];
 
-          console.log(treeData);
-
           writeGlobalConfig({
             automicList: treeData,
           });
           callback && callback(treeData);
         } catch (err) {
           message.info('刷新失败');
-          callback && callback([]);
+          // callback && callback([]);
         }
       } else {
         traverseTree(automicList, node => {
