@@ -1,10 +1,11 @@
 const transformCustomCodeStatement = (padding, dataStructure, result) => {
-  result.output += `${padding}`;
-  result.output += dataStructure.codeValue + '\n';
-  console.log(dataStructure);
-  // const variable = dataStructure['properties']['required'][0].value;
-  // const initValue = dataStructure['properties']['required'][1].value;
-  // result.output += `${variable} = ${initValue}`;
+  if (dataStructure.codeValue) {
+    const buf = dataStructure.codeValue
+      .split('\n')
+      .map(item => padding + item)
+      .join('\n');
+    result.output += buf;
+  }
 };
 
 export default transformCustomCodeStatement;
