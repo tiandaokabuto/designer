@@ -12,6 +12,17 @@ import { changeModifyState } from '../../../common/utils';
 
 import store from '../../../../store';
 
+// color: "#1890FF"
+// id: "b8739d50"
+// index: 1
+// label: "流程块"
+// shape: "processblock"
+// size: "184*56"
+// style: {stroke: "rgba(61, 109, 204, 1)", fill: "#ecf5f6"}
+// type: "node"
+// x: 360
+// y: 125
+
 const canLink = () => {};
 
 class NodeHandler {
@@ -20,7 +31,6 @@ class NodeHandler {
   }
 
   handleNodeChange = description => {
-    console.log(description);
     if (description.action === 'add') {
       if (description.model.shape === 'processblock') {
         const key = description.item.id;
@@ -103,6 +113,31 @@ class NodeHandler {
           shape: 'end-node',
           properties: [],
         });
+      } else if (description.model.shape === 'group') {
+        this.apiAction('undo');
+        const model = description.model;
+        this.propsAPI.add('node', {
+          style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+          x: model.x,
+          y: model.y,
+          label: '判断',
+          id: 1,
+          shape: 'rhombus-node',
+          size: '184*56',
+        });
+        this.propsAPI.add('node', {
+          style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+          x: model.x,
+          y: model.y + 120,
+          label: '流程块',
+          id: 2,
+          shape: 'processblock',
+          size: '184*56',
+        });
+        // this.propsAPI.add('edge', {
+        //   source: 1,
+        //   target: 2,
+        // });
       }
     }
     // 保存当前流程图的任意更新不加区分
