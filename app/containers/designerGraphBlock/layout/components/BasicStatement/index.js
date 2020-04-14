@@ -142,7 +142,7 @@ const BasicStatement = useInjectContext(props => {
             交互设计
           </div>
         );
-      case '代码块':
+      case '自定义代码块':
         return (
           <div
             className="cmd-operation"
