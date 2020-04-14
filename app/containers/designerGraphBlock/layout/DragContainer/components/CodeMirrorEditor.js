@@ -39,6 +39,8 @@ export default React.forwardRef(({ value, id }, ref) => {
     };
   });
 
+  console.log(value, id);
+
   useEffect(() => {
     var el = document.getElementById('editor' + (id ? id : ''));
     var version = '# version: Python3\n\n';
@@ -81,14 +83,12 @@ export default React.forwardRef(({ value, id }, ref) => {
     codeMirrorRef.current = myCodeMirror;
   }, []);
 
-  console.log(value, '---------');
-
   useEffect(() => {
     codeMirrorRef.current.setOption('value', value);
   }, [value]);
 
   return (
-    <div style={{ height: '100%' }} key={uniqueId('code_')}>
+    <div style={{ height: '100%' }}>
       <textarea
         id={`editor${id ? id : ''}`}
         className={`editor${id ? id : ''}`}
