@@ -57,6 +57,19 @@
     color: rgba(51, 51, 51, 1);
     font-size: 14px;
     padding: 0 20px;
+    &-tip {
+      &:after {
+        content: '';
+        position: relative;
+        display: inline-block;
+        top: -9px;
+        left: 5px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: #ff3333;
+      }
+    }
   }
   &-content {
     display: inline-block;
@@ -75,5 +88,10 @@
   }
   ::-webkit-scrollbar-thumb {
     border: 4px solid #fcfcfc;
+  }
+  p {
+    font-size: 14px;
+    color: rgba(51, 51, 51, 1);
+    line-height: 28px;
   }
 }
