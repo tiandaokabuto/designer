@@ -281,7 +281,28 @@ class NodeHandler {
                 type: 'node',
               },
             ],
-            edges: [],
+            edges: [
+              {
+                source: rhombusNodeId,
+                target: processBlockIdOne,
+                sourceAnchor: 1,
+                targetAnchor: 0,
+                label: '是',
+              },
+              {
+                source: processBlockIdOne,
+                target: rhombusNodeId,
+                sourceAnchor: 3,
+                targetAnchor: 3,
+              },
+              {
+                source: rhombusNodeId,
+                target: processBlockIdTwo,
+                sourceAnchor: 2,
+                targetAnchor: 2,
+                label: '否',
+              },
+            ],
           },
         };
 
