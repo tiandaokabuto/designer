@@ -1,6 +1,7 @@
 .dragger-editor-container-output-tages {
   float: right;
   color: #2e2e2e;
+  user-select: none;
   .ant-tag-checkable-checked,
   .ant-tag-checkable:active {
     background-color: transparent;
