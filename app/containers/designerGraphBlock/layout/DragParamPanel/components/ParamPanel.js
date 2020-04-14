@@ -178,18 +178,19 @@ const getComponentType = (
             paramType.length === 1 &&
             paramType[0] === 'Number');
 
+        const handleWatchChange = value => {
+          param.value = value;
+        };
+        const handleMutiply = value => {
+          param.value = getVariableList(value)[param.mutiplyIndex];
+        };
+
         return (
           <AutoComplete
             key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
             defaultValue={String(param.value || param.default)}
             dataSource={(dataSource || []).concat(appendDataSource)}
             onSelect={value => {
-              const handleWatchChange = value => {
-                param.value = value;
-              };
-              const handleMutiply = value => {
-                param.value = getVariableList(value)[param.mutiplyIndex];
-              };
               const dep = depList.find(item => {
                 if (item.isVariable) {
                   return item.name === value;
