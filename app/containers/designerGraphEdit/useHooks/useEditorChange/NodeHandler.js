@@ -1,6 +1,7 @@
 import { message } from 'antd';
+import uniqueId from 'lodash/uniqueId';
 
-import { findNodeById } from './utils';
+import { findNodeById, generateUniqueId } from './utils';
 import {
   setGraphDataMap,
   updateGraphData,
@@ -12,17 +13,6 @@ import { changeModifyState } from '../../../common/utils';
 
 import store from '../../../../store';
 
-// color: "#1890FF"
-// id: "b8739d50"
-// index: 1
-// label: "流程块"
-// shape: "processblock"
-// size: "184*56"
-// style: {stroke: "rgba(61, 109, 204, 1)", fill: "#ecf5f6"}
-// type: "node"
-// x: 360
-// y: 125
-
 const canLink = () => {};
 
 class NodeHandler {
@@ -32,11 +22,12 @@ class NodeHandler {
 
   handleNodeChange = description => {
     if (description.action === 'add') {
+      const {
+        grapheditor: { savingModuleData, graphData },
+      } = store.getState();
       if (description.model.shape === 'processblock') {
         const key = description.item.id;
-        const {
-          grapheditor: { savingModuleData },
-        } = store.getState();
+
         if (savingModuleData) {
           setGraphDataMap(key, savingModuleData);
           changeSavingModuleData(undefined);
@@ -115,25 +106,191 @@ class NodeHandler {
         });
       } else if (description.model.shape === 'group') {
         this.apiAction('undo');
+        console.log(graphData, description);
         const model = description.model;
-        this.propsAPI.add('node', {
-          style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
-          x: model.x,
-          y: model.y,
-          label: '判断',
-          id: 1,
-          shape: 'rhombus-node',
-          size: '184*56',
+        const processBlockIdOne = generateUniqueId(graphData.nodes);
+        const processBlockIdTwo = generateUniqueId(graphData.nodes);
+        const processBlockIdThree = generateUniqueId(graphData.nodes);
+        const processBlockIdFour = generateUniqueId(graphData.nodes);
+        const rhombusNodeId = generateUniqueId(graphData.nodes);
+
+        // group
+        const LOOP_GRAPHDATA = {
+          while: {
+            nodes: [
+              {
+                style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+                x: model.x,
+                y: model.y,
+                label: '判断',
+                id: rhombusNodeId, //'c67929f1',
+                shape: 'rhombus-node',
+                size: '184*56',
+                type: 'node',
+              },
+              {
+                style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+                x: model.x,
+                y: model.y + 120,
+                label: '流程块',
+                id: processBlockIdOne,
+                shape: 'processblock',
+                size: '184*56',
+                type: 'node',
+              },
+              {
+                style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+                x: model.x,
+                y: model.y + 240,
+                label: '流程块',
+                id: processBlockIdTwo,
+                shape: 'processblock',
+                size: '184*56',
+                type: 'node',
+              },
+            ],
+            edges: [
+              {
+                source: rhombusNodeId,
+                target: processBlockIdOne,
+                sourceAnchor: 1,
+                targetAnchor: 0,
+                label: '是',
+              },
+              {
+                source: processBlockIdOne,
+                target: rhombusNodeId,
+                sourceAnchor: 3,
+                targetAnchor: 3,
+              },
+              {
+                source: rhombusNodeId,
+                target: processBlockIdTwo,
+                sourceAnchor: 2,
+                targetAnchor: 2,
+                label: '否',
+              },
+            ],
+          },
+          doWhile: {
+            nodes: [
+              {
+                style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+                x: model.x,
+                y: model.y + 120,
+                label: '判断',
+                id: rhombusNodeId, //'c67929f1',
+                shape: 'rhombus-node',
+                size: '184*56',
+                type: 'node',
+              },
+              {
+                style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+                x: model.x,
+                y: model.y,
+                label: '流程块',
+                id: processBlockIdOne,
+                shape: 'processblock',
+                size: '184*56',
+                type: 'node',
+              },
+              {
+                style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+                x: model.x,
+                y: model.y + 240,
+                label: '流程块',
+                id: processBlockIdTwo,
+                shape: 'processblock',
+                size: '184*56',
+                type: 'node',
+              },
+            ],
+            edges: [
+              {
+                source: rhombusNodeId,
+                target: processBlockIdOne,
+                sourceAnchor: 3,
+                targetAnchor: 3,
+                label: '是',
+              },
+              {
+                source: processBlockIdOne,
+                target: rhombusNodeId,
+                sourceAnchor: 1,
+                targetAnchor: 0,
+              },
+              {
+                source: rhombusNodeId,
+                target: processBlockIdTwo,
+                sourceAnchor: 1,
+                targetAnchor: 0,
+                label: '否',
+              },
+            ],
+          },
+          forEach: {
+            nodes: [
+              {
+                style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+                x: model.x,
+                y: model.y + 120,
+                label: '判断',
+                id: rhombusNodeId, //'c67929f1',
+                shape: 'rhombus-node',
+                size: '184*56',
+                type: 'node',
+              },
+              {
+                style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+                x: model.x,
+                y: model.y,
+                label: '流程块',
+                id: processBlockIdOne,
+                shape: 'processblock',
+                size: '184*56',
+                type: 'node',
+              },
+              {
+                style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+                x: model.x,
+                y: model.y + 240,
+                label: '流程块',
+                id: processBlockIdTwo,
+                shape: 'processblock',
+                size: '184*56',
+                type: 'node',
+              },
+              {
+                style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+                x: model.x,
+                y: model.y + 360,
+                label: '流程块',
+                id: processBlockIdThree,
+                shape: 'processblock',
+                size: '184*56',
+                type: 'node',
+              },
+              {
+                style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
+                x: model.x - 100,
+                y: model.y + 480,
+                label: '流程块',
+                id: processBlockIdFour,
+                shape: 'processblock',
+                size: '184*56',
+                type: 'node',
+              },
+            ],
+            edges: [],
+          },
+        };
+
+        updateGraphData({
+          ...graphData,
+          nodes: graphData.nodes.concat(LOOP_GRAPHDATA['forEach'].nodes),
+          edges: graphData.edges.concat(LOOP_GRAPHDATA['forEach'].edges),
         });
-        this.propsAPI.add('node', {
-          style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
-          x: model.x,
-          y: model.y + 120,
-          label: '流程块',
-          id: 2,
-          shape: 'processblock',
-          size: '184*56',
-        });
+
         // this.propsAPI.add('edge', {
         //   source: 1,
         //   target: 2,
