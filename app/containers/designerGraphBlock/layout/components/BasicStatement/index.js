@@ -250,7 +250,15 @@ const BasicStatement = useInjectContext(props => {
                   });
                   ipcRenderer.send('min');
                   ipcRenderer.send('start_server', id);
-                  if (card.cmdName === '鼠标-点击目标') {
+                  const cmdNameArr = [
+                    '鼠标-点击目标',
+                    '鼠标-移动',
+                    '键盘-目标中按键',
+                    '键盘-目标中输入文本',
+                  ];
+                  if (cmdNameArr.includes(card.cmdName)) {
+                    // console.log(PATH_CONFIG('windowHook'));
+                    console.log('调用testHook');
                     const worker = exec(PATH_CONFIG('windowHook'));
                   }
                   ipcRenderer.on(

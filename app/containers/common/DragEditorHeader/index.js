@@ -28,7 +28,9 @@ import NewProcess from './NewProcess';
 
 import './index.scss';
 
-const { remote } = require('electron');
+const { remote, ipcRenderer } = require('electron');
+const fs = require('fs');
+const JSZip = require('jszip');
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -64,8 +66,6 @@ export default memo(
     const persistentStorage = usePersistentStorage();
 
     const handlePublishZip = usePublishProcessZip();
-
-    const downloadPython = useGetDownloadPath();
 
     const getProcessName = useGetProcessName();
 
@@ -126,6 +126,7 @@ export default memo(
         transformProcessToPython();
         executePython();
       } catch (e) {
+        console.log(e);
         message.error('代码转换出错，请检查流程图');
       }
     };
@@ -259,7 +260,24 @@ export default memo(
         description: '导入',
         type: 'upload',
         // disabled: true,
-        onClick: () => {},
+        onClick: () => {
+          const handleFilePath = (e, filePath) => {
+            const adm_zip = require('adm-zip');
+            const unzip = new adm_zip(filePath[0]);
+            const entry = unzip.getEntry('manifest.json');
+            const str = unzip.readAsText(entry, 'utf8');
+            console.log(str);
+            console.log(filePath[0].match);
+          };
+          ipcRenderer.removeAllListeners('chooseItem');
+          ipcRenderer.send(
+            'choose-directory-dialog',
+            'showOpenDialog',
+            '选择',
+            ['openFile']
+          );
+          ipcRenderer.on('chooseItem', handleFilePath);
+        },
       },
       {
         description: '控制台',

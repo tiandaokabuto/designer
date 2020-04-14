@@ -24,7 +24,8 @@ export default memo(
     );
 
     const [output, setOutput] = useState(executeOutput);
-    const [filter, setFilter] = useState('a');
+    const [filter, setFilter] = useState('');
+    // const [filterOutput, setFilterOutput] = useState([]);
     const [selectedTags, setSelectedTags] = useState('DEBUG');
 
     useEffect(() => {
@@ -83,32 +84,66 @@ export default memo(
 
     const transformOutput = useMemo(() => {
       const outputList = output.split('\n').filter(Boolean);
-      return outputList.map(item => (
-        <>
-          <span
-            dangerouslySetInnerHTML={{
-              __html: filter
-                ? item.replace(
-                    filter,
-                    match => `<span style="color:red">${match}</span>`
-                  )
-                : item,
-            }}
-          ></span>
-          <br />
-        </>
-      ));
-    }, [output, filter]);
+      const selectedOutputList = outputList.filter(
+        item => item.indexOf(`[${selectedTags}]`) > -1
+      );
+
+      return selectedOutputList.map((item, index) => {
+        if (item.indexOf(filter) > -1) {
+          const className = `keyWordRow${index}`;
+
+          return (
+            <div
+              key={item}
+              dangerouslySetInnerHTML={{
+                __html: item.replace(
+                  RegExp(filter, 'g'),
+                  (match, index) =>
+                    `<span class="${className}_${index}" style="color:red">${match}</span>`
+                ),
+              }}
+            />
+          );
+        }
+        return <div key={item}>{item}</div>;
+      });
+    }, [output, filter, selectedTags]);
+
+    const handleTriggerOpen = () => {
+      const basicHeight = '220px';
+      const minHeight = '40px';
+      const outputDom = document.querySelector(
+        '.dragger-editor-container-output'
+      );
+      const originHeight = parseFloat(
+        window.getComputedStyle(outputDom).height
+      );
+      // 添加动画效果
+      outputDom.className =
+        'dragger-editor-container-output dragger-editor-container-output-animateOpen';
+      outputDom.style.height = originHeight <= 40 ? basicHeight : minHeight;
+      setTimeout(() => {
+        outputDom.className = 'dragger-editor-container-output';
+      }, 300);
+    };
+
     return (
-      <div className="dragger-editor-container-output" style={{ ...style }}>
-        <div className="dragger-editor-container-output-title">
+      <div
+        className="dragger-editor-container-output"
+        style={{ ...style }}
+        onMouseDown={e => {
+          isMouseDown = true;
+          startOffset = e.pageY;
+        }}
+      >
+        <div
+          className="dragger-editor-container-output-title"
+          onMouseDown={e => e.stopPropagation()}
+        >
           <span>输出:</span>
           <div
             className="dragger-editor-container-output-anchor"
-            onMouseDown={e => {
-              isMouseDown = true;
-              startOffset = e.pageY;
-            }}
+            onClick={handleTriggerOpen}
           >
             <Icon type="caret-up" style={{ marginBottom: '-3px' }} />
             <Icon type="caret-down" />
@@ -124,8 +159,10 @@ export default memo(
             }}
           />
         </div>
-        {/* <pre className="dragger-editor-container-output-content">{output}</pre> */}
-        <pre className="dragger-editor-container-output-content">
+        <pre
+          className="dragger-editor-container-output-content"
+          onMouseDown={e => e.stopPropagation()}
+        >
           {transformOutput}
         </pre>
       </div>

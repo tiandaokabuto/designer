@@ -18,6 +18,8 @@ import {
   CHANGE_MODULE_TREE,
   CHANGE_TREE_TAB,
   CHANGE_SAVING_MODULE_DATA,
+  CHANGE_MOVING_MODULE_NODE,
+  CHANGE_MOVING_MODULE_NODE_DATA,
 } from '../actions/grapheditor';
 
 import { isDirNode, findNodeByKey } from '../containers/common/utils';
@@ -28,7 +30,7 @@ const defaultState = {
   currentEditingId: undefined, // 当前编辑的是哪个流程块
   checkedGraphBlockId: undefined,
   editorBlockPythonCode: '',
-  treeTab: '',
+  treeTab: 'process',
   processTree: [], // 当前项目的自定义流程树结构
   moduleTree: [], // 当前项目的复用流程块树结构
   currentCheckedModuleTreeNode: undefined, // 当前选中的复用块
@@ -36,6 +38,8 @@ const defaultState = {
   currentCheckedTreeNode: undefined,
   currentProject: undefined,
   savingModuleData: undefined,
+  movingModuleNode: undefined,
+  movingModuleNodeData: undefined,
 };
 
 const objChangeMap = obj => {
@@ -184,6 +188,16 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         currentProject: action.payload,
+      };
+    case CHANGE_MOVING_MODULE_NODE:
+      return {
+        ...state,
+        movingModuleNode: action.payload,
+      };
+    case CHANGE_MOVING_MODULE_NODE_DATA:
+      return {
+        ...state,
+        movingModuleNodeData: action.payload,
       };
     case SYNCHRO_GRAPHDATATOPROCESSTREE:
       return {

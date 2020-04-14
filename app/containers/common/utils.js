@@ -908,6 +908,9 @@ export const exportCustomProcessBlock = () => {
   });
 };
 
+/**
+ * 复制当前的流程块
+ */
 export const copyModule = () => {
   const {
     grapheditor: {

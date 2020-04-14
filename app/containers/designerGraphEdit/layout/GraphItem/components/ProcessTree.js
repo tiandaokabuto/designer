@@ -11,7 +11,10 @@ import {
   changeModuleTree,
   changeCheckedModuleTreeNode,
 } from '../../../../reduxActions';
-import { resetGraphEditData } from '../../../../reduxActions';
+import {
+  resetGraphEditData,
+  changeMovingModuleNode,
+} from '../../../../reduxActions';
 import Switcher from './Switcher';
 import ContextMenu from './ContextMenu';
 import {
@@ -57,29 +60,30 @@ const transformTreeTitle = processTree => {
       if (child.type === 'process') {
         // child.hasModified = false;
         child.title = (
-          // <div draggable={false}>
-          //   <Item
-          //     type="node"
-          //     size="184*56"
-          //     shape="processblock"
-          //     icon="http://bpic.588ku.com/element_origin_min_pic/00/92/88/9056f24073c4c87.jpg"
-          //     model={{
-          //       color: '#1890FF',
-          //       label: 'a',
-          //       style: {
-          //         stroke: 'rgba(61, 109, 204, 1)',
-          //         fill: '#ecf5f6',
-          //       },
-          //     }}
-          //   >
-          <TreeNodeTitle
-            title={child.title}
-            hasModified={child.hasModified}
-            type="cluster"
-          />
-          // </Item>
-          // {/* </ItemPanel> */}
-          // </div>
+          <div draggable={false}>
+            <ItemPanel>
+              <Item
+                type="node"
+                size="184*56"
+                shape="processblock"
+                icon="http://bpic.588ku.com/element_origin_min_pic/00/92/88/9056f24073c4c87.jpg"
+                model={{
+                  color: '#1890FF',
+                  label: child.title,
+                  style: {
+                    stroke: 'rgba(61, 109, 204, 1)',
+                    fill: '#ecf5f6',
+                  },
+                }}
+              >
+                <TreeNodeTitle
+                  title={child.title}
+                  hasModified={child.hasModified}
+                  type="cluster"
+                />
+              </Item>
+            </ItemPanel>
+          </div>
         );
       } else {
         // child.hasModified = false;
@@ -127,7 +131,17 @@ export default ({ type }) => {
     // });
   };
 
+  const onDragStart = info => {
+    const dragKey = info.node.props.eventKey;
+    traverseTree(moduleTree, item => {
+      if (item.key === dragKey) {
+        changeMovingModuleNode(item);
+      }
+    });
+  };
+
   const onDrop = info => {
+    console.log(info);
     const dropKey = info.node.props.eventKey; // 释放的元素
     const dragKey = info.dragNode.props.eventKey; // 拖动的元素
     const dropPos = info.node.props.pos.split('-'); //
@@ -408,6 +422,7 @@ export default ({ type }) => {
             node: node.props,
           });
         }}
+        onDragStart={onDragStart}
         onDragEnter={onDragEnter}
         onDrop={onDrop}
         //treeData={processTree}

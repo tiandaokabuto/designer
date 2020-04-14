@@ -15,6 +15,8 @@ import {
   CHANGE_CHECKED_MODULE_TREE_NODE,
   CHANGE_TREE_TAB,
   CHANGE_SAVING_MODULE_DATA,
+  CHANGE_MOVING_MODULE_NODE,
+  CHANGE_MOVING_MODULE_NODE_DATA,
 } from '../../actions/grapheditor';
 import {
   SYNCHRO_CODEBLOCK,
@@ -215,6 +217,20 @@ export const changeTreeTab = tab => {
 export const changeSavingModuleData = data => {
   dispatch({
     type: CHANGE_SAVING_MODULE_DATA,
+    payload: data,
+  });
+};
+
+export const changeMovingModuleNode = node => {
+  dispatch({
+    type: CHANGE_MOVING_MODULE_NODE,
+    payload: node,
+  });
+};
+
+export const changeMovingModuleNodeData = data => {
+  dispatch({
+    type: CHANGE_MOVING_MODULE_NODE_DATA,
     payload: data,
   });
 };
