@@ -11,14 +11,12 @@ import {
 
 export default ({ visible, setVisible, interactiveCard }) => {
   const codeMirrorRef = useRef(null);
-  // console.log(interactiveCard, 'interactiveCard');
   const cards = useSelector(state => state.blockcode.cards);
   const noticyChange = useNoticyBlockCodeChange();
   const handleEmitCodeTransform = useTransformToPython();
   return (
     <Modal
       width="80vw"
-      // key={uniqueId('codeMirror_')}
       bodyStyle={{
         height: '75vh',
       }}
