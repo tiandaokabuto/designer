@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Modal } from 'antd';
+import uniqueId from 'lodash/uniqueId';
 
 import CodeMirrorEditor from '../../../../DragContainer/components/CodeMirrorEditor';
 
@@ -8,13 +9,20 @@ export default ({ visible, setVisible, interactiveCard }) => {
   return (
     <Modal
       width="80vw"
+      key={uniqueId('codeMirror_')}
       bodyStyle={{
         height: '75vh',
       }}
       centered
+      destroyOnClose={true}
       visible={visible}
       onOk={() => {
-        console.log(codeMirrorRef);
+        const temp = codeMirrorRef.current.codeMirrorRef;
+        if (temp) {
+          const codeRef = temp.current;
+          interactiveCard.codeValue = codeRef.getValue();
+          setVisible(false);
+        }
       }}
       onCancel={() => {
         setVisible(false);
@@ -22,7 +30,7 @@ export default ({ visible, setVisible, interactiveCard }) => {
       closable={false}
     >
       <CodeMirrorEditor
-        value={interactiveCard.codeValue || '#在此处编写代码'}
+        value={interactiveCard.codeValue || ''}
         ref={codeMirrorRef}
       />
     </Modal>

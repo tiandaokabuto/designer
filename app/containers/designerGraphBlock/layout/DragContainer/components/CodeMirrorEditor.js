@@ -82,7 +82,6 @@ export default React.forwardRef(({ value }, ref) => {
 
   useEffect(() => {
     codeMirrorRef.current.setOption('value', value);
-    console.log(codeMirrorRef.current);
   }, [value]);
 
   return (
