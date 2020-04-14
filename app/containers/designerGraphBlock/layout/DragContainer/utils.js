@@ -23,21 +23,20 @@ export const changeAIHintList = cards => {
       node.properties.required &&
       (output = node.properties.required.find(item => item.enName === 'outPut'))
     ) {
-      if (output.paramType && Array.isArray(output.paramType)) {
-        if (output.paramType.find(Array.isArray)) {
+      const paramType = output.paramType;
+      if (paramType && Array.isArray(paramType)) {
+        if (paramType.find(Array.isArray)) {
           if (output.value) {
             const tempOutput = output.value.replace(/\(|\)/g, '');
             const variableList = tempOutput.split(',');
             if (tempOutput && variableList.length) {
               output.isMutiply = true;
-              output.paramType.forEach((item, index) => {
+              paramType.forEach((item, index) => {
                 item.forEach(type => {
                   if (!aiHintList[type]) {
                     aiHintList[type] = [output];
                   } else {
-                    if (
-                      !aiHintList[type].filter(item => item === output).length
-                    ) {
+                    if (~aiHintList[type].findIndex(item => item === output)) {
                       aiHintList[type].push(output);
                     }
                   }
@@ -46,11 +45,11 @@ export const changeAIHintList = cards => {
             }
           }
         } else {
-          output.paramType.forEach(type => {
+          paramType.forEach(type => {
             if (!aiHintList[type]) {
               aiHintList[type] = [output];
             } else {
-              if (!aiHintList[type].filter(item => item === output).length) {
+              if (~aiHintList[type].findIndex(item => item === output)) {
                 aiHintList[type].push(output);
               }
             }
@@ -59,8 +58,6 @@ export const changeAIHintList = cards => {
       }
     }
   });
-
-  console.log(aiHintList);
 
   updateAIHintList(aiHintList);
 };
