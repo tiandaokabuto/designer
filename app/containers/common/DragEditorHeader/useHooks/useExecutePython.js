@@ -23,6 +23,7 @@ export default () => {
     });
     worker.on('error', error => {
       const log = iconv.decode(error, 'cp936');
+      console.log(log);
       event.emit(PYTHON_OUTPUT, log);
     });
   };

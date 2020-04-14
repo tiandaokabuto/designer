@@ -52,39 +52,49 @@ const TreeNodeTitle = ({ title, type, hasModified }) => {
   );
 };
 
-const transformTreeTitle = processTree => {
+const transformTreeTitle = (processTree, type) => {
   const result = cloneDeep(processTree);
   function recurise(tree) {
     for (const child of tree) {
       // 添加title
       if (child.type === 'process') {
         // child.hasModified = false;
-        child.title = (
-          <div draggable={false}>
-            <ItemPanel>
-              <Item
-                type="node"
-                size="184*56"
-                shape="processblock"
-                icon="http://bpic.588ku.com/element_origin_min_pic/00/92/88/9056f24073c4c87.jpg"
-                model={{
-                  color: '#1890FF',
-                  label: child.title,
-                  style: {
-                    stroke: 'rgba(61, 109, 204, 1)',
-                    fill: '#ecf5f6',
-                  },
-                }}
-              >
-                <TreeNodeTitle
-                  title={child.title}
-                  hasModified={child.hasModified}
-                  type="cluster"
-                />
-              </Item>
-            </ItemPanel>
-          </div>
-        );
+        if (type === 'processModule') {
+          child.title = (
+            <div draggable={false}>
+              <ItemPanel>
+                <Item
+                  type="node"
+                  size="184*56"
+                  shape="processblock"
+                  icon="http://bpic.588ku.com/element_origin_min_pic/00/92/88/9056f24073c4c87.jpg"
+                  model={{
+                    color: '#1890FF',
+                    label: child.title,
+                    style: {
+                      stroke: 'rgba(61, 109, 204, 1)',
+                      fill: '#ecf5f6',
+                    },
+                  }}
+                >
+                  <TreeNodeTitle
+                    title={child.title}
+                    hasModified={child.hasModified}
+                    type="cluster"
+                  />
+                </Item>
+              </ItemPanel>
+            </div>
+          );
+        } else {
+          child.title = (
+            <TreeNodeTitle
+              title={child.title}
+              hasModified={child.hasModified}
+              type="cluster"
+            />
+          );
+        }
       } else {
         // child.hasModified = false;
         child.title = (
@@ -321,12 +331,8 @@ export default ({ type }) => {
     };
   }, [setExpandedKeys]);
 
-  return type === 'process' ? (
-    <div
-      style={{
-        height: '50vh',
-      }}
-    >
+  return (
+    <div>
       <Tree
         className="draggable-tree"
         expandedKeys={expandedKeys}
@@ -347,26 +353,49 @@ export default ({ type }) => {
         }}
         onDragEnter={onDragEnter}
         onDrop={onDrop}
+        onDragStart={onDragStart}
         //treeData={processTree}
-        treeData={transformTreeTitle(processTree)}
-        selectedKeys={[currentCheckedTreeNode]}
+        treeData={
+          type === 'process'
+            ? transformTreeTitle(processTree, type)
+            : transformTreeTitle(moduleTree, type)
+        }
+        selectedKeys={
+          type === 'process'
+            ? [currentCheckedTreeNode]
+            : [currentCheckedModuleTreeNode]
+        }
         onSelect={(selectedKey, e) => {
-          if (currentCheckedTreeNode === undefined) {
-            setSelectedKey(selectedKey[0]);
-            changeCheckedTreeNode(selectedKey[0]);
+          if (type === 'process') {
+            if (currentCheckedTreeNode === undefined) {
+              // 首次打开时currentCheckedTreeNode为undefined
+              setSelectedKey(selectedKey[0]);
+              changeCheckedTreeNode(selectedKey[0]);
+            } else {
+              // 选择自身以外的其他节点
+              if (selectedKey.length !== 0) {
+                const isModified = hasNodeModified(
+                  processTree,
+                  currentCheckedTreeNode
+                );
+                // 当前选中节点是否有更改
+                if (isModified) {
+                  setSelectedKey(selectedKey[0]);
+                  setModalVisible(true); // 提示保存
+                } else {
+                  setSelectedKey(selectedKey[0]);
+                  changeCheckedTreeNode(selectedKey[0]);
+                }
+              }
+            }
           } else {
-            if (selectedKey.length !== 0) {
-              const isModified = hasNodeModified(
-                processTree,
-                currentCheckedTreeNode
-              );
-              if (isModified) {
-                // 有更改
+            if (currentCheckedModuleTreeNode === undefined) {
+              setSelectedKey(selectedKey[0]);
+              changeCheckedModuleTreeNode(selectedKey[0]);
+            } else {
+              if (selectedKey.length !== 0) {
                 setSelectedKey(selectedKey[0]);
-                setModalVisible(true);
-              } else {
-                setSelectedKey(selectedKey[0]);
-                changeCheckedTreeNode(selectedKey[0]);
+                changeCheckedModuleTreeNode(selectedKey[0]);
               }
             }
           }
@@ -397,74 +426,152 @@ export default ({ type }) => {
         }}
       />
     </div>
-  ) : (
-    <div
-      style={{
-        height: '50vh',
-      }}
-    >
-      {/* <ItemPanel> */}
-      <Tree
-        className="draggable-tree"
-        expandedKeys={expandedKeys}
-        defaultExpandAll={true}
-        switcherIcon={<Switcher />}
-        showIcon={true}
-        draggable
-        blockNode
-        onExpand={expandKeys => {
-          setExpandedKeys(expandKeys);
-        }}
-        onRightClick={({ event, node }) => {
-          setPosition({
-            left: event.pageX + 40,
-            top: event.pageY - 20,
-            node: node.props,
-          });
-        }}
-        onDragStart={onDragStart}
-        onDragEnter={onDragEnter}
-        onDrop={onDrop}
-        //treeData={processTree}
-        treeData={transformTreeTitle(moduleTree)}
-        selectedKeys={[currentCheckedModuleTreeNode]}
-        onSelect={(selectedKey, e) => {
-          if (currentCheckedModuleTreeNode === undefined) {
-            setSelectedKey(selectedKey[0]);
-            changeCheckedModuleTreeNode(selectedKey[0]);
-          } else {
-            if (selectedKey.length !== 0) {
-              setSelectedKey(selectedKey[0]);
-              changeCheckedModuleTreeNode(selectedKey[0]);
-            }
-          }
-        }}
-      />
-      {/* </ItemPanel> */}
-      <ContextMenu
-        position={position}
-        handleDelete={handleDelete}
-        handleRename={handleRename}
-      />
-      <ConfirmModal
-        visible={modalVisible}
-        content="请确认是否保存?"
-        onCancel={() => {
-          setModalVisible(false);
-        }}
-        onCancelOk={() => {
-          resetGraphEditData();
-          changeCheckedTreeNode(selectedKey);
-          setModalVisible(false);
-        }}
-        onOk={() => {
-          setNodeModifiedState(processTree, currentCheckedTreeNode); // 把hasmodified改成false
-          persistentStorage(); // 保存currentCheckedTreeNode的内容
-          resetGraphEditData(); // 重设GraphEditData
-          changeCheckedTreeNode(selectedKey); // 修改当前选中
-          setModalVisible(false); // 关闭对话框
-        }}
-      />
-    </div>
   );
+
+  // return type === 'process' ? (
+  //   <div
+  //     style={{
+  //       height: '50vh',
+  //     }}
+  //   >
+  //     <Tree
+  //       className="draggable-tree"
+  //       expandedKeys={expandedKeys}
+  //       defaultExpandAll={true}
+  //       switcherIcon={<Switcher />}
+  //       showIcon={true}
+  //       draggable
+  //       blockNode
+  //       onExpand={expandKeys => {
+  //         setExpandedKeys(expandKeys);
+  //       }}
+  //       onRightClick={({ event, node }) => {
+  //         setPosition({
+  //           left: event.pageX + 40,
+  //           top: event.pageY - 20,
+  //           node: node.props,
+  //         });
+  //       }}
+  //       onDragEnter={onDragEnter}
+  //       onDrop={onDrop}
+  //       //treeData={processTree}
+  //       treeData={transformTreeTitle(processTree, type)}
+  //       selectedKeys={[currentCheckedTreeNode]}
+  //       onSelect={(selectedKey, e) => {
+  //         if (currentCheckedTreeNode === undefined) {
+  //           setSelectedKey(selectedKey[0]);
+  //           changeCheckedTreeNode(selectedKey[0]);
+  //         } else {
+  //           if (selectedKey.length !== 0) {
+  //             const isModified = hasNodeModified(
+  //               processTree,
+  //               currentCheckedTreeNode
+  //             );
+  //             if (isModified) {
+  //               // 有更改
+  //               setSelectedKey(selectedKey[0]);
+  //               setModalVisible(true);
+  //             } else {
+  //               setSelectedKey(selectedKey[0]);
+  //               changeCheckedTreeNode(selectedKey[0]);
+  //             }
+  //           }
+  //         }
+  //       }}
+  //     />
+  //     <ContextMenu
+  //       position={position}
+  //       handleDelete={handleDelete}
+  //       handleRename={handleRename}
+  //     />
+  //     <ConfirmModal
+  //       visible={modalVisible}
+  //       content="请确认是否保存?"
+  //       onCancel={() => {
+  //         setModalVisible(false);
+  //       }}
+  //       onCancelOk={() => {
+  //         resetGraphEditData();
+  //         changeCheckedTreeNode(selectedKey);
+  //         setModalVisible(false);
+  //       }}
+  //       onOk={() => {
+  //         setNodeModifiedState(processTree, currentCheckedTreeNode); // 把hasmodified改成false
+  //         persistentStorage(); // 保存currentCheckedTreeNode的内容
+  //         resetGraphEditData(); // 重设GraphEditData
+  //         changeCheckedTreeNode(selectedKey); // 修改当前选中
+  //         setModalVisible(false); // 关闭对话框
+  //       }}
+  //     />
+  //   </div>
+  // ) : (
+  //   <div
+  //     style={{
+  //       height: '50vh',
+  //     }}
+  //   >
+  //     {/* <ItemPanel> */}
+  //     <Tree
+  //       className="draggable-tree"
+  //       expandedKeys={expandedKeys}
+  //       defaultExpandAll={true}
+  //       switcherIcon={<Switcher />}
+  //       showIcon={true}
+  //       draggable
+  //       blockNode
+  //       onExpand={expandKeys => {
+  //         setExpandedKeys(expandKeys);
+  //       }}
+  //       onRightClick={({ event, node }) => {
+  //         setPosition({
+  //           left: event.pageX + 40,
+  //           top: event.pageY - 20,
+  //           node: node.props,
+  //         });
+  //       }}
+  //       onDragStart={onDragStart}
+  //       onDragEnter={onDragEnter}
+  //       onDrop={onDrop}
+  //       //treeData={processTree}
+  //       treeData={transformTreeTitle(moduleTree, type)}
+  //       selectedKeys={[currentCheckedModuleTreeNode]}
+  //       onSelect={(selectedKey, e) => {
+  //         if (currentCheckedModuleTreeNode === undefined) {
+  //           setSelectedKey(selectedKey[0]);
+  //           changeCheckedModuleTreeNode(selectedKey[0]);
+  //         } else {
+  //           if (selectedKey.length !== 0) {
+  //             setSelectedKey(selectedKey[0]);
+  //             changeCheckedModuleTreeNode(selectedKey[0]);
+  //           }
+  //         }
+  //       }}
+  //     />
+  //     {/* </ItemPanel> */}
+  //     <ContextMenu
+  //       position={position}
+  //       handleDelete={handleDelete}
+  //       handleRename={handleRename}
+  //     />
+  //     <ConfirmModal
+  //       visible={modalVisible}
+  //       content="请确认是否保存?"
+  //       onCancel={() => {
+  //         setModalVisible(false);
+  //       }}
+  //       onCancelOk={() => {
+  //         resetGraphEditData();
+  //         changeCheckedTreeNode(selectedKey);
+  //         setModalVisible(false);
+  //       }}
+  //       onOk={() => {
+  //         setNodeModifiedState(processTree, currentCheckedTreeNode); // 把hasmodified改成false
+  //         persistentStorage(); // 保存currentCheckedTreeNode的内容
+  //         resetGraphEditData(); // 重设GraphEditData
+  //         changeCheckedTreeNode(selectedKey); // 修改当前选中
+  //         setModalVisible(false); // 关闭对话框
+  //       }}
+  //     />
+  //   </div>
+  // );
 };
