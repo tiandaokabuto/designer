@@ -139,10 +139,12 @@ const getComponentType = (
   switch (param.componentType) {
     case COMPONENT_TYPE.INPUT:
       if (param.enName !== 'outPut') {
+        const paramType = param.paramType;
+        const hasParamType = paramType && Array.isArray(paramType);
+        // 待匹配的下拉列表
         const dataSource =
-          param.paramType &&
-          Array.isArray(param.paramType) &&
-          param.paramType.reduce((prev, next) => {
+          hasParamType &&
+          paramType.reduce((prev, next) => {
             return prev.concat(
               aiHintList[next]
                 ? [
@@ -162,10 +164,9 @@ const getComponentType = (
                 : []
             );
           }, []);
-        const paramType = param.paramType;
+        // 待匹配的依赖项
         const depList =
-          (paramType &&
-            Array.isArray(paramType) &&
+          (hasParamType &&
             paramType.reduce((prev, next) => {
               return prev.concat(aiHintList[next] || []);
             }, [])) ||
