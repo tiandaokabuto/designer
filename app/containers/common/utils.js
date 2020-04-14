@@ -696,7 +696,7 @@ export const formatDateTime = time => {
 export const changeModifyState = (processTree, key, modifyState) => {
   const node = findNodeByKey(processTree, key);
   if (!node) return;
-  node.hasModified = true;
+  node.hasModified = modifyState;
   changeProcessTree([...processTree]);
 };
 

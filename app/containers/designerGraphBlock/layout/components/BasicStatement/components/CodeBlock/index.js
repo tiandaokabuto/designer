@@ -1,15 +1,24 @@
 import React, { useRef } from 'react';
 import { Modal } from 'antd';
+import { useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 
 import CodeMirrorEditor from '../../../../DragContainer/components/CodeMirrorEditor';
+import {
+  useNoticyBlockCodeChange,
+  useTransformToPython,
+} from '../../../../useHooks';
 
 export default ({ visible, setVisible, interactiveCard }) => {
   const codeMirrorRef = useRef(null);
+  // console.log(interactiveCard, 'interactiveCard');
+  const cards = useSelector(state => state.blockcode.cards);
+  const noticyChange = useNoticyBlockCodeChange();
+  const handleEmitCodeTransform = useTransformToPython();
   return (
     <Modal
       width="80vw"
-      key={uniqueId('codeMirror_')}
+      // key={uniqueId('codeMirror_')}
       bodyStyle={{
         height: '75vh',
       }}
@@ -21,6 +30,8 @@ export default ({ visible, setVisible, interactiveCard }) => {
         if (temp) {
           const codeRef = temp.current;
           interactiveCard.codeValue = codeRef.getValue();
+          noticyChange();
+          handleEmitCodeTransform(cards);
           setVisible(false);
         }
       }}
@@ -31,6 +42,7 @@ export default ({ visible, setVisible, interactiveCard }) => {
     >
       <CodeMirrorEditor
         value={interactiveCard.codeValue || ''}
+        id={interactiveCard.id}
         ref={codeMirrorRef}
       />
     </Modal>
