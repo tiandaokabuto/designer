@@ -36,9 +36,7 @@ export const changeAIHintList = cards => {
                   if (!aiHintList[type]) {
                     aiHintList[type] = [output];
                   } else {
-                    if (
-                      !aiHintList[type].filter(item => item === output).length
-                    ) {
+                    if (~aiHintList[type].findIndex(item => item === output)) {
                       aiHintList[type].push(output);
                     }
                   }
@@ -51,7 +49,7 @@ export const changeAIHintList = cards => {
             if (!aiHintList[type]) {
               aiHintList[type] = [output];
             } else {
-              if (!aiHintList[type].filter(item => item === output).length) {
+              if (~aiHintList[type].findIndex(item => item === output)) {
                 aiHintList[type].push(output);
               }
             }
