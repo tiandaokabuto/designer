@@ -19,10 +19,15 @@ import {
   setNodeModifiedState,
   downProcessZipToLocal,
   traverseTree,
+  getModuleUniqueId,
 } from '../utils';
-import { updateCurrentPagePosition } from '../../reduxActions';
+import {
+  updateCurrentPagePosition,
+  changeModuleTree,
+} from '../../reduxActions';
 import api from '../../../api';
 import { handleScreenCapture } from '@/containers/shared';
+import PATH_CONFIG from '@/constants/localFilePath';
 
 import NewProcess from './NewProcess';
 
@@ -30,7 +35,7 @@ import './index.scss';
 
 const { remote, ipcRenderer } = require('electron');
 const fs = require('fs');
-const JSZip = require('jszip');
+const adm_zip = require('adm-zip');
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -53,10 +58,15 @@ export default memo(
     currentCheckedTreeNodeRef.current = currentCheckedTreeNode;
 
     const treeTab = useSelector(state => state.grapheditor.treeTab);
+    const projectName = useSelector(state => state.grapheditor.currentProject);
 
     const processTree = useSelector(state => state.grapheditor.processTree);
     const processTreeRef = useRef(null);
     processTreeRef.current = processTree;
+
+    const moduleTree = useSelector(state => state.grapheditor.moduleTree);
+    const moduleTreeRef = useRef(null);
+    moduleTreeRef.current = moduleTree;
 
     const [modalVisible, setModalVisible] = useState(false);
     const [versionTipVisible, setVersionTipVisible] = useState(false);
@@ -264,12 +274,68 @@ export default memo(
         // disabled: true,
         onClick: () => {
           const handleFilePath = (e, filePath) => {
-            const adm_zip = require('adm-zip');
             const unzip = new adm_zip(filePath[0]);
             const entry = unzip.getEntry('manifest.json');
-            const str = unzip.readAsText(entry, 'utf8');
-            console.log(str);
-            console.log(filePath[0].match);
+            const data = JSON.parse(unzip.readAsText(entry, 'utf8'));
+            const re = /([^\.\/\\]+)\.(?:[a-z]+)$/i;
+            const fileName = re.exec(filePath[0])[1];
+            if (
+              fs.existsSync(
+                PATH_CONFIG(
+                  'project',
+                  `${projectName}/${projectName}_module/${fileName}.json`
+                )
+              )
+            ) {
+              message.info('该流程块已存在');
+            } else {
+              fs.writeFileSync(
+                PATH_CONFIG(
+                  'project',
+                  `${projectName}/${projectName}_module/${fileName}.json`
+                ),
+                JSON.stringify({
+                  graphDataMap: data,
+                })
+              );
+              const newModuleTree = [...moduleTreeRef.current];
+              // console.log(moduleTreeRef.current);
+              newModuleTree.push({
+                title: fileName,
+                type: 'process',
+                key: getModuleUniqueId(moduleTreeRef.current),
+                graphDataMap: {},
+              });
+              console.log(newModuleTree);
+              changeModuleTree(newModuleTree);
+              fs.readFile(
+                PATH_CONFIG(
+                  'project',
+                  `${projectName}/${projectName}_module/manifest.json`
+                ),
+                function(err, data) {
+                  if (!err) {
+                    let description = JSON.parse(data.toString());
+                    console.log(description);
+                    fs.writeFile(
+                      PATH_CONFIG(
+                        'project',
+                        `${projectName}/${projectName}_module/manifest.json`
+                      ),
+                      JSON.stringify({
+                        ...description,
+                        moduleTree: newModuleTree,
+                      }),
+                      function(err) {
+                        if (err) {
+                          console.error(err);
+                        }
+                      }
+                    );
+                  }
+                }
+              );
+            }
           };
           ipcRenderer.removeAllListeners('chooseItem');
           ipcRenderer.send(

@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, memo } from 'react';
+import React, { useEffect, useRef, memo, useImperativeHandle } from 'react';
 import CodeMirror from 'codemirror';
 import { useDispatch, useSelector } from 'react-redux';
+import uniqueId from 'lodash/uniqueId';
 import useUpdateEffect from 'react-hook-easier/lib/useUpdateEffect';
 
 import 'codemirror/lib/codemirror.css';
@@ -28,12 +29,18 @@ import 'codemirror/addon/fold/comment-fold.js';
 import 'codemirror/addon/edit/closebrackets.js';
 import 'codemirror/addon/edit/matchbrackets.js';
 
-export default memo(({ value }) => {
+export default React.forwardRef(({ value, id }, ref) => {
   const codeMirrorRef = useRef(null);
   const dispatch = useDispatch();
-  // const pythonCode = useSelector(state => state.blockcode.pythonCode);
+
+  useImperativeHandle(ref, () => {
+    return {
+      codeMirrorRef,
+    };
+  });
+
   useEffect(() => {
-    var el = document.getElementById('editor');
+    var el = document.getElementById('editor' + (id ? id : ''));
     var version = '# version: Python3\n\n';
     var codeAreaTip = '# please edit your code here:\n';
     var codeStart = '# code start\n\n';
@@ -80,7 +87,10 @@ export default memo(({ value }) => {
 
   return (
     <div style={{ height: '100%' }}>
-      <textarea id="editor" className="editor"></textarea>
+      <textarea
+        id={`editor${id ? id : ''}`}
+        className={`editor${id ? id : ''}`}
+      ></textarea>
     </div>
   );
 });

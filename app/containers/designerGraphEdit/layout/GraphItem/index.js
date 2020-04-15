@@ -6,6 +6,8 @@ import ProcessTree from './components/ProcessTree';
 import { useChangeProjectName } from '../../useHooks';
 import { changeTreeTab } from '../../../reduxActions';
 
+// import './GraphContainer.scss';
+
 const { TabPane } = Tabs;
 export default () => {
   const currentProject = useSelector(state => state.grapheditor.currentProject);
@@ -40,21 +42,28 @@ export default () => {
           }}
         />
       </div>
-      <Tabs
-        defaultActiveKey={treeTab}
-        className="dragger-editor-container-tabs"
-        tabPosition="bottom"
-        onChange={key => {
-          changeTreeTab(key);
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '0',
         }}
       >
-        <TabPane tab="流程" key="process">
-          <ProcessTree type={'process'} />
-        </TabPane>
-        <TabPane tab="流程块" key="processModule">
-          <ProcessTree type={'processModule'} />
-        </TabPane>
-      </Tabs>
+        <Tabs
+          defaultActiveKey={treeTab}
+          className="dragger-editor-container-tabs"
+          tabPosition="bottom"
+          onChange={key => {
+            changeTreeTab(key);
+          }}
+        >
+          <TabPane tab="流程" key="process">
+            <ProcessTree type={'process'} />
+          </TabPane>
+          <TabPane tab="流程块" key="processModule">
+            <ProcessTree type={'processModule'} />
+          </TabPane>
+        </Tabs>
+      </div>
 
       {/* <Tree>{renderTreeNodes(processTree)}</Tree> */}
     </div>

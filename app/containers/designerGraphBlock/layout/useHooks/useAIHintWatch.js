@@ -56,7 +56,9 @@ export default () => {
       const type = typeOf(item.value);
       if (type === undefined) return;
       item.isVariable = true;
-      item.listeners = item.listeners.filter(Boolean);
+      if (item.listeners) {
+        item.listeners = item.listeners.filter(Boolean);
+      }
       removeDuplicateItem(aiHintList, item);
       if (aiHintList[type]) {
         if (aiHintList[type].find(el => el === item)) return;

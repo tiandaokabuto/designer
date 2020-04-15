@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Flow, withPropsAPI } from 'gg-editor';
 import { useSelector } from 'react-redux';
+import { Modal, Radio } from 'antd';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
 import event from '../../../designerGraphBlock/layout/eventCenter';
@@ -12,7 +13,10 @@ import RhombusNode from '../RegisterNode/RhombusNode';
 import ReuseCommand from './components/EditorContextMenu/ReuseCommand';
 import CustomCommand from './components/EditorContextMenu/CustomCommand';
 
-import EditorDrawer from './components/EditorDrawer';
+import WhileJPG from '@/containers/images/while.jpg';
+import DoWhileJPG from '@/containers/images/doWhile.jpg';
+import ForEachJPG from '@/containers/images/forEach.jpg';
+
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
 
 import EditorChange, {
@@ -47,7 +51,7 @@ export default useInjectContext(
         state => state.temporaryvariable.currentPagePosition
       );
       const processTree = useSelector(state => state.grapheditor.processTree);
-      const [drawerVisible, setDrawerVisible] = useState(false);
+
       const node = findNodeByKey(processTree, currentCheckedTreeNode);
       // 自适应当前画布的大小
       useEffect(() => {
@@ -63,6 +67,19 @@ export default useInjectContext(
         return () => {
           event.removeListener('undo', handleUndo);
           event.removeListener('redo', handleRedo);
+        };
+      }, []);
+
+      const [modalVisible, setModalVisible] = useState(false);
+      const [loopType, setLoopType] = useState('while');
+
+      useEffect(() => {
+        const handleModalChange = () => {
+          setModalVisible(true);
+        };
+        event.addListener('loopChoose', handleModalChange);
+        return () => {
+          event.removeListener('loopChoose', handleModalChange);
         };
       }, []);
 
@@ -183,10 +200,6 @@ export default useInjectContext(
             }}
             noEndEdge={false}
           />
-          <EditorDrawer
-            visible={drawerVisible}
-            setDrawerVisible={setDrawerVisible}
-          />
           <ProcessBlockNode />
           <StartNode />
           <EndNode />
@@ -196,6 +209,50 @@ export default useInjectContext(
           {/* <HighlightEditor /> */}
           <CustomCommand />
           <OutputPanel tag="graph" />
+          <Modal
+            visible={modalVisible}
+            closable={false}
+            width={'90vw'}
+            bodyStyle={{
+              height: '80vh',
+              overflow: 'auto',
+            }}
+            centered
+            onOk={() => {
+              event.emit('loopChooseEnd', loopType);
+              setModalVisible(false);
+            }}
+            onCancel={() => {
+              setModalVisible(false);
+            }}
+          >
+            <Radio.Group
+              onChange={e => setLoopType(e.target.value)}
+              value={loopType}
+              style={{
+                display: 'flex',
+                position: 'relative',
+              }}
+            >
+              <Radio value={'while'} className="while-radio">
+                <div className="while-desc">While循环 (先判断再做的循环)</div>
+                <img src={WhileJPG} style={{ width: '100%' }} />
+              </Radio>
+              <Radio value={'doWhile'} className="while-radio">
+                <div className="while-desc">
+                  Do-While循环 (先做再判断的循环)
+                </div>
+                <img src={DoWhileJPG} style={{ width: '100%' }} />
+              </Radio>
+              <Radio value={'forEach'} className="while-radio">
+                <div className="while-desc">For循环 (数组遍历的循环)</div>
+                <img
+                  src={ForEachJPG}
+                  style={{ width: '100%', height: '90%' }}
+                />
+              </Radio>
+            </Radio.Group>
+          </Modal>
         </div>
       );
     }

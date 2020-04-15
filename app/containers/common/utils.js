@@ -474,7 +474,7 @@ const getUniqueId = tree => {
   }
 };
 
-const getModuleUniqueId = tree => {
+export const getModuleUniqueId = tree => {
   let new_key = uniqueId('key_module_');
   while (true) {
     if (hasDuplicateKey(tree, new_key)) {
@@ -696,7 +696,7 @@ export const formatDateTime = time => {
 export const changeModifyState = (processTree, key, modifyState) => {
   const node = findNodeByKey(processTree, key);
   if (!node) return;
-  node.hasModified = true;
+  node.hasModified = modifyState;
   changeProcessTree([...processTree]);
 };
 
