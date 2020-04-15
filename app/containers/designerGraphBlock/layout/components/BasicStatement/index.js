@@ -258,8 +258,12 @@ const BasicStatement = useInjectContext(props => {
                   ];
                   if (cmdNameArr.includes(card.cmdName)) {
                     console.log(PATH_CONFIG('windowHook'));
+                    try {
+                      const worker = exec(PATH_CONFIG('windowHook'));
+                    } catch (e) {
+                      console.log(e);
+                    }
                     console.log('调用testHook');
-                    const worker = exec(PATH_CONFIG('windowHook'));
                   }
                   ipcRenderer.on(
                     'updateXpath',

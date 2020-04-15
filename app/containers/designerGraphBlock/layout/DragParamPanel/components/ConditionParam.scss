@@ -1,0 +1,20 @@
+.condition-param {
+  &-title {
+    height: 40px;
+    padding: 0 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(238, 238, 238, 1);
+  }
+  &-ifcondition {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 20px;
+    place-items: center start;
+    grid-gap: 4px 8px;
+    padding: 4px 8px;
+  }
+  &-btn {
+    cursor: pointer;
+  }
+}
