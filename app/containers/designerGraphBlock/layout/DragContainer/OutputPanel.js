@@ -25,8 +25,21 @@ export default memo(
 
     const [output, setOutput] = useState(executeOutput);
     const [filter, setFilter] = useState('');
+    const [newOutputTip, setNewOutputTip] = useState(false);
     // const [filterOutput, setFilterOutput] = useState([]);
-    const [selectedTags, setSelectedTags] = useState('DEBUG');
+    const [selectedTags, setSelectedTags] = useState([
+      'DEBUG',
+      'INFO',
+      'WARN',
+      'ERROR',
+    ]);
+
+    const getOutputDomHeight = () => {
+      const outputDom = document.querySelector(
+        '.dragger-editor-container-output'
+      );
+      return parseFloat(window.getComputedStyle(outputDom).height);
+    };
 
     useEffect(() => {
       const handleAnchorMouseMove = useThrottle(e => {
@@ -37,12 +50,12 @@ export default memo(
           const outputDom = document.querySelector(
             '.dragger-editor-container-output'
           );
-          const originHeight = parseFloat(
-            window.getComputedStyle(outputDom).height
-          );
+          const originHeight = getOutputDomHeight();
           // if (originHeight <= 74 && offset < 0) return;
           // originHeight = originHeight < 74 ? 74 : originHeight;
-          outputDom.style.height = originHeight + offset + 'px';
+          const currentHeight = originHeight + offset;
+          outputDom.style.height = currentHeight + 'px';
+          if (currentHeight > 40) setNewOutputTip(false);
         }
       }, 0);
 
@@ -55,6 +68,8 @@ export default memo(
 
     useEffect(() => {
       const handlePythonOutput = stdout => {
+        const originHeight = getOutputDomHeight();
+        if (originHeight <= 40 && !newOutputTip) setNewOutputTip(true);
         setOutput(output => output + '\n' + stdout);
       };
       const handleClearOutput = () => {
@@ -80,20 +95,25 @@ export default memo(
           }
         : {
             width: '100%',
+            position: 'relative',
           };
 
     const transformOutput = useMemo(() => {
       const outputList = output.split('\n').filter(Boolean);
-      const selectedOutputList = outputList.filter(
-        item => item.indexOf(`[${selectedTags}]`) > -1
-      );
+      const selectedOutputList = outputList.filter(item => {
+        for (let i = 0; i < selectedTags.length; i += 1) {
+          const selectedTag = selectedTags[i];
+          if (item.indexOf(`[${selectedTag}]`) > -1) return true;
+        }
+        return false;
+      });
 
       return selectedOutputList.map((item, index) => {
-        if (item.indexOf(filter) > -1) {
+        if (filter && item.indexOf(filter) > -1) {
           const className = `keyWordRow${index}`;
 
           return (
-            <div
+            <p
               key={item}
               dangerouslySetInnerHTML={{
                 __html: item.replace(
@@ -105,7 +125,7 @@ export default memo(
             />
           );
         }
-        return <div key={item}>{item}</div>;
+        return <p key={item}>{item}</p>;
       });
     }, [output, filter, selectedTags]);
 
@@ -115,13 +135,13 @@ export default memo(
       const outputDom = document.querySelector(
         '.dragger-editor-container-output'
       );
-      const originHeight = parseFloat(
-        window.getComputedStyle(outputDom).height
-      );
+      const originHeight = getOutputDomHeight();
+      const isMinStatus = originHeight <= 40;
       // 添加动画效果
       outputDom.className =
         'dragger-editor-container-output dragger-editor-container-output-animateOpen';
-      outputDom.style.height = originHeight <= 40 ? basicHeight : minHeight;
+      outputDom.style.height = isMinStatus ? basicHeight : minHeight;
+      if (isMinStatus && newOutputTip) setNewOutputTip(false);
       setTimeout(() => {
         outputDom.className = 'dragger-editor-container-output';
       }, 300);
@@ -140,7 +160,13 @@ export default memo(
           className="dragger-editor-container-output-title"
           onMouseDown={e => e.stopPropagation()}
         >
-          <span>输出:</span>
+          <span
+            className={
+              newOutputTip ? 'dragger-editor-container-output-title-tip' : ''
+            }
+          >
+            输出
+          </span>
           <div
             className="dragger-editor-container-output-anchor"
             onClick={handleTriggerOpen}
@@ -154,7 +180,11 @@ export default memo(
             selectedTags={selectedTags}
             handleChange={(checked, selectedTagLabel) => {
               if (checked) {
-                setSelectedTags(selectedTagLabel);
+                setSelectedTags([...selectedTags, selectedTagLabel]);
+              } else {
+                setSelectedTags(
+                  selectedTags.filter(item => selectedTagLabel !== item)
+                );
               }
             }}
           />

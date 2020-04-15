@@ -474,7 +474,7 @@ const getUniqueId = tree => {
   }
 };
 
-const getModuleUniqueId = tree => {
+export const getModuleUniqueId = tree => {
   let new_key = uniqueId('key_module_');
   while (true) {
     if (hasDuplicateKey(tree, new_key)) {
