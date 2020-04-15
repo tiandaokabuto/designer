@@ -8,7 +8,7 @@ export const generateUniqueId = group => {
   let id;
   while (true) {
     id = uniqueId('group_');
-    if (!group.find(item => item.id === id)) {
+    if (!group || !group.find(item => item.id === id)) {
       return id;
     }
   }

@@ -1,5 +1,14 @@
 @import '../common/style/common.scss';
 
+.while-radio {
+  margin-top: 24px;
+  .ant-radio {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+  }
+}
+
 .designergraph {
   background: rgba(255, 255, 255, 1);
   height: calc(100vh);

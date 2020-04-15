@@ -8,6 +8,7 @@ import {
   synchroGraphDataToProcessTree,
   changeSavingModuleData,
 } from '../../../reduxActions';
+import event from '../../../designerGraphBlock/layout/eventCenter';
 
 import { changeModifyState } from '../../../common/utils';
 
@@ -106,7 +107,6 @@ class NodeHandler {
         });
       } else if (description.model.shape === 'group') {
         this.apiAction('undo');
-        console.log(graphData, description);
         const model = description.model;
         const processBlockIdOne = generateUniqueId(graphData.nodes);
         const processBlockIdTwo = generateUniqueId(graphData.nodes);
@@ -283,39 +283,51 @@ class NodeHandler {
             ],
             edges: [
               {
+                source: processBlockIdOne,
+                target: rhombusNodeId,
+                sourceAnchor: 1,
+                targetAnchor: 0,
+              },
+              {
                 source: rhombusNodeId,
-                target: processBlockIdOne,
+                target: processBlockIdTwo,
                 sourceAnchor: 1,
                 targetAnchor: 0,
                 label: '是',
               },
               {
-                source: processBlockIdOne,
+                source: processBlockIdTwo,
+                target: processBlockIdThree,
+                sourceAnchor: 1,
+                targetAnchor: 0,
+              },
+              {
+                source: processBlockIdThree,
                 target: rhombusNodeId,
                 sourceAnchor: 3,
                 targetAnchor: 3,
               },
               {
                 source: rhombusNodeId,
-                target: processBlockIdTwo,
+                target: processBlockIdFour,
                 sourceAnchor: 2,
-                targetAnchor: 2,
+                targetAnchor: 0,
                 label: '否',
               },
             ],
           },
         };
 
-        updateGraphData({
-          ...graphData,
-          nodes: graphData.nodes.concat(LOOP_GRAPHDATA['forEach'].nodes),
-          edges: graphData.edges.concat(LOOP_GRAPHDATA['forEach'].edges),
-        });
+        event.removeAllListeners('loopChooseEnd');
 
-        // this.propsAPI.add('edge', {
-        //   source: 1,
-        //   target: 2,
-        // });
+        event.emit('loopChoose');
+        event.addListener('loopChooseEnd', type => {
+          updateGraphData({
+            ...graphData,
+            nodes: (graphData.nodes || []).concat(LOOP_GRAPHDATA[type].nodes),
+            edges: (graphData.edges || []).concat(LOOP_GRAPHDATA[type].edges),
+          });
+        });
       }
     }
     // 保存当前流程图的任意更新不加区分

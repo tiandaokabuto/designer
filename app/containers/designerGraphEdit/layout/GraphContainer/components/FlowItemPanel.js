@@ -86,11 +86,11 @@ const FlowItemPanel = () => {
       </Item>
       <Item
         type="node"
-        size="70*48"
+        size="10*10"
         shape="group"
         model={{
           color: '#722ED1',
-          label: '循环',
+          label: '',
           style: {
             stroke: 'rgba(61, 109, 204, 1)',
             fill: '#ecf5f6',
