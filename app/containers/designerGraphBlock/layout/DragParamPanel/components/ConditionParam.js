@@ -45,6 +45,7 @@ export default ({
       <Radio.Group
         style={{
           display: 'flex',
+          marginBottom: '10px',
         }}
         onChange={e => {
           param.tag = e.target.value;
@@ -56,13 +57,6 @@ export default ({
         <Radio value={1}>向导模式</Radio>
         <Radio value={2}>自定义模式</Radio>
       </Radio.Group>
-      <Icon
-        type="plus"
-        className="condition-param-btn"
-        onClick={() => {
-          handleAdd();
-        }}
-      />
       {tag === 1 ? (
         <div className="condition-param">
           <div>
@@ -70,7 +64,15 @@ export default ({
               <span>变量</span>
               <span>规则</span>
               <span>变量</span>
-              <span></span>
+              <span>
+                <Icon
+                  type="plus"
+                  className="condition-param-btn"
+                  onClick={() => {
+                    handleAdd();
+                  }}
+                />
+              </span>
             </div>
             {(param.valueList || []).map((item, index) => {
               return (
@@ -127,8 +129,8 @@ export default ({
                         display: 'flex',
                       }}
                     >
-                      <Radio value="&&">且</Radio>
-                      <Radio value="||">或</Radio>
+                      <Radio value="and">且</Radio>
+                      <Radio value="or">或</Radio>
                     </Radio.Group>
                   </div>
                 </Fragment>
