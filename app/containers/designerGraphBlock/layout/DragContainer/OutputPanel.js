@@ -27,7 +27,12 @@ export default memo(
     const [filter, setFilter] = useState('');
     const [newOutputTip, setNewOutputTip] = useState(false);
     // const [filterOutput, setFilterOutput] = useState([]);
-    const [selectedTags, setSelectedTags] = useState('DEBUG');
+    const [selectedTags, setSelectedTags] = useState([
+      'DEBUG',
+      'INFO',
+      'WARN',
+      'ERROR',
+    ]);
 
     const getOutputDomHeight = () => {
       const outputDom = document.querySelector(
@@ -90,13 +95,18 @@ export default memo(
           }
         : {
             width: '100%',
+            position: 'relative',
           };
 
     const transformOutput = useMemo(() => {
       const outputList = output.split('\n').filter(Boolean);
-      const selectedOutputList = outputList.filter(
-        item => item.indexOf(`[${selectedTags}]`) > -1
-      );
+      const selectedOutputList = outputList.filter(item => {
+        for (let i = 0; i < selectedTags.length; i += 1) {
+          const selectedTag = selectedTags[i];
+          if (item.indexOf(`[${selectedTag}]`) > -1) return true;
+        }
+        return false;
+      });
 
       return selectedOutputList.map((item, index) => {
         if (filter && item.indexOf(filter) > -1) {
@@ -170,7 +180,11 @@ export default memo(
             selectedTags={selectedTags}
             handleChange={(checked, selectedTagLabel) => {
               if (checked) {
-                setSelectedTags(selectedTagLabel);
+                setSelectedTags([...selectedTags, selectedTagLabel]);
+              } else {
+                setSelectedTags(
+                  selectedTags.filter(item => selectedTagLabel !== item)
+                );
               }
             }}
           />
