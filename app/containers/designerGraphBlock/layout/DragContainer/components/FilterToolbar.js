@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
+import ArrowUpPNG from '@/containers/images/arrow-up.png';
+import ArrowDownPNG from '@/containers/images/arrow-down.png';
+
 let isMouseDown = false;
 let pageX = 0;
 let pageY = 0;
 
-export default ({ visible, matchNum }) => {
+export default ({ visible, matchNum, handlePrev, handleNext }) => {
   useEffect(() => {
     const toolBar = document.querySelector(
       'div.dragger-editor-container-output-toolbar'
@@ -46,6 +49,23 @@ export default ({ visible, matchNum }) => {
       }}
     >
       搜索结果: class, 共<span style={{ color: 'red' }}>{matchNum}</span>个结果
+      <span
+        onClick={() => {
+          handlePrev();
+        }}
+      >
+        <img
+          src={ArrowUpPNG}
+          style={{ width: 16, margin: '0 12px', cursor: 'pointer' }}
+        />
+      </span>
+      <span
+        onClick={() => {
+          handleNext();
+        }}
+      >
+        <img src={ArrowDownPNG} style={{ width: 16, cursor: 'pointer' }} />
+      </span>
     </div>
   );
 };
