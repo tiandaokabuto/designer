@@ -7,6 +7,7 @@ import { Icon, Input } from 'antd';
 import event, { PYTHON_OUTPUT } from '../eventCenter';
 import FilterToolbar from './components/FilterToolbar';
 import Tags from './components/Tags';
+import ZoomToolBar from './components/ZoomToolBar';
 
 let isMouseDown = false;
 let startOffset = 0;
@@ -180,6 +181,7 @@ export default memo(
           className="dragger-editor-container-output-title"
           onMouseDown={e => e.stopPropagation()}
         >
+          {tag === 'graph' && <ZoomToolBar />}
           <span
             className={
               newOutputTip ? 'dragger-editor-container-output-title-tip' : ''
