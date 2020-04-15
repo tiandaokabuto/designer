@@ -57,6 +57,12 @@ export default memo(
     const currentCheckedTreeNodeRef = useRef(null);
     currentCheckedTreeNodeRef.current = currentCheckedTreeNode;
 
+    const currentCheckedModuleTreeNode = useSelector(
+      state => state.grapheditor.currentCheckedModuleTreeNode
+    );
+    const currentCheckedModuleTreeNodeRef = useRef(null);
+    currentCheckedModuleTreeNodeRef.current = currentCheckedModuleTreeNode;
+
     const treeTab = useSelector(state => state.grapheditor.treeTab);
     const projectName = useSelector(state => state.grapheditor.currentProject);
 
@@ -297,14 +303,37 @@ export default memo(
                 })
               );
               const newModuleTree = [...moduleTreeRef.current];
-              // console.log(moduleTreeRef.current);
-              newModuleTree.push({
-                title: fileName,
-                type: 'process',
-                key: getModuleUniqueId(moduleTreeRef.current),
-                graphDataMap: {},
-              });
-              console.log(newModuleTree);
+              if (!currentCheckedModuleTreeNodeRef.current) {
+                // 没有选中
+                newModuleTree.push({
+                  title: fileName,
+                  type: 'process',
+                  key: getModuleUniqueId(newModuleTree),
+                  graphDataMap: {},
+                });
+              } else {
+                traverseTree(newModuleTree, item => {
+                  if (currentCheckedModuleTreeNodeRef.current === item.key) {
+                    if (item.type === 'process') {
+                      // 选中的是流程
+                      newModuleTree.push({
+                        title: fileName,
+                        type: 'process',
+                        key: getModuleUniqueId(newModuleTree),
+                        graphDataMap: {},
+                      });
+                    } else {
+                      // 选中的是目录
+                      item.children.push({
+                        title: fileName,
+                        type: 'process',
+                        key: getModuleUniqueId(newModuleTree),
+                        graphDataMap: {},
+                      });
+                    }
+                  }
+                });
+              }
               changeModuleTree(newModuleTree);
               fs.readFile(
                 PATH_CONFIG(

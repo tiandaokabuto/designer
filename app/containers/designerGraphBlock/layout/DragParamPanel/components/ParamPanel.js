@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { Input, Select, AutoComplete, Button } from 'antd';
+import { Input, Select, AutoComplete, Button, Icon, Radio } from 'antd';
 import { useSelector } from 'react-redux';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 import uniqueId from 'lodash/uniqueId';
@@ -135,6 +135,60 @@ const getComponentType = (
         })}
       </div>
     );
+  } else if (param.enName === 'ifcondition') {
+    // return (
+    //   <Radio.Group
+    //     onChange={e => {
+    //       console.log(e.target.value);
+    //     }}
+    //   >
+    //     <Radio value={1}>
+    //       向导模式
+    //       {/* <div className="variablePanel">
+    //         <div className="variablePanel-title">
+    //           <Icon
+    //             type="plus"
+    //             className="variablePanel-btn"
+    //             onClick={() => {}}
+    //           />
+    //         </div>
+    //         <div className="parampanel-content-ifcondition">
+    //           <span>变量1</span>
+    //           <span>规则</span>
+    //           <span>变量2</span>
+    //           <span></span>
+    //           <Input placeholder="变量1" value={0} onChange={e => {}} />
+    //           <Input placeholder="规则" value={1} onChange={e => {}} />
+    //           <Input placeholder="变量2" value={2} onChange={e => {}} />
+    //           <Icon
+    //             type="delete"
+    //             className="variablePanel-btn"
+    //             onClick={() => {}}
+    //           />
+    //         </div>
+    //       </div> */}
+    //     </Radio>
+    //     <Radio value={2}>
+    //       自定义模式
+    //       {/* <Input
+    //         defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
+    //         key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
+    //         onChange={e => {
+    //           param.value = e.target.value;
+    //           handleEmitCodeTransform(cards);
+    //           if (param.listeners) {
+    //             param.listeners.forEach(callback => {
+    //               if (typeof callback === 'function') {
+    //                 callback(e.target.value);
+    //               }
+    //             });
+    //           }
+    //         }}
+    //         onKeyDown={e => stopDeleteKeyDown(e)}
+    //       /> */}
+    //     </Radio>
+    //   </Radio.Group>
+    // );
   }
   switch (param.componentType) {
     case COMPONENT_TYPE.INPUT:
@@ -322,6 +376,7 @@ const ParamItem = ({
   aiHintList,
   setFlag,
 }) => {
+  console.log(param, cards, flag, aiHintList);
   const [err, message, handleValidate] = useVerifyInput(param);
   return (
     <React.Fragment>

@@ -6,7 +6,7 @@ import ProcessTree from './components/ProcessTree';
 import { useChangeProjectName } from '../../useHooks';
 import { changeTreeTab } from '../../../reduxActions';
 
-// import './GraphContainer.scss';
+import './GraphContainer.scss';
 
 const { TabPane } = Tabs;
 export default () => {
