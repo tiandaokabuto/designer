@@ -2,13 +2,16 @@ import React, { useEffect, useState, memo, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
-import { Icon } from 'antd';
+import { Icon, Input } from 'antd';
 
 import event, { PYTHON_OUTPUT } from '../eventCenter';
+import FilterToolbar from './components/FilterToolbar';
 import Tags from './components/Tags';
 
 let isMouseDown = false;
 let startOffset = 0;
+
+const { Search } = Input;
 
 const tagsFromServer = [
   { label: 'DEBUG', icon: 'warning', fill: '#0060bf' },
@@ -30,7 +33,7 @@ export default memo(
     );
 
     const [output, setOutput] = useState(fakeData);
-    const [filter, setFilter] = useState('openBrowser');
+    const [filter, setFilter] = useState('');
     const [newOutputTip, setNewOutputTip] = useState(false);
     const [selectedTags, setSelectedTags] = useState([
       'DEBUG',
@@ -124,8 +127,7 @@ export default memo(
               key={item}
               dangerouslySetInnerHTML={{
                 __html: item.replace(
-                  filter,
-                  // RegExp(filter, 'g'),
+                  RegExp(filter, 'g'),
                   (match, index) =>
                     `<span class="${className}_${index}" style="color:red">${match}</span>`
                 ),
@@ -175,6 +177,7 @@ export default memo(
           >
             输出
           </span>
+
           <div
             className="dragger-editor-container-output-anchor"
             onClick={handleTriggerOpen}
@@ -197,12 +200,31 @@ export default memo(
             }}
           />
         </div>
+        <div className="dragger-editor-container-output-search">
+          <Search
+            allowClear
+            onChange={e => {
+              if (e.target.value === '') {
+                setFilter('');
+              }
+            }}
+            onSearch={value => {
+              setFilter(value);
+            }}
+            onKeyDown={e => {
+              if (e.keyCode === 13) {
+                setFilter(e.target.value);
+              }
+            }}
+          />
+        </div>
         <pre
           className="dragger-editor-container-output-content"
           onMouseDown={e => e.stopPropagation()}
         >
           {transformOutput}
         </pre>
+        <FilterToolbar visible={filter !== ''} />
       </div>
     );
   })
