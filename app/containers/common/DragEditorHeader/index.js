@@ -69,6 +69,8 @@ export default memo(
 
     const getProcessName = useGetProcessName();
 
+    const downloadPython = useGetDownloadPath();
+
     const transformProcessToPython = useTransformProcessToPython();
 
     const executePython = useExecutePython();
