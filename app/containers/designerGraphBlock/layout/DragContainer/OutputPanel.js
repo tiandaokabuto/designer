@@ -33,7 +33,7 @@ export default memo(
       state => state.temporaryvariable.executeOutput
     );
 
-    const [output, setOutput] = useState('');
+    const [output, setOutput] = useState(fakeData);
     const [filter, setFilter] = useState('');
     const [matchNum, setMatchNum] = useState(0);
     const [cursor, setCursor] = useState(0);
