@@ -17,16 +17,21 @@ const tagsFromServer = [
   { label: 'ERROR', icon: 'close-circle', fill: '#ea5154' },
 ];
 
+const fakeData = `[INFO] 2020-04-15 13:47:12,404 Browser.py [line:50] openBrowser 正在打开浏览器...
+
+[ERROR] 2020-04-15 13:47:17,206 Browser.py [line:68] openBrowser 无法打开浏览器
+
+[ERROR] 2020-04-15 13:47:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of ChromeDriver only supports Chrome version 79`;
+
 export default memo(
   useInjectContext(({ tag, updateExecuteOutput }) => {
     const executeOutput = useSelector(
       state => state.temporaryvariable.executeOutput
     );
 
-    const [output, setOutput] = useState(executeOutput);
-    const [filter, setFilter] = useState('');
+    const [output, setOutput] = useState(fakeData);
+    const [filter, setFilter] = useState('openBrowser');
     const [newOutputTip, setNewOutputTip] = useState(false);
-    // const [filterOutput, setFilterOutput] = useState([]);
     const [selectedTags, setSelectedTags] = useState([
       'DEBUG',
       'INFO',
@@ -101,15 +106,17 @@ export default memo(
     const transformOutput = useMemo(() => {
       const outputList = output.split('\n').filter(Boolean);
       const selectedOutputList = outputList.filter(item => {
-        for (let i = 0; i < selectedTags.length; i += 1) {
-          const selectedTag = selectedTags[i];
-          if (item.indexOf(`[${selectedTag}]`) > -1) return true;
-        }
-        return false;
+        return selectedTags.some(tag => item.includes(`[${tag}]`));
+        // for (let i = 0; i < selectedTags.length; i += 1) {
+        //   const selectedTag = selectedTags[i];
+        //   if (item.indexOf(`[${selectedTag}]`) > -1) return true;
+        // }
+        // return false;
       });
 
       return selectedOutputList.map((item, index) => {
-        if (filter && item.indexOf(filter) > -1) {
+        // if (filter && item.indexOf(filter) > -1) {
+        if (filter && item.includes(filter)) {
           const className = `keyWordRow${index}`;
 
           return (
@@ -117,7 +124,8 @@ export default memo(
               key={item}
               dangerouslySetInnerHTML={{
                 __html: item.replace(
-                  RegExp(filter, 'g'),
+                  filter,
+                  // RegExp(filter, 'g'),
                   (match, index) =>
                     `<span class="${className}_${index}" style="color:red">${match}</span>`
                 ),
