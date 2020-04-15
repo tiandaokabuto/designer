@@ -24,7 +24,7 @@ const fakeData = `[INFO] 2020-04-15 13:47:12,404 Browser.py [line:50] openBrowse
 
 [ERROR] 2020-04-15 13:47:17,206 Browser.py [line:68] openBrowser 无法打开浏览器
 
-[ERROR] 2020-04-15 13:47:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of ChromeDriver only supports Chrome version 79`;
+[ERROR] 2020-04-15 13:47:17,206 Browser.py 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of [line:69] openBrowser Message: session not created: This version of ChromeDriver only supports Chrome version 79`;
 
 export default memo(
   useInjectContext(({ tag, updateExecuteOutput }) => {
@@ -32,7 +32,7 @@ export default memo(
       state => state.temporaryvariable.executeOutput
     );
 
-    const [output, setOutput] = useState(fakeData);
+    const [output, setOutput] = useState('');
     const [filter, setFilter] = useState('');
     const [matchNum, setMatchNum] = useState(0);
     const [cursor, setCursor] = useState(0);
@@ -143,6 +143,7 @@ export default memo(
         return <p key={item}>{item}</p>;
       });
       setMatchNum(matchNum);
+
       return result;
     }, [output, filter, cursor, selectedTags]);
 
@@ -162,6 +163,18 @@ export default memo(
       setTimeout(() => {
         outputDom.className = 'dragger-editor-container-output';
       }, 300);
+    };
+
+    const handleScrollIntoView = () => {
+      const activeDom = document.querySelector('span.keyWordRow_active');
+      const container = document.querySelector(
+        'div.dragger-editor-container-output'
+      );
+      const content = document.querySelector(
+        'pre.dragger-editor-container-output-content'
+      );
+
+      content.scrollTo(0, activeDom.offsetTop - container.offsetTop);
     };
 
     return (
@@ -212,14 +225,17 @@ export default memo(
             allowClear
             onChange={e => {
               if (e.target.value === '') {
+                setCursor(0);
                 setFilter('');
               }
             }}
             onSearch={value => {
+              setCursor(0);
               setFilter(value);
             }}
             onKeyDown={e => {
               if (e.keyCode === 13) {
+                setCursor(0);
                 setFilter(e.target.value);
               }
             }}
@@ -236,9 +252,15 @@ export default memo(
           matchNum={matchNum}
           handleNext={() => {
             setCursor(cursor => (cursor + 1 < matchNum ? cursor + 1 : cursor));
+            setTimeout(() => {
+              handleScrollIntoView();
+            });
           }}
           handlePrev={() => {
             setCursor(cursor => (cursor - 1 >= 0 ? cursor - 1 : cursor));
+            setTimeout(() => {
+              handleScrollIntoView();
+            });
           }}
         />
       </div>

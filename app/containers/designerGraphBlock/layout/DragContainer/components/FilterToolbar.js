@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
+import ArrowUpPNG from '@/containers/images/arrow-up.png';
+import ArrowDownPNG from '@/containers/images/arrow-down.png';
+
 let isMouseDown = false;
 let pageX = 0;
 let pageY = 0;
@@ -51,14 +54,17 @@ export default ({ visible, matchNum, handlePrev, handleNext }) => {
           handlePrev();
         }}
       >
-        上一个
+        <img
+          src={ArrowUpPNG}
+          style={{ width: 16, margin: '0 12px', cursor: 'pointer' }}
+        />
       </span>
       <span
         onClick={() => {
           handleNext();
         }}
       >
-        下一个
+        <img src={ArrowDownPNG} style={{ width: 16, cursor: 'pointer' }} />
       </span>
     </div>
   );
