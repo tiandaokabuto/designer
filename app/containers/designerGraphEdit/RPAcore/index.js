@@ -80,7 +80,7 @@ const transformEditorProcess = (
        * 情况二: 条件判断其中有一个的分支在遍历的路径上又回到了自身, 属于循环的情况
        *    额外处理
        */
-      const condition = blockData['properties'][0].value;
+      const condition = blockData['properties'][1].value;
 
       const isYesCircleExist = isCircleExist(
         graphData.edges,

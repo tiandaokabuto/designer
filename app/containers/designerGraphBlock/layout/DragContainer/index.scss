@@ -45,6 +45,36 @@
     padding-top: 8px;
     float: right;
   }
+  &-toolbar {
+    position: absolute;
+    cursor: default;
+    user-select: none;
+    width: 200px;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 12px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+  }
+  &-search {
+    position: absolute;
+    right: 379px;
+    top: 12px;
+    .ant-input {
+      height: 20px;
+      line-height: 20px;
+      background: rgba(230, 230, 230, 0);
+      border-radius: 12px;
+      border: 1px solid rgba(204, 204, 204, 1);
+      &:hover {
+        border-color: #32a67f !important;
+      }
+      &:focus {
+        box-shadow: none;
+      }
+    }
+  }
   &-title {
     position: relative;
     line-height: 40px;
@@ -82,6 +112,10 @@
     font-size: 14px;
     word-break: normal;
     white-space: normal;
+  }
+  .keyWordRow_active {
+    //color: #fff49c !important;
+    background: rgba(255, 244, 156, 1);
   }
   ::-webkit-scrollbar {
     width: 16px;

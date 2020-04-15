@@ -2,14 +2,17 @@ import React, { useEffect, useState, memo, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
-import { Icon } from 'antd';
+import { Icon, Input } from 'antd';
 
 import event, { PYTHON_OUTPUT } from '../eventCenter';
+import FilterToolbar from './components/FilterToolbar';
 import Tags from './components/Tags';
 import ZoomToolBar from './components/ZoomToolBar';
 
 let isMouseDown = false;
 let startOffset = 0;
+
+const { Search } = Input;
 
 const tagsFromServer = [
   { label: 'DEBUG', icon: 'warning', fill: '#0060bf' },
@@ -18,16 +21,23 @@ const tagsFromServer = [
   { label: 'ERROR', icon: 'close-circle', fill: '#ea5154' },
 ];
 
+const fakeData = `[INFO] 2020-04-15 13:47:12,404 Browser.py [line:50] openBrowser 正在打开浏览器...
+
+[ERROR] 2020-04-15 13:47:17,206 Browser.py [line:68] openBrowser 无法打开浏览器
+
+[ERROR] 2020-04-15 13:47:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of ChromeDriver only supports Chrome version 79`;
+
 export default memo(
   useInjectContext(({ tag, updateExecuteOutput }) => {
     const executeOutput = useSelector(
       state => state.temporaryvariable.executeOutput
     );
 
-    const [output, setOutput] = useState(executeOutput);
+    const [output, setOutput] = useState('');
     const [filter, setFilter] = useState('');
+    const [matchNum, setMatchNum] = useState(0);
+    const [cursor, setCursor] = useState(0);
     const [newOutputTip, setNewOutputTip] = useState(false);
-    // const [filterOutput, setFilterOutput] = useState([]);
     const [selectedTags, setSelectedTags] = useState([
       'DEBUG',
       'INFO',
@@ -102,16 +112,22 @@ export default memo(
     const transformOutput = useMemo(() => {
       const outputList = output.split('\n').filter(Boolean);
       const selectedOutputList = outputList.filter(item => {
-        for (let i = 0; i < selectedTags.length; i += 1) {
-          const selectedTag = selectedTags[i];
-          if (item.indexOf(`[${selectedTag}]`) > -1) return true;
-        }
-        return false;
+        return selectedTags.some(tag => item.includes(`[${tag}]`));
+        // for (let i = 0; i < selectedTags.length; i += 1) {
+        //   const selectedTag = selectedTags[i];
+        //   if (item.indexOf(`[${selectedTag}]`) > -1) return true;
+        // }
+        // return false;
       });
+      let matchNum = 0;
 
-      return selectedOutputList.map((item, index) => {
-        if (filter && item.indexOf(filter) > -1) {
-          const className = `keyWordRow${index}`;
+      const result = selectedOutputList.map((item, index) => {
+        // if (filter && item.indexOf(filter) > -1) {
+        if (filter && item.includes(filter)) {
+          const className =
+            cursor === index
+              ? `keyWordRow_${index} keyWordRow_active`
+              : `keyWordRow_${index}`;
 
           return (
             <p
@@ -119,8 +135,10 @@ export default memo(
               dangerouslySetInnerHTML={{
                 __html: item.replace(
                   RegExp(filter, 'g'),
-                  (match, index) =>
-                    `<span class="${className}_${index}" style="color:red">${match}</span>`
+                  (match, index) => (
+                    matchNum++,
+                    `<span class="${className}" style="color:red">${match}</span>`
+                  )
                 ),
               }}
             />
@@ -128,7 +146,9 @@ export default memo(
         }
         return <p key={item}>{item}</p>;
       });
-    }, [output, filter, selectedTags]);
+      setMatchNum(matchNum);
+      return result;
+    }, [output, filter, cursor, selectedTags]);
 
     const handleTriggerOpen = () => {
       const basicHeight = '220px';
@@ -169,6 +189,7 @@ export default memo(
           >
             输出
           </span>
+
           <div
             className="dragger-editor-container-output-anchor"
             onClick={handleTriggerOpen}
@@ -191,12 +212,31 @@ export default memo(
             }}
           />
         </div>
+        <div className="dragger-editor-container-output-search">
+          <Search
+            allowClear
+            onChange={e => {
+              if (e.target.value === '') {
+                setFilter('');
+              }
+            }}
+            onSearch={value => {
+              setFilter(value);
+            }}
+            onKeyDown={e => {
+              if (e.keyCode === 13) {
+                setFilter(e.target.value);
+              }
+            }}
+          />
+        </div>
         <pre
           className="dragger-editor-container-output-content"
           onMouseDown={e => e.stopPropagation()}
         >
           {transformOutput}
         </pre>
+        <FilterToolbar visible={filter !== ''} matchNum={matchNum} />
       </div>
     );
   })
