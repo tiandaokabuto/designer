@@ -4,7 +4,7 @@ let isMouseDown = false;
 let pageX = 0;
 let pageY = 0;
 
-export default ({ visible }) => {
+export default ({ visible, matchNum }) => {
   useEffect(() => {
     const toolBar = document.querySelector(
       'div.dragger-editor-container-output-toolbar'
@@ -45,7 +45,7 @@ export default ({ visible }) => {
         zIndex: visible ? 2 : -1,
       }}
     >
-      搜索结果: class, 共<span style={{ color: 'red' }}>32</span>个结果
+      搜索结果: class, 共<span style={{ color: 'red' }}>{matchNum}</span>个结果
     </div>
   );
 };

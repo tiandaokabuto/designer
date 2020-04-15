@@ -112,6 +112,10 @@
     word-break: normal;
     white-space: normal;
   }
+  .keyWordRow_active {
+    //color: #fff49c !important;
+    background: rgba(255, 244, 156, 1);
+  }
   ::-webkit-scrollbar {
     width: 16px;
     height: 16px;

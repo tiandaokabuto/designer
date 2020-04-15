@@ -34,6 +34,8 @@ export default memo(
 
     const [output, setOutput] = useState(fakeData);
     const [filter, setFilter] = useState('');
+    const [matchNum, setMatchNum] = useState(0);
+    const [cursor, setCursor] = useState(0);
     const [newOutputTip, setNewOutputTip] = useState(false);
     const [selectedTags, setSelectedTags] = useState([
       'DEBUG',
@@ -116,11 +118,15 @@ export default memo(
         // }
         // return false;
       });
+      let matchNum = 0;
 
-      return selectedOutputList.map((item, index) => {
+      const result = selectedOutputList.map((item, index) => {
         // if (filter && item.indexOf(filter) > -1) {
         if (filter && item.includes(filter)) {
-          const className = `keyWordRow${index}`;
+          const className =
+            cursor === index
+              ? `keyWordRow_${index} keyWordRow_active`
+              : `keyWordRow_${index}`;
 
           return (
             <p
@@ -128,8 +134,10 @@ export default memo(
               dangerouslySetInnerHTML={{
                 __html: item.replace(
                   RegExp(filter, 'g'),
-                  (match, index) =>
-                    `<span class="${className}_${index}" style="color:red">${match}</span>`
+                  (match, index) => (
+                    matchNum++,
+                    `<span class="${className}" style="color:red">${match}</span>`
+                  )
                 ),
               }}
             />
@@ -137,7 +145,9 @@ export default memo(
         }
         return <p key={item}>{item}</p>;
       });
-    }, [output, filter, selectedTags]);
+      setMatchNum(matchNum);
+      return result;
+    }, [output, filter, cursor, selectedTags]);
 
     const handleTriggerOpen = () => {
       const basicHeight = '220px';
@@ -224,7 +234,7 @@ export default memo(
         >
           {transformOutput}
         </pre>
-        <FilterToolbar visible={filter !== ''} />
+        <FilterToolbar visible={filter !== ''} matchNum={matchNum} />
       </div>
     );
   })
