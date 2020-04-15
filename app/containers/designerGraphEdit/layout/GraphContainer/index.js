@@ -4,7 +4,10 @@ import { useSelector } from 'react-redux';
 import { Modal, Radio } from 'antd';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
-import event from '../../../designerGraphBlock/layout/eventCenter';
+import event, {
+  CANVAS_ZOOM_OUT,
+  CANVAS_ZOOM_IN,
+} from '../../../designerGraphBlock/layout/eventCenter';
 import FlowItemPanel from './components/FlowItemPanel';
 import ProcessBlockNode from '../RegisterNode/ProcessBlockNode';
 import StartNode from '../RegisterNode/StartNode';
@@ -62,11 +65,25 @@ export default useInjectContext(
         const handleRedo = () => {
           executeCommand('redo');
         };
+        const handleZoomOut = frequency => {
+          for (let i = 0; i < frequency; i += 1) {
+            executeCommand('zoomOut');
+          }
+        };
+        const handleZoomIn = frequency => {
+          for (let i = 0; i < frequency; i += 1) {
+            executeCommand('zoomIn');
+          }
+        };
         event.addListener('undo', handleUndo);
         event.addListener('redo', handleRedo);
+        event.addListener(CANVAS_ZOOM_OUT, handleZoomOut);
+        event.addListener(CANVAS_ZOOM_IN, handleZoomIn);
         return () => {
           event.removeListener('undo', handleUndo);
           event.removeListener('redo', handleRedo);
+          event.removeListener(CANVAS_ZOOM_OUT, handleZoomOut);
+          event.removeListener(CANVAS_ZOOM_IN, handleZoomIn);
         };
       }, []);
 
