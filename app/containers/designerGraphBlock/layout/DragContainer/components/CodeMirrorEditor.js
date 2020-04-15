@@ -39,8 +39,6 @@ export default React.forwardRef(({ value, id }, ref) => {
     };
   });
 
-  console.log(value, id);
-
   useEffect(() => {
     var el = document.getElementById('editor' + (id ? id : ''));
     var version = '# version: Python3\n\n';
