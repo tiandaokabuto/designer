@@ -21,12 +21,6 @@ const tagsFromServer = [
   { label: 'ERROR', icon: 'close-circle', fill: '#ea5154' },
 ];
 
-const fakeData = `[INFO] 2020-04-15 13:47:12,404 Browser.py [line:50] openBrowser 正在打开浏览器...
-
-[ERROR] 2020-04-15 13:47:17,206 Browser.py [line:68] openBrowser 无法打开浏览器
-
-[ERROR] 2020-04-15 13:47:17,206 Browser.py 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of 7:17,206 Browser.py [line:69] openBrowser Message: session not created: This version of [line:69] openBrowser Message: session not created: This version of ChromeDriver only supports Chrome version 79`;
-
 export default memo(
   useInjectContext(({ tag, updateExecuteOutput }) => {
     const executeOutput = useSelector(
@@ -175,7 +169,7 @@ export default memo(
         'pre.dragger-editor-container-output-content'
       );
 
-      content.scrollTo(0, activeDom.offsetTop - container.offsetTop);
+      content.scrollTo(0, activeDom.offsetTop - 40);
     };
 
     return (
