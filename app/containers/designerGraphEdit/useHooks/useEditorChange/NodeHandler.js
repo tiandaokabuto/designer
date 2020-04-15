@@ -322,6 +322,58 @@ class NodeHandler {
 
         event.emit('loopChoose');
         event.addListener('loopChooseEnd', type => {
+          const processblockDesc = {
+            shape: 'processblock',
+            properties: [
+              {
+                cnName: '标签名称',
+                enName: 'label',
+                value: '流程块',
+                default: '',
+              },
+              {
+                cnName: '输入参数',
+                enName: 'param',
+                value: [],
+                default: '',
+              },
+              {
+                cnName: '流程块返回',
+                enName: 'output',
+                value: '',
+                default: '',
+              },
+            ],
+            variable: [],
+          };
+          const rhombusDesc = {
+            shape: 'rhombus-node',
+            properties: [
+              {
+                cnName: '标签名称',
+                enName: 'label',
+                value: '判断',
+                default: '',
+              },
+              {
+                cnName: '分支条件',
+                enName: 'condition',
+                value: '',
+                default: '',
+              },
+            ],
+          };
+          if (type === 'while' || type === 'doWhile') {
+            setGraphDataMap(processBlockIdOne, processblockDesc);
+            setGraphDataMap(processBlockIdTwo, processblockDesc);
+            setGraphDataMap(rhombusNodeId, rhombusDesc);
+          } else {
+            setGraphDataMap(processBlockIdOne, processblockDesc);
+            setGraphDataMap(processBlockIdTwo, processblockDesc);
+            setGraphDataMap(processBlockIdThree, processblockDesc);
+            setGraphDataMap(processBlockIdFour, processblockDesc);
+            setGraphDataMap(rhombusNodeId, rhombusDesc);
+          }
           updateGraphData({
             ...graphData,
             nodes: (graphData.nodes || []).concat(LOOP_GRAPHDATA[type].nodes),
