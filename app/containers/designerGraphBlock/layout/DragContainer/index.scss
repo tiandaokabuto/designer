@@ -22,7 +22,6 @@
   background: white;
   border-top: 1px solid #cccccc;
   bottom: 0px;
-  overflow: hidden;
   background: #fcfcfc;
   &::before {
     content: '';
@@ -31,6 +30,7 @@
     cursor: row-resize;
     position: absolute;
     top: 0;
+    z-index: 2;
   }
   &-animateOpen {
     transition: ease height 0.3s;
@@ -46,6 +46,7 @@
     float: right;
   }
   &-title {
+    position: relative;
     line-height: 40px;
     height: 40px;
     background: linear-gradient(

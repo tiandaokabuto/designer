@@ -7,3 +7,11 @@ export const PYTHON_OUTPUT = /** 回显python代码执行后的结果           
 export const PYTHON_DISPLAY = /** 将转化后的代码展示到在线编辑器          */ Symbol(
   'python_display'
 );
+
+export const CANVAS_ZOOM_OUT = /** 缩小画布                              */ Symbol(
+  'canvas_zoom_out'
+);
+
+export const CANVAS_ZOOM_IN = /** 放大画布                              */ Symbol(
+  'canvas_zoom_in'
+);
