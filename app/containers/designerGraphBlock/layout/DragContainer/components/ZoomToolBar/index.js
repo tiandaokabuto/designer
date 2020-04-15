@@ -33,11 +33,13 @@ const Zoom = () => {
   };
 
   const handleClick = (type, frequency) => {
-    if (zoomLevel >= 19 || zoomLevel <= 1 || isCanvasNoNode) return;
+    if (isCanvasNoNode) return;
     if (type === 'zoom-in') {
+      if (zoomLevel >= 19) return;
       event.emit(CANVAS_ZOOM_IN, frequency);
       setZoomLevel(zoomLevel + frequency);
     } else if (type === 'zoom-out') {
+      if (zoomLevel <= 1) return;
       event.emit(CANVAS_ZOOM_OUT, frequency);
       setZoomLevel(zoomLevel - frequency);
     }
