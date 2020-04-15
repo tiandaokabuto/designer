@@ -15,15 +15,15 @@ const transformConditionalStatement = (padding, dataStructure, result) => {
         console.log(item.rule);
         // 最后一个，不把连接符填上
         if (item.rule === 'None' || item.rule === 'not None') {
-          result.output += `${item.v1} ${item.rule} `;
+          result.output += `(${item.v1} ${item.rule}) `;
         } else {
-          result.output += `${item.v1} ${item.rule} ${item.v2} `;
+          result.output += `(${item.v1} ${item.rule} ${item.v2}) `;
         }
       } else {
         if (item.rule === 'None' || item.rule === 'not None') {
-          result.output += `${item.v1} ${item.rule} ${item.connect} `;
+          result.output += `(${item.v1} ${item.rule}) ${item.connect} `;
         } else {
-          result.output += `${item.v1} ${item.rule} ${item.v2} ${item.connect} `;
+          result.output += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;
         }
       }
     });
