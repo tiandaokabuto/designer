@@ -235,12 +235,17 @@ export default useInjectContext(
               }}
             >
               <Radio value={'while'} className="while-radio">
+                <div className="while-desc">While循环 (先判断再做的循环)</div>
                 <img src={WhileJPG} style={{ width: '100%' }} />
               </Radio>
               <Radio value={'doWhile'} className="while-radio">
+                <div className="while-desc">
+                  Do-While循环 (先做再判断的循环)
+                </div>
                 <img src={DoWhileJPG} style={{ width: '100%' }} />
               </Radio>
               <Radio value={'forEach'} className="while-radio">
+                <div className="while-desc">For循环 (数组遍历的循环)</div>
                 <img
                   src={ForEachJPG}
                   style={{ width: '100%', height: '90%' }}
