@@ -85,6 +85,8 @@ export default memo(
 
     const getProcessName = useGetProcessName();
 
+    const downloadPython = useGetDownloadPath();
+
     const transformProcessToPython = useTransformProcessToPython();
 
     const executePython = useExecutePython();
@@ -123,6 +125,7 @@ export default memo(
           }, 0);
         } catch (e) {
           message.error('代码转换出错，请检查流程图');
+          console.log(e);
         }
       }
     };
@@ -442,6 +445,7 @@ export default memo(
                     );
                   } catch (e) {
                     message.error('代码转换出错，请检查流程图');
+                    console.log(e);
                   }
                 }}
               >
