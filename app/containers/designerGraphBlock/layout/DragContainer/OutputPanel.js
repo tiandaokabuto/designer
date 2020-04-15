@@ -123,22 +123,19 @@ export default memo(
       const result = selectedOutputList.map((item, index) => {
         // if (filter && item.indexOf(filter) > -1) {
         if (filter && item.includes(filter)) {
-          const className =
-            cursor === index
-              ? `keyWordRow_${index} keyWordRow_active`
-              : `keyWordRow_${index}`;
-
+          const className = `keyWordRow_${index}`;
           return (
             <p
               key={item}
               dangerouslySetInnerHTML={{
-                __html: item.replace(
-                  RegExp(filter, 'g'),
-                  (match, index) => (
-                    matchNum++,
-                    `<span class="${className}" style="color:red">${match}</span>`
-                  )
-                ),
+                __html: item.replace(RegExp(filter, 'g'), (match, index) => {
+                  const classNameT =
+                    matchNum === cursor
+                      ? className + ' keyWordRow_active'
+                      : className;
+                  matchNum++;
+                  return `<span class="${classNameT}" style="color:red">${match}</span>`;
+                }),
               }}
             />
           );
@@ -234,7 +231,16 @@ export default memo(
         >
           {transformOutput}
         </pre>
-        <FilterToolbar visible={filter !== ''} matchNum={matchNum} />
+        <FilterToolbar
+          visible={filter !== ''}
+          matchNum={matchNum}
+          handleNext={() => {
+            setCursor(cursor => (cursor + 1 < matchNum ? cursor + 1 : cursor));
+          }}
+          handlePrev={() => {
+            setCursor(cursor => (cursor - 1 >= 0 ? cursor - 1 : cursor));
+          }}
+        />
       </div>
     );
   })

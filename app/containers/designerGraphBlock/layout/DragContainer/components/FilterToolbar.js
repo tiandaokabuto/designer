@@ -4,7 +4,7 @@ let isMouseDown = false;
 let pageX = 0;
 let pageY = 0;
 
-export default ({ visible, matchNum }) => {
+export default ({ visible, matchNum, handlePrev, handleNext }) => {
   useEffect(() => {
     const toolBar = document.querySelector(
       'div.dragger-editor-container-output-toolbar'
@@ -46,6 +46,20 @@ export default ({ visible, matchNum }) => {
       }}
     >
       搜索结果: class, 共<span style={{ color: 'red' }}>{matchNum}</span>个结果
+      <span
+        onClick={() => {
+          handlePrev();
+        }}
+      >
+        上一个
+      </span>
+      <span
+        onClick={() => {
+          handleNext();
+        }}
+      >
+        下一个
+      </span>
     </div>
   );
 };
