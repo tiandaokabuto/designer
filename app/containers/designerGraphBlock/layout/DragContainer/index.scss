@@ -50,6 +50,8 @@
     cursor: default;
     user-select: none;
     height: 32px;
+    white-space: nowrap;
+    // overflow: hidden;
     line-height: 32px;
     padding: 0 12px;
     background: rgba(255, 255, 255, 1);
