@@ -31,13 +31,9 @@ class NodeHandler {
       } = store.getState();
       if (description.model.shape === 'processblock') {
         const key = description.item.id;
-<<<<<<< HEAD
         const {
           grapheditor: { savingModuleData, movingModuleNode, currentProject },
         } = store.getState();
-=======
-
->>>>>>> 7a467986b51f55ab901d256b8d22db7534a51d55
         if (savingModuleData) {
           setGraphDataMap(key, savingModuleData);
           changeSavingModuleData(undefined);
