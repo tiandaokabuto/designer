@@ -395,7 +395,6 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
           <Input
             defaultValue={checkedBlock._userDesc}
             onChange={e => {
-              console.log(e.target.value);
               checkedBlock.userDesc = e.target.value;
               handleEmitCodeTransform(cards);
             }}
