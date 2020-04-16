@@ -18,6 +18,7 @@ body {
   font-family: Arial, Helvetica, Helvetica Neue, serif;
   overflow-y: hidden;
   margin: 0;
+  border: 2px solid #32a67f;
 }
 /* ::-webkit-scrollbar {
   display: none;
