@@ -247,6 +247,7 @@ export default memo(
         <FilterToolbar
           visible={filter !== ''}
           matchNum={matchNum}
+          filter={filter}
           handleNext={() => {
             setCursor(cursor => (cursor + 1 < matchNum ? cursor + 1 : cursor));
             setTimeout(() => {
