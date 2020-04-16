@@ -12,8 +12,8 @@ import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
-import PATH_CONFIG from '@/constants/localFilePath';
 
+import PATH_CONFIG from '@/constants/localFilePath';
 import { CHANGE_CHECKEDID } from '../../../../../actions/codeblock';
 import {
   useDropTarget,
@@ -29,6 +29,7 @@ import {
 import { BasicStatementTag } from '../../statementTags';
 import Interactive from './components/Interactive';
 import CodeBlock from './components/CodeBlock';
+import MaskLayer from './components/MaskLayer';
 import ItemTypes from '../../statementTypes';
 
 const { ipcRenderer } = require('electron');
@@ -127,6 +128,8 @@ const BasicStatement = useInjectContext(props => {
 
   // 代码块编写逻辑
   const [codeVisible, setCodeVisible] = useState(false);
+  // 展示图片遮罩层
+  const [showImgContain, setShowImgContain] = useState(false);
 
   const generateEditOperation = card => {
     switch (card.cmdName) {
@@ -162,6 +165,11 @@ const BasicStatement = useInjectContext(props => {
     if (!layout) return;
     Object.assign(card.layout, layout);
     handleEmitCodeTransform(cards);
+  };
+
+  const handleEnlageImg = e => {
+    setShowImgContain(true);
+    e.stopPropagation();
   };
 
   return (
@@ -209,14 +217,14 @@ const BasicStatement = useInjectContext(props => {
                 }
               }}
               dangerouslySetInnerHTML={{ __html: templateVisible }}
-            ></div>
+            />
           </div>
         )}
         {isTail ? (
-          <div></div>
+          <div />
         ) : (
           !readOnly && (
-            <React.Fragment>
+            <>
               <div className="card-content-operation">
                 <Icon
                   type="play-circle"
@@ -275,22 +283,36 @@ const BasicStatement = useInjectContext(props => {
                 }}
               >
                 {xpathImage === undefined ? (
-                  <Fragment>
+                  <>
                     <Icon
                       type="home"
                       className="card-content-searchtarget-anchor"
                     />
                     查找目标
-                  </Fragment>
+                  </>
                 ) : (
-                  <img
-                    src={xpathImage}
-                    alt="xpath"
-                    style={{ width: 48, height: 32 }}
-                  />
+                  <div className="card-content-searchtarget-content">
+                    <img
+                      src={xpathImage}
+                      alt="xpath"
+                      className="card-content-searchtarget-img"
+                      style={{ maxWidth: 48, maxHeight: 32 }}
+                    />
+                    <Icon
+                      type="fullscreen"
+                      className="card-content-searchtarget-fullscreen"
+                      onClick={handleEnlageImg}
+                    />
+                    <MaskLayer
+                      isShow={showImgContain}
+                      handleCilckFrangment={() => setShowImgContain(false)}
+                    >
+                      <img src={xpathImage} alt="xpath" />
+                    </MaskLayer>
+                  </div>
                 )}
               </div>
-            </React.Fragment>
+            </>
           )
         )}
       </div>
@@ -298,10 +320,10 @@ const BasicStatement = useInjectContext(props => {
         className={isTail ? 'card-mask card-mask__tail' : 'card-mask'}
         data-id={isTail ? '' : id}
         style={{
-          backgroundColor: backgroundColor,
+          backgroundColor,
         }}
         ref={dragImage}
-      ></div>
+      />
       <Interactive
         saveLayoutChange={saveLayoutChange}
         interactiveCard={card}

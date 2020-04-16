@@ -1,0 +1,18 @@
+#fragment {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  background: rgba(125, 125, 125, 0.8);
+}
+.showMaskLayer {
+  position: absolute;
+  display: inline-block;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.showFragment {
+  display: block !important;
+}
