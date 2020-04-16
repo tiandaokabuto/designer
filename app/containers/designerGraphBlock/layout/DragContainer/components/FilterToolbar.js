@@ -24,8 +24,23 @@ export default ({ visible, matchNum, handlePrev, handleNext, filter }) => {
         pageY = e.pageY;
         const newTop = parseInt(toolBar.style.top, 10) + offsetTop;
         const newLeft = parseInt(toolBar.style.left, 10) + offsetLeft;
+
+        const toolBarWidth = parseInt(window.getComputedStyle(toolBar).width);
+        const containerWidth = parseInt(
+          window.getComputedStyle(
+            document.querySelector(
+              'pre.dragger-editor-container-output-content'
+            )
+          ).width
+        );
+
         toolBar.style.top = (newTop < 0 ? 0 : newTop) + 'px';
-        toolBar.style.left = (newLeft < 0 ? 0 : newLeft) + 'px';
+        toolBar.style.left =
+          (newLeft < 0
+            ? 0
+            : newLeft > containerWidth - toolBarWidth
+            ? containerWidth - toolBarWidth
+            : newLeft) + 'px';
         if (newTop < -20 || newLeft < -20) {
           isMouseDown = false;
         }
