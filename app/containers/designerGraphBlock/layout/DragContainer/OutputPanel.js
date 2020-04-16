@@ -27,7 +27,7 @@ export default memo(
       state => state.temporaryvariable.executeOutput
     );
 
-    const [output, setOutput] = useState(fakeData);
+    const [output, setOutput] = useState('');
     const [filter, setFilter] = useState('');
     const [matchNum, setMatchNum] = useState(0);
     const [cursor, setCursor] = useState(0);
@@ -168,8 +168,9 @@ export default memo(
       const content = document.querySelector(
         'pre.dragger-editor-container-output-content'
       );
-
-      content.scrollTo(0, activeDom.offsetTop - 40);
+      if (content && activeDom) {
+        content.scrollTo(0, activeDom.offsetTop - 40);
+      }
     };
 
     return (
