@@ -64,6 +64,36 @@
       width: 1px;
       background: rgba(50, 166, 127, 1);
     }
+    &-fullscreen {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    &-showLageImgContain {
+      display: block;
+      position: fixed;
+      bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+    &-hideLageImgContain {
+      display: none;
+    }
+    &-content {
+      width: 48px;
+      height: 32px;
+    }
+    &-img {
+      max-width: 48px;
+      max-height: 32px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
   .template_span {
     max-width: 100px;

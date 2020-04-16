@@ -335,7 +335,7 @@ export default ({ type }) => {
   return (
     <div
       style={{
-        height: '78vh',
+        height: 'calc(100vh - 150px)',
       }}
     >
       <Tree
