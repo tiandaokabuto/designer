@@ -168,8 +168,9 @@ export default memo(
       const content = document.querySelector(
         'pre.dragger-editor-container-output-content'
       );
-
-      content.scrollTo(0, activeDom.offsetTop - 40);
+      if (content && activeDom) {
+        content.scrollTo(0, activeDom.offsetTop - 40);
+      }
     };
 
     return (
@@ -246,6 +247,7 @@ export default memo(
         <FilterToolbar
           visible={filter !== ''}
           matchNum={matchNum}
+          filter={filter}
           handleNext={() => {
             setCursor(cursor => (cursor + 1 < matchNum ? cursor + 1 : cursor));
             setTimeout(() => {
