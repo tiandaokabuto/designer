@@ -12,8 +12,6 @@ export default ({
   stopDeleteKeyDown,
   setFlag,
 }) => {
-  console.log(param, cards);
-
   const [tag, setTag] = useState(param.tag);
 
   const handleDelete = index => {
