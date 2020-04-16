@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 export default card => {
+  /*111*/
   const [desc, setDesc] = useState(card._userDesc);
   useEffect(() => {
     const descriptor = Object.getOwnPropertyDescriptor(card, 'userDesc');

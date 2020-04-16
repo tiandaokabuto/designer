@@ -49,11 +49,12 @@ export default ({ current }) => {
       if (isMouseDown) {
         let offset = startOffset - e.pageX; // 偏移量
         startOffset = e.pageX;
-        // if (e.clientX <= 239) return;
+        if (e.clientX <= 239) return;
         const outputDom = document.querySelector('.dragger-editor-parampanel');
         const originWidth = getParamPanelWidth();
         const currentWidth = originWidth + offset;
-        outputDom.style.width = currentWidth + 'px';
+        outputDom.style.flexBasis = currentWidth + 'px';
+        // outputDom.style.width = currentWidth + 'px';
       }
     }, 0);
 
@@ -72,39 +73,48 @@ export default ({ current }) => {
         startOffset = e.pageX;
       }}
     >
-      <Tabs className="dragger-editor-parampanel-tabs">
-        <TabPane tab="属性" key="1">
-          {checkedBlock && (
-            <ParamPanel
-              checkedBlock={checkedBlock}
-              handleEmitCodeTransform={handleEmitCodeTransform}
-              key={checkedBlock.id}
-              cards={cards}
+      <div
+        onMouseDown={e => {
+          e.stopPropagation();
+        }}
+      >
+        <Tabs className="dragger-editor-parampanel-tabs">
+          <TabPane tab="属性" key="1">
+            {checkedBlock && (
+              <ParamPanel
+                onMouseDown={e => {
+                  console.log('aaaa');
+                }}
+                checkedBlock={checkedBlock}
+                handleEmitCodeTransform={handleEmitCodeTransform}
+                key={checkedBlock.id}
+                cards={cards}
+              />
+            )}
+          </TabPane>
+          <TabPane tab="变量" key="2">
+            <VariablePanel
+              blockNode={{
+                variable: inputParams,
+              }}
+              handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+              label="输入参数"
+              disabled={true}
             />
-          )}
-        </TabPane>
-        <TabPane tab="变量" key="2">
-          <VariablePanel
-            blockNode={{
-              variable: inputParams,
-            }}
-            handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
-            label="输入参数"
-            disabled={true}
-          />
-          <VariablePanel
-            blockNode={blockNode}
-            handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
-          />
-        </TabPane>
-        <TabPane tab="流程图" key="3">
-          <GGEditor>
-            <div style={{ height: 'calc(100vh - 81px)' }}>
-              <GraphContainer showHead={true} />
-            </div>
-          </GGEditor>
-        </TabPane>
-      </Tabs>
+            <VariablePanel
+              blockNode={blockNode}
+              handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+            />
+          </TabPane>
+          <TabPane tab="流程图" key="3">
+            <GGEditor>
+              <div style={{ height: 'calc(100vh - 81px)' }}>
+                <GraphContainer showHead={true} />
+              </div>
+            </GGEditor>
+          </TabPane>
+        </Tabs>
+      </div>
     </div>
   );
 };

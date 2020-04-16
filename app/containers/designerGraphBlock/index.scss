@@ -118,21 +118,25 @@
     }
   }
   &-parampanel {
-    width: 239px;
-    // min-width: 239px;
-    // max-width: 239px;
-    // flex-basis: 239px;
+    // width: 239px;
+    min-width: 239px;
+    max-width: 500px;
+    flex-basis: 239px;
+    // flex-basis: 1;
     position: relative;
+    pointer-events: none;
     &::before {
+      pointer-events: auto;
       content: '';
       height: 100%;
       width: 5px;
       cursor: col-resize;
       position: absolute;
-      top: 112px;
+      // top: 112px;
       z-index: 2;
     }
     &-tabs {
+      pointer-events: auto;
       .ant-tabs-tab {
         margin: 0;
         min-width: 68px;

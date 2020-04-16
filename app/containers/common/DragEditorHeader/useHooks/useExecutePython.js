@@ -15,10 +15,12 @@ export default () => {
     });
     worker.stdout.on('data', function(data) {
       const log = iconv.decode(data, 'cp936');
+      console.log(log);
       event.emit(PYTHON_OUTPUT, log);
     });
     worker.stderr.on('data', function(err) {
       const log = iconv.decode(err, 'cp936');
+      console.log(log);
       event.emit(PYTHON_OUTPUT, log);
     });
     worker.on('error', error => {

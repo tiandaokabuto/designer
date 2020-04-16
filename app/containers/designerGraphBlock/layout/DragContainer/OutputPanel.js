@@ -104,15 +104,20 @@ export default memo(
           };
 
     const transformOutput = useMemo(() => {
+      let selectedOutputList;
       const outputList = output.split('\n').filter(Boolean);
-      const selectedOutputList = outputList.filter(item => {
-        return selectedTags.some(tag => item.includes(`[${tag}]`));
-        // for (let i = 0; i < selectedTags.length; i += 1) {
-        //   const selectedTag = selectedTags[i];
-        //   if (item.indexOf(`[${selectedTag}]`) > -1) return true;
-        // }
-        // return false;
-      });
+      if (selectedTags.length === 4) {
+        selectedOutputList = outputList;
+      } else {
+        selectedOutputList = outputList.filter(item => {
+          return selectedTags.some(tag => item.includes(`[${tag}]`));
+          // for (let i = 0; i < selectedTags.length; i += 1) {
+          //   const selectedTag = selectedTags[i];
+          //   if (item.indexOf(`[${selectedTag}]`) > -1) return true;
+          // }
+          // return false;
+        });
+      }
       let matchNum = 0;
 
       const result = selectedOutputList.map((item, index) => {
@@ -138,7 +143,6 @@ export default memo(
         return <p key={item}>{item}</p>;
       });
       setMatchNum(matchNum);
-
       return result;
     }, [output, filter, cursor, selectedTags]);
 
