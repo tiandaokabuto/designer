@@ -14,7 +14,6 @@ const transformConditionalStatement = (padding, dataStructure, result) => {
     result.output += `${padding}if `;
     valueList.forEach((item, index) => {
       if (index === valueList.length - 1) {
-        console.log(item.rule);
         // 最后一个，不把连接符填上
         if (item.rule === 'is None' || item.rule === 'not None') {
           result.output += `(${item.v1} ${item.rule}) `;

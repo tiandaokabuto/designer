@@ -12,8 +12,6 @@ export default ({
   stopDeleteKeyDown,
   setFlag,
 }) => {
-  console.log(param, cards);
-
   const [tag, setTag] = useState(param.tag);
 
   const handleDelete = index => {
@@ -49,6 +47,7 @@ export default ({
         }}
         onChange={e => {
           param.tag = e.target.value;
+          param.forceUpdate = param.forceUpdate + 1;
           setTag(e.target.value);
           handleEmitCodeTransform(cards);
         }}
@@ -83,6 +82,7 @@ export default ({
                       defaultValue={item.v1}
                       onChange={e => {
                         item.v1 = e.target.value;
+                        param.forceUpdate = param.forceUpdate + 1;
                         handleEmitCodeTransform(cards);
                       }}
                     />
@@ -92,6 +92,7 @@ export default ({
                       dropdownMatchSelectWidth={false}
                       onChange={value => {
                         item.rule = value;
+                        param.forceUpdate = param.forceUpdate + 1;
                         handleEmitCodeTransform(cards);
                       }}
                     >
@@ -106,6 +107,7 @@ export default ({
                       defaultValue={item.v2}
                       onChange={e => {
                         item.v2 = e.target.value;
+                        param.forceUpdate = param.forceUpdate + 1;
                         handleEmitCodeTransform(cards);
                       }}
                     />
@@ -114,6 +116,7 @@ export default ({
                       className="condition-param-btn"
                       onClick={() => {
                         handleDelete(index);
+                        param.forceUpdate = param.forceUpdate + 1;
                         handleEmitCodeTransform(cards);
                       }}
                     />
@@ -123,6 +126,7 @@ export default ({
                       defaultValue={item.connect}
                       onChange={e => {
                         item.connect = e.target.value;
+                        param.forceUpdate = param.forceUpdate + 1;
                         handleEmitCodeTransform(cards);
                       }}
                       style={{

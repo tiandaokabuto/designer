@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
+import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
 import { findNodeLevelById, findNodeById } from '../shared/utils';
 import event from '../eventCenter';
@@ -10,8 +11,65 @@ export default (id, visibleTemplate) => {
     const cards = useSelector(state => state.blockcode.cards);
     const handleEmitCodeTransform = useTransformToPython();
     const [newVisible, setNewVisible] = useState('');
+    const [condition, setCondition] = useState('');
     const [canDrag, setCanDrag] = useState(true);
+    const [_, forceUpdate] = useForceUpdate();
     const node = findNodeById(cards, id);
+
+    if (
+      node.text === '条件分支' &&
+      node.properties.required[0].tag === /* 条件语句的向导模式 */ 1
+    ) {
+      const transformCondition = () => {
+        const valueList = node.properties.required[0].valueList || [];
+        let result = '';
+        valueList.forEach((item, index) => {
+          if (index === valueList.length - 1) {
+            // 最后一个，不把连接符填上
+            if (item.rule === 'None' || item.rule === 'not None') {
+              result += `(${item.v1} ${item.rule}) `;
+            } else {
+              result += `(${item.v1} ${item.rule} ${item.v2}) `;
+            }
+          } else {
+            if (item.rule === 'None' || item.rule === 'not None') {
+              result += `(${item.v1} ${item.rule}) ${item.connect} `;
+            } else {
+              result += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;
+            }
+          }
+        });
+        setCondition(result);
+        forceUpdate();
+      };
+
+      useEffect(() => {
+        const item = node.properties.required[0];
+        const descriptor = Object.getOwnPropertyDescriptor(item, 'forceUpdate');
+        if (descriptor && descriptor.get) {
+          return;
+        }
+        item._forceUpdate = item.forceUpdate || 0;
+
+        Object.defineProperty(item, 'forceUpdate', {
+          get() {
+            return this._forceUpdate;
+          },
+          set(value) {
+            this._forceUpdate = value;
+
+            if (node.properties.required[0].tag === 1) {
+              transformCondition();
+            } else {
+              forceUpdate();
+            }
+          },
+        });
+
+        transformCondition();
+      }, [node]);
+      return [true, `如果满足 ${condition} 则`, () => {}, () => {}];
+    }
     const watchingListTemp = visibleTemplate.match(/({{.*?}})/g);
     if (watchingListTemp === null) return [true, visibleTemplate];
     const watchingList = watchingListTemp.map(item =>

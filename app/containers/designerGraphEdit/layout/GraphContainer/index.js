@@ -225,7 +225,8 @@ export default useInjectContext(
           <ReuseCommand />
           {/* <HighlightEditor /> */}
           <CustomCommand />
-          <OutputPanel tag="graph" />
+          {!showHead && <OutputPanel tag="graph" />}
+
           <Modal
             visible={modalVisible}
             closable={false}
