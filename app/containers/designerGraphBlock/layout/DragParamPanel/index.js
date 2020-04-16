@@ -49,7 +49,7 @@ export default ({ current }) => {
       if (isMouseDown) {
         let offset = startOffset - e.pageX; // 偏移量
         startOffset = e.pageX;
-        // if (e.clientX <= 239) return;
+        if (e.clientX <= 239) return;
         const outputDom = document.querySelector('.dragger-editor-parampanel');
         const originWidth = getParamPanelWidth();
         const currentWidth = originWidth + offset;
