@@ -53,7 +53,8 @@ export default ({ current }) => {
         const outputDom = document.querySelector('.dragger-editor-parampanel');
         const originWidth = getParamPanelWidth();
         const currentWidth = originWidth + offset;
-        outputDom.style.width = currentWidth + 'px';
+        outputDom.style.flexBasis = currentWidth + 'px';
+        // outputDom.style.width = currentWidth + 'px';
       }
     }, 0);
 
@@ -76,6 +77,9 @@ export default ({ current }) => {
         <TabPane tab="属性" key="1">
           {checkedBlock && (
             <ParamPanel
+              onMouseDown={e => {
+                console.log('aaaa');
+              }}
               checkedBlock={checkedBlock}
               handleEmitCodeTransform={handleEmitCodeTransform}
               key={checkedBlock.id}
