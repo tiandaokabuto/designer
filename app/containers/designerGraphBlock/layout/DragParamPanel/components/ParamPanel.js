@@ -1,5 +1,11 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { Input, Select, AutoComplete, Button } from 'antd';
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  Fragment,
+} from 'react';
+import { Input, Select, AutoComplete, Button, Icon, Radio } from 'antd';
 import { useSelector } from 'react-redux';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 import uniqueId from 'lodash/uniqueId';
@@ -11,6 +17,7 @@ import {
   useAppendDataSource,
   useVerifyInput,
 } from '../../useHooks';
+import ConditionParam from './ConditionParam';
 import api, { config } from '../../../../../api';
 const { ipcRenderer } = require('electron');
 
@@ -134,6 +141,16 @@ const getComponentType = (
           );
         })}
       </div>
+    );
+  } else if (param.enName === 'ifcondition') {
+    return (
+      <ConditionParam
+        param={param}
+        cards={cards}
+        handleEmitCodeTransform={handleEmitCodeTransform}
+        stopDeleteKeyDown={stopDeleteKeyDown}
+        setFlag={setFlag}
+      ></ConditionParam>
     );
   }
   switch (param.componentType) {
@@ -328,9 +345,13 @@ const ParamItem = ({
   return (
     <React.Fragment>
       <div className="parampanel-item">
-        <span className="param-title" title={param.desc}>
-          {param.cnName}
-        </span>
+        {param.cnName === '条件' ? (
+          ''
+        ) : (
+          <span className="param-title" title={param.desc}>
+            {param.cnName}
+          </span>
+        )}
         <div style={{ flex: 1, overflow: 'hidden' }}>
           {getComponentType(
             param,

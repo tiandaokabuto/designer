@@ -257,9 +257,13 @@ const BasicStatement = useInjectContext(props => {
                     '键盘-目标中输入文本',
                   ];
                   if (cmdNameArr.includes(card.cmdName)) {
-                    // console.log(PATH_CONFIG('windowHook'));
+                    console.log(PATH_CONFIG('windowHook'));
+                    try {
+                      const worker = exec(PATH_CONFIG('windowHook'));
+                    } catch (e) {
+                      console.log(e);
+                    }
                     console.log('调用testHook');
-                    const worker = exec(PATH_CONFIG('windowHook'));
                   }
                   ipcRenderer.on(
                     'updateXpath',

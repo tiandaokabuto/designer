@@ -251,8 +251,6 @@ export const renameNodeByKey = (
   const node = findNodeByKey(tree, key);
   // const parent = findParentNodeByKey(tree, key) || [];
   const oldTitle = node.title;
-  console.log(node);
-  console.log(persistentStorage);
   if (type === 'process') {
     node.title = (
       <Input
@@ -426,7 +424,7 @@ export const persistentStorage = (
   });
 };
 
-export const persistentModuleStorage = (moduleTree, name, node) => {
+export const persistentModuleStorage = (moduleTree, name) => {
   // let tree = JSON.parse(JSON.stringify(moduleTree));
   fs.readFile(
     PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
@@ -667,7 +665,6 @@ export const openProject = name => {
         function(err, data) {
           if (!err) {
             const { moduleTree } = JSON.parse(data.toString());
-            console.log(moduleTree);
             changeModuleTree(moduleTree);
           } else {
             changeModuleTree([]);
@@ -809,13 +806,11 @@ export const addToReuse = () => {
     },
   } = store.getState();
   const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
-  console.log(data); // 数据
   const title = data.properties[0].value; // 标题
   const files = fs.readdirSync(
     PATH_CONFIG('project', `${currentProject}/${currentProject}_module`)
   );
   const item = files.find(item => item === `${title}.json`);
-  console.log(item);
   if (!item) {
     // 把流程块数据写入文件
     fs.writeFileSync(
@@ -835,7 +830,7 @@ export const addToReuse = () => {
       graphDataMap: {},
     });
     changeModuleTree(newModuleTree);
-    console.log(newModuleTree);
+    persistentModuleStorage(newModuleTree, currentProject);
     fs.readFile(
       PATH_CONFIG(
         'project',
@@ -844,7 +839,6 @@ export const addToReuse = () => {
       function(err, data) {
         if (!err) {
           let description = JSON.parse(data.toString());
-          console.log(description);
           fs.writeFile(
             PATH_CONFIG(
               'project',

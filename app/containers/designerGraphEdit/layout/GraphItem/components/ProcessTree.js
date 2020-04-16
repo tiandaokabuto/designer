@@ -280,6 +280,7 @@ export default ({ type }) => {
         content: '请确认是否删除?',
         onOk() {
           deleteNodeByKey(type, moduleTree, currentProject, key);
+          changeCheckedModuleTreeNode(undefined);
           changeModuleTree([...moduleTree]);
           // resetGraphEditData();
           persistentStorage();
@@ -332,7 +333,11 @@ export default ({ type }) => {
   }, [setExpandedKeys]);
 
   return (
-    <div>
+    <div
+      style={{
+        height: '78vh',
+      }}
+    >
       <Tree
         className="draggable-tree"
         expandedKeys={expandedKeys}

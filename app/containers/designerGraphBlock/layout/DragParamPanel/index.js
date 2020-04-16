@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Tabs } from 'antd';
 import { useSelector } from 'react-redux';
 import GGEditor from 'gg-editor';
+// import useThrottle from 'react-hook-easier/lib/useThrottle';
 
 import { useTransformToPython } from '../useHooks';
 import ParamPanel from './components/ParamPanel';
@@ -10,6 +11,8 @@ import GraphContainer from '../../../designerGraphEdit/layout/GraphContainer';
 import VariablePanel from '../../../designerGraphEdit/layout/GraphParamPanel/components/VariablePanel';
 
 const { TabPane } = Tabs;
+// let isMouseDown = false;
+// let startOffset = 0;
 
 const getCheckedBlock = (cards, checkedId) => {
   return findNodeById(cards, checkedId);
@@ -36,8 +39,39 @@ export default ({ current }) => {
     [blockNode]
   );
 
+  // const getParamPanelWidth = () => {
+  //   const outputDom = document.querySelector('.dragger-editor-parampanel');
+  //   return parseFloat(window.getComputedStyle(outputDom).width);
+  // };
+  // useEffect(() => {
+  //   const handleAnchorMouseMove = useThrottle(e => {
+  //     if (isMouseDown) {
+  //       let offset = startOffset - e.pageX;
+  //       startOffset = e.pageX;
+  //       if (e.clientX <= 114) return;
+  //       const outputDom = document.querySelector('.dragger-editor-parampanel');
+  //       const originWidth = getParamPanelWidth();
+  //       const currentWidth = originWidth + offset;
+  //       outputDom.style.width = currentWidth + 'px';
+  //       // if (currentWidth > 40) setNewOutputTip(false);
+  //     }
+  //   }, 0);
+
+  //   const handleMouseUp = () => {
+  //     isMouseDown = false;
+  //   };
+  //   document.addEventListener('mouseup', handleMouseUp);
+  //   document.addEventListener('mousemove', handleAnchorMouseMove);
+  // }, []);
+
   return (
-    <div className="dragger-editor-parampanel">
+    <div
+      className="dragger-editor-parampanel"
+      // onMouseDown={e => {
+      //   isMouseDown = true;
+      //   startOffset = e.pageX;
+      // }}
+    >
       <Tabs className="dragger-editor-parampanel-tabs">
         <TabPane tab="属性" key="1">
           {checkedBlock && (

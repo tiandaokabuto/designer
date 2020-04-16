@@ -38,7 +38,7 @@ class NodeHandler {
           setGraphDataMap(key, savingModuleData);
           changeSavingModuleData(undefined);
         } else if (movingModuleNode) {
-          console.log(movingModuleNode);
+          // 拖动复用流程块
           fs.readFile(
             PATH_CONFIG(
               'project',
