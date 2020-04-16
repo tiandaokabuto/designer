@@ -5,19 +5,25 @@ export default card => {
   useEffect(() => {
     const descriptor = Object.getOwnPropertyDescriptor(card, 'userDesc');
     if (!card) return;
-    if (!card.userDesc) {
-      card.userDesc = card._userDesc;
-    }
+    card.userDesc = card.userDesc || '';
     card._userDesc = card.userDesc;
-    Object.defineProperty(card, 'userDesc', {
-      get() {
-        return this._userDesc;
-      },
-      set(value) {
-        this._userDesc = value;
-        setDesc(value);
-      },
-    });
-  }, [card]);
+    try {
+      Object.defineProperty(card, 'userDesc', {
+        get() {
+          return card._userDesc;
+        },
+        set(value) {
+          card._userDesc = value;
+          setDesc(value);
+        },
+      });
+    } catch (err) {
+      console.log(err);
+      card = { ...card };
+    }
+    return () => {
+      card = { ...card };
+    };
+  }, [card, setDesc]);
   return desc;
 };
