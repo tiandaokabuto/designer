@@ -133,11 +133,8 @@ const createMainWindow = () => {
     width: 1350,
     height: 728,
     frame: false,
-<<<<<<< HEAD
-=======
     transparent: true,
     minWidth: 1144,
->>>>>>> 16c3f9a6ae071fb2fc325b57221f968a21b52a3f
     hasShadow: true,
     // movable: false, //可否移动
     webPreferences: {
