@@ -40,9 +40,12 @@ export default useInjectContext(
       updateCurrentEditingProcessBlock,
       updateCurrentPagePosition,
     }) => {
-      const { getSelected, executeCommand, update, save } = propsAPI;
+      const { getSelected, executeCommand, update, save, find } = propsAPI;
       const graphData = useSelector(state => state.grapheditor.graphData);
       const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+      const checkedGraphBlockId = useSelector(
+        state => state.grapheditor.checkedGraphBlockId
+      );
       const graphDataMapRef = useRef(new Map());
       graphDataMapRef.current = graphDataMap;
       const currentCheckedTreeNode = useSelector(
@@ -99,6 +102,12 @@ export default useInjectContext(
           event.removeListener('loopChoose', handleModalChange);
         };
       }, []);
+
+      useEffect(() => {
+        const item = find(checkedGraphBlockId);
+        if (!item) return;
+        propsAPI.editor.getCurrentPage().setSelected(item, true);
+      });
 
       return (
         <div className="designergraph-container">
