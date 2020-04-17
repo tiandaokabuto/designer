@@ -107,10 +107,12 @@ const createLoginWindow = () => {
     height: 500,
     //useContentSize: true,
     frame: false,
+    hasShadow: true,
     resizable: false,
+    transparent: true,
     webPreferences: {
       nodeIntegration: true,
-      devTools: true,
+      devTools: false,
     },
   });
 
@@ -130,8 +132,10 @@ const createMainWindow = () => {
     show: false,
     width: 1350,
     height: 728,
-    minWidth: 1144,
     frame: false,
+    transparent: true,
+    minWidth: 1144,
+    hasShadow: true,
     // movable: false, //可否移动
     webPreferences: {
       nodeIntegration: true,
