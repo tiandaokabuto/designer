@@ -38,7 +38,7 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
           statement.subtype &&
           (statement.subtype & PrintStatementTag) === PrintStatementTag
         ) {
-          transformPrintStatement(padding, statement, result);
+          transformPrintStatement(padding, statement, result, moduleMap);
         } else if (
           statement.subtype &&
           (statement.subtype & ReturnStatementTag) === ReturnStatementTag
