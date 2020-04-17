@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { Input, Radio, Select, Icon } from 'antd';
+import uniqueId from 'lodash/uniqueId';
 
 import './ConditionParam.scss';
 
@@ -11,6 +12,7 @@ export default ({
   handleEmitCodeTransform,
   stopDeleteKeyDown,
   setFlag,
+  keyFlag,
 }) => {
   const [tag, setTag] = useState(param.tag);
 
@@ -145,7 +147,7 @@ export default ({
       ) : (
         <Input
           defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
-          // key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
+          key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
           onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);

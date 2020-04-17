@@ -149,6 +149,7 @@ const getComponentType = (
         cards={cards}
         handleEmitCodeTransform={handleEmitCodeTransform}
         stopDeleteKeyDown={stopDeleteKeyDown}
+        keyFlag={keyFlag}
         setFlag={setFlag}
       ></ConditionParam>
     );
