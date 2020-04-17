@@ -33,16 +33,24 @@ import event from '../../../../designerGraphBlock/layout/eventCenter';
 
 const TreeNodeTitle = ({ title, type, hasModified }) => {
   return (
-    <div className="treenode-title">
+    <div
+      className="treenode-title"
+      style={{
+        position: 'relative',
+      }}
+    >
       <Icon type={type} style={{ marginRight: 8, marginLeft: 12 }} />
       {title}
       <span
         style={{
           visibility: hasModified ? 'visible' : 'hidden',
-          verticalAlign: 'sub',
-          display: 'inline-block',
-          marginLeft: 8,
+          // verticalAlign: 'sub',
+          // display: 'inline-block',
+          // marginLeft: 8,
           color: hasModified ? 'red' : '',
+          position: 'absolute',
+          right: '8px',
+          top: '2px',
         }}
         className={hasModified ? 'hasModified' : 'notModified'}
       >
