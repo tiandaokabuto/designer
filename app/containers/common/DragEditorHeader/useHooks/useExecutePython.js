@@ -1,3 +1,5 @@
+import { message } from 'antd';
+
 import event, {
   PYTHON_OUTPUT,
 } from '../../../designerGraphBlock/layout/eventCenter';
@@ -9,7 +11,7 @@ const process = require('process');
 export default () => {
   return () => {
     event.emit('clear_output');
-
+    message.loading('程序运行中', 0);
     const worker = exec(
       PATH_CONFIG('pythonExecute'),
       {
@@ -21,7 +23,6 @@ export default () => {
             iconv.encode(err.stack, 'cp936'),
             'cp936'
           );
-          console.log(result);
           console.log(err.stack);
           event.emit(PYTHON_OUTPUT, err.stack);
         }
@@ -43,6 +44,11 @@ export default () => {
       const log = iconv.decode(error, 'cp936');
       console.log(log);
       event.emit(PYTHON_OUTPUT, log);
+      message.destroy();
+    });
+    worker.on('exit', () => {
+      console.log('结束了');
+      message.destroy();
     });
   };
 };
