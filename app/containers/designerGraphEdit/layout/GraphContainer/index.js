@@ -28,6 +28,8 @@ import EditorChange, {
 
 import { findNodeByKey, copyModule } from '../../../common/utils';
 
+let isUnSelected = false;
+
 export default useInjectContext(
   withPropsAPI(
     ({
@@ -152,6 +154,7 @@ export default useInjectContext(
             }}
             onNodeClick={node => {
               const dataId = node.shape._attrs.dataId;
+              isUnSelected = false;
               /**
                * 处理参数面板展示的逻辑
                */
@@ -170,13 +173,8 @@ export default useInjectContext(
                 //   //changeCheckedGraphBlockId(node.item.model.id);
                 //   // synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
                 // }, 0);
-
-                changeCheckedGraphBlockId(node.item.model.id);
                 synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
-              } else {
-                changeCheckedGraphBlockId(node.item.model.id);
               }
-
               /**
                * 跳转到代码块编辑页面
                * 跳转的时候就需要将即将编辑的流程块关联到当前的这个流程块的id
@@ -223,6 +221,24 @@ export default useInjectContext(
                   history.push('/designerGraphBlock');
                 }, 0);
               }
+            }}
+            onEdgeClick={() => {
+              isUnSelected = false;
+            }}
+            onBeforeItemSelected={node => {
+              // 选中状态下点击选中其他块，会先触发onNodeClick,再触发onAfterItemUnselected,最后触发onBeforeItemSelected
+              // 这种状态暂时叫做重新选择，在此处记录重新选择的id
+              if (
+                node.item.type === 'node' &&
+                (checkedGraphBlockId !== node.item.model.id || isUnSelected)
+              ) {
+                isUnSelected = false;
+                changeCheckedGraphBlockId(node.item.model.id);
+              }
+            }}
+            onAfterItemUnselected={() => {
+              isUnSelected = true;
+              changeCheckedGraphBlockId('');
             }}
             noEndEdge={false}
           />
