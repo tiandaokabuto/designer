@@ -6,10 +6,10 @@ const transformPrintStatement = (padding, dataStructure, result, moduleMap) => {
   const main_func = dataStructure['properties']['optional'][0].value;
   const params = dataStructure['properties']['optional'][1].value;
   if (params) {
-    result.output += `logger.${level_string}(${template_string}.${main_func ||
+    result.output += `logger.${level_string}("[${level_string.toLocaleUpperCase()}]" + ${template_string}.${main_func ||
       'format'}(${params}))`;
   } else {
-    result.output += `logger.${level_string}(${template_string})`;
+    result.output += `logger.${level_string}("[${level_string.toLocaleUpperCase()}]" + ${template_string})`;
   }
 };
 
