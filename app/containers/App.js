@@ -98,7 +98,7 @@ export default class App extends React.Component<Props> {
     if (!this.showReconnentTip && !this.loginData.offLine) {
       if (this.timerId) clearInterval(this.timerId);
       this.showReconnentTip = true;
-      message.loading({
+      message.info({
         content: '网络重连中...',
         key,
         duration: 0,
