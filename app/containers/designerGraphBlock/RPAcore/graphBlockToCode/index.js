@@ -125,7 +125,7 @@ export default (dataStructure, depth = 0, blockNode) => {
   moduleMap.clear();
   transformBlockToCodeImpl(dataStructure, depth);
   transformModuleImport(result, moduleMap, depth);
-  if (result.output === '\n') {
+  if (result.output === '\n' || result.output == '\n\n') {
     result.output = paddingStart(depth) + 'pass\n';
   }
   return result;
