@@ -40,6 +40,10 @@
   }
   .ant-tabs-content {
     // position: fixed;
-    top: 112px;
+    .treenode-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 }

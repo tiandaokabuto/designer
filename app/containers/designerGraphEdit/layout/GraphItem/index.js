@@ -46,6 +46,7 @@ export default () => {
         style={{
           position: 'fixed',
           bottom: '0',
+          maxWidth: '239px',
         }}
       >
         <Tabs
