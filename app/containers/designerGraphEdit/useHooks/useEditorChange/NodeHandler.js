@@ -141,6 +141,7 @@ class NodeHandler {
           while: {
             nodes: [
               {
+                color: '#1890FF',
                 style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
                 x: model.x,
                 y: model.y,
@@ -151,6 +152,7 @@ class NodeHandler {
                 type: 'node',
               },
               {
+                color: '#1890FF',
                 style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
                 x: model.x,
                 y: model.y + 120,
@@ -161,6 +163,7 @@ class NodeHandler {
                 type: 'node',
               },
               {
+                color: '#1890FF',
                 style: { stroke: 'rgba(61, 109, 204, 1)', fill: '#ecf5f6' },
                 x: model.x,
                 y: model.y + 240,
