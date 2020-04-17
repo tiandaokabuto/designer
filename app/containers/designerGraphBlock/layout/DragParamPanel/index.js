@@ -54,7 +54,6 @@ export default ({ current }) => {
         const originWidth = getParamPanelWidth();
         const currentWidth = originWidth + offset;
         outputDom.style.flexBasis = currentWidth + 'px';
-        // outputDom.style.width = currentWidth + 'px';
       }
     }, 0);
 
