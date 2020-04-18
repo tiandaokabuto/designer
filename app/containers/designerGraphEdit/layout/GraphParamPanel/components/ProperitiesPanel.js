@@ -113,6 +113,17 @@ export default withPropsAPI(
               />
             );
           }
+          if (param.enName === 'output') {
+            return (
+              <VariablePanel
+                key={index}
+                blockNode={{
+                  variable: param.value,
+                }}
+                label="输出参数"
+              />
+            );
+          }
 
           return (
             <FormItem

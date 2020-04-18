@@ -73,7 +73,7 @@ class NodeHandler {
               {
                 cnName: '流程块返回',
                 enName: 'output',
-                value: '',
+                value: [],
                 default: '',
               },
             ],
@@ -365,7 +365,7 @@ class NodeHandler {
               {
                 cnName: '流程块返回',
                 enName: 'output',
-                value: '',
+                value: [],
                 default: '',
               },
             ],
