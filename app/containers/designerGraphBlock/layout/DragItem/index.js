@@ -120,7 +120,18 @@ export default useInjectContext(
       let treeData = cloneDeep(tree);
       let expandedKeysTemp = [];
       if (filter) {
-        treeData = filterTree(treeData, filter, [], expandedKeysTemp);
+        const originTreeData = treeData;
+        // 搜索只对可用进行搜索
+        treeData = filterTree(
+          treeData.filter(item => item.title === '可用'),
+          filter,
+          [],
+          expandedKeysTemp
+        );
+        // 拼接原来的可用和收藏列表
+        treeData = originTreeData
+          .filter(item => item.title !== '可用')
+          .concat(treeData);
         setExpandedKeys(expandedKeys => {
           return Array.from(new Set([...expandedKeys, ...expandedKeysTemp]));
         });
