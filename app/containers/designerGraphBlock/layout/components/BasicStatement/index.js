@@ -204,7 +204,7 @@ const BasicStatement = useInjectContext(props => {
               onClick={e => {
                 if (readOnly) return;
                 const anchor = e.target.dataset.anchor;
-                changeToEditableTemplate(anchor);
+                if (anchor) changeToEditableTemplate(anchor);
                 // 触发变量的修改
               }}
               onDragStart={e => {

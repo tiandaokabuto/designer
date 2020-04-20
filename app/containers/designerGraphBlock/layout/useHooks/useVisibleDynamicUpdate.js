@@ -91,7 +91,9 @@ export default (id, visibleTemplate) => {
         });
         if (find) {
           return (
-            `<span data-anchor=${find.enName} class="template_span ${
+            `<span data-anchor=${
+              find.componentType === 1 ? '' : find.enName
+            } class="template_span ${
               find.value === '' ? 'template_span__empty' : ''
             }">${find.value}</span>` || ''
           );
@@ -143,7 +145,7 @@ export default (id, visibleTemplate) => {
           `input.template_input_${anchor}`
         );
         inputDom.focus();
-      }, 0);
+      }, 100);
     };
 
     const saveInputChange = e => {
