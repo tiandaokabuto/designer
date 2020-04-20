@@ -5,10 +5,16 @@ const transformReturnStatement = (
   blockNode = {}
 ) => {
   result.output += `${padding}`;
+<<<<<<< HEAD
   const returnList =
     (blockNode.properties &&
       blockNode.properties.find(item => item.enName === 'output').value) ||
     [];
+=======
+  const returnList = ''.find(item => item.enName === 'output').value || [];
+  // const returnList =
+  //   blockNode.properties.find(item => item.enName === 'output').value || [];
+>>>>>>> f9474d3... fix:开发一键恢复功能
   const return_string = dataStructure['properties']['required'][0].value.map(
     item => item.name || 'None'
   );
