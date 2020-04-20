@@ -409,7 +409,13 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
         {(checkedBlock.properties.required || []).map((param, index) => {
           if (param.enName === 'return_string') {
             return (
-              <OutputPanel key={checkedBlock.id + index} output={param.value} />
+              <OutputPanel
+                key={checkedBlock.id + index}
+                output={param.value}
+                handleEmitCodeTransform={() => {
+                  handleEmitCodeTransform(cards);
+                }}
+              />
             );
           }
           return (

@@ -4,7 +4,7 @@ import { Input } from 'antd';
 
 import './outputPanel.scss';
 
-export default ({ output }) => {
+export default ({ output, handleEmitCodeTransform }) => {
   const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
   const checkedGraphBlockId = useSelector(
     state => state.grapheditor.checkedGraphBlockId
@@ -23,7 +23,7 @@ export default ({ output }) => {
       output[index].value = item.value;
     }
   });
-  console.log(output, 'returnParams');
+  output.length = returnList.length;
   return (
     <div className="outputPanel">
       <div className="outputPanel-container">
@@ -35,15 +35,12 @@ export default ({ output }) => {
           <Input
             key={item.name || '0'}
             defaultValue={item.name}
-            onChange={e => (item.name = e.target.value)}
+            onChange={e => {
+              item.name = e.target.value;
+              handleEmitCodeTransform();
+            }}
           />
           <span style={{ lineHeight: '32px' }}>{item.value}</span>
-          {/* <Input
-            key={item.value || '1'}
-            defaultValue={item.value}
-
-            onChange={e => (item.value = e.target.value)}
-          /> */}
         </div>
       ))}
     </div>
