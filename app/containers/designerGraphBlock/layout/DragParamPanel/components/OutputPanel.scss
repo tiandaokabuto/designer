@@ -1,0 +1,12 @@
+.outputPanel {
+  &-container {
+    display: flex;
+    margin: 8px 0px;
+    > * {
+      flex-basis: 50%;
+    }
+    :first-child {
+      margin-right: 6px;
+    }
+  }
+}
