@@ -24,7 +24,7 @@ export default () => {
             onChange={e => {
               changeProjectName(currentProject, e.target.value);
             }}
-            onBlur={() => {
+            onBlur={e => {
               setEditVisible(false);
             }}
           />
