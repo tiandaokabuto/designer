@@ -179,6 +179,7 @@ const BasicStatement = useInjectContext(props => {
         ...style,
         opacity: opacity,
       }}
+      className="cursor__before"
       className={className}
     >
       <div
