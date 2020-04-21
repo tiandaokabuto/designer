@@ -407,8 +407,6 @@ class NodeHandler {
           });
         });
       }
-    } else if (description.action === 'remove') {
-      console.log('删除了');
     }
     // 保存当前流程图的任意更新不加区分
     updateGraphData(this.propsAPI.save());

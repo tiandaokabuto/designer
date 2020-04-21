@@ -25,6 +25,7 @@ import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/Output
 import EditorChange, {
   registerDataChange,
 } from '../../useHooks/useEditorChange';
+import { synchroGraphDataToProcessTree } from '../../../reduxActions';
 
 import { findNodeByKey, copyModule } from '../../../common/utils';
 
@@ -66,9 +67,13 @@ export default useInjectContext(
         showHead && propsAPI.executeCommand('autoZoom');
         const handleUndo = () => {
           executeCommand('undo');
+          // updateGraphData(save());
+          // synchroGraphDataToProcessTree();
         };
         const handleRedo = () => {
           executeCommand('redo');
+          // updateGraphData(save());
+          // synchroGraphDataToProcessTree();
         };
         const handleZoomOut = frequency => {
           for (let i = 0; i < frequency; i += 1) {
@@ -209,6 +214,7 @@ export default useInjectContext(
               }
             }}
             onDoubleClick={node => {
+              console.log(node);
               if (
                 node.item &&
                 ['processblock'].includes(node.item.model.shape)

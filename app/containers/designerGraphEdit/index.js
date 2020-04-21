@@ -29,12 +29,9 @@ export default () => {
         className="designergraph editor"
         onBeforeCommandExecute={e => {
           const { command } = e;
-          console.log(e);
-          console.log(command.back);
         }}
         onAfterCommandExecute={e => {
           const { command } = e;
-          console.log(command);
         }}
       >
         <GraphItem />
