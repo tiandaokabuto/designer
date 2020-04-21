@@ -4,7 +4,6 @@ const transformReturnStatement = (
   result,
   blockNode = {}
 ) => {
-  console.log(blockNode, 'blockNode');
   result.output += `${padding}`;
   const returnList =
     (blockNode.properties &&

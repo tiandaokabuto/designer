@@ -33,7 +33,7 @@ export default ({ output, handleEmitCodeTransform }) => {
       {output.map((item, index) => (
         <div key={index} className="outputPanel-container">
           <Input
-            key={item.name || '0'}
+            // key={item.name || '0'}
             defaultValue={item.name}
             onChange={e => {
               item.name = e.target.value;
