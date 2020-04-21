@@ -22,6 +22,21 @@ export default () => {
       function(err) {
         if (!err) {
           changeCurrentProject(change);
+          console.log(current);
+          console.log(change);
+          fs.rename(
+            PATH_CONFIG('project', `${change}/${current}_module`),
+            PATH_CONFIG('project', `${change}/${change}_module`),
+            function(err) {
+              if (!err) {
+                console.log('更改module文件夹');
+              } else {
+                console.log(err);
+              }
+            }
+          );
+        } else {
+          console.log(err);
         }
       }
     );

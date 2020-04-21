@@ -312,6 +312,7 @@ const getComponentType = (
 
               handleEmitCodeTransform(cards);
             }}
+            onKeyDown={e => stopDeleteKeyDown(e)}
           />
           <Button
             onClick={() => {

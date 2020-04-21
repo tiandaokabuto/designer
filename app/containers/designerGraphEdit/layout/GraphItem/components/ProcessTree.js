@@ -36,26 +36,54 @@ const TreeNodeTitle = ({ title, type, hasModified }) => {
     <div
       className="treenode-title"
       style={{
-        position: 'relative',
+        // position: 'relative',
+        display: 'flex',
+        justifyContent: 'space-between',
+        // flexDirection: 'row',
       }}
     >
-      <Icon type={type} style={{ marginRight: 8, marginLeft: 12 }} />
-      {title}
+      <Icon
+        type={type}
+        style={{
+          marginRight: 8,
+          marginLeft: 12,
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      />
+      {/* <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+        }}
+      > */}
+      <span
+        style={{
+          flexBasis: 150,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {title}
+      </span>
       <span
         style={{
           visibility: hasModified ? 'visible' : 'hidden',
-          // verticalAlign: 'sub',
-          // display: 'inline-block',
-          // marginLeft: 8,
+          verticalAlign: 'sub',
+          display: 'inline-block',
+          marginRight: 4,
           color: hasModified ? 'red' : '',
-          position: 'absolute',
-          right: '8px',
-          top: '2px',
+          // position: 'absolute',
+          // right: '8px',
+          // top: '2px',
         }}
         className={hasModified ? 'hasModified' : 'notModified'}
       >
         *
       </span>
+      {/* </div> */}
     </div>
   );
 };

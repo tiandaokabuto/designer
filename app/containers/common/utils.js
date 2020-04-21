@@ -307,7 +307,7 @@ export const renameNodeByKey = (
             const item = dirs.find(item => `${newTitle}.json` === item);
             if (!item) {
               node.title = newTitle;
-              fs.rename(
+              fs.renameSync(
                 PATH_CONFIG(
                   'project',
                   `${name}/${name}_module/${oldTitle}.json`
@@ -315,10 +315,28 @@ export const renameNodeByKey = (
                 PATH_CONFIG(
                   'project',
                   `${name}/${name}_module/${newTitle}.json`
+                )
+              );
+              fs.readFile(
+                PATH_CONFIG(
+                  'project',
+                  `${name}/${name}_module/${newTitle}.json`
                 ),
-                err => {
-                  if (err) {
-                    message.error(err);
+                (err, data) => {
+                  if (!err) {
+                    const description = JSON.parse(data.toString());
+                    if (description.graphDataMap.properties) {
+                      description.graphDataMap.properties[0].value = newTitle;
+                    }
+                    fs.writeFileSync(
+                      PATH_CONFIG(
+                        'project',
+                        `${name}/${name}_module/${newTitle}.json`
+                      ),
+                      JSON.stringify(description)
+                    );
+                  } else {
+                    console.log(err);
                   }
                 }
               );
