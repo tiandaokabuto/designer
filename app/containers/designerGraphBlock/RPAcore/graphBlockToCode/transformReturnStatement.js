@@ -2,11 +2,14 @@ const transformReturnStatement = (
   padding,
   dataStructure,
   result,
-  blockNode
+  blockNode = {}
 ) => {
+  console.log(blockNode, 'blockNode');
   result.output += `${padding}`;
   const returnList =
-    blockNode.properties.find(item => item.enName === 'output').value || [];
+    (blockNode.properties &&
+      blockNode.properties.find(item => item.enName === 'output').value) ||
+    [];
   const return_string = dataStructure['properties']['required'][0].value.map(
     item => item.name || 'None'
   );
