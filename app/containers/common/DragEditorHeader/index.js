@@ -177,14 +177,20 @@ export default memo(
         {
           description: '保存',
           type: 'save',
-          disabled: true,
-          onClick: () => {}, //handlePublishProcess,
+          onClick: () => {
+            setNodeModifiedState(
+              processTreeRef.current,
+              currentCheckedTreeNodeRef.current
+            );
+            persistentStorage();
+            message.success('保存成功');
+          }, //handlePublishProcess,
         },
         {
           description: '运行',
           type: 'iconzhihang',
           IconFont: true,
-          disabled: true,
+          // disabled: true,
           onClick: handleOperation,
         },
         {
