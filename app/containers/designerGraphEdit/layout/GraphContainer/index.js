@@ -238,7 +238,6 @@ export default useInjectContext(
             }}
             onAfterItemUnselected={() => {
               isUnSelected = true;
-              changeCheckedGraphBlockId('');
             }}
             noEndEdge={false}
           />

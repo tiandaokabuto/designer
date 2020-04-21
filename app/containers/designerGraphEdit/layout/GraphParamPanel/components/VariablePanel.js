@@ -51,7 +51,7 @@ export default ({
       </div>
       <div className="variablePanel-container">
         <span>变量名</span>
-        <span>值</span>
+        <span>{label === '输出参数' ? '描述' : '值'}</span>
         <span></span>
         {(variableList || []).map((varibale, index) => {
           return (
