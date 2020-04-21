@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react';
-import GGEditor, { Flow, RegisterNode } from 'gg-editor';
+import React from 'react';
+import GGEditor from 'gg-editor';
 
 import GraphBlockHeader from '../common/GraphBlockHeader';
 import DragEditorHeader from '../common/DragEditorHeader';
@@ -21,7 +21,7 @@ import './index.scss';
 
 export default () => {
   return (
-    <Fragment>
+    <>
       <GraphBlockHeader history={history} />
       <DragEditorHeader type="process" />
 
@@ -32,6 +32,6 @@ export default () => {
         <FlowContextMenu />
         {/* <ReuseCommand /> */}
       </GGEditor>
-    </Fragment>
+    </>
   );
 };
