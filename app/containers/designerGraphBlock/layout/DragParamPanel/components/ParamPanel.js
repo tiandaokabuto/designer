@@ -18,6 +18,7 @@ import {
   useVerifyInput,
 } from '../../useHooks';
 import ConditionParam from './ConditionParam';
+import LoopConditionParam from './LoopConditionParam/index';
 import OutputPanel from './OutputPanel';
 import api, { config } from '../../../../../api';
 const { ipcRenderer } = require('electron');
@@ -74,7 +75,9 @@ const getComponentType = (
   keyFlag,
   aiHintList = {},
   setFlag,
-  handleValidate
+  handleValidate,
+  loopSelect,
+  setLoopSelect
 ) => {
   useEffect(() => {
     handleValidate({
@@ -96,6 +99,7 @@ const getComponentType = (
     },
     [param]
   );
+
   // 任务数据下拉列表
   const [appendDataSource] = useAppendDataSource(param);
   // 针对一些特殊的情况需要作出特殊的处理
@@ -152,7 +156,39 @@ const getComponentType = (
         stopDeleteKeyDown={stopDeleteKeyDown}
         keyFlag={keyFlag}
         setFlag={setFlag}
-      ></ConditionParam>
+      />
+    );
+  } else if (param.enName === 'looptype') {
+    return (
+      <Select
+        style={{ width: '100%' }}
+        defaultValue={param.value || param.default}
+        dropdownMatchSelectWidth={false}
+        onChange={value => {
+          param.value = value;
+          handleEmitCodeTransform(cards);
+          setLoopSelect(value);
+        }}
+      >
+        {param.valueMapping &&
+          param.valueMapping.map(item => (
+            <Option key={item.value} value={item.value}>
+              {item.name}
+            </Option>
+          ))}
+      </Select>
+    );
+  } else if (param.enName === 'loopcondition') {
+    return (
+      <LoopConditionParam
+        param={param}
+        cards={cards}
+        loopSelect={loopSelect}
+        stopDeleteKeyDown={stopDeleteKeyDown}
+        handleEmitCodeTransform={handleEmitCodeTransform}
+        keyFlag={keyFlag}
+        setFlag={setFlag}
+      />
     );
   }
   switch (param.componentType) {
@@ -343,12 +379,14 @@ const ParamItem = ({
   flag,
   aiHintList,
   setFlag,
+  loopSelect,
+  setLoopSelect,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
   return (
     <React.Fragment>
       <div className="parampanel-item">
-        {param.cnName === '条件' ? (
+        {param.cnName === '条件' || param.cnName === '循环条件' ? (
           ''
         ) : (
           <span className="param-title" title={param.desc}>
@@ -363,7 +401,9 @@ const ParamItem = ({
             flag,
             aiHintList,
             setFlag,
-            handleValidate
+            handleValidate,
+            loopSelect,
+            setLoopSelect
           )}
         </div>
       </div>
@@ -374,6 +414,12 @@ const ParamItem = ({
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const [flag, setFlag] = useState(false);
+  // loopSelect：循环类型，循环类型更改的时候需要改变循环条件
+  const [loopSelect, setLoopSelect] = useState(
+    checkedBlock.main === 'loop' && checkedBlock.properties.required[0].value
+      ? checkedBlock.properties.required[0].value
+      : 'for_list'
+  );
 
   const [aiHintList] = useAIHintWatch();
 
@@ -428,6 +474,8 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
               flag={flag}
               aiHintList={aiHintList}
               setFlag={setFlag}
+              loopSelect={loopSelect}
+              setLoopSelect={setLoopSelect}
             />
           );
         })}
