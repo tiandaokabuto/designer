@@ -60,6 +60,7 @@ export default (id, visibleTemplate) => {
             if (requiredItem.tag === 1) {
               transformCondition();
             } else {
+              // transformCondition();
               forceUpdate();
             }
           },
@@ -74,17 +75,52 @@ export default (id, visibleTemplate) => {
       node.text === '条件分支' &&
       node.properties.required[0].tag === /* 条件语句的向导模式 */ 1
     ) {
-      node.properties.required[0] = { ...node.properties.required[0] };
-      const conditionEffect = proxyCondition(
-        setCondition,
-        node.properties.required[0]
-      );
+      const transformCondition = () => {
+        const valueList = node.properties.required[0].valueList || [];
+        let result = '';
+        valueList.forEach((item, index) => {
+          if (index === valueList.length - 1) {
+            // 最后一个，不把连接符填上
+            if (item.rule === 'is None' || item.rule === 'not None') {
+              result += `(${item.v1} ${item.rule}) `;
+            } else {
+              result += `(${item.v1} ${item.rule} ${item.v2}) `;
+            }
+          } else {
+            if (item.rule === 'is None' || item.rule === 'not None') {
+              result += `(${item.v1} ${item.rule}) ${item.connect} `;
+            } else {
+              result += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;
+            }
+          }
+        });
+        setCondition(result);
+        forceUpdate();
+      };
 
       useEffect(() => {
-        console.log('hhhhhh');
-        conditionEffect();
+        node.properties.required[0] = { ...node.properties.required[0] };
+        const item = node.properties.required[0];
+        item._forceUpdate = item.forceUpdate || 0;
+
+        Object.defineProperty(item, 'forceUpdate', {
+          get() {
+            return this._forceUpdate;
+          },
+          set(value) {
+            this._forceUpdate = value;
+
+            if (node.properties.required[0].tag === 1) {
+              transformCondition();
+            } else {
+              forceUpdate();
+            }
+          },
+        });
+
+        transformCondition();
       }, [node]);
-      console.log(condition, '---condition');
+
       return [true, `如果满足 ${condition} 则`, () => {}, () => {}];
     }
 
