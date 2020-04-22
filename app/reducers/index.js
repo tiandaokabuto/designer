@@ -6,7 +6,6 @@ import counter from './counter';
 import blockcode from './blockcode';
 import grapheditor from './grapheditor';
 import temporaryvariable from './temporaryvariable';
-import test from './test';
 
 export default function createRootReducer(history: HashHistory) {
   return combineReducers<{}, *>({
@@ -15,6 +14,5 @@ export default function createRootReducer(history: HashHistory) {
     blockcode,
     grapheditor,
     temporaryvariable,
-    test,
   });
 }
