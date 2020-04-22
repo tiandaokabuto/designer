@@ -38,6 +38,13 @@ export default ({ current }) => {
       blockNode.properties.find(item => item.enName === 'param').value,
     [blockNode]
   );
+  const outputParams = useMemo(
+    () =>
+      blockNode.properties &&
+      Array.isArray(blockNode.properties) &&
+      blockNode.properties.find(item => item.enName === 'output').value,
+    [blockNode]
+  );
 
   const getParamPanelWidth = () => {
     const outputDom = document.querySelector('.dragger-editor-parampanel');
@@ -99,6 +106,14 @@ export default ({ current }) => {
               handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
               label="输入参数"
               disabled={true}
+            />
+            <VariablePanel
+              blockNode={{
+                variable: outputParams,
+              }}
+              handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+              label="输出参数"
+              disabled={false}
             />
             <VariablePanel
               blockNode={blockNode}

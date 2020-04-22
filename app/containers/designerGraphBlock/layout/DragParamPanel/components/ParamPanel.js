@@ -19,6 +19,7 @@ import {
 } from '../../useHooks';
 import ConditionParam from './ConditionParam';
 import LoopConditionParam from './LoopConditionParam/index';
+import OutputPanel from './OutputPanel';
 import api, { config } from '../../../../../api';
 const { ipcRenderer } = require('electron');
 
@@ -453,6 +454,17 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
       <div className="parampanel-required">必选项</div>
       <div className="parampanel-content">
         {(checkedBlock.properties.required || []).map((param, index) => {
+          if (param.enName === 'return_string') {
+            return (
+              <OutputPanel
+                key={checkedBlock.id + index}
+                output={param.value}
+                handleEmitCodeTransform={() => {
+                  handleEmitCodeTransform(cards);
+                }}
+              />
+            );
+          }
           return (
             <ParamItem
               key={checkedBlock.id + index}
