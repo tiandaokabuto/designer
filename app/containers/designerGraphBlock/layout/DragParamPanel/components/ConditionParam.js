@@ -14,6 +14,7 @@ export default ({
   setFlag,
   keyFlag,
 }) => {
+  console.log(param);
   const [tag, setTag] = useState(param.tag);
 
   const handleDelete = index => {
