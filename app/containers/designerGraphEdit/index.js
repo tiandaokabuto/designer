@@ -25,7 +25,15 @@ export default () => {
       <GraphBlockHeader history={history} />
       <DragEditorHeader type="process" />
 
-      <GGEditor className="designergraph editor">
+      <GGEditor
+        className="designergraph editor"
+        onBeforeCommandExecute={e => {
+          const { command } = e;
+        }}
+        onAfterCommandExecute={e => {
+          const { command } = e;
+        }}
+      >
         <GraphItem />
         <GraphContainer history={history} />
         <GraphParamPanel />

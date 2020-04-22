@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { Icon, message } from 'antd';
 import axios from 'axios';
+import { cloneDeep } from 'lodash';
 
 import { traverseTree } from '../../../../common/utils';
 import { updateAutomicList } from '../../../../reduxActions';
@@ -90,11 +91,43 @@ const readGlobalConfig = (callback, flag = false) => {
           const abilityStructure = await getAbialityStructure();
           const abilityTree = await getAbilityTree();
           message.info('刷新成功');
+          const resultTree = automicListToTree(abilityTree, abilityStructure); // 转换后的tree
           const prevPending = automicList
             ? automicList.filter(item =>
                 ['favorite', 'recent'].includes(item.key)
               )
             : [];
+          if (prevPending.length !== 0) {
+            const favoriteChild = prevPending[0].children;
+            const recentChild = prevPending[1].children;
+            const deepResultTree = cloneDeep(resultTree);
+            if (favoriteChild.length !== 0) {
+              const newArr = favoriteChild.map(favoriteItem => {
+                let newItem = null;
+                traverseTree(deepResultTree, item => {
+                  if (item.key === favoriteItem.key) {
+                    newItem = item;
+                  }
+                });
+                newItem.loved = true;
+                return newItem;
+              });
+              prevPending[0].children = newArr;
+            }
+            if (recentChild.length !== 0) {
+              const newArr = recentChild.map(recentItem => {
+                let newItem = null;
+                traverseTree(deepResultTree, item => {
+                  if (item.key === recentItem.key) {
+                    newItem = item;
+                  }
+                });
+                newItem.loved = true;
+                return newItem;
+              });
+              prevPending[1].children = newArr;
+            }
+          }
           const treeData = [
             ...(prevPending.length
               ? prevPending
@@ -120,7 +153,7 @@ const readGlobalConfig = (callback, flag = false) => {
               key: 'aviable',
               title: '可用',
               returnTreeData: null,
-              children: automicListToTree(abilityTree, abilityStructure),
+              children: resultTree,
             },
           ];
 
@@ -129,6 +162,7 @@ const readGlobalConfig = (callback, flag = false) => {
           });
           callback && callback(treeData);
         } catch (err) {
+          console.log(err);
           message.info('刷新失败');
           // callback && callback([]);
         }

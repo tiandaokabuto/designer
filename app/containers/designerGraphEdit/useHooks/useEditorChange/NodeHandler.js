@@ -25,6 +25,7 @@ class NodeHandler {
   }
 
   handleNodeChange = description => {
+    console.log(description.action);
     if (description.action === 'add') {
       const {
         grapheditor: { savingModuleData, graphData },

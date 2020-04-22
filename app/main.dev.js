@@ -112,7 +112,7 @@ const createLoginWindow = () => {
     transparent: true,
     webPreferences: {
       nodeIntegration: true,
-      devTools: false,
+      devTools: true,
     },
   });
 
