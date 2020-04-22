@@ -27,7 +27,7 @@ const result = {
 
 const moduleMap = new Map();
 
-const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
+const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
   if (!dataStructure) return;
   const padding = paddingStart(depth);
   dataStructure.forEach((statement, index) => {
@@ -43,7 +43,7 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
           statement.subtype &&
           (statement.subtype & ReturnStatementTag) === ReturnStatementTag
         ) {
-          transformReturnStatement(padding, statement, result);
+          transformReturnStatement(padding, statement, result, blockNode);
         } else if (
           statement.subtype &&
           (statement.subtype & BreakStatementTag) === BreakStatementTag
@@ -76,21 +76,25 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0) => {
         break;
       case 2: // while or for
         transformLoopStatement(padding, statement, result);
-        transformBlockToCodeImpl(statement.children, depth + 1);
+        transformBlockToCodeImpl(statement.children, depth + 1, blockNode);
         break;
       case 4:
         transformConditionalStatement(padding, statement, result);
         if (!statement.ifChildren.length) {
           result.output += `${paddingStart(depth + 1)}pass\n`;
         } else {
-          transformBlockToCodeImpl(statement.ifChildren, depth + 1);
+          transformBlockToCodeImpl(statement.ifChildren, depth + 1, blockNode);
         }
 
         result.output += `${padding}else:\n`;
         if (!statement.elseChildren.length) {
           result.output += `${paddingStart(depth + 1)}pass\n`;
         } else {
-          transformBlockToCodeImpl(statement.elseChildren, depth + 1);
+          transformBlockToCodeImpl(
+            statement.elseChildren,
+            depth + 1,
+            blockNode
+          );
         }
       default:
       // do nothing
@@ -123,7 +127,7 @@ export default (dataStructure, depth = 0, blockNode) => {
     transformModuleVariable(result, depth, blockNode.variable || []);
   }
   moduleMap.clear();
-  transformBlockToCodeImpl(dataStructure, depth);
+  transformBlockToCodeImpl(dataStructure, depth, blockNode);
   transformModuleImport(result, moduleMap, depth);
   if (result.output === '\n' || result.output == '\n\n') {
     result.output = paddingStart(depth) + 'pass\n';

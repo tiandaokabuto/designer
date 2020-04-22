@@ -882,10 +882,10 @@ export const addToReuse = () => {
 
 export const exportCustomProcessBlock = () => {
   const getDownloadPath = useGetDownloadPath();
-  // const {
-  //   grapheditor: { graphDataMap, checkedGraphBlockId },
-  // } = store.getState();
-  // console.log(checkedGraphBlockId);
+
+  const {
+    grapheditor: { graphDataMap, checkedGraphBlockId },
+  } = store.getState();
 
   getDownloadPath(filePath => {
     try {
@@ -894,10 +894,9 @@ export const exportCustomProcessBlock = () => {
       deleteFolder(filePath);
       fs.mkdirSync(filePath);
     }
-    const {
-      grapheditor: { graphDataMap, checkedGraphBlockId },
-    } = store.getState();
+
     const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
+
     fs.writeFileSync(
       filePath + '/manifest.json',
       JSON.stringify(data),

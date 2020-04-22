@@ -39,6 +39,7 @@ export default (id, visibleTemplate) => {
             }
           }
         });
+        console.log(result, '---transformCondition');
         setCondition(result);
         forceUpdate();
       };
@@ -59,15 +60,16 @@ export default (id, visibleTemplate) => {
             this._forceUpdate = value;
 
             if (node.properties.required[0].tag === 1) {
+              console.log('转换');
               transformCondition();
             } else {
               forceUpdate();
             }
           },
         });
-
         transformCondition();
       }, [node]);
+      console.log(condition, '---condition');
       return [true, `如果满足 ${condition} 则`, () => {}, () => {}];
     }
     const watchingListTemp = visibleTemplate.match(/({{.*?}})/g);
