@@ -39,17 +39,19 @@ export default (id, visibleTemplate) => {
             }
           }
         });
-        console.log(result, '---transformCondition');
         setCondition(result);
         forceUpdate();
+        console.log(result, '---');
       };
 
       useEffect(() => {
+        node.properties.required[0] = { ...node.properties.required[0] };
         const item = node.properties.required[0];
-        const descriptor = Object.getOwnPropertyDescriptor(item, 'forceUpdate');
-        if (descriptor && descriptor.get) {
-          return;
-        }
+        // const descriptor = Object.getOwnPropertyDescriptor(item, 'forceUpdate');
+        // console.log(descriptor, 'descriptor');
+        // if (descriptor && descriptor.get) {
+        //   return;
+        // }
         item._forceUpdate = item.forceUpdate || 0;
 
         Object.defineProperty(item, 'forceUpdate', {
@@ -60,7 +62,6 @@ export default (id, visibleTemplate) => {
             this._forceUpdate = value;
 
             if (node.properties.required[0].tag === 1) {
-              console.log('转换');
               transformCondition();
             } else {
               forceUpdate();
@@ -69,7 +70,6 @@ export default (id, visibleTemplate) => {
         });
         transformCondition();
       }, [node]);
-      console.log(condition, '---condition');
       return [true, `如果满足 ${condition} 则`, () => {}, () => {}];
     }
     const watchingListTemp = visibleTemplate.match(/({{.*?}})/g);
