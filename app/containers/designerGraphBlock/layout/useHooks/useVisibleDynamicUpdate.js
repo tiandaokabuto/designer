@@ -36,7 +36,7 @@ export default (id, visibleTemplate) => {
         }
       });
       setVisible(result);
-      forceUpdate();
+      // forceUpdate();
     };
 
     if (
@@ -191,7 +191,7 @@ export default (id, visibleTemplate) => {
           const inputDom = document.querySelector(
             `input.template_input_${anchor}`
           );
-          inputDom.focus();
+          if (inputDom) inputDom.focus();
         }, 0);
       };
 
