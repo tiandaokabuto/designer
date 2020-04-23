@@ -1,15 +1,8 @@
-import React, {
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  Fragment,
-} from 'react';
-import { Input, Select, AutoComplete, Button, Icon, Radio } from 'antd';
-import { useSelector } from 'react-redux';
-import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
+import './ParamPanel.scss';
+
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { Input, Select, AutoComplete, Button } from 'antd';
 import uniqueId from 'lodash/uniqueId';
-import axios from 'axios';
 
 import event from '../../eventCenter';
 import {
@@ -20,10 +13,8 @@ import {
 import ConditionParam from './ConditionParam';
 import LoopConditionParam from './LoopConditionParam/index';
 import OutputPanel from './OutputPanel';
-import api, { config } from '../../../../../api';
-const { ipcRenderer } = require('electron');
 
-import './ParamPanel.scss';
+const { ipcRenderer } = require('electron');
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -75,9 +66,7 @@ const getComponentType = (
   keyFlag,
   aiHintList = {},
   setFlag,
-  handleValidate,
-  loopSelect,
-  setLoopSelect
+  handleValidate
 ) => {
   useEffect(() => {
     handleValidate({
@@ -160,35 +149,43 @@ const getComponentType = (
     );
   } else if (param.enName === 'looptype') {
     return (
-      <Select
-        style={{ width: '100%' }}
-        defaultValue={param.value || param.default}
-        dropdownMatchSelectWidth={false}
-        onChange={value => {
-          param.value = value;
-          handleEmitCodeTransform(cards);
-          setLoopSelect(value);
-        }}
-      >
-        {param.valueMapping &&
-          param.valueMapping.map(item => (
-            <Option key={item.value} value={item.value}>
-              {item.name}
-            </Option>
-          ))}
-      </Select>
+      <LoopSelectContext.Consumer>
+        {({ setLoopSelect }) => (
+          <Select
+            style={{ width: '100%' }}
+            defaultValue={param.value || param.default}
+            dropdownMatchSelectWidth={false}
+            onChange={value => {
+              param.value = value;
+              handleEmitCodeTransform(cards);
+              setLoopSelect(value);
+            }}
+          >
+            {param.valueMapping &&
+              param.valueMapping.map(item => (
+                <Option key={item.value} value={item.value}>
+                  {item.name}
+                </Option>
+              ))}
+          </Select>
+        )}
+      </LoopSelectContext.Consumer>
     );
   } else if (param.enName === 'loopcondition') {
     return (
-      <LoopConditionParam
-        param={param}
-        cards={cards}
-        loopSelect={loopSelect}
-        stopDeleteKeyDown={stopDeleteKeyDown}
-        handleEmitCodeTransform={handleEmitCodeTransform}
-        keyFlag={keyFlag}
-        setFlag={setFlag}
-      />
+      <LoopSelectContext.Consumer>
+        {({ loopSelect }) => (
+          <LoopConditionParam
+            param={param}
+            cards={cards}
+            loopSelect={loopSelect}
+            stopDeleteKeyDown={stopDeleteKeyDown}
+            handleEmitCodeTransform={handleEmitCodeTransform}
+            keyFlag={keyFlag}
+            setFlag={setFlag}
+          />
+        )}
+      </LoopSelectContext.Consumer>
     );
   }
   switch (param.componentType) {
@@ -379,8 +376,6 @@ const ParamItem = ({
   flag,
   aiHintList,
   setFlag,
-  loopSelect,
-  setLoopSelect,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
   return (
@@ -401,9 +396,7 @@ const ParamItem = ({
             flag,
             aiHintList,
             setFlag,
-            handleValidate,
-            loopSelect,
-            setLoopSelect
+            handleValidate
           )}
         </div>
       </div>
@@ -411,6 +404,11 @@ const ParamItem = ({
     </React.Fragment>
   );
 };
+
+const LoopSelectContext = React.createContext({
+  loopSelect: 'for_list',
+  toggleLoopSelect: () => {},
+});
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const [flag, setFlag] = useState(false);
@@ -466,17 +464,17 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
             );
           }
           return (
-            <ParamItem
-              key={checkedBlock.id + index}
-              param={param}
-              handleEmitCodeTransform={handleEmitCodeTransform}
-              cards={cards}
-              flag={flag}
-              aiHintList={aiHintList}
-              setFlag={setFlag}
-              loopSelect={loopSelect}
-              setLoopSelect={setLoopSelect}
-            />
+            <LoopSelectContext.Provider value={{ loopSelect, setLoopSelect }}>
+              <ParamItem
+                key={checkedBlock.id + index}
+                param={param}
+                handleEmitCodeTransform={handleEmitCodeTransform}
+                cards={cards}
+                flag={flag}
+                aiHintList={aiHintList}
+                setFlag={setFlag}
+              />
+            </LoopSelectContext.Provider>
           );
         })}
       </div>

@@ -16,32 +16,35 @@ export default (id, visibleTemplate) => {
     const [_, forceUpdate] = useForceUpdate();
     const node = findNodeById(cards, id);
 
-    const proxyCondition = (setVisible, requiredItem) => {
-      const transformCondition = () => {
-        const valueList = requiredItem.valueList || [];
-        let result = '';
-        valueList.forEach((item, index) => {
-          if (index === valueList.length - 1) {
-            // 最后一个，不把连接符填上
-            if (item.rule === 'is None' || item.rule === 'not None') {
-              result += `(${item.v1} ${item.rule}) `;
-            } else {
-              result += `(${item.v1} ${item.rule} ${item.v2}) `;
-            }
+    const transformCondition = (requiredItem, setVisible) => {
+      const valueList = requiredItem.valueList || [];
+      let result = '';
+      valueList.forEach((item, index) => {
+        if (index === valueList.length - 1) {
+          // 最后一个，不把连接符填上
+          if (item.rule === 'is None' || item.rule === 'not None') {
+            result += `(${item.v1} ${item.rule}) `;
           } else {
-            if (item.rule === 'is None' || item.rule === 'not None') {
-              result += `(${item.v1} ${item.rule}) ${item.connect} `;
-            } else {
-              result += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;
-            }
+            result += `(${item.v1} ${item.rule} ${item.v2}) `;
           }
-        });
-        setVisible(result);
-        forceUpdate();
-      };
+        } else {
+          if (item.rule === 'is None' || item.rule === 'not None') {
+            result += `(${item.v1} ${item.rule}) ${item.connect} `;
+          } else {
+            result += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;
+          }
+        }
+      });
+      setVisible(result);
+      forceUpdate();
+    };
 
-      const conditionEffect = () => {
-        const item = requiredItem;
+    if (
+      node.text === '条件分支' &&
+      node.properties.required[0].tag === /* 条件语句的向导模式 */ 1
+    ) {
+      useEffect(() => {
+        const item = node.properties.required[0];
         const descriptor = Object.getOwnPropertyDescriptor(item, 'forceUpdate');
         if (descriptor && descriptor.get) {
           return;
@@ -56,30 +59,14 @@ export default (id, visibleTemplate) => {
           set(value) {
             this._forceUpdate = value;
 
-            if (requiredItem.tag === 1) {
-              transformCondition();
+            if (node.properties.required[0].tag === 1) {
+              transformCondition(node.properties.required[0], setCondition);
             } else {
               forceUpdate();
             }
           },
         });
-        transformCondition();
-      };
-
-      return conditionEffect;
-    };
-
-    if (
-      node.text === '条件分支' &&
-      node.properties.required[0].tag === /* 条件语句的向导模式 */ 1
-    ) {
-      const conditionEffect = proxyCondition(
-        setCondition,
-        node.properties.required[0]
-      );
-
-      useEffect(() => {
-        conditionEffect();
+        transformCondition(node.properties.required[0], setCondition);
       }, [node]);
       return [true, `如果满足 ${condition} 则`, () => {}, () => {}];
     }
@@ -106,87 +93,28 @@ export default (id, visibleTemplate) => {
         } else if (select === 'for_condition' && proxy.tag === 2) {
           template = '循环：当 {{value}} 成立时';
         } else if (select === 'for_condition' && proxy.tag === 1) {
-          template = newVisible;
+          template = `循环：当 {{}} 成立时`;
         }
         return template;
       };
 
-      const conditionEffect = proxyCondition(setConditionVisible, proxy);
       visibleTemplate = getVisibleTemplate();
 
-      const getNameValue = () => {
-        let nameMapValue = {};
-        const proxyValue = proxy.value;
-        let valueArray = proxyValue.split(' ');
-        if (select === 'for_list') {
-          nameMapValue = { ...nameMapValue, value: valueArray[0] };
-          nameMapValue = { ...nameMapValue, arrayRet: valueArray[2] };
-        } else if (select === 'for_dict') {
-          const key = proxyValue.split(',');
-          const value = proxyValue.match(/,([^\s]*)/);
-          nameMapValue = { ...nameMapValue, key: key[0] };
-          nameMapValue = {
-            ...nameMapValue,
-            value: value ? value[1] : '',
-          };
-          nameMapValue = {
-            ...nameMapValue,
-            dictVar: valueArray[valueArray.length - 1],
-          };
-        } else if (select === 'for_times') {
-          nameMapValue = { ...nameMapValue, index: valueArray[0] };
-          valueArray = proxyValue.substring(
-            proxyValue.indexOf('range(') + 6,
-            proxyValue.length - 1
-          );
-          valueArray = valueArray.split(',');
-          nameMapValue = { ...nameMapValue, startIndex: valueArray[0] };
-          nameMapValue = { ...nameMapValue, endIndex: valueArray[1] };
-          nameMapValue = { ...nameMapValue, step: valueArray[2] };
-        } else if (select === 'for_condition')
-          nameMapValue = { ...nameMapValue, value: proxyValue };
-        return nameMapValue;
-      };
-
-      const composeVaule = (name, value, originValue) => {
-        let result = '';
-        if (select === 'for_list') {
-          if (name === 'value') {
-            result =
-              value.concat(
-                originValue.substring(originValue.indexOf(' in '))
-              ) || '';
-          } else if (name === 'arrayRet') {
-            result =
-              originValue
-                .substring(0, originValue.indexOf(' in ') + 4)
-                .concat(value) || '';
-          }
-        } else if (select === 'for_dict') {
-          if (name === 'key') {
-            result =
-              value.concat(originValue.substring(originValue.indexOf(','))) ||
-              '';
-          } else if (name === 'value') {
-            result = originValue.replace(/,([^\s]*)/, `,${value}`) || '';
-          } else if (name === 'dictVar') {
-            result = originValue.replace(/in [^\s]*/, `in ${value}`) || '';
-          }
-        } else if (select === 'for_condition') {
-          result = value;
-        }
-        return result;
-      };
-
       const updateTemplate = template => {
-        const nameMapValue = getNameValue();
         const result = template.replace(/({{.*?}})/g, (_, ...args) => {
           const enName = args[0].replace(/{|}/g, '');
+          let value = '';
+          if (proxy[select]) {
+            value = proxy[select].filter(item => item.enName === enName)[0]
+              .value;
+          } else if (select === 'for_condition' && proxy.tag === 2) {
+            value = proxy.value;
+          }
           if (proxy) {
             return (
               `<span data-anchor=${enName} class="template_span ${
-                proxy.value === '' ? 'template_span__empty' : ''
-              }">${nameMapValue[enName]}</span>` || ''
+                value === '' ? 'template_span__empty' : ''
+              }">${value}</span>` || ''
             );
           }
         });
@@ -195,17 +123,6 @@ export default (id, visibleTemplate) => {
 
       // 对属性的改变做一个代理
       useEffect(() => {
-        proxy._value = proxy.value;
-        Object.defineProperty(proxy, 'value', {
-          get() {
-            return this._value;
-          },
-          set(value) {
-            this._value = value;
-            updateTemplate(getVisibleTemplate());
-          },
-        });
-
         forTypeNode._value = forTypeNode.value;
         Object.defineProperty(forTypeNode, 'value', {
           get() {
@@ -214,42 +131,55 @@ export default (id, visibleTemplate) => {
           set(value) {
             this._value = value;
             select = value;
-            updateTemplate(getVisibleTemplate());
+            if (proxy.tag === 1 && select === 'for_condition') {
+              transformCondition(proxy, setConditionVisible);
+            } else {
+              updateTemplate(getVisibleTemplate());
+            }
           },
         });
 
-        proxy._tag = proxy.tag;
-        Object.defineProperty(proxy, 'tag', {
+        proxy.forceUpdate = proxy.forceUpdate || 0;
+        proxy._forceUpdate = proxy.forceUpdate;
+        Object.defineProperty(proxy, 'forceUpdate', {
           get() {
-            return this._tag;
+            return this._forceUpdate;
           },
           set(value) {
-            this._tag = value;
-            updateTemplate(getVisibleTemplate());
+            this._forceUpdate = value;
+
+            if (proxy.tag === 1 && select === 'for_condition') {
+              transformCondition(proxy, setConditionVisible);
+            } else {
+              updateTemplate(getVisibleTemplate());
+            }
           },
         });
-        conditionEffect();
-        updateTemplate(visibleTemplate);
+
+        if (proxy.tag === 1 && select === 'for_condition') {
+          transformCondition(proxy, setConditionVisible);
+        } else updateTemplate(visibleTemplate);
       }, [id]);
 
       const changeToEditableTemplate = anchor => {
-        if (select === 'for_condition' && proxy.tag === '1') {
-          return;
-        }
-        const nameMapValue = getNameValue();
         const result = visibleTemplate.replace(/({{.*?}})/g, (_, ...args) => {
           const enName = args[0].replace(/{|}/g, '');
+          let value = '';
+          if (proxy[select]) {
+            value = proxy[select].filter(item => item.enName === enName)[0]
+              .value;
+          } else if (select === 'for_condition' && proxy.tag === 2) {
+            value = proxy.value;
+          }
           if (anchor !== enName) {
             return (
-              `<span data-anchor=${enName} class="template_span">${nameMapValue[enName]}</span>` ||
+              `<span data-anchor=${enName} class="template_span">${value}</span>` ||
               ''
             );
           }
           const html = `<input data-anchor=${anchor} class="template_input template_input_${anchor}" value="${
-            nameMapValue[enName] !== ''
-              ? nameMapValue[enName]
-                  .replace(/"/g, '&quot;')
-                  .replace(/'/g, '&apos;')
+            value !== ''
+              ? value.replace(/"/g, '&quot;').replace(/'/g, '&apos;')
               : ''
           }" >`;
           return html;
@@ -265,15 +195,24 @@ export default (id, visibleTemplate) => {
       };
 
       const saveInputChange = e => {
-        if (select === 'for_condition' && proxy.tag === '1') {
-          return;
-        }
         const dataId = e.target.dataset.anchor;
         const newValue = e.target.value;
-        if (proxy) {
-          proxy.value = composeVaule(dataId, newValue, proxy.value);
-          event.emit('forceUpdate', select);
+        if (select === 'for_condition' && proxy.tag === 2) {
+          proxy.value = newValue;
+        } else if (proxy[select]) {
+          proxy[select].some(item => {
+            if (item.enName === dataId) {
+              item.value = newValue;
+              if (item.id.indexOf('tigger') > -1) {
+                item.id = item.id.replace('tigger', '');
+              } else {
+                item.id = `tigger${item.id}`;
+              }
+              return true;
+            }
+          });
         }
+        event.emit('forceUpdate', select);
 
         setCanDrag(true);
         updateTemplate(getVisibleTemplate());
