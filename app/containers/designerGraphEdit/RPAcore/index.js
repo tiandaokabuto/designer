@@ -24,7 +24,8 @@ export const transformEditorProcess = (
   currentId,
   result,
   depth = 1,
-  breakPoint
+  breakPoint,
+  notWhile = false
 ) => {
   // 判断当前的结点类型 流程块结点 或者是 判断结点
   const currentNode = findNodeById(graphData.nodes, currentId);
@@ -46,8 +47,11 @@ export const transformEditorProcess = (
           1,
           blockData
         ).output || '\n'}` + result.output;
-      // 如果跟循环有关系需要添加循环语句
-      if (hasTwoEntryPortInProcessBlock(graphData.edges, currentId)) {
+
+      if (
+        !notWhile &&
+        hasTwoEntryPortInProcessBlock(graphData.edges, currentId)
+      ) {
         result.output += `${padding(depth)}while True:\n`;
         depth = depth + 1;
       }
@@ -127,6 +131,7 @@ export const transformEditorProcess = (
           findNodeByLabelAndId(graphData.edges, currentId, '否'),
           findNodeByLabelAndId(graphData.edges, currentId, '是')
         );
+        console.log(breakPoint, 'breakPoint');
         // 寻找label为是的出点进行解析
         const nextTrue = findNodeByLabelAndId(graphData.edges, currentId, '是');
         nextTrue && (result.output += `${padding(depth)}if ${condition}:\n`);
@@ -163,7 +168,8 @@ export const transformEditorProcess = (
             breakPoint,
             result,
             depth,
-            null
+            null,
+            true
           );
       } else {
         // 处理存在循环的情况
