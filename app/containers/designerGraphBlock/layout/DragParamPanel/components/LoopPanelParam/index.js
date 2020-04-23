@@ -1,8 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { Input } from 'antd';
 
-import LoopParamPanel from '../LoopParamPanel/index';
-import event from '../../../eventCenter';
+import LoopParam from './LoopParam';
 import ConditionParam from '../ConditionParam';
 
 export default ({
@@ -104,7 +103,7 @@ export default ({
     <Fragment>
       {param[loopSelect]
         ? param[loopSelect].map(item => (
-            <LoopParamPanel
+            <LoopParam
               param={{ ...param, cnName: item.cnName, value: item.value }}
               key={item.id}
               onChange={value => {

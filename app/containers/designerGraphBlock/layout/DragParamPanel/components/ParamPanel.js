@@ -11,7 +11,7 @@ import {
   useVerifyInput,
 } from '../../useHooks';
 import ConditionParam from './ConditionParam';
-import LoopConditionParam from './LoopConditionParam/index';
+import LoopConditionParam from './LoopPanelParam/index';
 import OutputPanel from './OutputPanel';
 
 const { ipcRenderer } = require('electron');
@@ -23,6 +23,7 @@ const COMPONENT_TYPE = {
   INPUT: 0,
   SELECT: 1,
   FILEPATHINPUT: 2,
+  DIRECTORY: 3,
 };
 
 const getMutiplyValue = (item, type) => {
@@ -334,6 +335,7 @@ const getComponentType = (
             ))}
         </Select>
       );
+    case COMPONENT_TYPE.DIRECTORY:
     case COMPONENT_TYPE.FILEPATHINPUT:
       return (
         <div className="parampanel-choosePath">
@@ -355,7 +357,11 @@ const getComponentType = (
                 'choose-directory-dialog',
                 'showOpenDialog',
                 '选择',
-                ['openFile']
+                [
+                  param.componentType === COMPONENT_TYPE.FILEPATHINPUT
+                    ? 'openFile'
+                    : 'openDirectory',
+                ]
               );
               ipcRenderer.on('chooseItem', handleFilePath);
             }}
