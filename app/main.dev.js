@@ -226,11 +226,15 @@ const createWindow = async () => {
     dialog[func](mainWindow, {
       buttonLabel: label,
       properties,
-    }).then(({ filePaths, canceled }) => {
-      if (!canceled) {
-        event.sender.send('chooseItem', filePaths);
-      }
-    });
+    })
+      .then(({ filePaths, canceled }) => {
+        if (!canceled) {
+          event.sender.send('chooseItem', filePaths);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   });
 
   // 创建登录窗口
