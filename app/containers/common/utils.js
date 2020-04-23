@@ -414,8 +414,8 @@ export const persistentStorage = (
             PATH_CONFIG('project', `${name}/${treeItem.title}/manifest.json`),
             JSON.stringify(treeItem.data)
           );
-          treeItem.data = {};
         }
+        treeItem.data = {};
       }
     });
   }

@@ -97,6 +97,18 @@ class NodeHandler {
               enName: 'condition',
               value: '',
               default: '',
+              valueMapping: [
+                { name: '等于', value: '==' },
+                { name: '不等于', value: '!=' },
+                { name: '大于', value: '>' },
+                { name: '小于', value: '<' },
+                { name: '大于等于', value: '>=' },
+                { name: '小于等于', value: '<=' },
+                { name: '空', value: 'is None' },
+                { name: '非空', value: 'not None' },
+              ],
+              tag: 1,
+              valueList: [],
             },
           ],
         });

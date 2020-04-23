@@ -44,6 +44,7 @@ export default (id, visibleTemplate) => {
       node.properties.required[0].tag === /* 条件语句的向导模式 */ 1
     ) {
       useEffect(() => {
+        node.properties.required[0] = { ...node.properties.required[0] };
         const item = node.properties.required[0];
         /*  const descriptor = Object.getOwnPropertyDescriptor(item, 'forceUpdate');
         if (descriptor && descriptor.get) {
@@ -69,7 +70,6 @@ export default (id, visibleTemplate) => {
         });
         transformCondition(node.properties.required[0], setCondition);
       }, [node]);
-
       return [true, `如果满足 ${condition} 则`, () => {}, () => {}];
     }
 
