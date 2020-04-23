@@ -42,6 +42,10 @@ export const findCommonTarget = (edges, labelTrue, labelFalse) => {
   if (labelTrue === null || labelFalse === null) {
     return null;
   }
+  const labelTruePath = [labelTrue];
+  const labelFalsePath = [labelFalse];
+
+  const hasDumplate = (a1, a2) => a1.filter(item => a2.includes(item)).length;
   while (
     labelTrue !== labelFalse &&
     labelTrue !== null &&
@@ -49,7 +53,14 @@ export const findCommonTarget = (edges, labelTrue, labelFalse) => {
   ) {
     labelTrue = findTargetIdBySourceId(edges, labelTrue);
     labelFalse = findTargetIdBySourceId(edges, labelFalse);
-    if (labelTrue === labelFalse) {
+    if (labelTrue) {
+      labelTruePath.push(labelTrue);
+    }
+    if (labelFalse) {
+      labelFalsePath.push(labelFalse);
+    }
+
+    if (hasDumplate(labelTruePath, labelFalsePath)) {
       return labelTrue;
     }
   }
