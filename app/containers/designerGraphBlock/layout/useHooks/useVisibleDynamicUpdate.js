@@ -46,7 +46,6 @@ export default (id, visibleTemplate) => {
         // if (descriptor && descriptor.get) {
         //   return;
         // }
-        console.log(item);
         item.forceUpdate = item.forceUpdate || 0;
         item._forceUpdate = item.forceUpdate || 0;
 
@@ -125,7 +124,6 @@ export default (id, visibleTemplate) => {
     }
 
     if (node.main === 'loop') {
-      console.log(node);
       const proxy = node.properties.required[1];
       const forTypeNode = node.properties.required[0];
       let select = forTypeNode.value;
