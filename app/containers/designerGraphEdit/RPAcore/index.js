@@ -7,6 +7,7 @@ import {
   findNodeByLabelAndId,
   isCircleExist,
   findCommonTarget,
+  hasTwoEntryPoint,
   hasTwoEntryPortInProcessBlock,
 } from './utils';
 
@@ -170,6 +171,41 @@ export const transformEditorProcess = (
             depth,
             null,
             true
+          );
+      } else if (hasTwoEntryPoint(graphData.edges, currentId)) {
+        result.output += `${padding(depth)}while ( True ):\n`;
+        result.output += `${padding(depth + 1)}if ${condition}:\n${padding(
+          depth + 2
+        )}break\n`;
+        let nextLabel = isYesCircleExist ? '是' : '否';
+        const nextNode = findNodeByLabelAndId(
+          graphData.edges,
+          currentId,
+          nextLabel
+        );
+        nextNode &&
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            nextNode,
+            result,
+            depth + 1,
+            currentId
+          );
+        let breakLabel = isYesCircleExist ? '否' : '是';
+        const breakNode = findNodeByLabelAndId(
+          graphData.edges,
+          currentId,
+          breakLabel
+        );
+        breakNode &&
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            breakNode,
+            result,
+            depth,
+            null
           );
       } else {
         // 处理存在循环的情况

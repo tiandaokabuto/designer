@@ -67,6 +67,11 @@ export const findCommonTarget = (edges, labelTrue, labelFalse) => {
   return null;
 };
 
+export const hasTwoEntryPoint = (edges, id) => {
+  const find = edges.filter(edge => edge.target === id);
+  return find.length === 2;
+};
+
 /**
  * 判断流程块结点存在两个输入结点
  */
