@@ -179,6 +179,7 @@ const BasicStatement = useInjectContext(props => {
         ...style,
         opacity: opacity,
       }}
+      className="cursor__before"
       className={className}
     >
       <div
@@ -204,7 +205,7 @@ const BasicStatement = useInjectContext(props => {
               onClick={e => {
                 if (readOnly) return;
                 const anchor = e.target.dataset.anchor;
-                changeToEditableTemplate(anchor);
+                if (anchor) changeToEditableTemplate(anchor);
                 // 触发变量的修改
               }}
               onDragStart={e => {

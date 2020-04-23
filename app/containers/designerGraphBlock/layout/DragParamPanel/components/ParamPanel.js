@@ -1,15 +1,8 @@
-import React, {
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  Fragment,
-} from 'react';
-import { Input, Select, AutoComplete, Button, Icon, Radio } from 'antd';
-import { useSelector } from 'react-redux';
-import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
+import './ParamPanel.scss';
+
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { Input, Select, AutoComplete, Button } from 'antd';
 import uniqueId from 'lodash/uniqueId';
-import axios from 'axios';
 
 import event from '../../eventCenter';
 import {
@@ -18,11 +11,10 @@ import {
   useVerifyInput,
 } from '../../useHooks';
 import ConditionParam from './ConditionParam';
+import LoopConditionParam from './LoopConditionParam/index';
 import OutputPanel from './OutputPanel';
-import api, { config } from '../../../../../api';
-const { ipcRenderer } = require('electron');
 
-import './ParamPanel.scss';
+const { ipcRenderer } = require('electron');
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -96,6 +88,7 @@ const getComponentType = (
     },
     [param]
   );
+
   // 任务数据下拉列表
   const [appendDataSource] = useAppendDataSource(param);
   // 针对一些特殊的情况需要作出特殊的处理
@@ -152,7 +145,47 @@ const getComponentType = (
         stopDeleteKeyDown={stopDeleteKeyDown}
         keyFlag={keyFlag}
         setFlag={setFlag}
-      ></ConditionParam>
+      />
+    );
+  } else if (param.enName === 'looptype') {
+    return (
+      <LoopSelectContext.Consumer>
+        {({ setLoopSelect }) => (
+          <Select
+            style={{ width: '100%' }}
+            defaultValue={param.value || param.default}
+            dropdownMatchSelectWidth={false}
+            onChange={value => {
+              param.value = value;
+              handleEmitCodeTransform(cards);
+              setLoopSelect(value);
+            }}
+          >
+            {param.valueMapping &&
+              param.valueMapping.map(item => (
+                <Option key={item.value} value={item.value}>
+                  {item.name}
+                </Option>
+              ))}
+          </Select>
+        )}
+      </LoopSelectContext.Consumer>
+    );
+  } else if (param.enName === 'loopcondition') {
+    return (
+      <LoopSelectContext.Consumer>
+        {({ loopSelect }) => (
+          <LoopConditionParam
+            param={param}
+            cards={cards}
+            loopSelect={loopSelect}
+            stopDeleteKeyDown={stopDeleteKeyDown}
+            handleEmitCodeTransform={handleEmitCodeTransform}
+            keyFlag={keyFlag}
+            setFlag={setFlag}
+          />
+        )}
+      </LoopSelectContext.Consumer>
     );
   }
   switch (param.componentType) {
@@ -348,7 +381,7 @@ const ParamItem = ({
   return (
     <React.Fragment>
       <div className="parampanel-item">
-        {param.cnName === '条件' ? (
+        {param.cnName === '条件' || param.cnName === '循环条件' ? (
           ''
         ) : (
           <span className="param-title" title={param.desc}>
@@ -372,8 +405,19 @@ const ParamItem = ({
   );
 };
 
+const LoopSelectContext = React.createContext({
+  loopSelect: 'for_list',
+  toggleLoopSelect: () => {},
+});
+
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const [flag, setFlag] = useState(false);
+  // loopSelect：循环类型，循环类型更改的时候需要改变循环条件
+  const [loopSelect, setLoopSelect] = useState(
+    checkedBlock.main === 'loop' && checkedBlock.properties.required[0].value
+      ? checkedBlock.properties.required[0].value
+      : 'for_list'
+  );
 
   const [aiHintList] = useAIHintWatch();
 
@@ -420,15 +464,17 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
             );
           }
           return (
-            <ParamItem
-              key={checkedBlock.id + index}
-              param={param}
-              handleEmitCodeTransform={handleEmitCodeTransform}
-              cards={cards}
-              flag={flag}
-              aiHintList={aiHintList}
-              setFlag={setFlag}
-            />
+            <LoopSelectContext.Provider value={{ loopSelect, setLoopSelect }}>
+              <ParamItem
+                key={checkedBlock.id + index}
+                param={param}
+                handleEmitCodeTransform={handleEmitCodeTransform}
+                cards={cards}
+                flag={flag}
+                aiHintList={aiHintList}
+                setFlag={setFlag}
+              />
+            </LoopSelectContext.Provider>
           );
         })}
       </div>
