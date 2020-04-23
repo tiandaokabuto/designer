@@ -75,13 +75,6 @@ export default ({
     },
   ];
 
-  const [flag, setUpdateFlag] = useState(false);
-
-  const handleForceUpdateLoop = select => {
-    setUpdateFlag(true);
-    setTimeout(() => setUpdateFlag(false), 50);
-  };
-
   useEffect(() => {
     if (!Array.isArray(param.for_list)) {
       param.for_list = for_list;
@@ -93,13 +86,6 @@ export default ({
       param.for_times = for_times;
     }
   });
-
-  useEffect(() => {
-    event.addListener('forceUpdate', handleForceUpdateLoop);
-    return () => {
-      event.removeListener('forceUpdate', handleForceUpdateLoop);
-    };
-  }, []);
 
   if (loopSelect === 'for_condition') {
     return (
@@ -116,7 +102,7 @@ export default ({
 
   return (
     <Fragment>
-      {param[loopSelect] /*  && !flag */
+      {param[loopSelect]
         ? param[loopSelect].map(item => (
             <LoopParamPanel
               param={{ ...param, cnName: item.cnName, value: item.value }}

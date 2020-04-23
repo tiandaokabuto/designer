@@ -9,7 +9,7 @@ type Props = {
   incrementIfOdd: () => void,
   incrementAsync: () => void,
   decrement: () => void,
-  counter: number
+  counter: number,
 };
 
 export default class Counter extends Component<Props> {
@@ -21,12 +21,12 @@ export default class Counter extends Component<Props> {
       incrementIfOdd,
       incrementAsync,
       decrement,
-      counter
+      counter,
     } = this.props;
     return (
       <div>
         <div className={styles.backButton} data-tid="backButton">
-          <Link to={routes.HOME}>
+          <Link to={routes.HOME || '/'}>
             <i className="fa fa-arrow-left fa-3x" />
           </Link>
         </div>

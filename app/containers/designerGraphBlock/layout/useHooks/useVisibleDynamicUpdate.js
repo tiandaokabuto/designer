@@ -45,10 +45,10 @@ export default (id, visibleTemplate) => {
     ) {
       useEffect(() => {
         const item = node.properties.required[0];
-        const descriptor = Object.getOwnPropertyDescriptor(item, 'forceUpdate');
+        /*  const descriptor = Object.getOwnPropertyDescriptor(item, 'forceUpdate');
         if (descriptor && descriptor.get) {
           return;
-        }
+        } */
         item.forceUpdate = item.forceUpdate || 0;
         item._forceUpdate = item.forceUpdate || 0;
 
@@ -62,12 +62,14 @@ export default (id, visibleTemplate) => {
             if (node.properties.required[0].tag === 1) {
               transformCondition(node.properties.required[0], setCondition);
             } else {
+              // transformCondition();
               forceUpdate();
             }
           },
         });
         transformCondition(node.properties.required[0], setCondition);
       }, [node]);
+
       return [true, `如果满足 ${condition} 则`, () => {}, () => {}];
     }
 
@@ -97,7 +99,6 @@ export default (id, visibleTemplate) => {
         }
         return template;
       };
-
       visibleTemplate = getVisibleTemplate();
 
       const updateTemplate = template => {
@@ -243,7 +244,9 @@ export default (id, visibleTemplate) => {
         });
         if (find) {
           return (
-            `<span data-anchor=${find.enName} class="template_span ${
+            `<span data-anchor=${
+              find.componentType === 1 ? '' : find.enName
+            } class="template_span ${
               find.value === '' ? 'template_span__empty' : ''
             }">${find.value}</span>` || ''
           );
@@ -295,7 +298,7 @@ export default (id, visibleTemplate) => {
           `input.template_input_${anchor}`
         );
         inputDom.focus();
-      }, 0);
+      }, 100);
     };
 
     const saveInputChange = e => {

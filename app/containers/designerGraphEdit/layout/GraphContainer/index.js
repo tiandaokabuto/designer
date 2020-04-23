@@ -67,13 +67,13 @@ export default useInjectContext(
         showHead && propsAPI.executeCommand('autoZoom');
         const handleUndo = () => {
           executeCommand('undo');
-          // updateGraphData(save());
-          // synchroGraphDataToProcessTree();
+          updateGraphData(save());
+          synchroGraphDataToProcessTree();
         };
         const handleRedo = () => {
           executeCommand('redo');
-          // updateGraphData(save());
-          // synchroGraphDataToProcessTree();
+          updateGraphData(save());
+          synchroGraphDataToProcessTree();
         };
         const handleZoomOut = frequency => {
           for (let i = 0; i < frequency; i += 1) {
