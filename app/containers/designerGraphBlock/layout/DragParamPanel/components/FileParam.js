@@ -18,6 +18,7 @@ export default ({
   handleEmitCodeTransform,
   setFlag,
   fileType,
+  filters,
 }) => {
   const handleFilePath = useCallback(
     (e, filePath) => {
@@ -52,7 +53,8 @@ export default ({
             'choose-directory-dialog',
             'showOpenDialog',
             '选择',
-            [fileType]
+            [fileType],
+            filters
           );
           ipcRenderer.on('chooseItem', handleFilePath);
         }}

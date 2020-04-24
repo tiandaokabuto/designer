@@ -69,6 +69,7 @@ export default ({ param, handleEmitCodeTransform, keyFlag, setFlag }) => {
           keyFlag={keyFlag}
           fileType="openFile"
           handleEmitCodeTransform={handleEmitCodeTransform}
+          filters={param.filter}
         />
       )}
     </React.Fragment>
