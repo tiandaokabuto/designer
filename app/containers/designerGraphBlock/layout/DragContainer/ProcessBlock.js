@@ -1,5 +1,6 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, memo } from 'react';
 import { InjectProvider } from 'react-hook-easier/lib/useInjectContext';
+import isEqual from 'lodash/isEqual';
 
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 import { useStore, useSelector, useDispatch } from 'react-redux';
@@ -57,7 +58,7 @@ const style = {
 
 const MENU_TYPE = 'MULTI';
 
-export default ({ readOnly = false }) => {
+export default memo(({ readOnly = false }) => {
   // 注册点击事件
   const event = !readOnly
     ? useEventHandler({
@@ -74,6 +75,18 @@ export default ({ readOnly = false }) => {
   const dispatch = useDispatch();
 
   const [isDraggingNode, setIsDraggingNode] = useState({});
+
+  const changeCardData = useCallback(
+    useDebounce(data => {
+      if (isEqual(data, cards)) return;
+      console.log('阻断通知cards的变化');
+      // dispatch({
+      //   type: CHANGE_CARDDATA,
+      //   payload: [...data],
+      // });
+    }, 20),
+    [dispatch, cards]
+  );
 
   // const [cards, setCards] = useState([]);
   const moveCard = useCallback(
@@ -108,10 +121,11 @@ export default ({ readOnly = false }) => {
           const cloneCards = cloneDeep(cards);
           dragNodes.splice(deleteIndex, 1);
           currentLevel.push(deleteNode);
-          dispatch({
-            type: CHANGE_CARDDATA,
-            payload: [...cards],
-          });
+          changeCardData(cards);
+          // dispatch({
+          //   type: CHANGE_CARDDATA,
+          //   payload: [...cards],
+          // });
           // setCards([...cards]);
         } else if (
           hoverItem.id.includes('tail') &&
@@ -139,10 +153,11 @@ export default ({ readOnly = false }) => {
           const cloneCards = cloneDeep(cards);
           dragNodes.splice(deleteIndex, 1);
           hoverNodes.push(deleteNode);
-          dispatch({
-            type: CHANGE_CARDDATA,
-            payload: [...cards],
-          });
+          changeCardData(cards);
+          // dispatch({
+          //   type: CHANGE_CARDDATA,
+          //   payload: [...cards],
+          // });
           // setCards([...cards]);
         } else if (
           hoverItem.id.includes('tail') &&
@@ -165,10 +180,11 @@ export default ({ readOnly = false }) => {
           const cloneCards = cloneDeep(cards);
           dragNodes.splice(deleteIndex, 1);
           hoverNodes.push(deleteNode);
-          dispatch({
-            type: CHANGE_CARDDATA,
-            payload: [...cards],
-          });
+          changeCardData(cards);
+          // dispatch({
+          //   type: CHANGE_CARDDATA,
+          //   payload: [...cards],
+          // });
           // setCards([...cards]);
         }
         return;
@@ -191,10 +207,11 @@ export default ({ readOnly = false }) => {
       const cloneCards = cloneDeep(cards);
       dragNodes.splice(deleteIndex, 1);
       hoverNodes.splice(insertIndex, 0, deleteNode);
-      dispatch({
-        type: CHANGE_CARDDATA,
-        payload: [...cards],
-      });
+      changeCardData(cards);
+      // dispatch({
+      //   type: CHANGE_CARDDATA,
+      //   payload: [...cards],
+      // });
       // setCards([...cards]);
     },
     [cards]
@@ -222,10 +239,11 @@ export default ({ readOnly = false }) => {
       /* eslint-disable */
       const newNode = useNode(card, newId);
       if (!currentLevel) {
-        dispatch({
-          type: CHANGE_CARDDATA,
-          payload: [...cards], //cloneDeep(cards),
-        });
+        changeCardData(cards);
+        // dispatch({
+        //   type: CHANGE_CARDDATA,
+        //   payload: [...cards], //cloneDeep(cards),
+        // });
         return;
       }
       if (insertIndex === PLACEHOLDER_STATEMENT) {
@@ -233,10 +251,11 @@ export default ({ readOnly = false }) => {
       } else {
         currentLevel.splice(insertIndex, 0, newNode);
       }
-      dispatch({
-        type: CHANGE_CARDDATA,
-        payload: [...cards], //cloneDeep(cards),
-      });
+      changeCardData(cards);
+      // dispatch({
+      //   type: CHANGE_CARDDATA,
+      //   payload: [...cards], //cloneDeep(cards),
+      // });
       // return cloneDeep(cards);
       //});
     },
@@ -347,4 +366,4 @@ export default ({ readOnly = false }) => {
       </ContextMenu> */}
     </InjectProvider>
   );
-};
+});

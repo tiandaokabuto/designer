@@ -29,14 +29,15 @@ const useDropTarget = ({
       const hoverClientY = clientOffset.y - hoverBoundingRect.top;
       const hoverIndex = index;
 
+      if (hoverClientY < hoverMiddleY) {
+        setClassName('cursor__before');
+        resetClassName();
+      } else {
+        setClassName('cursor__after');
+        resetClassName();
+      }
+
       if (item.effectTag === 'new') {
-        if (hoverClientY < hoverMiddleY) {
-          setClassName('cursor__before');
-          resetClassName();
-        } else {
-          setClassName('cursor__after');
-          resetClassName();
-        }
         return;
       }
 
