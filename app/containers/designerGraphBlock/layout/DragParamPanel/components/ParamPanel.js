@@ -13,8 +13,8 @@ import {
 import ConditionParam from './ConditionParam';
 import LoopConditionParam from './LoopPanelParam/index';
 import OutputPanel from './OutputPanel';
-
-const { ipcRenderer } = require('electron');
+import FileParam from './FileParam';
+import FileParamPanel from './FileParamPanel';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -58,8 +58,6 @@ const stopDeleteKeyDown = e => {
   }
 };
 
-let listener = null;
-
 const getComponentType = (
   param,
   handleEmitCodeTransform,
@@ -74,21 +72,6 @@ const getComponentType = (
       value: param.value,
     });
   }, []);
-
-  const handleFilePath = useCallback(
-    (e, filePath) => {
-      if (listener === param && filePath && filePath.length) {
-        setFlag(true);
-        setTimeout(() => {
-          setFlag(false);
-        }, 50);
-        param.value = `"${filePath[0].replace(/\//g, '\\\\')}"`;
-        // forceUpdate();
-        handleEmitCodeTransform(cards);
-      }
-    },
-    [param]
-  );
 
   // 任务数据下拉列表
   const [appendDataSource] = useAppendDataSource(param);
@@ -335,40 +318,29 @@ const getComponentType = (
             ))}
         </Select>
       );
-    case COMPONENT_TYPE.DIRECTORY:
     case COMPONENT_TYPE.FILEPATHINPUT:
       return (
-        <div className="parampanel-choosePath">
-          <Input
-            key={keyFlag ? uniqueId('key_') : ''}
-            defaultValue={param.value || param.default}
-            onChange={e => {
-              param.value = e.target.value;
-
-              handleEmitCodeTransform(cards);
-            }}
-            onKeyDown={e => stopDeleteKeyDown(e)}
-          />
-          <Button
-            onClick={() => {
-              listener = param;
-              ipcRenderer.removeAllListeners('chooseItem');
-              ipcRenderer.send(
-                'choose-directory-dialog',
-                'showOpenDialog',
-                '选择',
-                [
-                  param.componentType === COMPONENT_TYPE.FILEPATHINPUT
-                    ? 'openFile'
-                    : 'openDirectory',
-                ]
-              );
-              ipcRenderer.on('chooseItem', handleFilePath);
-            }}
-          >
-            选择
-          </Button>
-        </div>
+        <FileParamPanel
+          key={param.enName}
+          param={param}
+          keyFlag={keyFlag}
+          setFlag={setFlag}
+          handleEmitCodeTransform={() => {
+            handleEmitCodeTransform(cards);
+          }}
+        />
+      );
+    case COMPONENT_TYPE.DIRECTORY:
+      return (
+        <FileParam
+          param={param}
+          setFlag={setFlag}
+          keyFlag={keyFlag}
+          fileType="openDirectory"
+          handleEmitCodeTransform={() => {
+            handleEmitCodeTransform(cards);
+          }}
+        />
       );
     default:
       return '待开发...';
@@ -384,10 +356,13 @@ const ParamItem = ({
   setFlag,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
+  const specialParam = ['条件', '循环条件'];
+
   return (
     <React.Fragment>
       <div className="parampanel-item">
-        {param.cnName === '条件' || param.cnName === '循环条件' ? (
+        {specialParam.includes(param.cnName) ||
+        param.componentType === COMPONENT_TYPE.FILEPATHINPUT ? (
           ''
         ) : (
           <span className="param-title" title={param.desc}>
@@ -470,9 +445,11 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
             );
           }
           return (
-            <LoopSelectContext.Provider value={{ loopSelect, setLoopSelect }}>
+            <LoopSelectContext.Provider
+              key={checkedBlock.id + index}
+              value={{ loopSelect, setLoopSelect }}
+            >
               <ParamItem
-                key={checkedBlock.id + index}
                 param={param}
                 handleEmitCodeTransform={handleEmitCodeTransform}
                 cards={cards}
