@@ -18,9 +18,21 @@ const getCheckedBlock = (cards, checkedId) => {
   return findNodeById(cards, checkedId);
 };
 
+const getCheckedId = checkedId => {
+  if (Array.isArray) {
+    if (checkedId.length === 1) {
+      return checkedId[0];
+    }
+  }
+  return checkedId;
+};
+
 export default ({ current }) => {
   const data = useSelector(state => state.blockcode);
-  const checkedBlock = getCheckedBlock(data.cards, data.checkedId);
+  const checkedBlock = getCheckedBlock(
+    data.cards,
+    getCheckedId(data.checkedId)
+  );
   const cards = useSelector(state => state.blockcode.cards);
 
   const handleEmitCodeTransform = useTransformToPython();

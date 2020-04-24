@@ -15,7 +15,7 @@ export default ({ className }) => {
       if (checkedId) {
         dispatch({
           type: CHANGE_CHECKEDID,
-          payload: checkedId,
+          payload: [checkedId],
         });
         // if (e.target.classList.contains('loopstatement-header-title')) {
         //   // TODO...

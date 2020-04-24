@@ -30,7 +30,7 @@ export default ({ item, node, addToRecentList, updateCheckedBlockId }) => {
           payload: [...cardsRef.current],
         });
         addToRecentList(node);
-        updateCheckedBlockId(monitor.getDropResult().newId);
+        updateCheckedBlockId([monitor.getDropResult().newId]);
       }
     },
   });

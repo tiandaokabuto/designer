@@ -5,12 +5,12 @@ export default id => {
   const checkedId = useSelector(state => state.blockcode.checkedId);
   const [backgroundColor, setBackgroundColor] = useState('#fff');
   useEffect(() => {
-    if (checkedId && checkedId === id) {
+    if (checkedId && checkedId.includes(id)) {
       if (backgroundColor === '#fff') {
         setBackgroundColor('#DAF2ED');
       }
     }
-    if (!checkedId || checkedId !== id) {
+    if (!checkedId || !checkedId.includes(id)) {
       if (backgroundColor === '#DAF2ED') {
         setBackgroundColor('#fff');
       }

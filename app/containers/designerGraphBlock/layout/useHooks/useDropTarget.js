@@ -70,7 +70,7 @@ const useDropTarget = ({
           item,
           newId
         );
-        return;
+        return { newId };
       }
 
       const hoverBoundingRect = ref.current.getBoundingClientRect();

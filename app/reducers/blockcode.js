@@ -9,20 +9,30 @@ import {
   SYNCHRO_CODEBLOCK,
   CHANGE_AUTOMICLIST,
   CHANGE_AIHINTLIST,
+  CHANGE_CLIPBOARDDATA,
 } from '../actions/codeblock';
 
 import { synchroGraphDataMap } from '../containers/reduxActions';
 
 const defaultState = {
   cards: [],
-  checkedId: undefined,
+  checkedId: [],
   pythonCode: '',
   automicList: [],
   aiHintList: {},
+  clipboardData: {},
 };
 
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case CHANGE_CLIPBOARDDATA:
+      return {
+        ...state,
+        clipboardData: {
+          ...state.clipboardData,
+          ...action.payload,
+        },
+      };
     case CHANGE_AIHINTLIST:
       return {
         ...state,

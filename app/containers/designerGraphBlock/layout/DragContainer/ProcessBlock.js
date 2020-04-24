@@ -38,6 +38,7 @@ import {
   useDragSource,
   useEventHandler,
   useTransformToPython,
+  useListenMouseAndKeyboard,
 } from '../useHooks';
 import cloneDeep from 'lodash/cloneDeep';
 import update from 'immutability-helper';
@@ -65,6 +66,7 @@ export default memo(({ readOnly = false }) => {
         className: 'dragger-editor-container',
       })
     : null;
+  useListenMouseAndKeyboard();
 
   const cards = useSelector(state => state.blockcode.cards);
   const currentPagePosition = useSelector(

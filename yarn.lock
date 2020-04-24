@@ -6299,6 +6299,16 @@ electron-localshortcut@^3.1.0:
     keyboardevent-from-electron-accelerator "^2.0.0"
     keyboardevents-areequal "^0.2.1"
 
+electron-localshortcut@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.npm.taobao.org/electron-localshortcut/download/electron-localshortcut-3.2.1.tgz#cfc83a3eff5e28faf98ddcc87f80a2ce4f623cd3"
+  integrity sha1-z8g6Pv9eKPr5jdzIf4Cizk9iPNM=
+  dependencies:
+    debug "^4.0.1"
+    electron-is-accelerator "^0.1.0"
+    keyboardevent-from-electron-accelerator "^2.0.0"
+    keyboardevents-areequal "^0.2.1"
+
 electron-log@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-4.0.0.tgz#9315e4a5e6be5e2a158909856b2d2cb4d760cd6d"

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
@@ -14,7 +14,20 @@ import { writeFile } from '../../nodejs';
 
 import './index.scss';
 
+const remote = require('electron').remote;
+const electronLocalshortcut = require('electron-localshortcut');
+
 export default useInjectContext(({ history }) => {
+  // useEffect(() => {
+  //   const win = remote.getCurrentWindow();
+  //   if (!win || !win.webContents) return;
+  //   electronLocalshortcut.register(win, 'ctrl+c', () => {
+  //     console.log('You pressed ctrl & c');
+  //   });
+  //   return () => {
+  //     electronLocalshortcut.unregisterAll();
+  //   };
+  // }, []);
   return (
     <DndProvider backend={Backend}>
       <GraphBlockHeader />

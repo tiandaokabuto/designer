@@ -1,0 +1,154 @@
+import { useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { message } from 'antd';
+import cloneDeep from 'lodash/cloneDeep';
+import uniqueId from 'lodash/uniqueId';
+
+import {
+  updateCheckedBlockId,
+  updateClipBoardData,
+  updateCardData,
+} from '../../../reduxActions';
+import { insertAfter } from '../shared/utils';
+import { traverseCards } from '../DragContainer/utils';
+import { PREFIX_ID } from '../statementTypes';
+const remote = require('electron').remote;
+const electronLocalshortcut = require('electron-localshortcut');
+
+const KEYCODEMAP = {
+  shift: 16,
+  ctrl: 17,
+};
+
+const keyDownMap = {
+  isCtrlDown: false,
+  isShiftDown: false,
+};
+
+const getUniqueId = arr => {
+  let newId = uniqueId(PREFIX_ID);
+  while (arr.includes(newId)) {
+    newId = uniqueId(PREFIX_ID);
+  }
+  return newId;
+};
+
+const extractCheckedData = (cards, checkedId) => {
+  const result = [];
+  const currentIdList = [];
+  traverseCards(cards, node => {
+    currentIdList.push(node.id);
+  });
+  traverseCards(cards, node => {
+    if (checkedId.includes(node.id)) {
+      const cloned = cloneDeep(node);
+      cloned.id = getUniqueId(currentIdList);
+      result.push(cloned);
+    }
+  });
+  return result;
+};
+
+export default () => {
+  const checkedId = useSelector(state => state.blockcode.checkedId);
+  const cards = useSelector(state => state.blockcode.cards);
+  const clipboardData = useSelector(state => state.blockcode.clipboardData);
+
+  const setKeyState = useCallback((key, bool) => {
+    if (key === 'ctrl') {
+      keyDownMap.isCtrlDown = bool;
+    } else if (key === 'shift') {
+      keyDownMap.isShiftDown = bool;
+    }
+  }, []);
+  const isCtrlKeyDown = () => {
+    return keyDownMap.isCtrlDown;
+  };
+  const isShiftKeyDown = () => {
+    return keyDownMap.isShiftDown;
+  };
+  useEffect(() => {
+    const handleKeyDown = e => {
+      switch (e.keyCode) {
+        case KEYCODEMAP.ctrl:
+          setKeyState('ctrl', true);
+          break;
+        case KEYCODEMAP.shift:
+          setKeyState('shift', true);
+          break;
+        default:
+        // do nothing
+      }
+    };
+    const handleKeyUp = e => {
+      switch (e.keyCode) {
+        case KEYCODEMAP.ctrl:
+          setKeyState('ctrl', false);
+          break;
+        case KEYCODEMAP.shift:
+          setKeyState('shift', false);
+          break;
+        default:
+        // do nothing
+      }
+    };
+    const handleMouseDown = e => {
+      const id = e.target.dataset.id;
+      let newCheckedId = checkedId.concat();
+      if (!id) return;
+      if (isCtrlKeyDown()) {
+        console.log('ctrl + 鼠标左键', checkedId);
+        if (newCheckedId.includes(id)) {
+          newCheckedId = newCheckedId.filter(g => g !== id);
+          updateCheckedBlockId(newCheckedId);
+        } else {
+          newCheckedId.push(id);
+          console.log(newCheckedId);
+          updateCheckedBlockId(newCheckedId);
+        }
+        return;
+      }
+      if (isShiftKeyDown()) {
+        console.log('shift + 鼠标左键');
+        return;
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+    document.addEventListener('mousedown', handleMouseDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keyup', handleKeyUp);
+      document.removeEventListener('mousedown', handleMouseDown);
+    };
+  }, [setKeyState, checkedId]);
+
+  useEffect(() => {
+    const win = remote.getCurrentWindow();
+    if (!win || !win.webContents) return;
+    electronLocalshortcut.register(win, 'Ctrl+C', () => {
+      if (checkedId.length) {
+        // 生成待保存的数据结构
+        updateClipBoardData({
+          dep: checkedId,
+          content: extractCheckedData(cards, checkedId),
+        });
+        message.success('复制成功');
+      }
+    });
+    electronLocalshortcut.register(win, 'Ctrl+V', () => {
+      if (checkedId.length === 1) {
+        // 生成待保存的数据结构
+        insertAfter(cards, checkedId[0], clipboardData.content);
+        updateCardData([...cards]);
+        message.success('粘贴成功');
+      } else {
+        message.info('当前不能执行粘贴操作');
+      }
+    });
+
+    return () => {
+      electronLocalshortcut.unregisterAll(win);
+    };
+  }, [checkedId, cards, clipboardData]);
+};
