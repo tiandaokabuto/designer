@@ -23,6 +23,8 @@ import {
   CHANGE_AUTOMICLIST,
   CHANGE_CHECKEDID,
   CHANGE_AIHINTLIST,
+  CHANGE_CLIPBOARDDATA,
+  CHANGE_CARDDATA,
 } from '../../actions/codeblock';
 import {
   UPDATE_EXECUTEOUTPUT,
@@ -31,6 +33,20 @@ import {
 import store from '../../store';
 
 const { dispatch } = store;
+
+export const updateCardData = data => {
+  dispatch({
+    type: CHANGE_CARDDATA,
+    payload: data,
+  });
+};
+
+export const updateClipBoardData = data => {
+  dispatch({
+    type: CHANGE_CLIPBOARDDATA,
+    payload: data,
+  });
+};
 
 export const updateAIHintList = list => {
   dispatch({

@@ -1,8 +1,11 @@
+import { useRef } from 'react';
 import { useDrag } from 'react-dnd';
 import cloneDeep from 'lodash/cloneDeep';
+import { useDispatch, useSelector } from 'react-redux';
 
 import useLockContextMenu from './useLockContextMenu';
 import ItemTypes from '../statementTypes';
+import { CHANGE_CARDDATA } from '../../../../actions/codeblock';
 
 export default ({
   setIsDraggingNode,
@@ -12,6 +15,11 @@ export default ({
   canDrag,
   id,
 }) => {
+  const dispatch = useDispatch();
+  const cards = useSelector(state => state.blockcode.cards);
+  const cardsRef = useRef(null);
+  cardsRef.current = cards;
+
   const [, drag, dragImage] = useDrag({
     item: { type: ItemTypes.CARD, ...cloneDeep(props.card) },
     collect: monitor => ({
@@ -36,6 +44,10 @@ export default ({
     },
     end(item, monitor) {
       setIsDraggingNode({});
+      dispatch({
+        type: CHANGE_CARDDATA,
+        payload: [...cardsRef.current],
+      });
       // 解锁
       /* eslint-disable */
       useLockContextMenu(false);
