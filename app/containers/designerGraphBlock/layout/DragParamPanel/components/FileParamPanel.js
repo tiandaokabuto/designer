@@ -4,7 +4,15 @@ import { Radio } from 'antd';
 import Param from './LoopPanelParam/LoopParam';
 import FileParam from './FileParam';
 
-export default ({ param, handleEmitCodeTransform, keyFlag, setFlag }) => {
+export default ({
+  param,
+  handleEmitCodeTransform,
+  keyFlag,
+  setFlag,
+  aiHintList,
+  appendDataSource,
+  handleValidate,
+}) => {
   const [tag, setTag] = useState(param.tag ? param.tag : 1);
 
   useEffect(() => {
@@ -14,16 +22,20 @@ export default ({ param, handleEmitCodeTransform, keyFlag, setFlag }) => {
     if (!Array.isArray(param.valueList)) {
       param.valueList = [
         {
+          ...param,
           id: 'directory',
           cnName: '目录',
           enName: 'directory',
           value: '',
+          paramType: ['String'],
         },
         {
+          ...param,
           id: 'fileName',
           cnName: '文件名',
           enName: 'fileName',
           value: '',
+          paramType: ['String'],
         },
       ];
     }
@@ -55,10 +67,13 @@ export default ({ param, handleEmitCodeTransform, keyFlag, setFlag }) => {
               param={item}
               key={`${param.enName}-${item.id}`}
               onChange={value => {
-                item.value = value;
                 param.forceUpdate += 1;
-                handleEmitCodeTransform();
               }}
+              aiHintList={aiHintList}
+              appendDataSource={appendDataSource}
+              keyFlag={keyFlag}
+              handleEmitCodeTransform={handleEmitCodeTransform}
+              handleValidate={handleValidate}
             />
           );
         })
