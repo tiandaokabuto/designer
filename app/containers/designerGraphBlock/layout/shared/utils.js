@@ -68,10 +68,17 @@ export const findNodeById = (cards, id) => {
 };
 
 export const insertAfter = (cards, id, append) => {
+  if (!cards.length) {
+    cards.push(...append);
+    return true;
+  }
   const find = findNodeLevelById(cards, id, false);
   if (find) {
     const index = find.findIndex(node => node.id === id);
     find.splice(index + 1, 0, ...append);
+    return true;
+  } else {
+    return false;
   }
 };
 

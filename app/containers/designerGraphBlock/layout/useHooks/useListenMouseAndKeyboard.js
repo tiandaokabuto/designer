@@ -216,10 +216,14 @@ export default () => {
         // 生成待保存的数据结构
         const append = cloneDeep(clipboardData.content || []);
         attachedNodeId(cards, append);
-        insertAfter(cards, checkedId[0], append);
-        updateCardData([...cards]);
-        updateCheckedBlockId(getOrderedNodeList(append));
-        message.success('粘贴成功');
+        const result = insertAfter(cards, checkedId[0], append);
+        if (result) {
+          updateCardData([...cards]);
+          updateCheckedBlockId(getOrderedNodeList(append));
+          message.success('粘贴成功');
+        } else {
+          message.info('请选择粘贴位置');
+        }
       } else {
         message.info('当前不能执行粘贴操作');
       }
