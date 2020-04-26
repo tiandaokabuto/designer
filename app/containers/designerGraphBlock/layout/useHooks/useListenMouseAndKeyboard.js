@@ -167,7 +167,6 @@ export default () => {
             isReverse = true;
             [startIndex, lastIndex] = [lastIndex, startIndex];
           }
-          console.log(startIndex, lastIndex, orderedIdList);
           newCheckedId = orderedIdList.slice(startIndex, lastIndex + 1);
           console.log(newCheckedId);
           if (isReverse) {
@@ -208,6 +207,7 @@ export default () => {
         attachedNodeId(cards, append);
         insertAfter(cards, checkedId[0], append);
         updateCardData([...cards]);
+        updateCheckedBlockId(getOrderedNodeList(append));
         message.success('粘贴成功');
       } else {
         message.info('当前不能执行粘贴操作');
