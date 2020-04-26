@@ -11,6 +11,7 @@ import IconFont from '../IconFont/index';
 import usePersistentStorage from './useHooks/usePersistentStorage';
 import useExecutePython from './useHooks/useExecutePython';
 import useGetDownloadPath from './useHooks/useGetDownloadPath';
+import useVerifyCompatibility from './useHooks/useVerifyCompatibility';
 import useGetProcessName, {
   isEffectProcess,
 } from './useHooks/useGetProcessName';
@@ -90,6 +91,8 @@ export default memo(
     const transformProcessToPython = useTransformProcessToPython();
 
     const executePython = useExecutePython();
+
+    const verifyCompatibility = useVerifyCompatibility();
 
     const getProcessVersion = processName => {
       axios
@@ -387,6 +390,12 @@ export default memo(
         description: '控制台',
         type: 'desktop',
         disabled: true,
+      },
+      {
+        description: '校验',
+        disabled: false,
+        type: 'swap',
+        onClick: verifyCompatibility,
       },
     ];
 
