@@ -64,7 +64,7 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
       params += `${item.enName} = ${
         !Array.isArray(item.valueList)
           ? 'None'
-          : `"${item.valueList[0].value}${item.valueList[1].value}"`
+          : `${item.valueList[0].value} + ${item.valueList[1].value}`
       }`;
     } else {
       switch (item.enName) {
