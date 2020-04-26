@@ -4,68 +4,6 @@ import { Input } from 'antd';
 import LoopParam from './LoopParam';
 import ConditionParam from '../ConditionParam';
 
-// 4种循环的数据结构
-const for_list = [
-  {
-    id: 'listKeyword',
-    enName: 'value',
-    cnName: '值',
-    value: '',
-  },
-  {
-    id: 'listArray',
-    enName: 'arrayRet',
-    cnName: '数组',
-    value: '',
-  },
-];
-const for_dict = [
-  {
-    id: 'dictKey',
-    enName: 'key',
-    cnName: '键',
-    value: '',
-  },
-  {
-    id: 'dictValue',
-    enName: 'value',
-    cnName: '值',
-    value: '',
-  },
-  {
-    id: 'dictVar',
-    enName: 'dictVar',
-    cnName: '字典',
-    value: '',
-  },
-];
-const for_times = [
-  {
-    id: 'timeIndex',
-    enName: 'index',
-    cnName: '索引名称',
-    value: '',
-  },
-  {
-    id: 'timeStartIndex',
-    enName: 'startIndex',
-    cnName: '初始值',
-    value: '',
-  },
-  {
-    id: 'timeEndIndex',
-    enName: 'endIndex',
-    cnName: '结束值',
-    value: '',
-  },
-  {
-    id: 'timeStep',
-    enName: 'step',
-    cnName: '每次增加',
-    value: '',
-  },
-];
-
 export default ({
   param,
   handleEmitCodeTransform,
@@ -78,13 +16,70 @@ export default ({
   // 数据初始化
   useEffect(() => {
     if (!Array.isArray(param.for_list)) {
-      param.for_list = for_list;
+      param.for_list = [
+        {
+          id: 'listKeyword',
+          enName: 'value',
+          cnName: '值',
+          value: '',
+        },
+        {
+          id: 'listArray',
+          enName: 'arrayRet',
+          cnName: '数组',
+          value: '',
+        },
+      ];
     }
     if (!Array.isArray(param.for_dict)) {
-      param.for_dict = for_dict;
+      param.for_dict = [
+        {
+          id: 'dictKey',
+          enName: 'key',
+          cnName: '键',
+          value: '',
+        },
+        {
+          id: 'dictValue',
+          enName: 'value',
+          cnName: '值',
+          value: '',
+        },
+        {
+          id: 'dictVar',
+          enName: 'dictVar',
+          cnName: '字典',
+          value: '',
+        },
+      ];
     }
     if (!Array.isArray(param.for_times)) {
-      param.for_times = for_times;
+      param.for_times = [
+        {
+          id: 'timeIndex',
+          enName: 'index',
+          cnName: '索引名称',
+          value: '',
+        },
+        {
+          id: 'timeStartIndex',
+          enName: 'startIndex',
+          cnName: '初始值',
+          value: '',
+        },
+        {
+          id: 'timeEndIndex',
+          enName: 'endIndex',
+          cnName: '结束值',
+          value: '',
+        },
+        {
+          id: 'timeStep',
+          enName: 'step',
+          cnName: '每次增加',
+          value: '',
+        },
+      ];
     }
   }, []);
 
@@ -110,13 +105,6 @@ export default ({
               key={item.id}
               onChange={value => {
                 item.value = value;
-                /* if (param.listeners) {
-                  param.listeners.forEach(callback => {
-                    if (typeof callback === 'function') {
-                      callback(value);
-                    }
-                  });
-                } */
                 handleEmitCodeTransform(cards);
                 param.forceUpdate = param.forceUpdate + 1;
               }}
