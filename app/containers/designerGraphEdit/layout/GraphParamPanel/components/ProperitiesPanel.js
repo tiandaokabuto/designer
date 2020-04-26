@@ -23,8 +23,7 @@ const FormItem = ({
   setFlag,
 }) => {
   const ifItem = graphDataMap.get(checkedGraphBlockId).properties[1];
-  console.log(param);
-  console.log(ifItem);
+
   const [tag, setTag] = useState(ifItem.tag);
 
   const forceUpdate = () => {
