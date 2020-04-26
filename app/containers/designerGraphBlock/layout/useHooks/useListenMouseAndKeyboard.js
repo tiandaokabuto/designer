@@ -20,7 +20,7 @@ const KEYCODEMAP = {
   ctrl: 17,
 };
 
-const keyDownMap = {
+export const keyDownMap = {
   isCtrlDown: false,
   isShiftDown: false,
 };
@@ -77,11 +77,16 @@ const extractCheckedData = (cards, checkedId) => {
   return result;
 };
 
-const attachedNodeId = (cards, append) => {
+const getOrderedNodeList = cards => {
   const currentIdList = [];
   traverseAllCards(cards, node => {
     currentIdList.push(node.id);
   });
+  return currentIdList;
+};
+
+const attachedNodeId = (cards, append) => {
+  const currentIdList = getOrderedNodeList(cards);
 
   traverseAllCards(append, node => {
     node.id = getUniqueId(currentIdList);
@@ -137,19 +142,39 @@ export default () => {
       let newCheckedId = checkedId.concat();
       if (!id) return;
       if (isCtrlKeyDown()) {
-        console.log('ctrl + 鼠标左键', checkedId);
         if (newCheckedId.includes(id)) {
           newCheckedId = newCheckedId.filter(g => g !== id);
           updateCheckedBlockId(newCheckedId);
         } else {
-          newCheckedId.push(id);
-          console.log(newCheckedId);
+          newCheckedId.unshift(id);
           updateCheckedBlockId(newCheckedId);
         }
         return;
       }
       if (isShiftKeyDown()) {
         console.log('shift + 鼠标左键');
+        // empty
+        if (!newCheckedId.length) {
+          newCheckedId.push(id);
+        } else {
+          // firstIndex -> current
+          const startNode = newCheckedId.shift();
+          const orderedIdList = getOrderedNodeList(cards);
+          let startIndex = orderedIdList.findIndex(item => item === startNode);
+          let lastIndex = orderedIdList.findIndex(item => item === id);
+          let isReverse = false;
+          if (startIndex > lastIndex) {
+            isReverse = true;
+            [startIndex, lastIndex] = [lastIndex, startIndex];
+          }
+          console.log(startIndex, lastIndex, orderedIdList);
+          newCheckedId = orderedIdList.slice(startIndex, lastIndex + 1);
+          console.log(newCheckedId);
+          if (isReverse) {
+            newCheckedId.reverse();
+          }
+        }
+        updateCheckedBlockId(newCheckedId);
         return;
       }
     };
@@ -161,7 +186,7 @@ export default () => {
       document.removeEventListener('keyup', handleKeyUp);
       document.removeEventListener('mousedown', handleMouseDown);
     };
-  }, [setKeyState, checkedId]);
+  }, [setKeyState, checkedId, cards]);
 
   useEffect(() => {
     const win = remote.getCurrentWindow();
