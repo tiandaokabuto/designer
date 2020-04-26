@@ -58,64 +58,86 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
   result.output += `${padding}`;
   let params = ''; // 生成参数类型
   dataStructure.properties.required.forEach((item, index) => {
-    switch (item.enName) {
-      case 'outPut':
-        item.value && handleStatementOutput(item.value, '', result);
-        break;
-      case 'formJson':
-        if (params) params += ', ';
-        const formJson = handleFormJsonGenerate(dataStructure);
-
-        if (formJson !== 'None') {
-          const temp = JSON.parse(formJson);
-          result.output +=
-            '[' +
-            temp
-              .filter(
-                item =>
-                  !['submit-btn', 'cancel-btn', 'image'].includes(item.type) ||
-                  item.key
-              )
-              .map(item => item.key)
-              .join(',') +
-            ',' +
-            '] = ';
-          params +=
-            'variables = [' +
-            temp.map(item => item.value || '').join(',') +
-            '], ';
-        }
-
-        params += item.enName + ' = ' + formJson;
-        break;
-      case 'layout':
-        if (params) params += ', ';
-        params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
-        break;
-      default:
-        if (params) params += ', ';
-        params +=
-          item.enName +
-          ' = ' +
-          (item.default === undefined && item.value === undefined
-            ? 'None'
-            : !item.value
-            ? item.default
-            : item.value);
-    }
-  });
-  dataStructure.properties.optional &&
-    dataStructure.properties.optional.forEach((item, index) => {
-      if (item.value === '') return;
+    // 文件类型选择拼接模式，将item.valueList[0]目录名和item.valueList[1]文件名拼接起来
+    if (item.componentType === 2 && item.tag === 2) {
+      if (params) params += ', ';
+      params += `${item.enName} = ${
+        !Array.isArray(item.valueList)
+          ? 'None'
+          : `"${item.valueList[0].value}${item.valueList[1].value}"`
+      }`;
+    } else {
       switch (item.enName) {
         case 'outPut':
-          handleStatementOutput(item.value, '', result);
+          item.value && handleStatementOutput(item.value, '', result);
+          break;
+        case 'formJson':
+          if (params) params += ', ';
+          const formJson = handleFormJsonGenerate(dataStructure);
+
+          if (formJson !== 'None') {
+            const temp = JSON.parse(formJson);
+            result.output +=
+              '[' +
+              temp
+                .filter(
+                  item =>
+                    !['submit-btn', 'cancel-btn', 'image'].includes(
+                      item.type
+                    ) || item.key
+                )
+                .map(item => item.key)
+                .join(',') +
+              ',' +
+              '] = ';
+            params +=
+              'variables = [' +
+              temp.map(item => item.value || '').join(',') +
+              '], ';
+          }
+
+          params += item.enName + ' = ' + formJson;
+          break;
+        case 'layout':
+          if (params) params += ', ';
+          params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
           break;
         default:
           if (params) params += ', ';
-          params += item.enName + ' = ' + item.value;
+          params +=
+            item.enName +
+            ' = ' +
+            (item.default === undefined && item.value === undefined
+              ? 'None'
+              : !item.value
+              ? item.default
+              : item.value);
+      }
+    }
+  });
+  if (dataStructure.properties.optional) {
+    dataStructure.properties.optional.forEach((item, index) => {
+      if (item.value === '') return;
+      // 文件类型选择拼接模式，将item.valueList[0]目录名和item.valueList[1]文件名拼接起来
+      if (item.componentType === 2 && item.tag === 2) {
+        if (params) params += ', ';
+        params += `${item.enName} = ${
+          !Array.isArray(item.valueList)
+            ? 'None'
+            : `"${item.valueList[0].value}${item.valueList[1].value}"`
+        }`;
+      } else {
+        switch (item.enName) {
+          case 'outPut':
+            handleStatementOutput(item.value, '', result);
+            break;
+          default:
+            if (params) params += ', ';
+            params += item.enName + ' = ' + item.value;
+        }
       }
     });
+  }
   handleMainFnGeneration(dataStructure, params, result);
 };
 

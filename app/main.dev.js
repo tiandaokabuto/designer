@@ -221,16 +221,22 @@ const createWindow = async () => {
     event,
     func,
     label = '存储',
-    properties = []
+    properties = [],
+    filters = [{ name: 'All Files', extensions: ['*'] }]
   ) {
     dialog[func](mainWindow, {
       buttonLabel: label,
+      filters,
       properties,
-    }).then(({ filePaths, canceled }) => {
-      if (!canceled) {
-        event.sender.send('chooseItem', filePaths);
-      }
-    });
+    })
+      .then(({ filePaths, canceled }) => {
+        if (!canceled) {
+          event.sender.send('chooseItem', filePaths);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   });
 
   // 创建登录窗口

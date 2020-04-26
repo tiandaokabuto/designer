@@ -1,8 +1,9 @@
-import React from 'react';
-import { Input } from 'antd';
+import React, { useState, Fragment } from 'react';
+import { Input, Radio, Select, Icon } from 'antd';
 import { withPropsAPI } from 'gg-editor';
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 
+import ConditionParam from '../../../../designerGraphBlock/layout/DragParamPanel/components/ConditionParam';
 import VariablePanel from './VariablePanel';
 import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
 
@@ -11,14 +12,47 @@ import {
   synchroGraphDataToProcessTree,
 } from '../../../../reduxActions';
 
+const { Option } = Select;
+
 const FormItem = ({
   param,
   propsAPI,
   checkedGraphBlockId,
   noticyBlockCodeChange,
+  graphDataMap,
+  setFlag,
 }) => {
+  const ifItem = graphDataMap.get(checkedGraphBlockId).properties[1];
+  console.log(param);
+  console.log(ifItem);
+  const [tag, setTag] = useState(ifItem.tag);
+
+  const forceUpdate = () => {
+    setFlag(true);
+    setTimeout(() => {
+      setFlag(false);
+    }, 50);
+  };
+
+  const handleAdd = () => {
+    if (ifItem.valueList) {
+      ifItem.valueList.push({
+        v1: '',
+        v2: '',
+        rule: '',
+        connect: '',
+      });
+      forceUpdate();
+    }
+  };
+
+  const handleDelete = index => {
+    ifItem.valueList.splice(index, 1);
+    forceUpdate();
+  };
+
+  const { executeCommand, update, save, find } = propsAPI;
   const handleLableChange = useDebounce(e => {
-    const { executeCommand, update, save, find } = propsAPI;
     const item = find(checkedGraphBlockId);
     if (!item) {
       return;
@@ -73,24 +107,151 @@ const FormItem = ({
         alignItems: 'center',
       }}
     >
-      <span style={{ flex: 1, whiteSpace: 'nowrap', marginRight: '8px' }}>
-        {param.cnName}
-      </span>
-      <Input
-        defaultValue={param.value}
-        onChange={
-          param.enName === 'label'
-            ? e => {
-                e.persist();
-                handleLableChange(e);
+      {param.cnName === '分支条件' ? (
+        ''
+      ) : (
+        <span style={{ flex: 1, whiteSpace: 'nowrap', marginRight: '8px' }}>
+          {param.cnName}
+        </span>
+      )}
+
+      {param.cnName === '分支条件' ? (
+        <div>
+          <Radio.Group
+            style={{
+              display: 'flex',
+              marginBottom: '10px',
+            }}
+            onChange={e => {
+              ifItem.tag = e.target.value;
+              synchroGraphDataToProcessTree();
+              noticyBlockCodeChange();
+              setTag(e.target.value);
+            }}
+            defaultValue={ifItem.tag ? ifItem.tag : 2}
+          >
+            <Radio value={1}>向导模式</Radio>
+            <Radio value={2}>自定义模式</Radio>
+          </Radio.Group>
+          {tag === 1 ? (
+            <div className="condition-param">
+              <div>
+                <div className="condition-param-ifcondition">
+                  <span>变量</span>
+                  <span>规则</span>
+                  <span>变量</span>
+                  <span>
+                    <Icon
+                      type="plus"
+                      className="condition-param-btn"
+                      onClick={() => {
+                        handleAdd();
+                      }}
+                    />
+                  </span>
+                </div>
+                {(ifItem.valueList || []).map((item, index) => {
+                  return (
+                    <Fragment key={index}>
+                      <div className="condition-param-ifcondition">
+                        <Input
+                          placeholder="输入文本"
+                          defaultValue={item.v1}
+                          onChange={e => {
+                            item.v1 = e.target.value;
+                            synchroGraphDataToProcessTree();
+                            noticyBlockCodeChange();
+                          }}
+                        />
+                        <Select
+                          style={{ width: '100%' }}
+                          defaultValue={item.rule}
+                          dropdownMatchSelectWidth={false}
+                          onChange={value => {
+                            item.rule = value;
+                            synchroGraphDataToProcessTree();
+                            noticyBlockCodeChange();
+                          }}
+                        >
+                          {(ifItem.valueMapping || []).map(ruleItem => (
+                            <Option key={ruleItem.value} value={ruleItem.value}>
+                              {ruleItem.name}
+                            </Option>
+                          ))}
+                        </Select>
+                        <Input
+                          placeholder="输入"
+                          defaultValue={item.v2}
+                          onChange={e => {
+                            item.v2 = e.target.value;
+                            synchroGraphDataToProcessTree();
+                            noticyBlockCodeChange();
+                          }}
+                        />
+                        <Icon
+                          type="delete"
+                          className="condition-param-btn"
+                          onClick={() => {
+                            handleDelete(index);
+                            synchroGraphDataToProcessTree();
+                            noticyBlockCodeChange();
+                          }}
+                        />
+                      </div>
+                      <div className="condition-param-ifcondition">
+                        <Radio.Group
+                          defaultValue={item.connect}
+                          onChange={e => {
+                            item.connect = e.target.value;
+                            synchroGraphDataToProcessTree();
+                            noticyBlockCodeChange();
+                          }}
+                          style={{
+                            display: 'flex',
+                          }}
+                        >
+                          <Radio value="and">且</Radio>
+                          <Radio value="or">或</Radio>
+                        </Radio.Group>
+                      </div>
+                    </Fragment>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <Input
+              defaultValue={ifItem.value}
+              onChange={e => {
+                ifItem.value = e.target.value;
+                synchroGraphDataToProcessTree();
                 noticyBlockCodeChange();
-              }
-            : e => {
-                param.value = e.target.value;
-                noticyBlockCodeChange();
-              }
-        }
-      />
+              }}
+            />
+          )}
+        </div>
+      ) : (
+        <Input
+          defaultValue={param.value}
+          onChange={
+            param.enName === 'label'
+              ? e => {
+                  e.persist();
+                  handleLableChange(e);
+                  noticyBlockCodeChange();
+                }
+              : e => {
+                  console.log('aaa');
+                  param.value = e.target.value;
+                  setTimeout(() => {
+                    updateGraphData(save());
+                    synchroGraphDataToProcessTree();
+                  }, 0);
+                  noticyBlockCodeChange();
+                }
+          }
+        />
+      )}
     </div>
   );
 };
@@ -98,6 +259,7 @@ const FormItem = ({
 export default withPropsAPI(
   ({ propsAPI, checkedGraphBlockId, graphDataMap, blockNode }) => {
     const noticyBlockCodeChange = useNoticyBlockCodeChange();
+    const [flag, setFlag] = useState(false);
 
     return (
       <div key={checkedGraphBlockId}>
@@ -128,8 +290,10 @@ export default withPropsAPI(
           return (
             <FormItem
               param={param}
+              graphDataMap={graphDataMap}
               checkedGraphBlockId={checkedGraphBlockId}
               key={index}
+              setFlag={setFlag}
               propsAPI={propsAPI}
               noticyBlockCodeChange={noticyBlockCodeChange}
             />

@@ -82,7 +82,28 @@ const transformEditorProcess = (
        * 情况二: 条件判断其中有一个的分支在遍历的路径上又回到了自身, 属于循环的情况
        *    额外处理
        */
-      const condition = blockData['properties'][1].value;
+      const { value, valueList = [], tag = 2 } = blockData['properties'][1];
+      let condition = '';
+      if (tag === 2) {
+        condition = value;
+      } else {
+        valueList.forEach((item, index) => {
+          if (index === valueList.length - 1) {
+            // 最后一个，不把连接符填上
+            if (item.rule === 'is None' || item.rule === 'not None') {
+              condition += `(${item.v1} ${item.rule}) `;
+            } else {
+              condition += `(${item.v1} ${item.rule} ${item.v2}) `;
+            }
+          } else {
+            if (item.rule === 'is None' || item.rule === 'not None') {
+              condition += `(${item.v1} ${item.rule}) ${item.connect} `;
+            } else {
+              condition += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;
+            }
+          }
+        });
+      }
 
       const isYesCircleExist = isCircleExist(
         graphData.edges,

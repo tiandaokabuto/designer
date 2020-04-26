@@ -15,7 +15,7 @@ export default ({ param, onChange }) => {
       </span>
       <div style={{ flex: 1, overflow: 'hidden' }}>
         <Input
-          value={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
+          defaultValue={param.value}
           onChange={e => onChange(e.target.value)}
           onKeyDown={e => stopDeleteKeyDown(e)}
         />

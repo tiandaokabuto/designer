@@ -158,6 +158,7 @@ export default ({
                 }
               });
             }
+            param.forceUpdate = param.forceUpdate + 1;
           }}
           onKeyDown={e => stopDeleteKeyDown(e)}
         />

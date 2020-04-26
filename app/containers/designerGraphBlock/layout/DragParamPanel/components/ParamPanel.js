@@ -1,15 +1,8 @@
-import React, {
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  Fragment,
-} from 'react';
-import { Input, Select, AutoComplete, Button, Icon, Radio } from 'antd';
-import { useSelector } from 'react-redux';
-import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
+import './ParamPanel.scss';
+
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { Input, Select, AutoComplete, Button } from 'antd';
 import uniqueId from 'lodash/uniqueId';
-import axios from 'axios';
 
 import event from '../../eventCenter';
 import {
@@ -18,12 +11,10 @@ import {
   useVerifyInput,
 } from '../../useHooks';
 import ConditionParam from './ConditionParam';
-import LoopConditionParam from './LoopConditionParam/index';
+import LoopConditionParam from './LoopPanelParam/index';
 import OutputPanel from './OutputPanel';
-import api, { config } from '../../../../../api';
-const { ipcRenderer } = require('electron');
-
-import './ParamPanel.scss';
+import FileParam from './FileParam';
+import FileParamPanel from './FileParamPanel';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -32,6 +23,7 @@ const COMPONENT_TYPE = {
   INPUT: 0,
   SELECT: 1,
   FILEPATHINPUT: 2,
+  DIRECTORY: 3,
 };
 
 const getMutiplyValue = (item, type) => {
@@ -66,8 +58,6 @@ const stopDeleteKeyDown = e => {
   }
 };
 
-let listener = null;
-
 const getComponentType = (
   param,
   handleEmitCodeTransform,
@@ -75,30 +65,13 @@ const getComponentType = (
   keyFlag,
   aiHintList = {},
   setFlag,
-  handleValidate,
-  loopSelect,
-  setLoopSelect
+  handleValidate
 ) => {
   useEffect(() => {
     handleValidate({
       value: param.value,
     });
   }, []);
-
-  const handleFilePath = useCallback(
-    (e, filePath) => {
-      if (listener === param && filePath && filePath.length) {
-        setFlag(true);
-        setTimeout(() => {
-          setFlag(false);
-        }, 50);
-        param.value = `"${filePath[0].replace(/\//g, '\\\\')}"`;
-        // forceUpdate();
-        handleEmitCodeTransform(cards);
-      }
-    },
-    [param]
-  );
 
   // 任务数据下拉列表
   const [appendDataSource] = useAppendDataSource(param);
@@ -160,35 +133,43 @@ const getComponentType = (
     );
   } else if (param.enName === 'looptype') {
     return (
-      <Select
-        style={{ width: '100%' }}
-        defaultValue={param.value || param.default}
-        dropdownMatchSelectWidth={false}
-        onChange={value => {
-          param.value = value;
-          handleEmitCodeTransform(cards);
-          setLoopSelect(value);
-        }}
-      >
-        {param.valueMapping &&
-          param.valueMapping.map(item => (
-            <Option key={item.value} value={item.value}>
-              {item.name}
-            </Option>
-          ))}
-      </Select>
+      <LoopSelectContext.Consumer>
+        {({ setLoopSelect }) => (
+          <Select
+            style={{ width: '100%' }}
+            defaultValue={param.value || param.default}
+            dropdownMatchSelectWidth={false}
+            onChange={value => {
+              param.value = value;
+              handleEmitCodeTransform(cards);
+              setLoopSelect(value);
+            }}
+          >
+            {param.valueMapping &&
+              param.valueMapping.map(item => (
+                <Option key={item.value} value={item.value}>
+                  {item.name}
+                </Option>
+              ))}
+          </Select>
+        )}
+      </LoopSelectContext.Consumer>
     );
   } else if (param.enName === 'loopcondition') {
     return (
-      <LoopConditionParam
-        param={param}
-        cards={cards}
-        loopSelect={loopSelect}
-        stopDeleteKeyDown={stopDeleteKeyDown}
-        handleEmitCodeTransform={handleEmitCodeTransform}
-        keyFlag={keyFlag}
-        setFlag={setFlag}
-      />
+      <LoopSelectContext.Consumer>
+        {({ loopSelect }) => (
+          <LoopConditionParam
+            param={param}
+            cards={cards}
+            loopSelect={loopSelect}
+            stopDeleteKeyDown={stopDeleteKeyDown}
+            handleEmitCodeTransform={handleEmitCodeTransform}
+            keyFlag={keyFlag}
+            setFlag={setFlag}
+          />
+        )}
+      </LoopSelectContext.Consumer>
     );
   }
   switch (param.componentType) {
@@ -339,33 +320,27 @@ const getComponentType = (
       );
     case COMPONENT_TYPE.FILEPATHINPUT:
       return (
-        <div className="parampanel-choosePath">
-          <Input
-            key={keyFlag ? uniqueId('key_') : ''}
-            defaultValue={param.value || param.default}
-            onChange={e => {
-              param.value = e.target.value;
-
-              handleEmitCodeTransform(cards);
-            }}
-            onKeyDown={e => stopDeleteKeyDown(e)}
-          />
-          <Button
-            onClick={() => {
-              listener = param;
-              ipcRenderer.removeAllListeners('chooseItem');
-              ipcRenderer.send(
-                'choose-directory-dialog',
-                'showOpenDialog',
-                '选择',
-                ['openFile']
-              );
-              ipcRenderer.on('chooseItem', handleFilePath);
-            }}
-          >
-            选择
-          </Button>
-        </div>
+        <FileParamPanel
+          key={param.enName}
+          param={param}
+          keyFlag={keyFlag}
+          setFlag={setFlag}
+          handleEmitCodeTransform={() => {
+            handleEmitCodeTransform(cards);
+          }}
+        />
+      );
+    case COMPONENT_TYPE.DIRECTORY:
+      return (
+        <FileParam
+          param={param}
+          setFlag={setFlag}
+          keyFlag={keyFlag}
+          fileType="openDirectory"
+          handleEmitCodeTransform={() => {
+            handleEmitCodeTransform(cards);
+          }}
+        />
       );
     default:
       return '待开发...';
@@ -379,14 +354,15 @@ const ParamItem = ({
   flag,
   aiHintList,
   setFlag,
-  loopSelect,
-  setLoopSelect,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
+  const specialParam = ['条件', '循环条件'];
+
   return (
     <React.Fragment>
       <div className="parampanel-item">
-        {param.cnName === '条件' || param.cnName === '循环条件' ? (
+        {specialParam.includes(param.cnName) ||
+        param.componentType === COMPONENT_TYPE.FILEPATHINPUT ? (
           ''
         ) : (
           <span className="param-title" title={param.desc}>
@@ -401,9 +377,7 @@ const ParamItem = ({
             flag,
             aiHintList,
             setFlag,
-            handleValidate,
-            loopSelect,
-            setLoopSelect
+            handleValidate
           )}
         </div>
       </div>
@@ -411,6 +385,11 @@ const ParamItem = ({
     </React.Fragment>
   );
 };
+
+const LoopSelectContext = React.createContext({
+  loopSelect: 'for_list',
+  toggleLoopSelect: () => {},
+});
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const [flag, setFlag] = useState(false);
@@ -466,17 +445,19 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
             );
           }
           return (
-            <ParamItem
+            <LoopSelectContext.Provider
               key={checkedBlock.id + index}
-              param={param}
-              handleEmitCodeTransform={handleEmitCodeTransform}
-              cards={cards}
-              flag={flag}
-              aiHintList={aiHintList}
-              setFlag={setFlag}
-              loopSelect={loopSelect}
-              setLoopSelect={setLoopSelect}
-            />
+              value={{ loopSelect, setLoopSelect }}
+            >
+              <ParamItem
+                param={param}
+                handleEmitCodeTransform={handleEmitCodeTransform}
+                cards={cards}
+                flag={flag}
+                aiHintList={aiHintList}
+                setFlag={setFlag}
+              />
+            </LoopSelectContext.Provider>
           );
         })}
       </div>
