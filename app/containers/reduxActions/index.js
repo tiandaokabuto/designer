@@ -23,6 +23,7 @@ import {
   CHANGE_AUTOMICLIST,
   CHANGE_CHECKEDID,
   CHANGE_AIHINTLIST,
+  CHANGE_BLOCK_TREE_TAB,
 } from '../../actions/codeblock';
 import {
   UPDATE_EXECUTEOUTPUT,
@@ -31,6 +32,13 @@ import {
 import store from '../../store';
 
 const { dispatch } = store;
+
+export const changeBlockTreeTab = tab => {
+  dispatch({
+    type: CHANGE_BLOCK_TREE_TAB,
+    payload: tab,
+  });
+};
 
 export const updateAIHintList = list => {
   dispatch({

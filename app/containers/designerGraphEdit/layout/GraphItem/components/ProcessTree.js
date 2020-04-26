@@ -5,16 +5,16 @@ import cloneDeep from 'lodash/cloneDeep';
 import { ItemPanel, Item } from 'gg-editor';
 
 import { ConfirmModal } from '../../../../common/components';
+import DragCard from '../../../../designerGraphBlock/layout/DragItem/components/DragCard';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
   changeModuleTree,
   changeCheckedModuleTreeNode,
-} from '../../../../reduxActions';
-import {
   resetGraphEditData,
   changeMovingModuleNode,
 } from '../../../../reduxActions';
+
 import Switcher from './Switcher';
 import ContextMenu from './ContextMenu';
 import {
@@ -31,19 +31,26 @@ import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useH
 import { fromTextArea } from 'codemirror';
 import event from '../../../../designerGraphBlock/layout/eventCenter';
 
-const TreeNodeTitle = ({ title, type, hasModified }) => {
+const TreeNodeTitle = ({
+  title,
+  iconType,
+  hasModified,
+  node,
+  type,
+  currentProject,
+}) => {
+  console.log(type);
+  // console.log(title);
   return (
     <div
       className="treenode-title"
       style={{
-        // position: 'relative',
         display: 'flex',
         justifyContent: 'space-between',
-        // flexDirection: 'row',
       }}
     >
       <Icon
-        type={type}
+        type={iconType}
         style={{
           marginRight: 8,
           marginLeft: 12,
@@ -51,23 +58,26 @@ const TreeNodeTitle = ({ title, type, hasModified }) => {
           alignItems: 'center',
         }}
       />
-      {/* <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-        }}
-      > */}
-      <span
-        style={{
-          flexBasis: 150,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {title}
-      </span>
+      {type === 'secondModule' ? (
+        <DragCard
+          title={title}
+          node={node}
+          item={node}
+          tabType={type}
+          currentProject={currentProject}
+        ></DragCard>
+      ) : (
+        <div
+          style={{
+            flexBasis: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {title}
+        </div>
+      )}
       <span
         style={{
           visibility: hasModified ? 'visible' : 'hidden',
@@ -88,7 +98,12 @@ const TreeNodeTitle = ({ title, type, hasModified }) => {
   );
 };
 
-const transformTreeTitle = (processTree, type) => {
+const transformTreeTitle = (
+  processTree,
+  type,
+  currentProject,
+  blockTreeTab
+) => {
   const result = cloneDeep(processTree);
   function recurise(tree) {
     for (const child of tree) {
@@ -114,9 +129,12 @@ const transformTreeTitle = (processTree, type) => {
                   }}
                 >
                   <TreeNodeTitle
+                    node={child}
                     title={child.title}
                     hasModified={child.hasModified}
-                    type="cluster"
+                    iconType="cluster"
+                    type={blockTreeTab}
+                    currentProject={currentProject}
                   />
                 </Item>
               </ItemPanel>
@@ -125,9 +143,12 @@ const transformTreeTitle = (processTree, type) => {
         } else {
           child.title = (
             <TreeNodeTitle
+              node={child}
               title={child.title}
               hasModified={child.hasModified}
-              type="cluster"
+              iconType="cluster"
+              type={blockTreeTab}
+              currentProject={currentProject}
             />
           );
         }
@@ -135,9 +156,12 @@ const transformTreeTitle = (processTree, type) => {
         // child.hasModified = false;
         child.title = (
           <TreeNodeTitle
+            node={child}
             title={child.title}
             hasModified={child.hasModified}
-            type="file"
+            iconType="file"
+            type={blockTreeTab}
+            currentProject={currentProject}
           />
         );
       }
@@ -162,6 +186,7 @@ export default ({ type }) => {
   const currentCheckedModuleTreeNode = useSelector(
     state => state.grapheditor.currentCheckedModuleTreeNode
   );
+  const blockTreeTab = useSelector(state => state.blockcode.blockTreeTab);
   const currentProject = useSelector(state => state.grapheditor.currentProject);
 
   const persistentStorage = usePersistentStorage();
@@ -380,7 +405,7 @@ export default ({ type }) => {
         defaultExpandAll={true}
         switcherIcon={<Switcher />}
         showIcon={true}
-        draggable
+        draggable={type === 'secondModule' ? false : true}
         blockNode
         onExpand={expandKeys => {
           setExpandedKeys(expandKeys);
@@ -398,8 +423,13 @@ export default ({ type }) => {
         //treeData={processTree}
         treeData={
           type === 'process'
-            ? transformTreeTitle(processTree, type)
-            : transformTreeTitle(moduleTree, type)
+            ? transformTreeTitle(
+                processTree,
+                type,
+                currentProject,
+                blockTreeTab
+              )
+            : transformTreeTitle(moduleTree, type, currentProject, blockTreeTab)
         }
         selectedKeys={
           type === 'process'

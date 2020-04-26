@@ -1,6 +1,11 @@
 import { isArray } from './utils';
+// import { transformEditorProcess } from '../../../designerGraphEdit/RPAcore/index';
+import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
 import { resolve } from 'dns';
+import moment from 'moment';
 const fs = require('fs');
+
+const paddingStart = length => '    '.repeat(length);
 
 const handleModuleImport = (dataStructure, result, moduleMap) => {
   if (dataStructure.module) {
@@ -52,71 +57,116 @@ const handleFormJsonGenerate = dataStructure => {
   return 'None';
 };
 
-const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
+const transformBasicStatement = (
+  padding,
+  dataStructure,
+  result,
+  moduleMap,
+  depth
+) => {
   handleModuleImport(dataStructure, result, moduleMap);
   handleNote(dataStructure.cmdDesc, result, padding, dataStructure);
   result.output += `${padding}`;
   let params = ''; // 生成参数类型
-  dataStructure.properties.required.forEach((item, index) => {
-    switch (item.enName) {
-      case 'outPut':
-        item.value && handleStatementOutput(item.value, '', result);
-        break;
-      case 'formJson':
-        if (params) params += ', ';
-        const formJson = handleFormJsonGenerate(dataStructure);
-
-        if (formJson !== 'None') {
-          const temp = JSON.parse(formJson);
-          result.output +=
-            '[' +
-            temp
-              .filter(
-                item =>
-                  !['submit-btn', 'cancel-btn', 'image'].includes(item.type) ||
-                  item.key
-              )
-              .map(item => item.key)
-              .join(',') +
-            ',' +
-            '] = ';
-          params +=
-            'variables = [' +
-            temp.map(item => item.value || '').join(',') +
-            '], ';
-        }
-
-        params += item.enName + ' = ' + formJson;
-        break;
-      case 'layout':
-        if (params) params += ', ';
-        params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
-        break;
-      default:
-        if (params) params += ', ';
-        params +=
-          item.enName +
-          ' = ' +
-          (item.default === undefined && item.value === undefined
-            ? 'None'
-            : !item.value
-            ? item.default
-            : item.value);
-    }
-  });
-  dataStructure.properties.optional &&
-    dataStructure.properties.optional.forEach((item, index) => {
-      if (item.value === '') return;
+  if (dataStructure.properties.required) {
+    dataStructure.properties.required.forEach((item, index) => {
       switch (item.enName) {
         case 'outPut':
-          handleStatementOutput(item.value, '', result);
+          item.value && handleStatementOutput(item.value, '', result);
+          break;
+        case 'formJson':
+          if (params) params += ', ';
+          const formJson = handleFormJsonGenerate(dataStructure);
+
+          if (formJson !== 'None') {
+            const temp = JSON.parse(formJson);
+            result.output +=
+              '[' +
+              temp
+                .filter(
+                  item =>
+                    !['submit-btn', 'cancel-btn', 'image'].includes(
+                      item.type
+                    ) || item.key
+                )
+                .map(item => item.key)
+                .join(',') +
+              ',' +
+              '] = ';
+            params +=
+              'variables = [' +
+              temp.map(item => item.value || '').join(',') +
+              '], ';
+          }
+
+          params += item.enName + ' = ' + formJson;
+          break;
+        case 'layout':
+          if (params) params += ', ';
+          params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
           break;
         default:
           if (params) params += ', ';
-          params += item.enName + ' = ' + item.value;
+          params +=
+            item.enName +
+            ' = ' +
+            (item.default === undefined && item.value === undefined
+              ? 'None'
+              : !item.value
+              ? item.default
+              : item.value);
       }
     });
-  handleMainFnGeneration(dataStructure, params, result);
+    dataStructure.properties.optional &&
+      dataStructure.properties.optional.forEach((item, index) => {
+        if (item.value === '') return;
+        switch (item.enName) {
+          case 'outPut':
+            handleStatementOutput(item.value, '', result);
+            break;
+          default:
+            if (params) params += ', ';
+            params += item.enName + ' = ' + item.value;
+        }
+      });
+    handleMainFnGeneration(dataStructure, params, result);
+  } else {
+    console.log('没有require');
+    if (dataStructure.graphDataMap && dataStructure.graphDataMap.cards) {
+      const tail = Date.now();
+      const inputParam = dataStructure.properties
+        .find(item => item.cnName === '输入参数')
+        .value.map(item => `${item.name} = ${item.value}`)
+        .join(',');
+      const outputParam = dataStructure.properties
+        .find(item => item.cnName === '流程块返回')
+        .value.map(item => item.name)
+        .join(',');
+      const variables = transformVariable(
+        dataStructure.graphDataMap.variable,
+        depth + 1
+      );
+      result.output += `def RPA_${tail}()\n`;
+      result.output += `${variables}`;
+      dataStructure.graphDataMap.cards.forEach(item => {
+        transformBasicStatement(
+          paddingStart(depth + 1),
+          item,
+          result,
+          moduleMap,
+          depth + 1
+        );
+      });
+      if (outputParam) {
+        result.output += `${paddingStart(
+          depth
+        )}${outputParam} = RPA_${tail}(${inputParam})\n`;
+      } else {
+        result.output += `${paddingStart(depth)}RPA_${tail}(${inputParam})\n`;
+      }
+    }
+    // console.log(padding, dataStructure, result, moduleMap);
+  }
 };
 
 export default transformBasicStatement;

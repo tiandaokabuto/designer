@@ -9,6 +9,7 @@ import {
   SYNCHRO_CODEBLOCK,
   CHANGE_AUTOMICLIST,
   CHANGE_AIHINTLIST,
+  CHANGE_BLOCK_TREE_TAB,
 } from '../actions/codeblock';
 
 import { synchroGraphDataMap } from '../containers/reduxActions';
@@ -19,10 +20,16 @@ const defaultState = {
   pythonCode: '',
   automicList: [],
   aiHintList: {},
+  blockTreeTab: 'atomic', // actomic module
 };
 
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case CHANGE_BLOCK_TREE_TAB:
+      return {
+        ...state,
+        blockTreeTab: action.payload,
+      };
     case CHANGE_AIHINTLIST:
       return {
         ...state,

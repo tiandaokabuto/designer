@@ -70,7 +70,7 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
         ) {
           transformCustomCodeStatement(padding, statement, result, moduleMap);
         } else {
-          transformBasicStatement(padding, statement, result, moduleMap);
+          transformBasicStatement(padding, statement, result, moduleMap, depth);
         }
         result.output += '\n';
         break;

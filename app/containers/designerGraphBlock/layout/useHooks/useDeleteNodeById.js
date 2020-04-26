@@ -32,12 +32,6 @@ export default id => {
         if (checkedId === id) {
           handleDeleteNodeById(id);
         }
-      } else {
-        if (e.keyCode === 67 && e.ctrlKey) {
-          console.log('键盘复制');
-        } else if (e.keyCode === 86 && e.ctrlKey) {
-          console.log('键盘粘贴');
-        }
       }
     };
     document.addEventListener('keydown', handleDeleteKeyDown);

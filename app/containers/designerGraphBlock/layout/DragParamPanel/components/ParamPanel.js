@@ -1,6 +1,12 @@
 import './ParamPanel.scss';
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  Fragment,
+} from 'react';
 import { Input, Select, AutoComplete, Button } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
@@ -417,6 +423,7 @@ const LoopSelectContext = React.createContext({
 });
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
+  console.log(checkedBlock);
   const [flag, setFlag] = useState(false);
   // loopSelect：循环类型，循环类型更改的时候需要改变循环条件
   const [loopSelect, setLoopSelect] = useState(
@@ -424,7 +431,6 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
       ? checkedBlock.properties.required[0].value
       : 'for_list'
   );
-
   const [aiHintList] = useAIHintWatch();
 
   useEffect(() => {
@@ -455,51 +461,85 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
           />
         </div>
       )}
-      <div className="parampanel-required">必选项</div>
-      <div className="parampanel-content">
-        {(checkedBlock.properties.required || []).map((param, index) => {
-          if (param.enName === 'return_string') {
-            return (
-              <OutputPanel
-                key={checkedBlock.id + index}
-                output={param.value}
-                handleEmitCodeTransform={() => {
-                  handleEmitCodeTransform(cards);
-                }}
-              />
-            );
-          }
-          return (
-            <LoopSelectContext.Provider value={{ loopSelect, setLoopSelect }}>
-              <ParamItem
-                key={checkedBlock.id + index}
-                param={param}
-                handleEmitCodeTransform={handleEmitCodeTransform}
-                cards={cards}
-                flag={flag}
-                aiHintList={aiHintList}
-                setFlag={setFlag}
-              />
-            </LoopSelectContext.Provider>
-          );
-        })}
-      </div>
-      <div className="parampanel-optional">选填项</div>
-      <div className="parampanel-content">
-        {(checkedBlock.properties.optional || []).map((param, index) => {
-          return (
-            <ParamItem
-              key={checkedBlock.id + index}
-              param={param}
-              handleEmitCodeTransform={handleEmitCodeTransform}
-              cards={cards}
-              flag={flag}
-              aiHintList={aiHintList}
-              setFlag={setFlag}
-            />
-          );
-        })}
-      </div>
+      {checkedBlock.key && checkedBlock.key.indexOf('module') !== -1 ? (
+        <Fragment>
+          {checkedBlock.properties.map(item => {
+            if (item.cnName !== '标签名称') {
+              console.log(item.value);
+              // return <div>{item.cnName}</div>;
+              return (
+                <Fragment>
+                  <div className="parampanel-required">{item.cnName}</div>
+                  <div className="parampanel-content">
+                    {item.value.map(valueItem => {
+                      return (
+                        <div className="parampanel-item">
+                          <span className="param-title" title={valueItem.name}>
+                            {valueItem.name}
+                          </span>
+                          <div style={{ flex: 1, overflow: 'hidden' }}>
+                            {valueItem.value}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Fragment>
+              );
+            }
+          })}
+        </Fragment>
+      ) : (
+        <Fragment>
+          <div className="parampanel-required">必选项</div>
+          <div className="parampanel-content">
+            {(checkedBlock.properties.required || []).map((param, index) => {
+              if (param.enName === 'return_string') {
+                return (
+                  <OutputPanel
+                    key={checkedBlock.id + index}
+                    output={param.value}
+                    handleEmitCodeTransform={() => {
+                      handleEmitCodeTransform(cards);
+                    }}
+                  />
+                );
+              }
+              return (
+                <LoopSelectContext.Provider
+                  value={{ loopSelect, setLoopSelect }}
+                >
+                  <ParamItem
+                    key={checkedBlock.id + index}
+                    param={param}
+                    handleEmitCodeTransform={handleEmitCodeTransform}
+                    cards={cards}
+                    flag={flag}
+                    aiHintList={aiHintList}
+                    setFlag={setFlag}
+                  />
+                </LoopSelectContext.Provider>
+              );
+            })}
+          </div>
+          <div className="parampanel-optional">选填项</div>
+          <div className="parampanel-content">
+            {(checkedBlock.properties.optional || []).map((param, index) => {
+              return (
+                <ParamItem
+                  key={checkedBlock.id + index}
+                  param={param}
+                  handleEmitCodeTransform={handleEmitCodeTransform}
+                  cards={cards}
+                  flag={flag}
+                  aiHintList={aiHintList}
+                  setFlag={setFlag}
+                />
+              );
+            })}
+          </div>
+        </Fragment>
+      )}
     </div>
   );
 };

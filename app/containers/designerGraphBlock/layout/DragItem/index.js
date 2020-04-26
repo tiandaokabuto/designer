@@ -1,5 +1,5 @@
-import React, { useState, useRef, useMemo, useEffect } from 'react';
-import { Input, Icon, Tree, message } from 'antd';
+import React, { useState, useRef, useMemo, useEffect, Fragment } from 'react';
+import { Input, Icon, Tree, message, Tabs } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
@@ -7,6 +7,7 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import DragCard from './components/DragCard';
 import ContextMenu from './components/ContextMenu';
+import ProcessTree from '../../../designerGraphEdit/layout/GraphItem/components/ProcessTree';
 import event from '../eventCenter';
 import {
   BasicStatementTag,
@@ -14,15 +15,18 @@ import {
   ConditionalStatementTag,
 } from '../statementTags';
 import { traverseTree, findNodeByKey } from '../../../common/utils';
+import { changeBlockTreeTab } from '../../../reduxActions';
 
 import { query } from './PinYin';
 import { saveAutomicList } from './utils';
 
+const { TabPane } = Tabs;
 const { TreeNode } = Tree;
 const { Search } = Input;
 const MAX_RENCENT_DEQUEUE_LENGTH = 10;
 
 const canDisplay = (match, filter) => {
+  console.log(filter);
   if (!match) return false;
   const newMatch = match.toLocaleLowerCase();
   const newFilter = filter.toLocaleLowerCase();
@@ -41,6 +45,9 @@ const canDisplay = (match, filter) => {
 export default useInjectContext(
   ({ updateAutomicList, updateCheckedBlockId }) => {
     const atomicCList = useSelector(state => state.blockcode.automicList);
+
+    const blockTreeTab = useSelector(state => state.blockcode.blockTreeTab);
+
     const favoriteList = useMemo(() => {
       const find = atomicCList.find(item => item.key === 'favorite');
       return find ? find.children : [];
@@ -212,7 +219,72 @@ export default useInjectContext(
             />
           </div>
         </div>
-        <div className="dragger-editor-item-search">
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '0',
+            maxWidth: '239px',
+          }}
+        >
+          <Tabs
+            defaultActiveKey={blockTreeTab}
+            className="dragger-editor-container-tabs"
+            tabPosition="bottom"
+            onChange={key => {
+              changeBlockTreeTab(key);
+            }}
+          >
+            <TabPane tab="组件库" key="atomic">
+              <div className="dragger-editor-item-search">
+                <Input
+                  placeholder="请输入"
+                  onChange={e => {
+                    setFilter(e.target.value);
+                  }}
+                />
+              </div>
+              <Tree
+                className="atomicCList-tree"
+                expandedKeys={expandedKeys}
+                onExpand={expandedKeys => {
+                  setExpandedKeys(expandedKeys);
+                }}
+                onRightClick={({ event, node }) => {
+                  setPosition({
+                    left: event.pageX + 40,
+                    top: event.pageY - 20,
+                    node: node.props,
+                  });
+                }}
+                onSelect={(_, e) => {
+                  const props = e.node.props;
+                  console.log(props);
+                  if (props.children) {
+                    setExpandedKeys(keys => {
+                      if (keys.includes(props.eventKey)) {
+                        return keys.filter(item => item !== props.eventKey);
+                      } else {
+                        return keys.concat(props.eventKey);
+                      }
+                    });
+                  }
+                }}
+                treeData={treeData}
+              ></Tree>
+              <ContextMenu
+                position={position}
+                addToLovedList={addToLovedList}
+                removeFromLovedList={removeFromLovedList}
+                // handleDelete={handleDelete}
+                // handleRename={handleRename}
+              />
+            </TabPane>
+            <TabPane tab="流程块" key="secondModule">
+              <ProcessTree type={'secondModule'}></ProcessTree>
+            </TabPane>
+          </Tabs>
+        </div>
+        {/* <div className="dragger-editor-item-search">
           <Input
             placeholder="请输入"
             onChange={e => {
@@ -253,7 +325,7 @@ export default useInjectContext(
           removeFromLovedList={removeFromLovedList}
           // handleDelete={handleDelete}
           // handleRename={handleRename}
-        />
+        /> */}
       </div>
     );
   }
