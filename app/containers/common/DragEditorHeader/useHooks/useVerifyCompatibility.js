@@ -1,6 +1,92 @@
 import { message } from 'antd';
 
 import store from '@/store';
+import { findNodeByKey } from '../../utils';
+
+const fs = require('fs');
+
+const getAutoMicListMap = automicList => {
+  let result = {};
+  for (const child of automicList) {
+    if (child.children) {
+      result = {
+        ...result,
+        ...getAutoMicListMap(child.children),
+      };
+    } else {
+      result = {
+        ...result,
+        [child.item.main]: child.item,
+      };
+    }
+  }
+  return result;
+};
+
+const traverseAllCards = (cards, callback) => {
+  for (const child of cards) {
+    if (child.children) {
+      callback && callback(child);
+      traverseCards(child.children, callback);
+    } else if (child.ifChildren) {
+      callback && callback(child);
+      traverseCards(child.ifChildren, callback);
+    } else if (child.elseChildren) {
+      callback && callback(child);
+      traverseCards(child.elseChildren, callback);
+    } else {
+      callback && callback(child);
+    }
+  }
+};
+
+const isPlainObject = obj => {
+  if (typeof obj !== 'object' || obj === null) return false;
+  let proto = obj;
+  while (Object.getPrototypeOf(proto) !== null) {
+    proto = Object.getPrototypeOf(proto);
+  }
+  return Object.getPrototypeOf(obj) === proto;
+};
+
+const hasOwnPropertyKey = (obj, key) => {
+  return Object.hasOwnProperty(obj, key);
+};
+
+const typeOf = obj => {
+  return Object.prototype.toString.call(obj);
+};
+
+const isEqualType = (standard, current) => {
+  let flag = true;
+  try {
+    for (const key in standard) {
+      if (!hasOwnPropertyKey(standard, key)) {
+        if (typeOf(standard[key]) !== typeOf(current[key])) {
+          // 不一致
+          console.log('不一致');
+          flag = false;
+          throw new Error('err');
+        }
+        if (isPlainObject(standard[key])) {
+          flag = isEqualType(standard[key], current[key]);
+        } else if (Array.isArray(standard[key])) {
+          flag = isEqualType(standard[key], current[key]);
+        }
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  } finally {
+    return flag;
+  }
+};
+
+const verifyCards = (current, standard) => {
+  traverseAllCards(current, node => {
+    console.log(isEqualType(standard[node.main], node));
+  });
+};
 
 export default () => {
   return () => {
@@ -11,6 +97,27 @@ export default () => {
       message.info('请选择流程进行校验');
       return;
     }
-    console.log('hhhh', currentCheckedTreeNode, processTree);
+    const verifyNode = findNodeByKey(processTree, currentCheckedTreeNode);
+    if (!verifyNode) return;
+    try {
+      const graphDataMap = JSON.parse(verifyNode.data.graphDataMap);
+
+      const data = fs.readFileSync(
+        `${process.cwd()}/globalconfig/config.json`,
+        {
+          encoding: 'utf-8',
+        }
+      );
+      const { automicList = [] } = JSON.parse(data);
+      const temp = automicList.find(item => item.key === 'aviable').children;
+      const automicListMap = getAutoMicListMap(temp);
+      for (const item of Object.values(graphDataMap)) {
+        verifyCards(item.cards || [], automicListMap);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+    // const waitForVerifyMap = JSON.parse()
   };
 };
