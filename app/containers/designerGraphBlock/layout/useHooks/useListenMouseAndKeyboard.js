@@ -33,20 +33,60 @@ const getUniqueId = arr => {
   return newId;
 };
 
+const traverseAllCards = (cards, callback) => {
+  for (const child of cards) {
+    if (child.children) {
+      callback && callback(child);
+      traverseCards(child.children, callback);
+    } else if (child.ifChildren) {
+      callback && callback(child);
+      traverseCards(child.ifChildren, callback);
+    } else if (child.elseChildren) {
+      callback && callback(child);
+      traverseCards(child.elseChildren, callback);
+    } else {
+      callback && callback(child);
+    }
+  }
+};
+
+const extractTraverse = async (cards, callback) => {
+  for (const child of cards) {
+    if (child.children) {
+      const isExact = await callback(child);
+      !isExact && traverseCards(child.children, callback);
+    } else if (child.ifChildren) {
+      const isExact = await callback(child);
+      !isExact && traverseCards(child.ifChildren, callback);
+      !isExact && traverseCards(child.elseChildren, callback);
+    } else {
+      callback && callback(child);
+    }
+  }
+};
+
 const extractCheckedData = (cards, checkedId) => {
   const result = [];
-  const currentIdList = [];
-  traverseCards(cards, node => {
-    currentIdList.push(node.id);
-  });
-  traverseCards(cards, node => {
+  extractTraverse(cards, node => {
     if (checkedId.includes(node.id)) {
-      const cloned = cloneDeep(node);
-      cloned.id = getUniqueId(currentIdList);
-      result.push(cloned);
+      result.push(cloneDeep(node));
+      return true;
     }
+    return false;
   });
   return result;
+};
+
+const attachedNodeId = (cards, append) => {
+  const currentIdList = [];
+  traverseAllCards(cards, node => {
+    currentIdList.push(node.id);
+  });
+
+  traverseAllCards(append, node => {
+    node.id = getUniqueId(currentIdList);
+    currentIdList.push(node.id);
+  });
 };
 
 export default () => {
@@ -139,7 +179,9 @@ export default () => {
     electronLocalshortcut.register(win, 'Ctrl+V', () => {
       if (checkedId.length === 1) {
         // 生成待保存的数据结构
-        insertAfter(cards, checkedId[0], clipboardData.content);
+        const append = cloneDeep(clipboardData.content || []);
+        attachedNodeId(cards, append);
+        insertAfter(cards, checkedId[0], append);
         updateCardData([...cards]);
         message.success('粘贴成功');
       } else {
