@@ -191,6 +191,14 @@ export default () => {
     const win = remote.getCurrentWindow();
     if (!win || !win.webContents) return;
     electronLocalshortcut.register(win, 'Ctrl+C', () => {
+      const selected = window.getSelection().toString();
+      if (selected) {
+        updateClipBoardData({
+          dep: [],
+          content: undefined,
+        });
+        return;
+      }
       if (checkedId.length) {
         // 生成待保存的数据结构
         updateClipBoardData({
@@ -201,6 +209,9 @@ export default () => {
       }
     });
     electronLocalshortcut.register(win, 'Ctrl+V', () => {
+      if (!clipboardData.content) {
+        return;
+      }
       if (checkedId.length === 1) {
         // 生成待保存的数据结构
         const append = cloneDeep(clipboardData.content || []);
