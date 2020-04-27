@@ -1,5 +1,5 @@
-import React, { Fragment, useState } from 'react';
-import { Table, Form, Input, Icon } from 'antd';
+import React, { Fragment, useState, useEffect } from 'react';
+import { Table, Form, Input, Icon, message } from 'antd';
 import axios from 'axios';
 
 import AutoCompleteInputParam from './AutoCompleteInputParam';
@@ -13,11 +13,14 @@ const originColumns = [
     dataIndex: 'variableName',
     key: 'variableName',
     editable: true,
+    width: '90px',
+    ellipsis: true,
   },
   {
     title: '表头名',
     dataIndex: 'headerName',
     key: 'headerName',
+    ellipsis: true,
   },
 ];
 
@@ -94,7 +97,10 @@ class EditableCell extends React.Component {
         )}
       </Form.Item>
     ) : (
-      <div className="editable-cell-value-wrap" onClick={this.toggleEdit}>
+      <div
+        className="editable-cell-value-wrap ant-table-row-cell-ellipsis ant-table-row-cell-break-word"
+        onClick={this.toggleEdit}
+      >
         {children}
       </div>
     );
@@ -132,31 +138,48 @@ export default function TaskDataName({
   handleEmitCodeTransform,
   handleValidate,
 }) {
-  const originDataSource = [
-    {
-      key: '1',
-      variableName: '胡彦斌',
-      headerName: 32,
-    },
-    {
-      key: '2',
-      variableName: '胡彦祖',
-      headerName: 42,
-    },
-  ];
+  param.dataSource = param.dataSource || [];
+  param.tableName = param.tableName || '';
+  param.selectedRowKeys = param.selectedRowKeys || [];
+  let originValue = param.value || '';
+  const originDataSource = param.dataSource;
   const [dataSource, setdataSource] = useState(originDataSource);
   const [loading, setLoading] = useState(false);
   const [showColumn, setShowColumn] = useState(true);
+  const [selectedRowKeys, setSelectedRowKeys] = useState(param.selectedRowKeys);
+  let timer = null;
+
+  useEffect(() => {
+    // 首次进入不刷新
+    if (param.tableName !== param.value) {
+      // 清空选择情况
+      param.selectedRowKeys = [];
+      param.selectedRows = [];
+      setSelectedRowKeys([]);
+      // 刷新table表
+      refreshDataSource();
+    }
+  }, [param.value]);
 
   const components = { body: { row: EditableFormRow, cell: EditableCell } };
   const rowSelection = {
+    columnWidth: '50px',
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        'selectedRows: ',
-        selectedRows
-      );
+      param.selectedRowKeys = [...selectedRowKeys];
+      param.selectedRows = [...selectedRows];
+      setSelectedRowKeys(selectedRowKeys);
+      handleEmitCodeTransform();
     },
+    getCheckboxProps: record => {
+      // diabled的时候要去掉
+      if (record.variableName === '') {
+        return {
+          disabled: record.variableName === '',
+          checked: false,
+        };
+      }
+    },
+    selectedRowKeys,
   };
 
   const handleSave = row => {
@@ -167,6 +190,12 @@ export default function TaskDataName({
       ...item,
       ...row,
     });
+    param.dataSource = newData;
+    const selectedIndex = param.selectedRows.findIndex(
+      item => item.key === row.key
+    );
+    param.selectedRows[selectedIndex].variableName = row.variableName;
+    handleEmitCodeTransform();
     setdataSource(newData);
   };
 
@@ -188,20 +217,90 @@ export default function TaskDataName({
 
   const refreshDataSource = () => {
     const { value } = param;
-    axios
-      .get(api('taskDataFields'), {
-        params: {
-          taskDataName: '留言单',
-        },
-      })
-      .then(res => {
-        console.log(res);
-        return res.data;
-      })
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => console.log(err));
+    if (timer) clearTimeout(timer);
+    setLoading(prevState => {
+      // 查询太快,加个定时让他有（查询了的）感觉^_^
+      timer = setTimeout(() => {
+        if (!prevState) {
+          axios
+            .get(api('taskDataFields'), {
+              params: {
+                taskDataName: value.replace(/"/g, '').replace(/'/g, ''),
+              },
+            })
+            .then(res => {
+              return res ? res.data : { code: -1 };
+            })
+            .then(res => {
+              if (res.code !== -1 && Array.isArray(res.data)) {
+                // 刷新时，维护已经选择项的删除和更改
+                const newSelectedRows = param.selectedRows.reduce(
+                  (total, nextValue) => {
+                    const reduceIndex = res.data.findIndex(
+                      item => item.key === nextValue.key
+                    );
+                    if (reduceIndex > -1) {
+                      total.push(nextValue);
+                    }
+                    return total;
+                  },
+                  []
+                );
+                const newSelectedRowKeys = param.selectedRowKeys.reduce(
+                  (total, nextValue) => {
+                    const reduceIndex = res.data.findIndex(
+                      item => item.key === nextValue
+                    );
+                    if (reduceIndex > -1) {
+                      total.push(nextValue);
+                    }
+                    return total;
+                  },
+                  []
+                );
+                param.selectedRows = newSelectedRows;
+                param.selectedRowKeys = newSelectedRowKeys;
+                // 刷新后，把新的数据源的每个项和进行更改的项进行合并
+                const newDataSource = res.data.map(item => {
+                  const selectedItem = param.selectedRows.find(
+                    selectiItem => item.key === selectiItem.key
+                  );
+                  const newItem = {
+                    key: item.key,
+                    variableName: selectedItem
+                      ? selectedItem.variableName
+                      : item.value,
+                    headerName: item.value,
+                  };
+                  return newItem;
+                });
+                // 把合并后的数据源赋到原子能力的json上
+                param.dataSource = newDataSource;
+                param.tableName = param.value;
+                setdataSource(newDataSource);
+                setLoading(false);
+                clearTimeout(timer);
+                // 不触发这个函数不知道为什么不保存数据结构
+                handleEmitCodeTransform();
+                return true;
+              }
+              setdataSource([]);
+              param.dataSource = [];
+              param.tableName = '';
+              setLoading(false);
+              clearTimeout(timer);
+              return false;
+            })
+            .catch(err => {
+              message.error('刷新失败');
+              setLoading(false);
+              clearTimeout(timer);
+              console.log(err);
+            });
+        }
+      }, 500);
+      return true;
+    });
   };
 
   const triggerShowColumn = () => {
@@ -250,6 +349,8 @@ export default function TaskDataName({
             : 'parampanel-item task-data-column-hide'
         }
       >
+        {/* components:自定义组件,rowSelection:可选框配置,dataSource:数据源,columns:列配置,
+          loading:是否加载中,pagination:不要分页,scroll:滚动设置,size:表格大小 */}
         <Table
           components={components}
           rowClassName={() => 'editable-row'}
@@ -257,6 +358,9 @@ export default function TaskDataName({
           dataSource={dataSource}
           columns={columns}
           loading={loading}
+          pagination={false}
+          scroll={{ y: 125 }}
+          size="middle"
         />
       </div>
     </Fragment>

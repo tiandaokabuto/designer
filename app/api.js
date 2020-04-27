@@ -19,7 +19,7 @@ const apiList = {
   /** 任务数据的组件属性使用-根据任务数据名称-查询任务数据的字段结构 */
   taskDataFields: '/controller/designer/getTaskDataFields',
   /** 任务数据的组件属性使用-查询任务数据名称 */
-  taskDataNames: 'controller/designer/getTaskDataNames',
+  taskDataNames: '/controller/designer/getTaskDataNames',
 };
 
 export default description => {

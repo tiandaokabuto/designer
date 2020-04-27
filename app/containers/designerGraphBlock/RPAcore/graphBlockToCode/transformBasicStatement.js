@@ -25,11 +25,24 @@ const handleStatementOutput = (output, value, result) => {
   result.output += `${output} = `;
 };
 
-const handleMainFnGeneration = (dataStructure, params, result) => {
+const handleMainFnGeneration = (dataStructure, params, result, padding) => {
   const isSubtype = dataStructure.subtype;
   result.output += `${isSubtype ? '' : dataStructure.pkg + '.'}${
     dataStructure.main
   }(${params})\n`;
+  // 如果是消费任务数据原子能力，批量生成变量名
+  if (
+    dataStructure.main === 'consumeData' &&
+    dataStructure.properties.required[1].selectedRows
+  ) {
+    const selectedRows = dataStructure.properties.required[1].selectedRows;
+    selectedRows.map(item => {
+      if (item.variableName !== '') {
+        result.output += `${padding}${item.variableName} = ${dataStructure.properties.required[0].value}['${item.headerName}']\n`;
+      }
+      return item;
+    });
+  }
 };
 
 const handleNote = (cmdDesc, result, padding, dataStructure) => {
@@ -102,6 +115,17 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
           if (params) params += ', ';
           params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
           break;
+        case 'taskDataName':
+          if (params) params += ', ';
+          params +=
+            item.enName +
+            ' = ' +
+            (item.default === undefined && item.value === undefined
+              ? 'None'
+              : !item.value
+              ? item.default
+              : item.value);
+          break;
         default:
           if (params) params += ', ';
           params +=
@@ -138,7 +162,7 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
       }
     });
   }
-  handleMainFnGeneration(dataStructure, params, result);
+  handleMainFnGeneration(dataStructure, params, result, padding);
 };
 
 export default transformBasicStatement;
