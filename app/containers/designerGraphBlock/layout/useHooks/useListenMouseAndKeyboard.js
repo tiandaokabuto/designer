@@ -215,7 +215,7 @@ export default () => {
         return;
       }
       if (clipboard.readText('selection') !== 'copy-cardData') return;
-      if (checkedId.length === 1) {
+      if (checkedId.length === 1 || !cards.length) {
         // 生成待保存的数据结构
         const append = cloneDeep(clipboardData.content || []);
         attachedNodeId(cards, append);

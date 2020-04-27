@@ -172,6 +172,12 @@ const BasicStatement = useInjectContext(props => {
     e.stopPropagation();
   };
 
+  const borderColor = card.isCompatable
+    ? 'red'
+    : isTail
+    ? '#eeeeee'
+    : '#32a67f';
+
   return (
     <div
       ref={readOnly ? null : ref}
@@ -326,6 +332,7 @@ const BasicStatement = useInjectContext(props => {
         data-id={isTail ? '' : id}
         style={{
           backgroundColor,
+          borderColor,
         }}
         ref={dragImage}
       />
