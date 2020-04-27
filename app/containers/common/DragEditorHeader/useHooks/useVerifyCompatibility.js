@@ -2,6 +2,7 @@ import { message } from 'antd';
 
 import store from '@/store';
 import { findNodeByKey } from '../../utils';
+import { setGraphDataMap } from '../../../reduxActions';
 
 const fs = require('fs');
 
@@ -27,13 +28,13 @@ const traverseAllCards = (cards, callback) => {
   for (const child of cards) {
     if (child.children) {
       callback && callback(child);
-      traverseCards(child.children, callback);
+      traverseAllCards(child.children, callback);
     } else if (child.ifChildren) {
       callback && callback(child);
-      traverseCards(child.ifChildren, callback);
+      traverseAllCards(child.ifChildren, callback);
     } else if (child.elseChildren) {
       callback && callback(child);
-      traverseCards(child.elseChildren, callback);
+      traverseAllCards(child.elseChildren, callback);
     } else {
       callback && callback(child);
     }
@@ -64,8 +65,9 @@ const isEqualType = (standard, current) => {
       if (!hasOwnPropertyKey(standard, key)) {
         if (typeOf(standard[key]) !== typeOf(current[key])) {
           // 不一致
-          console.log('不一致');
+          console.log('不一致', current, key, standard);
           flag = false;
+          current[key] = standard[key];
           throw new Error('err');
         }
         if (isPlainObject(standard[key])) {
@@ -76,16 +78,21 @@ const isEqualType = (standard, current) => {
       }
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
   } finally {
     return flag;
   }
 };
 
 const verifyCards = (current, standard) => {
+  let flag = false;
   traverseAllCards(current, node => {
-    console.log(isEqualType(standard[node.main], node));
+    const isEqual = isEqualType(standard[node.main], node);
+    if (!isEqual) {
+      flag = true;
+    }
   });
+  return flag;
 };
 
 export default () => {
@@ -111,13 +118,15 @@ export default () => {
       const { automicList = [] } = JSON.parse(data);
       const temp = automicList.find(item => item.key === 'aviable').children;
       const automicListMap = getAutoMicListMap(temp);
-      for (const item of Object.values(graphDataMap)) {
-        verifyCards(item.cards || [], automicListMap);
+      for (const [key, item] of Object.entries(graphDataMap)) {
+        let isCompatable = verifyCards(item.cards || [], automicListMap);
+        if (isCompatable) {
+          setGraphDataMap(key, item);
+        }
       }
+      console.log('校验完成');
     } catch (err) {
       console.log(err);
     }
-
-    // const waitForVerifyMap = JSON.parse()
   };
 };
