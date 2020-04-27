@@ -13,6 +13,7 @@ import { insertAfter } from '../shared/utils';
 import { traverseCards } from '../DragContainer/utils';
 import { PREFIX_ID } from '../statementTypes';
 const remote = require('electron').remote;
+const { clipboard } = require('electron');
 const electronLocalshortcut = require('electron-localshortcut');
 
 const KEYCODEMAP = {
@@ -205,6 +206,7 @@ export default () => {
           dep: checkedId,
           content: extractCheckedData(cards, checkedId),
         });
+        clipboard.writeText('copy-cardData', 'selection');
         message.success('复制成功');
       }
     });
@@ -212,7 +214,8 @@ export default () => {
       if (!clipboardData.content) {
         return;
       }
-      if (checkedId.length === 1) {
+      if (clipboard.readText('selection') !== 'copy-cardData') return;
+      if (checkedId.length === 1 || !cards.length) {
         // 生成待保存的数据结构
         const append = cloneDeep(clipboardData.content || []);
         attachedNodeId(cards, append);

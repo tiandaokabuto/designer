@@ -242,8 +242,9 @@ export default (id, visibleTemplate) => {
         const find = proxyList.find(item => {
           return args[0].includes(item.enName);
         });
-        let value = find.value;
-        if (find.componentType === 2 && find.tag === 2) {
+
+        let value = find && find.value;
+        if (find && find.componentType === 2 && find.tag === 2) {
           const list = find.valueList;
           if (Array.isArray(list)) {
             value = `'${list[0].value}${list[1].value}'`;
