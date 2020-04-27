@@ -15,6 +15,8 @@ import LoopConditionParam from './LoopPanelParam/index';
 import OutputPanel from './OutputPanel';
 import FileParam from './FileParam';
 import FileParamPanel from './FileParamPanel';
+/* import AutoCompleteInputParam from './AutoCompleteInputParam';
+import TaskDataName from './TaskDataName'; */
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -162,6 +164,9 @@ const getComponentType = (
           <LoopConditionParam
             param={param}
             cards={cards}
+            aiHintList={aiHintList}
+            appendDataSource={appendDataSource}
+            handleValidate={handleValidate}
             loopSelect={loopSelect}
             stopDeleteKeyDown={stopDeleteKeyDown}
             handleEmitCodeTransform={handleEmitCodeTransform}
@@ -171,10 +176,31 @@ const getComponentType = (
         )}
       </LoopSelectContext.Consumer>
     );
-  }
+  } /*  else if (param.enName === 'taskDataName') {
+    return (
+      <TaskDataName
+        param={param}
+        aiHintList={aiHintList}
+        appendDataSource={appendDataSource}
+        keyFlag={keyFlag}
+        handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+        handleValidate={handleValidate}
+      />
+    );
+  }*/
   switch (param.componentType) {
     case COMPONENT_TYPE.INPUT:
       if (param.enName !== 'outPut') {
+        /* return (
+          <AutoCompleteInputParam
+            param={param}
+            aiHintList={aiHintList}
+            appendDataSource={appendDataSource}
+            keyFlag={keyFlag}
+            handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+            handleValidate={handleValidate}
+          />
+        ); */
         const paramType = param.paramType;
         const hasParamType = paramType && Array.isArray(paramType);
         // 待匹配的下拉列表
@@ -332,6 +358,9 @@ const getComponentType = (
           handleEmitCodeTransform={() => {
             handleEmitCodeTransform(cards);
           }}
+          aiHintList={aiHintList}
+          appendDataSource={appendDataSource}
+          handleValidate={handleValidate}
         />
       );
     case COMPONENT_TYPE.DIRECTORY:
@@ -360,6 +389,7 @@ const ParamItem = ({
   setFlag,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
+  //const specialParam = ['条件', '循环条件', '任务数据名称'];
   const specialParam = ['条件', '循环条件'];
 
   return (
