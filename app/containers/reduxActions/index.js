@@ -24,6 +24,8 @@ import {
   CHANGE_CHECKEDID,
   CHANGE_AIHINTLIST,
   CHANGE_BLOCK_TREE_TAB,
+  CHANGE_CLIPBOARDDATA,
+  CHANGE_CARDDATA,
 } from '../../actions/codeblock';
 import {
   UPDATE_EXECUTEOUTPUT,
@@ -37,6 +39,20 @@ export const changeBlockTreeTab = tab => {
   dispatch({
     type: CHANGE_BLOCK_TREE_TAB,
     payload: tab,
+  });
+};
+
+export const updateCardData = data => {
+  dispatch({
+    type: CHANGE_CARDDATA,
+    payload: data,
+  });
+};
+
+export const updateClipBoardData = data => {
+  dispatch({
+    type: CHANGE_CLIPBOARDDATA,
+    payload: data,
   });
 };
 

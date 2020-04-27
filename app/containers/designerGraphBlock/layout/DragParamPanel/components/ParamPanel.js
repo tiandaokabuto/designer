@@ -19,8 +19,10 @@ import {
 import ConditionParam from './ConditionParam';
 import LoopConditionParam from './LoopPanelParam/index';
 import OutputPanel from './OutputPanel';
-
-const { ipcRenderer } = require('electron');
+import FileParam from './FileParam';
+import FileParamPanel from './FileParamPanel';
+/* import AutoCompleteInputParam from './AutoCompleteInputParam';
+import TaskDataName from './TaskDataName'; */
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -64,8 +66,6 @@ const stopDeleteKeyDown = e => {
   }
 };
 
-let listener = null;
-
 const getComponentType = (
   param,
   handleEmitCodeTransform,
@@ -80,21 +80,6 @@ const getComponentType = (
       value: param.value,
     });
   }, []);
-
-  const handleFilePath = useCallback(
-    (e, filePath) => {
-      if (listener === param && filePath && filePath.length) {
-        setFlag(true);
-        setTimeout(() => {
-          setFlag(false);
-        }, 50);
-        param.value = `"${filePath[0].replace(/\//g, '\\\\')}"`;
-        // forceUpdate();
-        handleEmitCodeTransform(cards);
-      }
-    },
-    [param]
-  );
 
   // 任务数据下拉列表
   const [appendDataSource] = useAppendDataSource(param);
@@ -185,6 +170,9 @@ const getComponentType = (
           <LoopConditionParam
             param={param}
             cards={cards}
+            aiHintList={aiHintList}
+            appendDataSource={appendDataSource}
+            handleValidate={handleValidate}
             loopSelect={loopSelect}
             stopDeleteKeyDown={stopDeleteKeyDown}
             handleEmitCodeTransform={handleEmitCodeTransform}
@@ -194,35 +182,60 @@ const getComponentType = (
         )}
       </LoopSelectContext.Consumer>
     );
-  }
+  } /*  else if (param.enName === 'taskDataName') {
+    return (
+      <TaskDataName
+        param={param}
+        aiHintList={aiHintList}
+        appendDataSource={appendDataSource}
+        keyFlag={keyFlag}
+        handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+        handleValidate={handleValidate}
+      />
+    );
+  }*/
   switch (param.componentType) {
     case COMPONENT_TYPE.INPUT:
       if (param.enName !== 'outPut') {
+        /* return (
+          <AutoCompleteInputParam
+            param={param}
+            aiHintList={aiHintList}
+            appendDataSource={appendDataSource}
+            keyFlag={keyFlag}
+            handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+            handleValidate={handleValidate}
+          />
+        ); */
         const paramType = param.paramType;
         const hasParamType = paramType && Array.isArray(paramType);
         // 待匹配的下拉列表
         const dataSource =
           hasParamType &&
-          paramType.reduce((prev, next) => {
-            return prev.concat(
-              aiHintList[next]
-                ? [
-                    ...new Set(
-                      aiHintList[next]
-                        .map(item =>
-                          item.isVariable
-                            ? item.name
-                            : item.isMutiply
-                            ? getMutiplyValue(item, next)
-                            : item.value
-                        )
-                        .flat()
-                        .filter(Boolean)
-                    ),
-                  ]
-                : []
-            );
-          }, []);
+          Array.from(
+            new Set(
+              paramType.reduce((prev, next) => {
+                return prev.concat(
+                  aiHintList[next]
+                    ? [
+                        ...new Set(
+                          aiHintList[next]
+                            .map(item =>
+                              item.isVariable
+                                ? item.name
+                                : item.isMutiply
+                                ? getMutiplyValue(item, next)
+                                : item.value
+                            )
+                            .flat()
+                            .filter(Boolean)
+                        ),
+                      ]
+                    : []
+                );
+              }, [])
+            )
+          );
         // 待匹配的依赖项
         const depList =
           (hasParamType &&
@@ -293,6 +306,8 @@ const getComponentType = (
                 value,
               });
             }}
+            // 不对DataSource进行查询，详情咨询吴炯
+            filterOption={() => true}
           >
             {!needTextArea ? (
               <TextArea
@@ -341,40 +356,32 @@ const getComponentType = (
             ))}
         </Select>
       );
-    case COMPONENT_TYPE.DIRECTORY:
     case COMPONENT_TYPE.FILEPATHINPUT:
       return (
-        <div className="parampanel-choosePath">
-          <Input
-            key={keyFlag ? uniqueId('key_') : ''}
-            defaultValue={param.value || param.default}
-            onChange={e => {
-              param.value = e.target.value;
-
-              handleEmitCodeTransform(cards);
-            }}
-            onKeyDown={e => stopDeleteKeyDown(e)}
-          />
-          <Button
-            onClick={() => {
-              listener = param;
-              ipcRenderer.removeAllListeners('chooseItem');
-              ipcRenderer.send(
-                'choose-directory-dialog',
-                'showOpenDialog',
-                '选择',
-                [
-                  param.componentType === COMPONENT_TYPE.FILEPATHINPUT
-                    ? 'openFile'
-                    : 'openDirectory',
-                ]
-              );
-              ipcRenderer.on('chooseItem', handleFilePath);
-            }}
-          >
-            选择
-          </Button>
-        </div>
+        <FileParamPanel
+          key={param.enName}
+          param={param}
+          keyFlag={keyFlag}
+          setFlag={setFlag}
+          handleEmitCodeTransform={() => {
+            handleEmitCodeTransform(cards);
+          }}
+          aiHintList={aiHintList}
+          appendDataSource={appendDataSource}
+          handleValidate={handleValidate}
+        />
+      );
+    case COMPONENT_TYPE.DIRECTORY:
+      return (
+        <FileParam
+          param={param}
+          setFlag={setFlag}
+          keyFlag={keyFlag}
+          fileType="openDirectory"
+          handleEmitCodeTransform={() => {
+            handleEmitCodeTransform(cards);
+          }}
+        />
       );
     default:
       return '待开发...';
@@ -390,10 +397,14 @@ const ParamItem = ({
   setFlag,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
+  //const specialParam = ['条件', '循环条件', '任务数据名称'];
+  const specialParam = ['条件', '循环条件'];
+
   return (
     <React.Fragment>
       <div className="parampanel-item">
-        {param.cnName === '条件' || param.cnName === '循环条件' ? (
+        {specialParam.includes(param.cnName) ||
+        param.componentType === COMPONENT_TYPE.FILEPATHINPUT ? (
           ''
         ) : (
           <span className="param-title" title={param.desc}>
@@ -568,6 +579,53 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
           </div>
         </Fragment>
       )}
+      {/* <div className="parampanel-required">必选项</div>
+      <div className="parampanel-content">
+        {(checkedBlock.properties.required || []).map((param, index) => {
+          if (param.enName === 'return_string') {
+            return (
+              <OutputPanel
+                key={checkedBlock.id + index}
+                output={param.value}
+                handleEmitCodeTransform={() => {
+                  handleEmitCodeTransform(cards);
+                }}
+              />
+            );
+          }
+          return (
+            <LoopSelectContext.Provider
+              key={checkedBlock.id + index}
+              value={{ loopSelect, setLoopSelect }}
+            >
+              <ParamItem
+                param={param}
+                handleEmitCodeTransform={handleEmitCodeTransform}
+                cards={cards}
+                flag={flag}
+                aiHintList={aiHintList}
+                setFlag={setFlag}
+              />
+            </LoopSelectContext.Provider>
+          );
+        })}
+      </div>
+      <div className="parampanel-optional">选填项</div>
+      <div className="parampanel-content">
+        {(checkedBlock.properties.optional || []).map((param, index) => {
+          return (
+            <ParamItem
+              key={checkedBlock.id + index}
+              param={param}
+              handleEmitCodeTransform={handleEmitCodeTransform}
+              cards={cards}
+              flag={flag}
+              aiHintList={aiHintList}
+              setFlag={setFlag}
+            />
+          );
+        })}
+      </div> */}
     </div>
   );
 };

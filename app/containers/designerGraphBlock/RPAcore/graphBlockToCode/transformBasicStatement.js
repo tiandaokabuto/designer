@@ -71,63 +71,82 @@ const transformBasicStatement = (
   let params = ''; // 生成参数类型
   if (dataStructure.properties.required) {
     dataStructure.properties.required.forEach((item, index) => {
-      switch (item.enName) {
-        case 'outPut':
-          item.value && handleStatementOutput(item.value, '', result);
-          break;
-        case 'formJson':
-          if (params) params += ', ';
-          const formJson = handleFormJsonGenerate(dataStructure);
+      if (item.componentType === 2 && item.tag === 2) {
+        if (params) params += ', ';
+        params += `${item.enName} = ${
+          !Array.isArray(item.valueList)
+            ? 'None'
+            : `${item.valueList[0].value} + ${item.valueList[1].value}`
+        }`;
+      } else {
+        switch (item.enName) {
+          case 'outPut':
+            item.value && handleStatementOutput(item.value, '', result);
+            break;
+          case 'formJson':
+            if (params) params += ', ';
+            const formJson = handleFormJsonGenerate(dataStructure);
 
-          if (formJson !== 'None') {
-            const temp = JSON.parse(formJson);
-            result.output +=
-              '[' +
-              temp
-                .filter(
-                  item =>
-                    !['submit-btn', 'cancel-btn', 'image'].includes(
-                      item.type
-                    ) || item.key
-                )
-                .map(item => item.key)
-                .join(',') +
-              ',' +
-              '] = ';
+            if (formJson !== 'None') {
+              const temp = JSON.parse(formJson);
+              result.output +=
+                '[' +
+                temp
+                  .filter(
+                    item =>
+                      !['submit-btn', 'cancel-btn', 'image'].includes(
+                        item.type
+                      ) || item.key
+                  )
+                  .map(item => item.key)
+                  .join(',') +
+                ',' +
+                '] = ';
+              params +=
+                'variables = [' +
+                temp.map(item => item.value || '').join(',') +
+                '], ';
+            }
+
+            params += item.enName + ' = ' + formJson;
+            break;
+          case 'layout':
+            if (params) params += ', ';
             params +=
-              'variables = [' +
-              temp.map(item => item.value || '').join(',') +
-              '], ';
-          }
-
-          params += item.enName + ' = ' + formJson;
-          break;
-        case 'layout':
-          if (params) params += ', ';
-          params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
-          break;
-        default:
-          if (params) params += ', ';
-          params +=
-            item.enName +
-            ' = ' +
-            (item.default === undefined && item.value === undefined
-              ? 'None'
-              : !item.value
-              ? item.default
-              : item.value);
+              item.enName + ' = ' + JSON.stringify(dataStructure.layout);
+            break;
+          default:
+            if (params) params += ', ';
+            params +=
+              item.enName +
+              ' = ' +
+              (item.default === undefined && item.value === undefined
+                ? 'None'
+                : !item.value
+                ? item.default
+                : item.value);
+        }
       }
     });
     dataStructure.properties.optional &&
       dataStructure.properties.optional.forEach((item, index) => {
         if (item.value === '') return;
-        switch (item.enName) {
-          case 'outPut':
-            handleStatementOutput(item.value, '', result);
-            break;
-          default:
-            if (params) params += ', ';
-            params += item.enName + ' = ' + item.value;
+        if (item.componentType === 2 && item.tag === 2) {
+          if (params) params += ', ';
+          params += `${item.enName} = ${
+            !Array.isArray(item.valueList)
+              ? 'None'
+              : `"${item.valueList[0].value}${item.valueList[1].value}"`
+          }`;
+        } else {
+          switch (item.enName) {
+            case 'outPut':
+              handleStatementOutput(item.value, '', result);
+              break;
+            default:
+              if (params) params += ', ';
+              params += item.enName + ' = ' + item.value;
+          }
         }
       });
     handleMainFnGeneration(dataStructure, params, result);
@@ -170,7 +189,7 @@ const transformBasicStatement = (
       if (outputParam) {
         result.output += `\n${paddingStart(
           depth
-        )}${outputParam} = RPA_${tail}(${inputParam})\n`;
+        )}${outputParam} = RPA_${tail}(${inputParamKV})\n`;
       } else {
         result.output += `\n${paddingStart(
           depth

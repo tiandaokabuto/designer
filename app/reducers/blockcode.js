@@ -10,17 +10,19 @@ import {
   CHANGE_AUTOMICLIST,
   CHANGE_AIHINTLIST,
   CHANGE_BLOCK_TREE_TAB,
+  CHANGE_CLIPBOARDDATA,
 } from '../actions/codeblock';
 
 import { synchroGraphDataMap } from '../containers/reduxActions';
 
 const defaultState = {
   cards: [],
-  checkedId: undefined,
+  checkedId: [],
   pythonCode: '',
   automicList: [],
   aiHintList: {},
   blockTreeTab: 'atomic', // actomic module
+  clipboardData: {},
 };
 
 export default (state = defaultState, action) => {
@@ -29,6 +31,14 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         blockTreeTab: action.payload,
+      };
+    case CHANGE_CLIPBOARDDATA:
+      return {
+        ...state,
+        clipboardData: {
+          ...state.clipboardData,
+          ...action.payload,
+        },
       };
     case CHANGE_AIHINTLIST:
       return {

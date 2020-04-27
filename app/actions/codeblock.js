@@ -5,3 +5,4 @@ export const SYNCHRO_CODEBLOCK = 'synchro_codeblock';
 export const CHANGE_AUTOMICLIST = 'change_automiclist';
 export const CHANGE_AIHINTLIST = 'change_aihintlist';
 export const CHANGE_BLOCK_TREE_TAB = 'change_block_tree_tab';
+export const CHANGE_CLIPBOARDDATA = 'change_clipboard';

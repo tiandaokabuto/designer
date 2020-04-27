@@ -16,7 +16,9 @@ for (let i = 0; i < zoomCount; i += 1) {
 
 const Zoom = () => {
   const [zoomLevel, setZoomLevel] = useState(9);
-  const graphData = useSelector(state => state.grapheditor.graphData);
+  const graphData = useSelector(state => state.grapheditor.graphData) || {
+    nodes: [],
+  };
   const isCanvasNoNode = !graphData.nodes || graphData.nodes.length === 0;
 
   const handleChange = value => {

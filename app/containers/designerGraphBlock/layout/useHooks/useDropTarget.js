@@ -28,16 +28,64 @@ const useDropTarget = ({
       const clientOffset = monitor.getClientOffset();
       const hoverClientY = clientOffset.y - hoverBoundingRect.top;
       const hoverIndex = index;
+      if (hoverClientY < hoverMiddleY) {
+        setClassName('cursor__before');
+        resetClassName();
+      } else {
+        setClassName('cursor__after');
+        resetClassName();
+      }
+      // if (item.effectTag === 'new') {
+      //   return;
+      // }
+      // const dragIndex = item.index;
+      // if (isDraggingNode.id === id) {
+      //   return;
+      // }
+      // if (isDraggingNode.id !== item.id) return;
+      // if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+      //   return;
+      // }
+      // if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+      //   return;
+      // }
+      // moveCard(item, props.card);
+      // item.index = hoverIndex;
+    },
+    drop(item, monitor) {
+      const newId = uniqueId(PREFIX_ID);
+
+      if (!ref.current) {
+        return;
+      }
 
       if (item.effectTag === 'new') {
-        if (hoverClientY < hoverMiddleY) {
-          setClassName('cursor__before');
-          resetClassName();
-        } else {
-          setClassName('cursor__after');
-          resetClassName();
-        }
-        return;
+        addCard(
+          index === PLACEHOLDER_STATEMENT
+            ? index
+            : className === 'cursor__before'
+            ? index
+            : index + 1,
+          id,
+          item,
+          newId
+        );
+        return { newId };
+      }
+
+      const hoverBoundingRect = ref.current.getBoundingClientRect();
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+      const hoverIndex = index;
+
+      if (hoverClientY < hoverMiddleY) {
+        setClassName('cursor__before');
+        resetClassName();
+      } else {
+        setClassName('cursor__after');
+        resetClassName();
       }
 
       const dragIndex = item.index;
@@ -59,24 +107,7 @@ const useDropTarget = ({
       moveCard(item, props.card);
 
       item.index = hoverIndex;
-    },
-    drop(item, monitor) {
-      const newId = uniqueId(PREFIX_ID);
-      if (!ref.current) {
-        return;
-      }
-      if (item.effectTag === 'new') {
-        addCard(
-          index === PLACEHOLDER_STATEMENT
-            ? index
-            : className === 'cursor__before'
-            ? index
-            : index + 1,
-          id,
-          item,
-          newId
-        );
-      }
+
       return { newId };
     },
   });

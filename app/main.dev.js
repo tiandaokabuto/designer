@@ -221,10 +221,12 @@ const createWindow = async () => {
     event,
     func,
     label = '存储',
-    properties = []
+    properties = [],
+    filters = [{ name: 'All Files', extensions: ['*'] }]
   ) {
     dialog[func](mainWindow, {
       buttonLabel: label,
+      filters,
       properties,
     })
       .then(({ filePaths, canceled }) => {

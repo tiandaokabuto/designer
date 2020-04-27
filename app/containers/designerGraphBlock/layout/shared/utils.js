@@ -67,6 +67,21 @@ export const findNodeById = (cards, id) => {
   return undefined;
 };
 
+export const insertAfter = (cards, id, append) => {
+  if (!cards.length) {
+    cards.push(...append);
+    return true;
+  }
+  const find = findNodeLevelById(cards, id, false);
+  if (find) {
+    const index = find.findIndex(node => node.id === id);
+    find.splice(index + 1, 0, ...append);
+    return true;
+  } else {
+    return false;
+  }
+};
+
 /**
  * 判断当前结点是否是正在拖拽结点的子结点
  * @param {*} node

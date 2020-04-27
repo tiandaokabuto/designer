@@ -36,7 +36,7 @@ export default (id, visibleTemplate) => {
         }
       });
       setVisible(result);
-      forceUpdate();
+      // forceUpdate();
     };
 
     if (
@@ -106,8 +106,8 @@ export default (id, visibleTemplate) => {
           const enName = args[0].replace(/{|}/g, '');
           let value = '';
           if (proxy[select]) {
-            value = proxy[select].filter(item => item.enName === enName)[0]
-              .value;
+            const temp = proxy[select].filter(item => item.enName === enName);
+            value = (temp[0] || {}).value;
           } else if (select === 'for_condition' && proxy.tag === 2) {
             value = proxy.value;
           }
@@ -191,7 +191,7 @@ export default (id, visibleTemplate) => {
           const inputDom = document.querySelector(
             `input.template_input_${anchor}`
           );
-          inputDom.focus();
+          if (inputDom) inputDom.focus();
         }, 0);
       };
 
@@ -242,13 +242,22 @@ export default (id, visibleTemplate) => {
         const find = proxyList.find(item => {
           return args[0].includes(item.enName);
         });
+
+        let value = find && find.value;
+        if (find && find.componentType === 2 && find.tag === 2) {
+          const list = find.valueList;
+          if (Array.isArray(list)) {
+            value = `'${list[0].value}${list[1].value}'`;
+            return value;
+          }
+        }
         if (find) {
           return (
             `<span data-anchor=${
               find.componentType === 1 ? '' : find.enName
             } class="template_span ${
-              find.value === '' ? 'template_span__empty' : ''
-            }">${find.value}</span>` || ''
+              value === '' ? 'template_span__empty' : ''
+            }">${value}</span>` || ''
           );
         }
       });
@@ -267,6 +276,19 @@ export default (id, visibleTemplate) => {
             updateTemplate(visibleTemplate);
           },
         });
+        if (item.componentType === 2) {
+          item.forceUpdate = item.forceUpdate || 0;
+          item._forceUpdate = item.forceUpdate;
+          Object.defineProperty(item, 'forceUpdate', {
+            get() {
+              return this._forceUpdate;
+            },
+            set(value) {
+              this._forceUpdate = value;
+              updateTemplate(visibleTemplate);
+            },
+          });
+        }
       });
       updateTemplate(visibleTemplate);
     }, [id]);
