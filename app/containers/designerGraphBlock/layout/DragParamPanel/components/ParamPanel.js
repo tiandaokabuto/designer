@@ -1,7 +1,7 @@
 import './ParamPanel.scss';
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { Input, Select, AutoComplete, Button } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Input, Select, AutoComplete } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
 import event from '../../eventCenter';
@@ -15,8 +15,8 @@ import LoopConditionParam from './LoopPanelParam/index';
 import OutputPanel from './OutputPanel';
 import FileParam from './FileParam';
 import FileParamPanel from './FileParamPanel';
-/* import AutoCompleteInputParam from './AutoCompleteInputParam';
-import TaskDataName from './TaskDataName'; */
+import TaskDataName from './TaskDataName';
+// import AutoCompleteInputParam from './AutoCompleteInputParam';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -74,6 +74,10 @@ const getComponentType = (
       value: param.value,
     });
   }, []);
+
+  const emitCode = () => {
+    handleEmitCodeTransform(cards);
+  };
 
   // 任务数据下拉列表
   const [appendDataSource] = useAppendDataSource(param);
@@ -176,18 +180,18 @@ const getComponentType = (
         )}
       </LoopSelectContext.Consumer>
     );
-  } /*  else if (param.enName === 'taskDataName') {
+  } else if (param.enName === 'taskDataName') {
     return (
       <TaskDataName
         param={param}
         aiHintList={aiHintList}
         appendDataSource={appendDataSource}
         keyFlag={keyFlag}
-        handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+        handleEmitCodeTransform={emitCode}
         handleValidate={handleValidate}
       />
     );
-  }*/
+  }
   switch (param.componentType) {
     case COMPONENT_TYPE.INPUT:
       if (param.enName !== 'outPut') {
@@ -296,6 +300,8 @@ const getComponentType = (
                 value,
               });
             }}
+            // 不对DataSource进行查询，详情咨询吴炯
+            filterOption={() => true}
           >
             {!needTextArea ? (
               <TextArea
@@ -385,8 +391,8 @@ const ParamItem = ({
   setFlag,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
-  //const specialParam = ['条件', '循环条件', '任务数据名称'];
-  const specialParam = ['条件', '循环条件'];
+  const specialParam = ['条件', '循环条件', '任务数据名称'];
+  // const specialParam = ['条件', '循环条件'];
 
   return (
     <React.Fragment>
