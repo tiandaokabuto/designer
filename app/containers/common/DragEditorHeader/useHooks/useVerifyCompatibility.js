@@ -64,11 +64,11 @@ const isEqualType = (standard, current) => {
     for (const key in standard) {
       if (!hasOwnPropertyKey(standard, key)) {
         if (typeOf(standard[key]) !== typeOf(current[key])) {
-          // 不一致
           console.log('不一致', current, key, standard);
           flag = false;
+          // try fix
           current[key] = standard[key];
-          throw new Error('err');
+          throw new Error('err' + JSON.stringify(current[key]));
         }
         if (isPlainObject(standard[key])) {
           flag = isEqualType(standard[key], current[key]);
@@ -126,7 +126,7 @@ export default () => {
       }
       console.log('校验完成');
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
 };

@@ -106,8 +106,8 @@ export default (id, visibleTemplate) => {
           const enName = args[0].replace(/{|}/g, '');
           let value = '';
           if (proxy[select]) {
-            value = proxy[select].filter(item => item.enName === enName)[0]
-              .value;
+            const temp = proxy[select].filter(item => item.enName === enName);
+            value = (temp[0] || {}).value;
           } else if (select === 'for_condition' && proxy.tag === 2) {
             value = proxy.value;
           }
