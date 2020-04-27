@@ -31,11 +31,24 @@ const handleStatementOutput = (output, value, result) => {
   result.output += `${output} = `;
 };
 
-const handleMainFnGeneration = (dataStructure, params, result) => {
+const handleMainFnGeneration = (dataStructure, params, result, padding) => {
   const isSubtype = dataStructure.subtype;
   result.output += `${isSubtype ? '' : dataStructure.pkg + '.'}${
     dataStructure.main
   }(${params})\n`;
+  // 如果是消费任务数据原子能力，批量生成变量名
+  if (
+    dataStructure.main === 'consumeData' &&
+    dataStructure.properties.required[1].selectedRows
+  ) {
+    const selectedRows = dataStructure.properties.required[1].selectedRows;
+    selectedRows.map(item => {
+      if (item.variableName !== '') {
+        result.output += `${padding}${item.variableName} = ${dataStructure.properties.required[0].value}['${item.headerName}']\n`;
+      }
+      return item;
+    });
+  }
 };
 
 const handleNote = (cmdDesc, result, padding, dataStructure) => {
@@ -71,6 +84,7 @@ const transformBasicStatement = (
   let params = ''; // 生成参数类型
   if (dataStructure.properties.required) {
     dataStructure.properties.required.forEach((item, index) => {
+      // 文件类型选择拼接模式，将item.valueList[0]目录名和item.valueList[1]文件名拼接起来
       if (item.componentType === 2 && item.tag === 2) {
         if (params) params += ', ';
         params += `${item.enName} = ${
@@ -149,7 +163,7 @@ const transformBasicStatement = (
           }
         }
       });
-    handleMainFnGeneration(dataStructure, params, result);
+    handleMainFnGeneration(dataStructure, params, result, padding);
   } else {
     console.log('没有require');
     if (dataStructure.graphDataMap && dataStructure.graphDataMap.cards) {

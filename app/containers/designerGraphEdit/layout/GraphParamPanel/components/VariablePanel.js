@@ -33,6 +33,12 @@ export default ({
   };
   if (variableList === null || !Array.isArray(variableList)) return null;
 
+  const stopDeleteKeyDown = e => {
+    if (e.keyCode === 46) {
+      e.nativeEvent.stopImmediatePropagation();
+    }
+  };
+
   return (
     <div className="variablePanel">
       <div className="variablePanel-title">
@@ -72,6 +78,7 @@ export default ({
                   noticyChange();
                   handleEmitCodeTransform && handleEmitCodeTransform();
                 }}
+                onKeyDown={e => stopDeleteKeyDown(e)}
               />
               {disabled ? (
                 <span style={{ marginLeft: 6 }}>{varibale.value}</span>
@@ -84,6 +91,7 @@ export default ({
                     noticyChange();
                     handleEmitCodeTransform && handleEmitCodeTransform();
                   }}
+                  onKeyDown={e => stopDeleteKeyDown(e)}
                 />
               )}
               {disabled ? (
