@@ -114,7 +114,7 @@ export default useInjectContext(
         const item = find(checkedGraphBlockId);
         if (!item) return;
         propsAPI.editor.getCurrentPage().setSelected(item, true);
-      });
+      }, [checkedGraphBlockId]);
 
       return (
         <div className="designergraph-container">

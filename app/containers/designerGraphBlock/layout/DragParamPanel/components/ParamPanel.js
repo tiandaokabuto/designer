@@ -210,26 +210,30 @@ const getComponentType = (
         // 待匹配的下拉列表
         const dataSource =
           hasParamType &&
-          paramType.reduce((prev, next) => {
-            return prev.concat(
-              aiHintList[next]
-                ? [
-                    ...new Set(
-                      aiHintList[next]
-                        .map(item =>
-                          item.isVariable
-                            ? item.name
-                            : item.isMutiply
-                            ? getMutiplyValue(item, next)
-                            : item.value
-                        )
-                        .flat()
-                        .filter(Boolean)
-                    ),
-                  ]
-                : []
-            );
-          }, []);
+          Array.from(
+            new Set(
+              paramType.reduce((prev, next) => {
+                return prev.concat(
+                  aiHintList[next]
+                    ? [
+                        ...new Set(
+                          aiHintList[next]
+                            .map(item =>
+                              item.isVariable
+                                ? item.name
+                                : item.isMutiply
+                                ? getMutiplyValue(item, next)
+                                : item.value
+                            )
+                            .flat()
+                            .filter(Boolean)
+                        ),
+                      ]
+                    : []
+                );
+              }, [])
+            )
+          );
         // 待匹配的依赖项
         const depList =
           (hasParamType &&

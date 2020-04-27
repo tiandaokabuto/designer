@@ -13,7 +13,6 @@ export const generateUniqueId = group => {
       .toString(16)
       .slice(-8);
     if (id !== prevId && (!group || !group.find(item => item.id === id))) {
-      console.log(id, 'id');
       prevId = id;
       return id;
     }

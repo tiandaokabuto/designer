@@ -13,7 +13,7 @@ export default ({ className }) => {
     const container = document.querySelector(`.${className}`);
     const handleClick = e => {
       const checkedId = e.target.getAttribute('data-id');
-      if (checkedId && !keyDownMap.isShiftDown) {
+      if (checkedId && !keyDownMap.isShiftDown && !keyDownMap.isCtrlDown) {
         dispatch({
           type: CHANGE_CHECKEDID,
           payload: [checkedId],
