@@ -20,6 +20,8 @@ import { changeBlockTreeTab } from '../../../reduxActions';
 import { query } from './PinYin';
 import { saveAutomicList } from './utils';
 
+import './index.scss';
+
 const { TabPane } = Tabs;
 const { TreeNode } = Tree;
 const { Search } = Input;

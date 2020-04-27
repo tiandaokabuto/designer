@@ -6,6 +6,7 @@ export default props => {
   const iconRef = useRef(null);
   useEffect(() => {
     const offsetParent = iconRef.current.offsetParent; // ant-tree-switcher_open
+    console.log(offsetParent);
     if (
       offsetParent &&
       offsetParent.classList.contains('ant-tree-switcher_open')

@@ -465,22 +465,50 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
         <Fragment>
           {checkedBlock.properties.map(item => {
             if (item.cnName !== '标签名称') {
-              console.log(item.value);
-              // return <div>{item.cnName}</div>;
               return (
                 <Fragment>
                   <div className="parampanel-required">{item.cnName}</div>
                   <div className="parampanel-content">
                     {item.value.map(valueItem => {
                       return (
-                        <div className="parampanel-item">
-                          <span className="param-title" title={valueItem.name}>
-                            {valueItem.name}
-                          </span>
-                          <div style={{ flex: 1, overflow: 'hidden' }}>
-                            {valueItem.value}
+                        <Fragment>
+                          <div className="parampanel-item">
+                            <span
+                              className="param-title"
+                              title={valueItem.name}
+                            >
+                              变量名
+                            </span>
+                            <div style={{ flex: 1, overflow: 'hidden' }}>
+                              <Input
+                                defaultValue={valueItem.name} // 可以加上 param.default 在参数面板显示默认值
+                                onChange={e => {
+                                  valueItem.name = e.target.value;
+                                  handleEmitCodeTransform(cards);
+                                }}
+                                onKeyDown={e => stopDeleteKeyDown(e)}
+                              />
+                            </div>
                           </div>
-                        </div>
+                          <div className="parampanel-item">
+                            <span
+                              className="param-title"
+                              title={valueItem.name}
+                            >
+                              {item.cnName === '流程块返回' ? '描述' : '值'}
+                            </span>
+                            <div style={{ flex: 1, overflow: 'hidden' }}>
+                              <Input
+                                defaultValue={valueItem.value} // 可以加上 param.default 在参数面板显示默认值
+                                onChange={e => {
+                                  valueItem.value = e.target.value;
+                                  handleEmitCodeTransform(cards);
+                                }}
+                                onKeyDown={e => stopDeleteKeyDown(e)}
+                              />
+                            </div>
+                          </div>
+                        </Fragment>
                       );
                     })}
                   </div>
