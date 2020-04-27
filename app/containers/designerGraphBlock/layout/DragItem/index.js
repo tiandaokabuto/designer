@@ -237,49 +237,55 @@ export default useInjectContext(
             }}
           >
             <TabPane tab="组件库" key="atomic">
-              <div className="dragger-editor-item-search">
-                <Input
-                  placeholder="请输入"
-                  onChange={e => {
-                    setFilter(e.target.value);
+              <div
+                style={{
+                  height: 'calc(100vh - 170px)',
+                }}
+              >
+                <div className="dragger-editor-item-search">
+                  <Input
+                    placeholder="请输入"
+                    onChange={e => {
+                      setFilter(e.target.value);
+                    }}
+                  />
+                </div>
+                <Tree
+                  className="atomicCList-tree"
+                  expandedKeys={expandedKeys}
+                  onExpand={expandedKeys => {
+                    setExpandedKeys(expandedKeys);
                   }}
+                  onRightClick={({ event, node }) => {
+                    setPosition({
+                      left: event.pageX + 40,
+                      top: event.pageY - 20,
+                      node: node.props,
+                    });
+                  }}
+                  onSelect={(_, e) => {
+                    const props = e.node.props;
+                    console.log(props);
+                    if (props.children) {
+                      setExpandedKeys(keys => {
+                        if (keys.includes(props.eventKey)) {
+                          return keys.filter(item => item !== props.eventKey);
+                        } else {
+                          return keys.concat(props.eventKey);
+                        }
+                      });
+                    }
+                  }}
+                  treeData={treeData}
+                ></Tree>
+                <ContextMenu
+                  position={position}
+                  addToLovedList={addToLovedList}
+                  removeFromLovedList={removeFromLovedList}
+                  // handleDelete={handleDelete}
+                  // handleRename={handleRename}
                 />
               </div>
-              <Tree
-                className="atomicCList-tree"
-                expandedKeys={expandedKeys}
-                onExpand={expandedKeys => {
-                  setExpandedKeys(expandedKeys);
-                }}
-                onRightClick={({ event, node }) => {
-                  setPosition({
-                    left: event.pageX + 40,
-                    top: event.pageY - 20,
-                    node: node.props,
-                  });
-                }}
-                onSelect={(_, e) => {
-                  const props = e.node.props;
-                  console.log(props);
-                  if (props.children) {
-                    setExpandedKeys(keys => {
-                      if (keys.includes(props.eventKey)) {
-                        return keys.filter(item => item !== props.eventKey);
-                      } else {
-                        return keys.concat(props.eventKey);
-                      }
-                    });
-                  }
-                }}
-                treeData={treeData}
-              ></Tree>
-              <ContextMenu
-                position={position}
-                addToLovedList={addToLovedList}
-                removeFromLovedList={removeFromLovedList}
-                // handleDelete={handleDelete}
-                // handleRename={handleRename}
-              />
             </TabPane>
             <TabPane tab="流程块" key="secondModule">
               <ProcessTree type={'secondModule'}></ProcessTree>

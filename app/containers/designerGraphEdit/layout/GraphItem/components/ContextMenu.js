@@ -12,6 +12,7 @@ export default ({ position, handleDelete, handleRename }) => {
 
   const isProcess = node && node.type === 'process';
   const treeTab = useSelector(state => state.grapheditor.treeTab);
+  const blockTreeTab = useSelector(state => state.blockcode.blockTreeTab);
 
   const persistentStorage = usePersistentStorage();
   const persistentModuleStorage = usePersistentModuleStorage();
@@ -51,10 +52,14 @@ export default ({ position, handleDelete, handleRename }) => {
       <div
         className="menuitem"
         onClick={() => {
-          if (treeTab !== 'processModule') {
-            handleDelete(node.eventKey, persistentStorage);
-          } else {
+          if (blockTreeTab === 'secondModule') {
             handleDelete(node.eventKey, persistentModuleStorage);
+          } else {
+            if (treeTab !== 'processModule') {
+              handleDelete(node.eventKey, persistentStorage);
+            } else {
+              handleDelete(node.eventKey, persistentModuleStorage);
+            }
           }
           setVisible(false);
         }}
@@ -66,10 +71,14 @@ export default ({ position, handleDelete, handleRename }) => {
       <div
         className="menuitem"
         onClick={() => {
-          if (treeTab !== 'processModule') {
-            handleRename(node.eventKey, persistentStorage);
-          } else {
+          if (blockTreeTab === 'secondModule') {
             handleRename(node.eventKey, persistentModuleStorage);
+          } else {
+            if (treeTab !== 'processModule') {
+              handleRename(node.eventKey, persistentStorage);
+            } else {
+              handleRename(node.eventKey, persistentModuleStorage);
+            }
           }
           setVisible(false);
         }}

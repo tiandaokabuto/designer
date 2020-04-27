@@ -1,6 +1,7 @@
 import { isArray } from './utils';
 // import { transformEditorProcess } from '../../../designerGraphEdit/RPAcore/index';
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
+import { uuid } from '../../../common/utils';
 import { resolve } from 'dns';
 import moment from 'moment';
 const fs = require('fs');
@@ -133,10 +134,14 @@ const transformBasicStatement = (
   } else {
     console.log('没有require');
     if (dataStructure.graphDataMap && dataStructure.graphDataMap.cards) {
-      const tail = Date.now();
-      const inputParam = dataStructure.properties
+      const tail = uuid();
+      const inputParamKV = dataStructure.properties
         .find(item => item.cnName === '输入参数')
         .value.map(item => `${item.name} = ${item.value}`)
+        .join(',');
+      const inputParamK = dataStructure.properties
+        .find(item => item.cnName === '输入参数')
+        .value.map(item => `${item.name}`)
         .join(',');
       const outputParam = dataStructure.properties
         .find(item => item.cnName === '流程块返回')
@@ -146,7 +151,12 @@ const transformBasicStatement = (
         dataStructure.graphDataMap.variable,
         depth + 1
       );
-      result.output += `def RPA_${tail}()\n`;
+      if (inputParamK) {
+        result.output += `def RPA_Atomic_${tail}(${inputParamK})\n`;
+      } else {
+        result.output += `def RPA_Atomic_${tail}()\n`;
+      }
+
       result.output += `${variables}`;
       dataStructure.graphDataMap.cards.forEach(item => {
         transformBasicStatement(
@@ -158,11 +168,13 @@ const transformBasicStatement = (
         );
       });
       if (outputParam) {
-        result.output += `${paddingStart(
+        result.output += `\n${paddingStart(
           depth
         )}${outputParam} = RPA_${tail}(${inputParam})\n`;
       } else {
-        result.output += `${paddingStart(depth)}RPA_${tail}(${inputParam})\n`;
+        result.output += `\n${paddingStart(
+          depth
+        )}RPA_Atomic_${tail}(${inputParamKV})\n`;
       }
     }
     // console.log(padding, dataStructure, result, moduleMap);

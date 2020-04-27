@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Tooltip } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import ItemTypes from '../../statementTypes';
@@ -17,47 +17,38 @@ export default ({
   updateCheckedBlockId = () => {},
 }) => {
   const ref = useRef(null);
-  let iitem = null;
+  const titleRef = useRef(null);
+  let newItem = null;
   if (tabType !== 'atomic') {
-    if (item.type === 'dir') {
-      iitem = {
-        ...item,
-        type: ItemTypes.CARD,
-        effectTag: 'new',
-        $$typeof: item.$$typeof !== undefined ? item.$$typeof : 1,
-        text: item.text !== undefined ? item.text : item.title.props.title,
-        title: title,
-        properties: [],
-        // properties: [],
-        graphDataMap: {},
-      };
-    } else {
-      const { graphDataMap } = JSON.parse(
-        fs.readFileSync(
-          PATH_CONFIG(
-            'project',
-            `${currentProject}/${currentProject}_module/${item.title.props.title}.json`
-          )
-        )
-      );
-      iitem = {
-        ...item,
-        type: ItemTypes.CARD,
-        effectTag: 'new',
-        $$typeof: item.$$typeof !== undefined ? item.$$typeof : 1,
-        text: item.text !== undefined ? item.text : item.title.props.title,
-        title: title,
-        properties: graphDataMap.properties,
-        graphDataMap,
-      };
+    if (typeof title === 'string') {
+      titleRef.current = title;
     }
-  } else {
-    iitem = {
+    const { graphDataMap } = JSON.parse(
+      fs.readFileSync(
+        PATH_CONFIG(
+          'project',
+          `${currentProject}/${currentProject}_module/${titleRef.current}.json`
+        )
+      )
+    );
+    newItem = {
       ...item,
       type: ItemTypes.CARD,
       effectTag: 'new',
-      $$typeof: item.$$typeof !== undefined ? item.$$typeof : 1,
-      text: item.text !== undefined ? item.text : item.title.props.title,
+      $$typeof: 1,
+      text: title,
+      title: title,
+      properties: graphDataMap.properties,
+      // properties: [],
+      graphDataMap,
+    };
+  } else {
+    newItem = {
+      ...item,
+      type: ItemTypes.CARD,
+      effectTag: 'new',
+      $$typeof: item.$$typeof,
+      text: item.text,
     };
   }
   const [{ isDragging }, drag] = useDrag({
@@ -68,7 +59,7 @@ export default ({
     //   $$typeof: item.$$typeof !== undefined ? item.$$typeof : 1,
     //   text: item.text !== undefined ? item.text : item.title.props.title,
     // },
-    item: iitem,
+    item: newItem,
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
