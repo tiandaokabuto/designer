@@ -300,6 +300,8 @@ const getComponentType = (
                 value,
               });
             }}
+            // 不对DataSource进行查询，详情咨询吴炯
+            filterOption={() => true}
           >
             {!needTextArea ? (
               <TextArea
