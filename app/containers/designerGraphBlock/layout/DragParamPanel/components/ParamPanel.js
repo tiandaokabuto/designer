@@ -485,25 +485,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                               className="param-title"
                               title={valueItem.name}
                             >
-                              变量名
-                            </span>
-                            <div style={{ flex: 1, overflow: 'hidden' }}>
-                              <Input
-                                defaultValue={valueItem.name} // 可以加上 param.default 在参数面板显示默认值
-                                onChange={e => {
-                                  valueItem.name = e.target.value;
-                                  handleEmitCodeTransform(cards);
-                                }}
-                                onKeyDown={e => stopDeleteKeyDown(e)}
-                              />
-                            </div>
-                          </div>
-                          <div className="parampanel-item">
-                            <span
-                              className="param-title"
-                              title={valueItem.name}
-                            >
-                              {item.cnName === '流程块返回' ? '描述' : '值'}
+                              {valueItem.name}
                             </span>
                             <div style={{ flex: 1, overflow: 'hidden' }}>
                               <Input
