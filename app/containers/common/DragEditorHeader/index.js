@@ -162,10 +162,9 @@ export default memo(
         find.description = '停止';
         find.onClick = function() {
           // 终止流程
-          exec(`${process.cwd()}/app/common/python/stop.bat ${uuid}`)(
-            (find.description = '运行')
-          ),
-            (find.onClick = handleOperation);
+          exec(`${process.cwd()}/app/common/python/stop.bat ${uuid}`);
+          find.description = '运行';
+          find.onClick = handleOperation;
           forceUpdate();
         };
         forceUpdate();
