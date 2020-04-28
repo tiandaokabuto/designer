@@ -9,6 +9,7 @@ import {
   SYNCHRO_CODEBLOCK,
   CHANGE_AUTOMICLIST,
   CHANGE_AIHINTLIST,
+  CHANGE_BLOCK_TREE_TAB,
   CHANGE_CLIPBOARDDATA,
 } from '../actions/codeblock';
 
@@ -20,11 +21,17 @@ const defaultState = {
   pythonCode: '',
   automicList: [],
   aiHintList: {},
+  blockTreeTab: 'atomic', // actomic module
   clipboardData: {},
 };
 
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case CHANGE_BLOCK_TREE_TAB:
+      return {
+        ...state,
+        blockTreeTab: action.payload,
+      };
     case CHANGE_CLIPBOARDDATA:
       return {
         ...state,

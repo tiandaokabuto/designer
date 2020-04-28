@@ -25,6 +25,7 @@ import {
 import {
   updateCurrentPagePosition,
   changeModuleTree,
+  changeBlockTreeTab,
 } from '../../reduxActions';
 import api from '../../../api';
 import { handleScreenCapture } from '@/containers/shared';
@@ -162,6 +163,7 @@ export default memo(
           onClick: () => {
             event.emit('toggle');
             updateCurrentPagePosition('editor');
+            changeBlockTreeTab('atomic');
             history.goBack();
           },
         },

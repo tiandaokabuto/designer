@@ -246,10 +246,11 @@ export const renameNodeByKey = (
   persistentStorage,
   restoreCheckedTreeNode,
   name,
-  type
+  type,
+  persistentModuleStorage
 ) => {
   const node = findNodeByKey(tree, key);
-  // const parent = findParentNodeByKey(tree, key) || [];
+  console.log(persistentStorage);
   const oldTitle = node.title;
   if (type === 'process') {
     node.title = (
@@ -307,6 +308,7 @@ export const renameNodeByKey = (
             const item = dirs.find(item => `${newTitle}.json` === item);
             if (!item) {
               node.title = newTitle;
+              // 重命名对应的json文件
               fs.renameSync(
                 PATH_CONFIG(
                   'project',
@@ -317,6 +319,7 @@ export const renameNodeByKey = (
                   `${name}/${name}_module/${newTitle}.json`
                 )
               );
+              // 把json文件里面的流程块名也改为最新
               fs.readFile(
                 PATH_CONFIG(
                   'project',
@@ -390,6 +393,7 @@ export const persistentStorage = (
   name,
   node
 ) => {
+  console.log('保存流程');
   let tree = JSON.parse(JSON.stringify(processTree));
   if (modifiedNodesArr) {
     traverseTree(tree, treeItem => {
@@ -443,6 +447,7 @@ export const persistentStorage = (
 };
 
 export const persistentModuleStorage = (moduleTree, name) => {
+  console.log('保存模块');
   // let tree = JSON.parse(JSON.stringify(moduleTree));
   fs.readFile(
     PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
@@ -500,6 +505,18 @@ export const getModuleUniqueId = tree => {
       return new_key;
     }
   }
+};
+
+export const uuid = () => {
+  let s = [];
+  const hexDigits = '0123456789abcdef';
+  for (let i = 0; i < 36; i++) {
+    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+  }
+  s[14] = '4'; // bits 12-15 of the time_hi_and_version field to 0010
+  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
+  s[8] = s[13] = s[18] = s[23] = '_';
+  return s.join('');
 };
 
 /**
@@ -849,32 +866,6 @@ export const addToReuse = () => {
     });
     changeModuleTree(newModuleTree);
     persistentModuleStorage(newModuleTree, currentProject);
-    fs.readFile(
-      PATH_CONFIG(
-        'project',
-        `${currentProject}/${currentProject}_module/manifest.json`
-      ),
-      function(err, data) {
-        if (!err) {
-          let description = JSON.parse(data.toString());
-          fs.writeFile(
-            PATH_CONFIG(
-              'project',
-              `${currentProject}/${currentProject}_module/manifest.json`
-            ),
-            JSON.stringify({
-              ...description,
-              moduleTree: newModuleTree,
-            }),
-            function(err) {
-              if (err) {
-                console.error(err);
-              }
-            }
-          );
-        }
-      }
-    );
   } else {
     message.info('已存在同名的流程块');
   }

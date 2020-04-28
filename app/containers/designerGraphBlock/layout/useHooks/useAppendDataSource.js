@@ -13,6 +13,22 @@ export default param => {
         if (~json.code) {
           setMissionDataSource((json.data || []).map(item => item.name));
         }
+        return true;
+      })
+      .catch(err => console.log(err));
+  } else if (!missionDataSource.length && param.enName === 'taskDataName') {
+    axios
+      .get(api('taskDataNames'))
+      .then(res => {
+        console.log(res);
+        return res ? res.data : { code: -1 };
+      })
+      .then(json => {
+        if (~json.code) {
+          setMissionDataSource(json.data || []);
+          return true;
+        }
+        return false;
       })
       .catch(err => console.log(err));
   }

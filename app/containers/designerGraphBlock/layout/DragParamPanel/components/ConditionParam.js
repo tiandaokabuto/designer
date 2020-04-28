@@ -151,13 +151,13 @@ export default ({
           onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
-            if (param.listeners) {
-              param.listeners.forEach(callback => {
-                if (typeof callback === 'function') {
-                  callback(e.target.value);
-                }
-              });
-            }
+            // if (param.listeners) {
+            //   param.listeners.forEach(callback => {
+            //     if (typeof callback === 'function') {
+            //       callback(e.target.value);
+            //     }
+            //   });
+            // }
             param.forceUpdate = param.forceUpdate + 1;
           }}
           onKeyDown={e => stopDeleteKeyDown(e)}

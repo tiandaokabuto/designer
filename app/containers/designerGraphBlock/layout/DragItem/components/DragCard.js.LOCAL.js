@@ -1,9 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Tooltip } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
-import { useDispatch, useSelector } from 'react-redux';
 import ItemTypes from '../../statementTypes';
-import { CHANGE_CARDDATA } from '../../../../../actions/codeblock';
 
 import PATH_CONFIG from '@/constants/localFilePath';
 
@@ -18,17 +16,10 @@ export default ({
   addToRecentList = () => {},
   updateCheckedBlockId = () => {},
 }) => {
-  const dispatch = useDispatch();
-  const cards = useSelector(state => state.blockcode.cards);
-  const cardsRef = useRef(null);
-  cardsRef.current = cards;
-
   const ref = useRef(null);
   const titleRef = useRef(null);
   let newItem = null;
-
   if (tabType !== 'atomic') {
-    console.log(typeof title);
     if (typeof title === 'string') {
       titleRef.current = title;
     }
@@ -46,7 +37,7 @@ export default ({
       effectTag: 'new',
       $$typeof: 1,
       text: title,
-      title,
+      title: title,
       properties: graphDataMap.properties,
       // properties: [],
       graphDataMap,
@@ -61,21 +52,25 @@ export default ({
     };
   }
   const [{ isDragging }, drag] = useDrag({
+    // item: {
+    //   ...item,
+    //   type: ItemTypes.CARD,
+    //   effectTag: 'new',
+    //   $$typeof: item.$$typeof !== undefined ? item.$$typeof : 1,
+    //   text: item.text !== undefined ? item.text : item.title.props.title,
+    // },
     item: newItem,
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
     end: (item, monitor) => {
       if (monitor.didDrop()) {
-        dispatch({
-          type: CHANGE_CARDDATA,
-          payload: [...cardsRef.current],
-        });
+        console.log('放下了');
+        console.log(item);
         if (tabType === 'atomic') {
           addToRecentList(node);
         }
-        // updateCheckedBlockId(monitor.getDropResult().newId);
-        updateCheckedBlockId([monitor.getDropResult().newId]);
+        updateCheckedBlockId(monitor.getDropResult().newId);
       }
     },
   });

@@ -47,14 +47,14 @@
       overflow-y: auto;
       overflow-x: hidden;
       margin-top: 8px;
-      height: calc(100vh - 157px);
+      height: calc(100vh - 220px);
       .ant-tree-switcher-noop {
         display: none;
       }
       .ant-tree-node-content-wrapper {
         line-height: 32px;
         height: 32px;
-        user-select: none;
+        // user-select: none;
         width: -webkit-fill-available;
         .dragger-editor-item-statement {
           width: 100%;
