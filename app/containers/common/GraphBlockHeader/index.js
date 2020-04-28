@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Icon, Dropdown, Menu, Modal } from 'antd';
+import './index.scss';
+import React, { useState, Fragment, useRef } from 'react';
+import { Icon, Dropdown, Menu } from 'antd';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
@@ -7,12 +8,10 @@ import { ConfirmModal } from '../components';
 import NewProject from './NewProject';
 import api from '../../../api';
 import { getModifiedNodes, setAllModifiedState } from '../utils';
-import { changeCheckedTreeNode } from '../../reduxActions';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
-const { ipcRenderer, remote } = require('electron');
+import HelpModel from './HelpModel';
 
-import './index.scss';
-import { useRef } from 'react';
+const { ipcRenderer, remote } = require('electron');
 
 const generateMenu = arr => {
   return (
@@ -38,8 +37,10 @@ const handleWindowOperation = op => {
 
 export default ({ history, tag }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const globalUserName = remote.getGlobal('sharedObject').userName;
   const [visible, setVisible] = useState(undefined);
+  const [helpModelVisible, setHelpModelVisible] = useState(false);
+  const globalUserName = remote.getGlobal('sharedObject').userName;
+
   const resetVisible = () => {
     setVisible(undefined);
   };
@@ -78,9 +79,12 @@ export default ({ history, tag }) => {
     },
     {
       title: '帮助',
-      disabled: true,
+      onClick: () => {
+        setHelpModelVisible(true);
+      },
     },
   ];
+
   const handleSignOut = () => {
     if (!globalUserName) {
       // 离线模式
@@ -98,6 +102,10 @@ export default ({ history, tag }) => {
         return false;
       })
       .catch(err => console.log(err));
+  };
+
+  const handleCancel = () => {
+    setHelpModelVisible(false);
   };
 
   return (
@@ -131,13 +139,20 @@ export default ({ history, tag }) => {
           }
           if (typeof tool === 'object') {
             return (
-              <span
-                className={tool.disabled ? 'item-disabled' : ''}
-                key={index}
-                onClick={tool.onClick || (() => {})}
-              >
-                {tool.title}
-              </span>
+              <Fragment key={index}>
+                <span
+                  className={tool.disabled ? 'item-disabled' : ''}
+                  onClick={tool.onClick || (() => {})}
+                >
+                  {tool.title}
+                </span>
+                {tool.title === '帮助' && !tool.disabled ? (
+                  <HelpModel
+                    visible={helpModelVisible}
+                    handleCancel={handleCancel}
+                  />
+                ) : null}
+              </Fragment>
             );
           }
           return <span key={index}>{tool}</span>;
