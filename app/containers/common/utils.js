@@ -447,7 +447,6 @@ export const persistentStorage = (
 };
 
 export const persistentModuleStorage = (moduleTree, name) => {
-  console.log('保存模块');
   // let tree = JSON.parse(JSON.stringify(moduleTree));
   fs.readFile(
     PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
@@ -483,7 +482,7 @@ export const hasDuplicateKey = (tree, new_key) => {
   }
 };
 
-const getUniqueId = tree => {
+export const getUniqueId = tree => {
   let new_key = uniqueId('key_');
   while (true) {
     if (hasDuplicateKey(tree, new_key)) {
