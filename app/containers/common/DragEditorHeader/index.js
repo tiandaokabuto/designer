@@ -188,7 +188,7 @@ export default memo(
         find.description = '停止';
         find.onClick = function() {
           // 终止流程
-          exec(`${process.cwd()}/app/common/python/stop.bat ${uuid}`, err => {
+          exec(`${process.cwd()}/app/pythonUtils/stop.bat ${uuid}`, err => {
             if (!err) {
               message.success('停止成功');
             } else {
