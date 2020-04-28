@@ -544,9 +544,9 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
               return (
                 <LoopSelectContext.Provider
                   value={{ loopSelect, setLoopSelect }}
+                  key={checkedBlock.id + index}
                 >
                   <ParamItem
-                    key={checkedBlock.id + index}
                     param={param}
                     handleEmitCodeTransform={handleEmitCodeTransform}
                     cards={cards}
