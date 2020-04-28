@@ -115,12 +115,8 @@ const isEqualType = (standard, current, isParam = false) => {
   let flag = true;
   for (const key in standard) {
     if (!hasOwnPropertyKey(standard, key)) {
-      if (current[key] === 'return_string') {
-        console.log(standard, '----1', current);
-      }
       if (typeOf(standard[key]) !== typeOf(current[key])) {
         flag = false;
-        // console.log(current, key, standard, '---类型不同');
 
         current[key] = standard[key];
       } else {
@@ -164,10 +160,6 @@ const verifyCards = (current, standard) => {
     if (!isEqual) {
       flag = true;
       node.isCompatable = true;
-    }
-    if (node.isCompatable) {
-      node.isCompatable = false;
-      flag = true;
     }
   });
   return flag;

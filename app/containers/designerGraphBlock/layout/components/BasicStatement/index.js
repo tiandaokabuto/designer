@@ -24,6 +24,7 @@ import {
   useWatchCmdDesc,
   useTransformToPython,
   useChangeCheckedBlockColor,
+  useChangeCompatable,
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../statementTags';
@@ -76,6 +77,8 @@ const BasicStatement = useInjectContext(props => {
   const hasLookTarget = useHasLookTarget(card);
 
   const cmdDesc = useWatchCmdDesc(card);
+
+  const [handleClick, borderColor] = useChangeCompatable(card, isTail);
 
   const [
     canDrag,
@@ -172,12 +175,6 @@ const BasicStatement = useInjectContext(props => {
     e.stopPropagation();
   };
 
-  const borderColor = card.isCompatable
-    ? 'red'
-    : isTail
-    ? '#eeeeee'
-    : '#32a67f';
-
   return (
     <div
       ref={readOnly ? null : ref}
@@ -187,6 +184,7 @@ const BasicStatement = useInjectContext(props => {
       }}
       className="cursor__before"
       className={className}
+      onClick={() => handleClick(id)}
     >
       <div
         className={isTail ? 'card-content card-content__tail' : 'card-content'}
