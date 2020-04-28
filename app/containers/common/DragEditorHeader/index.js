@@ -154,19 +154,31 @@ export default memo(
       try {
         const uuid = new Date().getTime().toString(16);
         uuidRef.current = uuid;
-        transformProcessToPython();
-        executePython(uuid);
+
         const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
           item => item.description === '运行'
         );
         find.description = '停止';
         find.onClick = function() {
           // 终止流程
-          exec(`${process.cwd()}/app/common/python/stop.bat ${uuid}`);
+          exec(`${process.cwd()}/app/common/python/stop.bat ${uuid}`, err => {
+            if (!err) {
+              message.success('停止成功');
+            } else {
+              message.error('停止失败');
+            }
+            console.log(err);
+          });
           find.description = '运行';
           find.onClick = handleOperation;
           forceUpdate();
         };
+        transformProcessToPython();
+        executePython(uuid, () => {
+          find.description = '运行';
+          find.onClick = handleOperation;
+          forceUpdate();
+        });
         forceUpdate();
       } catch (e) {
         console.log(e);

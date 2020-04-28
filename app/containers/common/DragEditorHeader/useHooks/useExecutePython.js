@@ -9,7 +9,7 @@ const iconv = require('iconv-lite');
 const process = require('process');
 
 export default () => {
-  return uuid => {
+  return (uuid, callback) => {
     event.emit('clear_output');
     message.loading('程序运行中', 0);
     const worker = exec(
@@ -39,10 +39,12 @@ export default () => {
       const log = iconv.decode(error, 'cp936');
       event.emit(PYTHON_OUTPUT, log);
       message.destroy();
+      callback && callback();
     });
     worker.on('exit', () => {
       console.log('结束了');
       message.destroy();
+      callback && callback();
     });
   };
 };
