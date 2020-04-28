@@ -169,19 +169,30 @@ export default memo(
             }
             console.log(err);
           });
+          const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
+            item => item.description === '停止'
+          );
           find.description = '运行';
           find.onClick = handleOperation;
           forceUpdate();
         };
         transformProcessToPython();
         executePython(uuid, () => {
+          const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
+            item => item.description === '停止'
+          );
           find.description = '运行';
           find.onClick = handleOperation;
           forceUpdate();
         });
         forceUpdate();
       } catch (e) {
-        console.log(e);
+        const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
+          item => item.description === '停止' || item.description === '运行'
+        );
+        find.description = '运行';
+        find.onClick = handleOperation;
+        forceUpdate();
         message.error('代码转换出错，请检查流程图');
       }
     };

@@ -76,7 +76,8 @@ export const transformEditorProcess = (
           next,
           result,
           depth,
-          breakPoint
+          breakPoint,
+          false
         );
       break;
     case 'rhombus-node':
@@ -124,7 +125,16 @@ export const transformEditorProcess = (
 
       const isCircle = isYesCircleExist || isNoCircleExist;
 
-      if (!isCircle) {
+      console.log(isCircle, 'isCircle');
+
+      if (
+        !isCircle ||
+        findCommonTarget(
+          graphData.edges,
+          findNodeByLabelAndId(graphData.edges, currentId, '否'),
+          findNodeByLabelAndId(graphData.edges, currentId, '是')
+        )
+      ) {
         // 当找到两者共同的点时结束条件判断的转译
         // 找到两者共同的结束点
         const breakPoint = findCommonTarget(
@@ -143,8 +153,10 @@ export const transformEditorProcess = (
             nextTrue,
             result,
             depth + 1,
-            breakPoint
+            breakPoint,
+            false
           );
+        nextTrue && (result.output += `${padding(depth + 1)}pass\n`);
         // 寻找label为否的出点进行解析
         const nextFalse = findNodeByLabelAndId(
           graphData.edges,
@@ -159,8 +171,10 @@ export const transformEditorProcess = (
             nextFalse,
             result,
             depth + 1,
-            breakPoint
+            breakPoint,
+            false
           );
+        nextFalse && (result.output += `${padding(depth + 1)}pass\n`);
         // 从breakPoint处继续解析 此时要设置新的断点为 null
         breakPoint &&
           transformEditorProcess(
@@ -190,7 +204,8 @@ export const transformEditorProcess = (
             nextNode,
             result,
             depth + 1,
-            currentId
+            currentId,
+            false
           );
         let breakLabel = isYesCircleExist ? '否' : '是';
         const breakNode = findNodeByLabelAndId(
@@ -205,7 +220,8 @@ export const transformEditorProcess = (
             breakNode,
             result,
             depth,
-            null
+            null,
+            false
           );
       } else {
         // 处理存在循环的情况
@@ -225,7 +241,8 @@ export const transformEditorProcess = (
             nextNode,
             result,
             depth - 1,
-            null
+            null,
+            false
           );
       }
 
