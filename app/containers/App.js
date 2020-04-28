@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
-import { message } from 'antd';
+import { message, Button } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
+import { withRouter } from 'react-router';
 
 import api, { config } from '../api';
 import { hex_sha1, readGlobalConfig } from '../login/utils';
@@ -22,6 +23,44 @@ type Props = {
 let timerID = null;
 const token = remote.getGlobal('sharedObject').token;
 const key = 'refresh';
+
+const ErrorPage = withRouter(({ history, errMessage }) => {
+  return (
+    <div
+      style={{
+        color: 'red',
+      }}
+    >
+      {errMessage}
+      <br />
+      <Button
+        onClick={() => {
+          window.location.reload();
+        }}
+      >
+        一键恢复
+      </Button>
+    </div>
+  );
+});
+
+class ErrorCapture extends React.Component {
+  state = {
+    hasError: false,
+    errMessage: '',
+  };
+  componentDidCatch(err) {
+    this.setState({
+      hasError: true,
+      errMessage: err.stack.toString(),
+    });
+  }
+  render() {
+    const { hasError, errMessage } = this.state;
+    if (hasError) return <ErrorPage errMessage={errMessage} />;
+    return this.props.children;
+  }
+}
 
 export default class App extends React.Component<Props> {
   props: Props;
@@ -164,6 +203,6 @@ export default class App extends React.Component<Props> {
 
   render() {
     const { children } = this.props;
-    return <>{children}</>;
+    return <ErrorCapture>{children}</ErrorCapture>;
   }
 }
