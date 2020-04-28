@@ -10,7 +10,6 @@ import {
   updateCardData,
 } from '../../../reduxActions';
 import { insertAfter } from '../shared/utils';
-import { traverseCards } from '../DragContainer/utils';
 import { PREFIX_ID } from '../statementTypes';
 const remote = require('electron').remote;
 const { clipboard } = require('electron');
@@ -42,8 +41,6 @@ const traverseAllCards = (cards, callback) => {
     } else if (child.ifChildren) {
       callback && callback(child);
       traverseAllCards(child.ifChildren, callback);
-    } else if (child.elseChildren) {
-      callback && callback(child);
       traverseAllCards(child.elseChildren, callback);
     } else {
       callback && callback(child);
