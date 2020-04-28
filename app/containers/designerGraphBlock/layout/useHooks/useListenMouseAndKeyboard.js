@@ -38,13 +38,13 @@ const traverseAllCards = (cards, callback) => {
   for (const child of cards) {
     if (child.children) {
       callback && callback(child);
-      traverseCards(child.children, callback);
+      traverseAllCards(child.children, callback);
     } else if (child.ifChildren) {
       callback && callback(child);
-      traverseCards(child.ifChildren, callback);
+      traverseAllCards(child.ifChildren, callback);
     } else if (child.elseChildren) {
       callback && callback(child);
-      traverseCards(child.elseChildren, callback);
+      traverseAllCards(child.elseChildren, callback);
     } else {
       callback && callback(child);
     }
@@ -55,11 +55,11 @@ const extractTraverse = async (cards, callback) => {
   for (const child of cards) {
     if (child.children) {
       const isExact = await callback(child);
-      !isExact && traverseCards(child.children, callback);
+      !isExact && extractTraverse(child.children, callback);
     } else if (child.ifChildren) {
       const isExact = await callback(child);
-      !isExact && traverseCards(child.ifChildren, callback);
-      !isExact && traverseCards(child.elseChildren, callback);
+      !isExact && extractTraverse(child.ifChildren, callback);
+      !isExact && extractTraverse(child.elseChildren, callback);
     } else {
       callback && callback(child);
     }
