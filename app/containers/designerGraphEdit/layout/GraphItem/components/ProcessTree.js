@@ -5,16 +5,16 @@ import cloneDeep from 'lodash/cloneDeep';
 import { ItemPanel, Item } from 'gg-editor';
 
 import { ConfirmModal } from '../../../../common/components';
+import DragCard from '../../../../designerGraphBlock/layout/DragItem/components/DragCard';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
   changeModuleTree,
   changeCheckedModuleTreeNode,
-} from '../../../../reduxActions';
-import {
   resetGraphEditData,
   changeMovingModuleNode,
 } from '../../../../reduxActions';
+
 import Switcher from './Switcher';
 import ContextMenu from './ContextMenu';
 import {
@@ -24,26 +24,31 @@ import {
   setAllModifiedState,
   setNodeModifiedState,
   traverseTree,
-  persistentModuleStorage,
+  // persistentModuleStorage,
 } from '../../../../common/utils';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
 import { fromTextArea } from 'codemirror';
 import event from '../../../../designerGraphBlock/layout/eventCenter';
 
-const TreeNodeTitle = ({ title, type, hasModified }) => {
+const TreeNodeTitle = ({
+  title,
+  iconType,
+  hasModified,
+  node,
+  type,
+  currentProject,
+}) => {
   return (
     <div
       className="treenode-title"
       style={{
-        // position: 'relative',
         display: 'flex',
         justifyContent: 'space-between',
-        // flexDirection: 'row',
       }}
     >
       <Icon
-        type={type}
+        type={iconType}
         style={{
           marginRight: 8,
           marginLeft: 12,
@@ -51,23 +56,26 @@ const TreeNodeTitle = ({ title, type, hasModified }) => {
           alignItems: 'center',
         }}
       />
-      {/* <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-        }}
-      > */}
-      <span
-        style={{
-          flexBasis: 150,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {title}
-      </span>
+      {type === 'secondModule' && node.type === 'process' ? (
+        <DragCard
+          title={title}
+          node={node}
+          item={node}
+          tabType={type}
+          currentProject={currentProject}
+        ></DragCard>
+      ) : (
+        <div
+          style={{
+            flexBasis: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {title}
+        </div>
+      )}
       <span
         style={{
           visibility: hasModified ? 'visible' : 'hidden',
@@ -75,20 +83,21 @@ const TreeNodeTitle = ({ title, type, hasModified }) => {
           display: 'inline-block',
           marginRight: 4,
           color: hasModified ? 'red' : '',
-          // position: 'absolute',
-          // right: '8px',
-          // top: '2px',
         }}
         className={hasModified ? 'hasModified' : 'notModified'}
       >
         *
       </span>
-      {/* </div> */}
     </div>
   );
 };
 
-const transformTreeTitle = (processTree, type) => {
+const transformTreeTitle = (
+  processTree,
+  type,
+  currentProject,
+  blockTreeTab
+) => {
   const result = cloneDeep(processTree);
   function recurise(tree) {
     for (const child of tree) {
@@ -114,9 +123,12 @@ const transformTreeTitle = (processTree, type) => {
                   }}
                 >
                   <TreeNodeTitle
+                    node={child}
                     title={child.title}
                     hasModified={child.hasModified}
-                    type="cluster"
+                    iconType="cluster"
+                    type={blockTreeTab}
+                    currentProject={currentProject}
                   />
                 </Item>
               </ItemPanel>
@@ -125,9 +137,12 @@ const transformTreeTitle = (processTree, type) => {
         } else {
           child.title = (
             <TreeNodeTitle
+              node={child}
               title={child.title}
               hasModified={child.hasModified}
-              type="cluster"
+              iconType="cluster"
+              type={blockTreeTab}
+              currentProject={currentProject}
             />
           );
         }
@@ -135,9 +150,12 @@ const transformTreeTitle = (processTree, type) => {
         // child.hasModified = false;
         child.title = (
           <TreeNodeTitle
+            node={child}
             title={child.title}
             hasModified={child.hasModified}
-            type="file"
+            iconType="file"
+            type={blockTreeTab}
+            currentProject={currentProject}
           />
         );
       }
@@ -162,6 +180,7 @@ export default ({ type }) => {
   const currentCheckedModuleTreeNode = useSelector(
     state => state.grapheditor.currentCheckedModuleTreeNode
   );
+  const blockTreeTab = useSelector(state => state.blockcode.blockTreeTab);
   const currentProject = useSelector(state => state.grapheditor.currentProject);
 
   const persistentStorage = usePersistentStorage();
@@ -292,26 +311,18 @@ export default ({ type }) => {
           changeModuleTree(data);
         }
       });
-      persistentModuleStorage(
-        data,
-        currentProject,
-        currentCheckedModuleTreeNode
-      );
+      persistentModuleStorage();
+      // persistentModuleStorage(
+      //   data,
+      //   currentProject,
+      //   currentCheckedModuleTreeNode
+      // );
     }
   };
 
   const handleDelete = (key, persistentStorage) => {
-    if (type === 'process') {
-      Modal.confirm({
-        content: '请确认是否删除?',
-        onOk() {
-          deleteNodeByKey(type, processTree, currentProject, key);
-          changeProcessTree([...processTree]);
-          resetGraphEditData();
-          persistentStorage();
-        },
-      });
-    } else {
+    if (blockTreeTab === 'secondModule') {
+      console.log('第二层修改模块');
       Modal.confirm({
         content: '请确认是否删除?',
         onOk() {
@@ -322,24 +333,37 @@ export default ({ type }) => {
           persistentStorage();
         },
       });
+    } else {
+      if (type === 'process') {
+        console.log('第一层修改流程');
+        Modal.confirm({
+          content: '请确认是否删除?',
+          onOk() {
+            deleteNodeByKey(type, processTree, currentProject, key);
+            changeProcessTree([...processTree]);
+            resetGraphEditData();
+            persistentStorage();
+          },
+        });
+      } else {
+        console.log('第一层修改模块');
+        Modal.confirm({
+          content: '请确认是否删除?',
+          onOk() {
+            deleteNodeByKey(type, moduleTree, currentProject, key);
+            changeCheckedModuleTreeNode(undefined);
+            changeModuleTree([...moduleTree]);
+            // resetGraphEditData();
+            persistentStorage();
+          },
+        });
+      }
     }
   };
 
   const handleRename = (key, persistentStorage) => {
-    if (type === 'process') {
-      const restoreCheckedTreeNode = () => {
-        changeCheckedTreeNode(currentCheckedTreeNode);
-      };
-      changeCheckedTreeNode(undefined);
-      renameNodeByKey(
-        cloneDeep(processTree),
-        key,
-        persistentStorage,
-        restoreCheckedTreeNode,
-        currentProject,
-        type
-      );
-    } else {
+    if (blockTreeTab === 'secondModule') {
+      console.log('第二层修改模块');
       const restoreCheckedTreeNode = () => {
         changeCheckedModuleTreeNode(currentCheckedModuleTreeNode);
       };
@@ -352,6 +376,36 @@ export default ({ type }) => {
         currentProject,
         type
       );
+    } else {
+      if (type === 'process') {
+        console.log('第一层修改流程');
+        const restoreCheckedTreeNode = () => {
+          changeCheckedTreeNode(currentCheckedTreeNode);
+        };
+        changeCheckedTreeNode(undefined);
+        renameNodeByKey(
+          cloneDeep(processTree),
+          key,
+          persistentStorage,
+          restoreCheckedTreeNode,
+          currentProject,
+          type
+        );
+      } else {
+        console.log('第一层修改模块');
+        const restoreCheckedTreeNode = () => {
+          changeCheckedModuleTreeNode(currentCheckedModuleTreeNode);
+        };
+        changeCheckedModuleTreeNode(undefined);
+        renameNodeByKey(
+          cloneDeep(moduleTree),
+          key,
+          persistentStorage,
+          restoreCheckedTreeNode,
+          currentProject,
+          type
+        );
+      }
     }
   };
 
@@ -375,12 +429,15 @@ export default ({ type }) => {
       }}
     >
       <Tree
-        className="draggable-tree"
+        className={
+          type === 'secondModule' ? 'atomicCList-tree' : 'draggable-tree'
+        }
+        // className="draggable-tree"
         expandedKeys={expandedKeys}
         defaultExpandAll={true}
-        switcherIcon={<Switcher />}
-        showIcon={true}
-        draggable
+        switcherIcon={type === 'secondModule' ? '' : <Switcher />}
+        showIcon={type === 'secondModule' ? false : true}
+        draggable={type === 'secondModule' ? false : true}
         blockNode
         onExpand={expandKeys => {
           setExpandedKeys(expandKeys);
@@ -395,11 +452,15 @@ export default ({ type }) => {
         onDragEnter={onDragEnter}
         onDrop={onDrop}
         onDragStart={onDragStart}
-        //treeData={processTree}
         treeData={
           type === 'process'
-            ? transformTreeTitle(processTree, type)
-            : transformTreeTitle(moduleTree, type)
+            ? transformTreeTitle(
+                processTree,
+                type,
+                currentProject,
+                blockTreeTab
+              )
+            : transformTreeTitle(moduleTree, type, currentProject, blockTreeTab)
         }
         selectedKeys={
           type === 'process'
@@ -468,151 +529,4 @@ export default ({ type }) => {
       />
     </div>
   );
-
-  // return type === 'process' ? (
-  //   <div
-  //     style={{
-  //       height: '50vh',
-  //     }}
-  //   >
-  //     <Tree
-  //       className="draggable-tree"
-  //       expandedKeys={expandedKeys}
-  //       defaultExpandAll={true}
-  //       switcherIcon={<Switcher />}
-  //       showIcon={true}
-  //       draggable
-  //       blockNode
-  //       onExpand={expandKeys => {
-  //         setExpandedKeys(expandKeys);
-  //       }}
-  //       onRightClick={({ event, node }) => {
-  //         setPosition({
-  //           left: event.pageX + 40,
-  //           top: event.pageY - 20,
-  //           node: node.props,
-  //         });
-  //       }}
-  //       onDragEnter={onDragEnter}
-  //       onDrop={onDrop}
-  //       //treeData={processTree}
-  //       treeData={transformTreeTitle(processTree, type)}
-  //       selectedKeys={[currentCheckedTreeNode]}
-  //       onSelect={(selectedKey, e) => {
-  //         if (currentCheckedTreeNode === undefined) {
-  //           setSelectedKey(selectedKey[0]);
-  //           changeCheckedTreeNode(selectedKey[0]);
-  //         } else {
-  //           if (selectedKey.length !== 0) {
-  //             const isModified = hasNodeModified(
-  //               processTree,
-  //               currentCheckedTreeNode
-  //             );
-  //             if (isModified) {
-  //               // 有更改
-  //               setSelectedKey(selectedKey[0]);
-  //               setModalVisible(true);
-  //             } else {
-  //               setSelectedKey(selectedKey[0]);
-  //               changeCheckedTreeNode(selectedKey[0]);
-  //             }
-  //           }
-  //         }
-  //       }}
-  //     />
-  //     <ContextMenu
-  //       position={position}
-  //       handleDelete={handleDelete}
-  //       handleRename={handleRename}
-  //     />
-  //     <ConfirmModal
-  //       visible={modalVisible}
-  //       content="请确认是否保存?"
-  //       onCancel={() => {
-  //         setModalVisible(false);
-  //       }}
-  //       onCancelOk={() => {
-  //         resetGraphEditData();
-  //         changeCheckedTreeNode(selectedKey);
-  //         setModalVisible(false);
-  //       }}
-  //       onOk={() => {
-  //         setNodeModifiedState(processTree, currentCheckedTreeNode); // 把hasmodified改成false
-  //         persistentStorage(); // 保存currentCheckedTreeNode的内容
-  //         resetGraphEditData(); // 重设GraphEditData
-  //         changeCheckedTreeNode(selectedKey); // 修改当前选中
-  //         setModalVisible(false); // 关闭对话框
-  //       }}
-  //     />
-  //   </div>
-  // ) : (
-  //   <div
-  //     style={{
-  //       height: '50vh',
-  //     }}
-  //   >
-  //     {/* <ItemPanel> */}
-  //     <Tree
-  //       className="draggable-tree"
-  //       expandedKeys={expandedKeys}
-  //       defaultExpandAll={true}
-  //       switcherIcon={<Switcher />}
-  //       showIcon={true}
-  //       draggable
-  //       blockNode
-  //       onExpand={expandKeys => {
-  //         setExpandedKeys(expandKeys);
-  //       }}
-  //       onRightClick={({ event, node }) => {
-  //         setPosition({
-  //           left: event.pageX + 40,
-  //           top: event.pageY - 20,
-  //           node: node.props,
-  //         });
-  //       }}
-  //       onDragStart={onDragStart}
-  //       onDragEnter={onDragEnter}
-  //       onDrop={onDrop}
-  //       //treeData={processTree}
-  //       treeData={transformTreeTitle(moduleTree, type)}
-  //       selectedKeys={[currentCheckedModuleTreeNode]}
-  //       onSelect={(selectedKey, e) => {
-  //         if (currentCheckedModuleTreeNode === undefined) {
-  //           setSelectedKey(selectedKey[0]);
-  //           changeCheckedModuleTreeNode(selectedKey[0]);
-  //         } else {
-  //           if (selectedKey.length !== 0) {
-  //             setSelectedKey(selectedKey[0]);
-  //             changeCheckedModuleTreeNode(selectedKey[0]);
-  //           }
-  //         }
-  //       }}
-  //     />
-  //     {/* </ItemPanel> */}
-  //     <ContextMenu
-  //       position={position}
-  //       handleDelete={handleDelete}
-  //       handleRename={handleRename}
-  //     />
-  //     <ConfirmModal
-  //       visible={modalVisible}
-  //       content="请确认是否保存?"
-  //       onCancel={() => {
-  //         setModalVisible(false);
-  //       }}
-  //       onCancelOk={() => {
-  //         resetGraphEditData();
-  //         changeCheckedTreeNode(selectedKey);
-  //         setModalVisible(false);
-  //       }}
-  //       onOk={() => {
-  //         setNodeModifiedState(processTree, currentCheckedTreeNode); // 把hasmodified改成false
-  //         persistentStorage(); // 保存currentCheckedTreeNode的内容
-  //         resetGraphEditData(); // 重设GraphEditData
-  //         changeCheckedTreeNode(selectedKey); // 修改当前选中
-  //         setModalVisible(false); // 关闭对话框
-  //       }}
-  //     />
-  //   </div>
-  // );
 };

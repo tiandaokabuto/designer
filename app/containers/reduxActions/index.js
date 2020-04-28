@@ -23,6 +23,7 @@ import {
   CHANGE_AUTOMICLIST,
   CHANGE_CHECKEDID,
   CHANGE_AIHINTLIST,
+  CHANGE_BLOCK_TREE_TAB,
   CHANGE_CLIPBOARDDATA,
   CHANGE_CARDDATA,
 } from '../../actions/codeblock';
@@ -33,6 +34,13 @@ import {
 import store from '../../store';
 
 const { dispatch } = store;
+
+export const changeBlockTreeTab = tab => {
+  dispatch({
+    type: CHANGE_BLOCK_TREE_TAB,
+    payload: tab,
+  });
+};
 
 export const updateCardData = data => {
   dispatch({

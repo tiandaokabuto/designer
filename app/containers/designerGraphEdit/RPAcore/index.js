@@ -18,7 +18,7 @@ import transformVariable from './transformVariable';
 
 const padding = length => '    '.repeat(length);
 
-const transformEditorProcess = (
+export const transformEditorProcess = (
   graphData,
   graphDataMap,
   currentId,

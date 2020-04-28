@@ -1,6 +1,6 @@
 import './ParamPanel.scss';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { Input, Select, AutoComplete } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
@@ -432,6 +432,7 @@ const LoopSelectContext = React.createContext({
 });
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
+  console.log(checkedBlock);
   const [flag, setFlag] = useState(false);
   // loopSelect：循环类型，循环类型更改的时候需要改变循环条件
   const [loopSelect, setLoopSelect] = useState(
@@ -439,7 +440,6 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
       ? checkedBlock.properties.required[0].value
       : 'for_list'
   );
-
   const [aiHintList] = useAIHintWatch();
 
   useEffect(() => {
@@ -470,7 +470,114 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
           />
         </div>
       )}
-      <div className="parampanel-required">必选项</div>
+      {checkedBlock.key && checkedBlock.key.indexOf('module') !== -1 ? (
+        <Fragment>
+          {checkedBlock.properties.map(item => {
+            if (item.cnName !== '标签名称') {
+              return (
+                <Fragment>
+                  <div className="parampanel-required">{item.cnName}</div>
+                  <div className="parampanel-content">
+                    {item.value.map(valueItem => {
+                      return (
+                        <Fragment>
+                          <div className="parampanel-item">
+                            <span
+                              className="param-title"
+                              title={valueItem.name}
+                            >
+                              变量名
+                            </span>
+                            <div style={{ flex: 1, overflow: 'hidden' }}>
+                              <Input
+                                defaultValue={valueItem.name} // 可以加上 param.default 在参数面板显示默认值
+                                onChange={e => {
+                                  valueItem.name = e.target.value;
+                                  handleEmitCodeTransform(cards);
+                                }}
+                                onKeyDown={e => stopDeleteKeyDown(e)}
+                              />
+                            </div>
+                          </div>
+                          <div className="parampanel-item">
+                            <span
+                              className="param-title"
+                              title={valueItem.name}
+                            >
+                              {item.cnName === '流程块返回' ? '描述' : '值'}
+                            </span>
+                            <div style={{ flex: 1, overflow: 'hidden' }}>
+                              <Input
+                                defaultValue={valueItem.value} // 可以加上 param.default 在参数面板显示默认值
+                                onChange={e => {
+                                  valueItem.value = e.target.value;
+                                  handleEmitCodeTransform(cards);
+                                }}
+                                onKeyDown={e => stopDeleteKeyDown(e)}
+                              />
+                            </div>
+                          </div>
+                        </Fragment>
+                      );
+                    })}
+                  </div>
+                </Fragment>
+              );
+            }
+          })}
+        </Fragment>
+      ) : (
+        <Fragment>
+          <div className="parampanel-required">必选项</div>
+          <div className="parampanel-content">
+            {(checkedBlock.properties.required || []).map((param, index) => {
+              if (param.enName === 'return_string') {
+                return (
+                  <OutputPanel
+                    key={checkedBlock.id + index}
+                    output={param.value}
+                    handleEmitCodeTransform={() => {
+                      handleEmitCodeTransform(cards);
+                    }}
+                  />
+                );
+              }
+              return (
+                <LoopSelectContext.Provider
+                  value={{ loopSelect, setLoopSelect }}
+                >
+                  <ParamItem
+                    key={checkedBlock.id + index}
+                    param={param}
+                    handleEmitCodeTransform={handleEmitCodeTransform}
+                    cards={cards}
+                    flag={flag}
+                    aiHintList={aiHintList}
+                    setFlag={setFlag}
+                  />
+                </LoopSelectContext.Provider>
+              );
+            })}
+          </div>
+          <div className="parampanel-optional">选填项</div>
+          <div className="parampanel-content">
+            {(checkedBlock.properties.optional || []).map((param, index) => {
+              return (
+                <ParamItem
+                  key={checkedBlock.id + index}
+                  param={param}
+                  handleEmitCodeTransform={handleEmitCodeTransform}
+                  cards={cards}
+                  flag={flag}
+                  aiHintList={aiHintList}
+                  setFlag={setFlag}
+                />
+              );
+            })}
+          </div>
+        </Fragment>
+      )}
+      {/* <div className="parampanel-required">必选项</div>
       <div className="parampanel-content">
         {(checkedBlock.properties.required || []).map((param, index) => {
           if (param.enName === 'return_string') {
@@ -516,7 +623,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
             />
           );
         })}
-      </div>
+      </div> */}
     </div>
   );
 };

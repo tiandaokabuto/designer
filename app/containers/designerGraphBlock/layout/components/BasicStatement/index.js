@@ -270,6 +270,8 @@ const BasicStatement = useInjectContext(props => {
                     '鼠标-移动',
                     '键盘-目标中按键',
                     '键盘-目标中输入文本',
+                    '截取Windows控件图片',
+                    '判断元素是否存在',
                   ];
                   if (cmdNameArr.includes(card.cmdName)) {
                     console.log(PATH_CONFIG('windowHook'));

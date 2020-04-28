@@ -11,10 +11,11 @@ import './index.scss';
 const { TabPane } = Tabs;
 
 const DragContainer = () => {
-  const graphData = useSelector((state) => state.grapheditor.graphData);
-  const { currentEditingId } = useSelector((state) => state.grapheditor);
-  let nodesLabel = {}
-  if(graphData.nodes) {
+  const graphData = useSelector(state => state.grapheditor.graphData);
+  const { currentEditingId } = useSelector(state => state.grapheditor);
+  let nodesLabel = {};
+  // console.log(graphData.nodes);
+  if (graphData.nodes) {
     nodesLabel = graphData.nodes.find(item => item.id === currentEditingId);
   }
   return (
