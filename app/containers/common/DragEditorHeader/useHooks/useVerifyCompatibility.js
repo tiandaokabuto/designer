@@ -32,12 +32,65 @@ const traverseAllCards = (cards, callback) => {
     } else if (child.ifChildren) {
       callback && callback(child);
       traverseAllCards(child.ifChildren, callback);
-    } else if (child.elseChildren) {
-      callback && callback(child);
       traverseAllCards(child.elseChildren, callback);
     } else {
       callback && callback(child);
     }
+  }
+};
+
+const getStandardProperties = shape => {
+  switch (shape) {
+    case 'processblock':
+      return [
+        {
+          cnName: '标签名称',
+          enName: 'label',
+          value: '流程块',
+          default: '',
+        },
+        {
+          cnName: '输入参数',
+          enName: 'param',
+          value: [],
+          default: '',
+        },
+        {
+          cnName: '流程块返回',
+          enName: 'output',
+          value: [],
+          default: '',
+        },
+      ];
+    case 'rhombus-node':
+      return [
+        {
+          cnName: '标签名称',
+          enName: 'label',
+          value: '判断',
+          default: '',
+        },
+        {
+          cnName: '分支条件',
+          enName: 'condition',
+          value: '',
+          default: '',
+          valueMapping: [
+            { name: '等于', value: '==' },
+            { name: '不等于', value: '!=' },
+            { name: '大于', value: '>' },
+            { name: '小于', value: '<' },
+            { name: '大于等于', value: '>=' },
+            { name: '小于等于', value: '<=' },
+            { name: '空', value: 'is None' },
+            { name: '非空', value: 'not None' },
+          ],
+          tag: 1,
+          valueList: [],
+        },
+      ];
+    default:
+      return [];
   }
 };
 
@@ -64,8 +117,7 @@ const isEqualType = (standard, current, isParam = false) => {
     if (!hasOwnPropertyKey(standard, key)) {
       if (typeOf(standard[key]) !== typeOf(current[key])) {
         flag = false;
-        // try fix
-        // console.log(current, key, standard, '---类型不同');
+
         current[key] = standard[key];
       } else {
         if (isPlainObject(standard[key])) {
@@ -107,11 +159,7 @@ const verifyCards = (current, standard) => {
     const isEqual = isEqualType(standard[node.main], node);
     if (!isEqual) {
       flag = true;
-      // node.isCompatable = true;
-    }
-    if (node.isCompatable) {
-      // node.isCompatable = false;
-      flag = true;
+      node.isCompatable = true;
     }
   });
   return flag;
@@ -165,26 +213,10 @@ export default () => {
           item.properties = [];
         }
         isCompatable =
-          verifyBlockProperties(item.properties, [
-            {
-              cnName: '标签名称',
-              enName: 'label',
-              value: '流程块',
-              default: '',
-            },
-            {
-              cnName: '输入参数',
-              enName: 'param',
-              value: [],
-              default: '',
-            },
-            {
-              cnName: '流程块返回',
-              enName: 'output',
-              value: [],
-              default: '',
-            },
-          ]) || isCompatable;
+          verifyBlockProperties(
+            item.properties,
+            getStandardProperties(item.shape)
+          ) || isCompatable;
         if (isCompatable) {
           hasModified = true;
           setGraphDataMap(key, item);
@@ -196,7 +228,9 @@ export default () => {
       message.destroy();
       message.success('校验完成');
     } catch (err) {
-      // console.log(err);
+      console.log(err);
+      message.destroy();
+      message.error('校验失败');
     }
   };
 };

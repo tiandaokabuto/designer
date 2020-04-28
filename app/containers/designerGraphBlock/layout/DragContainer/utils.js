@@ -6,7 +6,6 @@ export const traverseCards = (cards, callback) => {
       traverseCards(child.children, callback);
     } else if (child.ifChildren) {
       traverseCards(child.ifChildren, callback);
-    } else if (child.elseChildren) {
       traverseCards(child.elseChildren, callback);
     } else {
       callback && callback(child);

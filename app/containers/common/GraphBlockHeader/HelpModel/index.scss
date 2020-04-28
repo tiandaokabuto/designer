@@ -1,0 +1,62 @@
+@font-face {
+  font-family: FZZYJW;
+  src: url('../../../common/IconFont/Font/FZZYJW.ttf');
+}
+
+.help-model {
+  width: 100%;
+  height: 258px;
+  position: relative;
+  &-title {
+    &-icon {
+      width: 49px;
+      height: 49px;
+      float: left;
+      margin-right: 15px;
+    }
+    &-cnTitle {
+      font-size: 18px;
+      color: rgba(50, 166, 127, 1);
+      line-height: 18px;
+      letter-spacing: 3px;
+      font-family: FZZYJW, FZZYJW--GB1, Arial, Helvetica, sans-serif;
+      font-weight: bold;
+      padding-top: 5px;
+    }
+    &-enTitle {
+      font-size: 15px;
+      color: rgba(50, 166, 127, 1);
+      line-height: 15px;
+      letter-spacing: 4px;
+      font-family: ArialMT, Arial, Helvetica, sans-serif;
+    }
+  }
+  &-version {
+    position: absolute;
+    bottom: 0;
+    &-test {
+      width: 120px;
+      height: 40px;
+      border-radius: 3px;
+      border: 1px solid rgba(238, 238, 238, 1);
+      margin-bottom: 20px;
+    }
+    &-text {
+      font-size: 12px;
+      font-family: Alibaba-PuHuiTi-R, Alibaba-PuHuiTi, Arial, Helvetica,
+        sans-serif;
+      font-weight: normal;
+      color: rgba(153, 153, 153, 1);
+      line-height: 12px;
+    }
+  }
+}
+
+.helpModel {
+  .ant-modal-content {
+    background: url(../../../images/helpModelBg.png);
+  }
+  .ant-modal-body {
+    padding: 32px 32px 30px;
+  }
+}

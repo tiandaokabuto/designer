@@ -19,6 +19,7 @@ import {
 import { withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
 import event from '../../designerGraphBlock/layout/eventCenter';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
@@ -57,6 +58,7 @@ import NewProcess from './NewProcess';
 import './index.scss';
 
 const { remote, ipcRenderer } = require('electron');
+const { exec } = require('child_process');
 const fs = require('fs');
 const process = require('process');
 const adm_zip = require('adm-zip');
@@ -107,6 +109,10 @@ export default memo(
     const [descText, setDescText] = useState('');
     const [exportType, setExportType] = useState('json');
     const [versionText, setVersionText] = useState('1.0.0'); // 默认值
+
+    const [_, forceUpdate] = useForceUpdate();
+
+    const uuidRef = useRef(null);
 
     const persistentStorage = usePersistentStorage();
 
@@ -173,10 +179,47 @@ export default memo(
 
     const handleOperation = () => {
       try {
+        const uuid = new Date().getTime().toString(16);
+        uuidRef.current = uuid;
+
+        const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
+          item => item.description === '运行'
+        );
+        find.description = '停止';
+        find.onClick = function() {
+          // 终止流程
+          exec(`${process.cwd()}/app/common/python/stop.bat ${uuid}`, err => {
+            if (!err) {
+              message.success('停止成功');
+            } else {
+              message.error('停止失败');
+            }
+            console.log(err);
+          });
+          const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
+            item => item.description === '停止'
+          );
+          find.description = '运行';
+          find.onClick = handleOperation;
+          forceUpdate();
+        };
         transformProcessToPython();
-        executePython();
+        executePython(uuid, () => {
+          const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
+            item => item.description === '停止'
+          );
+          find.description = '运行';
+          find.onClick = handleOperation;
+          forceUpdate();
+        });
+        forceUpdate();
       } catch (e) {
-        console.log(e);
+        const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
+          item => item.description === '停止' || item.description === '运行'
+        );
+        find.description = '运行';
+        find.onClick = handleOperation;
+        forceUpdate();
         message.error('代码转换出错，请检查流程图');
       }
     };

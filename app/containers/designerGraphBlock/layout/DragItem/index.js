@@ -265,7 +265,6 @@ export default useInjectContext(
                   }}
                   onSelect={(_, e) => {
                     const props = e.node.props;
-                    console.log(props);
                     if (props.children) {
                       setExpandedKeys(keys => {
                         if (keys.includes(props.eventKey)) {
