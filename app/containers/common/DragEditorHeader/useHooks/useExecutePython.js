@@ -9,11 +9,11 @@ const iconv = require('iconv-lite');
 const process = require('process');
 
 export default () => {
-  return () => {
+  return uuid => {
     event.emit('clear_output');
     message.loading('程序运行中', 0);
     const worker = exec(
-      PATH_CONFIG('pythonExecute'),
+      PATH_CONFIG('pythonExecute') + ` ${uuid}`,
       {
         encoding: 'buffer',
       },
