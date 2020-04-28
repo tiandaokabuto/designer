@@ -16,3 +16,4 @@ export { default as useAIHintWatch } from './useAIHintWatch';
 export { default as useAppendDataSource } from './useAppendDataSource';
 export { default as useVerifyInput } from './useVerifyInput';
 export { default as useListenMouseAndKeyboard } from './useListenMouseAndKeyboard';
+export { default as useChangeCompatable } from './useChangeCompatable';

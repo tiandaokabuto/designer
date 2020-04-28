@@ -432,7 +432,6 @@ const LoopSelectContext = React.createContext({
 });
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
-  console.log(checkedBlock);
   const [flag, setFlag] = useState(false);
   // loopSelect：循环类型，循环类型更改的时候需要改变循环条件
   const [loopSelect, setLoopSelect] = useState(
