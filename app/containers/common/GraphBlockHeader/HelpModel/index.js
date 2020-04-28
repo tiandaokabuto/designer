@@ -9,15 +9,19 @@ export default function HelpModel({ visible, handleCancel }) {
   const [version, setVersion] = useState('');
 
   useEffect(() => {
-    setVersion(getVerison());
+    getVerison(setVersion);
   }, []);
 
-  const getVerison = () => {
-    const data = fs.readFileSync(`${process.cwd()}/version/version.json`, {
-      encoding: 'utf-8',
+  const getVerison = callBack => {
+    fs.readFile(`${process.cwd()}/version/version.json`, function(err, data) {
+      if (err) {
+        console.log(err);
+        callBack('');
+      } else {
+        const { version = '' } = JSON.parse(data.toString());
+        callBack(version);
+      }
     });
-    const { version = '' } = JSON.parse(data);
-    return version;
   };
 
   return (
