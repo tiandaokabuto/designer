@@ -1,8 +1,3 @@
-@font-face {
-  font-family: FZZYJW;
-  src: url('FZZYJW.ttf');
-}
-
 .help-model {
   width: 100%;
   height: 258px;
@@ -19,7 +14,7 @@
       color: rgba(50, 166, 127, 1);
       line-height: 18px;
       letter-spacing: 3px;
-      font-family: FZZYJW, FZZYJW--GB1, Arial, Helvetica, sans-serif;
+      font-family: FZZYJW--GB1-0, FZZYJW--GB1, Arial, Helvetica, sans-serif;
       font-weight: bold;
       padding-top: 5px;
     }

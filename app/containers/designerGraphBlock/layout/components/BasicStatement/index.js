@@ -279,6 +279,7 @@ const BasicStatement = useInjectContext(props => {
                       console.log(e);
                     }
                   }
+                  ipcRenderer.removeAllListeners('updateXpath');
                   ipcRenderer.on(
                     'updateXpath',
                     (e, { xpath, imageData, targetId }) => {

@@ -256,11 +256,12 @@ const getComponentType = (
         const handleMutiply = value => {
           param.value = getVariableList(value)[param.mutiplyIndex];
         };
-        const select = window.getSelection().toString();
-        console.log(select, 'select');
-        if (!select) {
+
+        const isSelected = window.getSelection().toString();
+        if (!isSelected) {
           xpathKeyRef.current = uniqueId('key_');
         }
+
         return (
           <AutoComplete
             key={keyFlag || param.enName === 'xpath' ? xpathKeyRef.current : ''}

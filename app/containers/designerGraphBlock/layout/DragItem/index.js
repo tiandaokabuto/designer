@@ -28,7 +28,6 @@ const { Search } = Input;
 const MAX_RENCENT_DEQUEUE_LENGTH = 10;
 
 const canDisplay = (match, filter) => {
-  console.log(filter);
   if (!match) return false;
   const newMatch = match.toLocaleLowerCase();
   const newFilter = filter.toLocaleLowerCase();

@@ -18,7 +18,7 @@ const getAutoMicListMap = automicList => {
     } else {
       result = {
         ...result,
-        [child.item.main]: child.item,
+        [child.item.pkg + child.item.main + child.item.module]: child.item,
       };
     }
   }
@@ -157,7 +157,10 @@ const isEqualType = (standard, current, isParam = false) => {
 const verifyCards = (current, standard) => {
   let flag = false;
   traverseAllCards(current, node => {
-    const isEqual = isEqualType(standard[node.main], node);
+    const isEqual = isEqualType(
+      standard[node.pkg + node.main + node.module],
+      node
+    );
     if (!isEqual) {
       flag = true;
       node.isCompatable = true;
