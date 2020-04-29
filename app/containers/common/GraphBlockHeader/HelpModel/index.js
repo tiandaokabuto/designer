@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'antd';
 
+import SdIcon from '@/containers/images/sdIcon.png';
 import './index.scss';
 
 /* const fs = require('fs'); */
@@ -38,7 +39,7 @@ export default function HelpModel({ visible, handleCancel }) {
       <div className="help-model">
         <div className="help-model-title">
           <img
-            src="./containers/images/sdIcon.png"
+            src={SdIcon}
             alt="流程易图标"
             className="help-model-title-icon"
           />
