@@ -834,13 +834,14 @@ export const downProcessZipToLocal = (
   fs.writeFileSync(filePath + '/test.py', editorBlockPythonCode);
   fs.writeFileSync(
     filePath + '/manifest.json',
-    encrypt.argEncryptByDES(
-      JSON.stringify({
-        processName,
-        descText,
-        versionText,
-      })
-    )
+    JSON.stringify({
+      processName,
+      descText,
+      versionText,
+    })
+    // encrypt.argEncryptByDES(
+
+    // )
   );
   readDir(zip, filePath);
   zip
@@ -980,99 +981,96 @@ export const getChooseFilePath = (e, filePath) => {
       currentCheckedTreeNode,
     },
   } = store.getState();
-  if (treeTab === 'processModule') {
-    if (
-      fs.existsSync(
-        PATH_CONFIG(
-          'project',
-          `${currentProject}/${currentProject}_module/${fileName}.json`
-        )
-      )
-    ) {
-      message.info('该流程块已存在');
-    } else {
-      // 写入文件
-      fs.writeFileSync(
-        PATH_CONFIG(
-          'project',
-          `${currentProject}/${currentProject}_module/${fileName}.json`
-        ),
-        encrypt.argEncryptByDES(
-          JSON.stringify({
-            graphDataMap: data,
-          })
-        )
-      );
-      const newModuleTree = [...moduleTree];
-      // 没有选中流程块或者目录
-      if (!currentCheckedModuleTreeNode) {
-        newModuleTree.push({
-          title: fileName,
-          type: 'process',
-          key: getModuleUniqueId(newModuleTree),
-          graphDataMap: {},
-        });
-      } else {
-        // 对redux中的moduleTree进行修改
-        traverseTree(newModuleTree, item => {
-          if (currentCheckedModuleTreeNode === item.key) {
-            // 选中的是流程
-            if (item.type === 'process') {
-              newModuleTree.push({
-                title: fileName,
-                type: 'process',
-                key: getModuleUniqueId(newModuleTree),
-                graphDataMap: {},
-              });
-            } else {
-              // 选中的是目录
-              item.children.push({
-                title: fileName,
-                type: 'process',
-                key: getModuleUniqueId(newModuleTree),
-                graphDataMap: {},
-              });
-            }
-          }
-        });
-      }
-      changeModuleTree(newModuleTree);
-      persistentModuleStorage(newModuleTree, currentProject);
-    }
+  // if (treeTab === 'processModule') {
+  //   if (
+  //     fs.existsSync(
+  //       PATH_CONFIG(
+  //         'project',
+  //         `${currentProject}/${currentProject}_module/${fileName}.json`
+  //       )
+  //     )
+  //   ) {
+  //     message.info('该流程块已存在');
+  //   } else {
+  //     // 写入文件
+  //     fs.writeFileSync(
+  //       PATH_CONFIG(
+  //         'project',
+  //         `${currentProject}/${currentProject}_module/${fileName}.json`
+  //       ),
+  //       encrypt.argEncryptByDES(
+  //         JSON.stringify({
+  //           graphDataMap: data,
+  //         })
+  //       )
+  //     );
+  //     const newModuleTree = [...moduleTree];
+  //     // 没有选中流程块或者目录
+  //     if (!currentCheckedModuleTreeNode) {
+  //       newModuleTree.push({
+  //         title: fileName,
+  //         type: 'process',
+  //         key: getModuleUniqueId(newModuleTree),
+  //         graphDataMap: {},
+  //       });
+  //     } else {
+  //       // 对redux中的moduleTree进行修改
+  //       traverseTree(newModuleTree, item => {
+  //         if (currentCheckedModuleTreeNode === item.key) {
+  //           // 选中的是流程
+  //           if (item.type === 'process') {
+  //             newModuleTree.push({
+  //               title: fileName,
+  //               type: 'process',
+  //               key: getModuleUniqueId(newModuleTree),
+  //               graphDataMap: {},
+  //             });
+  //           } else {
+  //             // 选中的是目录
+  //             item.children.push({
+  //               title: fileName,
+  //               type: 'process',
+  //               key: getModuleUniqueId(newModuleTree),
+  //               graphDataMap: {},
+  //             });
+  //           }
+  //         }
+  //       });
+  //     }
+  //     changeModuleTree(newModuleTree);
+  //     persistentModuleStorage(newModuleTree, currentProject);
+  //   }
+  // }
+  if (fs.existsSync(PATH_CONFIG('project', `${currentProject}/${fileName}`))) {
+    message.info('流程已存在');
   } else {
-    if (
-      fs.existsSync(PATH_CONFIG('project', `${currentProject}/${fileName}`))
-    ) {
-      message.info('流程已存在');
+    let newProcessTree = undefined;
+    const isDirNodeBool = isDirNode(processTree, currentCheckedTreeNode);
+    const isLeafNodeOrUndefined =
+      currentCheckedTreeNode === undefined || !isDirNodeBool;
+    const uniqueid = getUniqueId(processTree);
+    checkAndMakeDir(PATH_CONFIG('project', `${currentProject}/${fileName}`));
+    if (isLeafNodeOrUndefined) {
+      newProcessTree = processTree.concat({
+        title: fileName,
+        key: uniqueid,
+        type: 'process',
+        isLeaf: true,
+        data,
+      });
     } else {
-      let newProcessTree = undefined;
-      const isDirNodeBool = isDirNode(processTree, currentCheckedTreeNode);
-      const isLeafNodeOrUndefined =
-        currentCheckedTreeNode === undefined || !isDirNodeBool;
-      const uniqueid = getUniqueId(processTree);
-      checkAndMakeDir(PATH_CONFIG('project', `${currentProject}/${fileName}`));
-      if (isLeafNodeOrUndefined) {
-        newProcessTree = processTree.concat({
-          title: fileName,
-          key: uniqueid,
-          type: 'process',
-          isLeaf: true,
-          data,
-        });
-      } else {
-        isDirNodeBool.children.push({
-          title: fileName,
-          key: uniqueid,
-          type: 'process',
-          isLeaf: true,
-          data,
-        });
-        newProcessTree = [...processTree];
-        event.emit('expandKeys', isDirNodeBool.key);
-      }
-      changeProcessTree(newProcessTree);
-      changeCheckedTreeNode(uniqueid);
-      persistentStorage(undefined, newProcessTree, currentProject, uniqueid);
+      isDirNodeBool.children.push({
+        title: fileName,
+        key: uniqueid,
+        type: 'process',
+        isLeaf: true,
+        data,
+      });
+      newProcessTree = [...processTree];
+      event.emit('expandKeys', isDirNodeBool.key);
     }
+    changeProcessTree(newProcessTree);
+    changeCheckedTreeNode(uniqueid);
+    persistentStorage(undefined, newProcessTree, currentProject, uniqueid);
   }
 };
