@@ -280,6 +280,7 @@ const BasicStatement = useInjectContext(props => {
                     }
                     console.log('调用testHook');
                   }
+                  ipcRenderer.removeAllListeners('updateXpath');
                   ipcRenderer.on(
                     'updateXpath',
                     (e, { xpath, imageData, targetId }) => {
