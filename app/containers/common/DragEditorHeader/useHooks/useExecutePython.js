@@ -12,8 +12,10 @@ export default () => {
   return (uuid, callback) => {
     event.emit('clear_output');
     message.loading('程序运行中', 0);
+    const path = PATH_CONFIG('pythonExecute') + ` ${uuid}`;
+    console.log(path);
     const worker = exec(
-      PATH_CONFIG('pythonExecute') + ` ${uuid}`,
+      path,
       {
         encoding: 'buffer',
       },

@@ -1,5 +1,21 @@
-import React, { useState, useEffect, memo, useMemo, useRef } from 'react';
-import { Icon, Modal, Form, Input, message, Button } from 'antd';
+import React, {
+  useState,
+  useEffect,
+  memo,
+  useMemo,
+  useRef,
+  Fragment,
+} from 'react';
+import {
+  Icon,
+  Modal,
+  Form,
+  Input,
+  message,
+  Button,
+  Tooltip,
+  Radio,
+} from 'antd';
 import { withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -22,11 +38,16 @@ import {
   downProcessZipToLocal,
   traverseTree,
   getModuleUniqueId,
+  persistentModuleStorage,
+  checkAndMakeDir,
+  isDirNode,
+  getUniqueId,
 } from '../utils';
 import {
   updateCurrentPagePosition,
   changeModuleTree,
   changeBlockTreeTab,
+  changeProcessTree,
 } from '../../reduxActions';
 import api from '../../../api';
 import { handleScreenCapture } from '@/containers/shared';
@@ -39,6 +60,7 @@ import './index.scss';
 const { remote, ipcRenderer } = require('electron');
 const { exec } = require('child_process');
 const fs = require('fs');
+const process = require('process');
 const adm_zip = require('adm-zip');
 
 const FormItem = Form.Item;
@@ -51,6 +73,7 @@ const layout = {
 export default memo(
   withRouter(({ history, type }) => {
     const [visible, setVisible] = useState(undefined);
+    const [isExport, setIsExport] = useState(false);
     const resetVisible = () => {
       setVisible(undefined);
     };
@@ -68,6 +91,9 @@ export default memo(
     currentCheckedModuleTreeNodeRef.current = currentCheckedModuleTreeNode;
 
     const treeTab = useSelector(state => state.grapheditor.treeTab);
+    const treeTabRef = useRef(null);
+    treeTabRef.current = treeTab;
+
     const projectName = useSelector(state => state.grapheditor.currentProject);
 
     const processTree = useSelector(state => state.grapheditor.processTree);
@@ -81,6 +107,7 @@ export default memo(
     const [modalVisible, setModalVisible] = useState(false);
     const [versionTipVisible, setVersionTipVisible] = useState(false);
     const [descText, setDescText] = useState('');
+    const [exportType, setExportType] = useState('json');
     const [versionText, setVersionText] = useState('1.0.0'); // 默认值
 
     const [_, forceUpdate] = useForceUpdate();
@@ -93,7 +120,7 @@ export default memo(
 
     const getProcessName = useGetProcessName();
 
-    const downloadPython = useGetDownloadPath();
+    const getDownLoadPath = useGetDownloadPath();
 
     const transformProcessToPython = useTransformProcessToPython();
 
@@ -194,6 +221,116 @@ export default memo(
         find.onClick = handleOperation;
         forceUpdate();
         message.error('代码转换出错，请检查流程图');
+      }
+    };
+
+    const exportProcess = filePath => {
+      const zip = new adm_zip();
+      zip.addLocalFolder(
+        `${process.cwd()}/project/${projectName}/${getProcessName()}`
+      );
+      zip.writeZip(`${filePath}.zip`);
+    };
+
+    const handleFilePath = (e, filePath) => {
+      const unzip = new adm_zip(filePath[0]);
+      const entry = unzip.getEntry('manifest.json');
+      const data = JSON.parse(unzip.readAsText(entry, 'utf8'));
+      const re = /([^\.\/\\]+)\.(?:[a-z]+)$/i;
+      const fileName = re.exec(filePath[0])[1];
+      if (treeTabRef.current === 'processModule') {
+        if (
+          fs.existsSync(
+            PATH_CONFIG(
+              'project',
+              `${projectName}/${projectName}_module/${fileName}.json`
+            )
+          )
+        ) {
+          message.info('该流程块已存在');
+        } else {
+          // 写入文件
+          fs.writeFileSync(
+            PATH_CONFIG(
+              'project',
+              `${projectName}/${projectName}_module/${fileName}.json`
+            ),
+            JSON.stringify({
+              graphDataMap: data,
+            })
+          );
+          const newModuleTree = [...moduleTreeRef.current];
+          // 没有选中流程块或者目录
+          if (!currentCheckedModuleTreeNodeRef.current) {
+            newModuleTree.push({
+              title: fileName,
+              type: 'process',
+              key: getModuleUniqueId(newModuleTree),
+              graphDataMap: {},
+            });
+          } else {
+            // 对redux中的moduleTree进行修改
+            traverseTree(newModuleTree, item => {
+              if (currentCheckedModuleTreeNodeRef.current === item.key) {
+                // 选中的是流程
+                if (item.type === 'process') {
+                  newModuleTree.push({
+                    title: fileName,
+                    type: 'process',
+                    key: getModuleUniqueId(newModuleTree),
+                    graphDataMap: {},
+                  });
+                } else {
+                  // 选中的是目录
+                  item.children.push({
+                    title: fileName,
+                    type: 'process',
+                    key: getModuleUniqueId(newModuleTree),
+                    graphDataMap: {},
+                  });
+                }
+              }
+            });
+          }
+          changeModuleTree(newModuleTree);
+          persistentModuleStorage(newModuleTree, projectName);
+        }
+      } else {
+        if (
+          fs.existsSync(PATH_CONFIG('project', `${projectName}/${fileName}`))
+        ) {
+          message.info('流程已存在');
+        } else {
+          let newProcessTree = [...processTreeRef.current];
+          const isDirNodeBool = isDirNode(
+            processTreeRef.current,
+            currentCheckedTreeNodeRef.current
+          );
+          const isLeafNodeOrUndefined =
+            currentCheckedTreeNodeRef.current === undefined || !isDirNodeBool;
+          const uniqueid = getUniqueId(processTreeRef.current);
+          checkAndMakeDir(PATH_CONFIG('project', `${projectName}/${fileName}`));
+          if (isLeafNodeOrUndefined) {
+            newProcessTree.push({
+              title: fileName,
+              key: uniqueid,
+              type: 'process',
+              isLeaf: true,
+              data,
+            });
+          } else {
+            isDirNodeBool.children.push({
+              title: fileName,
+              key: uniqueid,
+              type: 'process',
+              isLeaf: true,
+              data,
+            });
+          }
+          event.emit('expandKeys', isDirNodeBool.key);
+          changeProcessTree(newProcessTree);
+          persistentStorage();
+        }
       }
     };
 
@@ -331,96 +468,9 @@ export default memo(
       },
       {
         description: '导入',
-        type: 'upload',
+        type: 'download',
         // disabled: true,
         onClick: () => {
-          const handleFilePath = (e, filePath) => {
-            const unzip = new adm_zip(filePath[0]);
-            const entry = unzip.getEntry('manifest.json');
-            const data = JSON.parse(unzip.readAsText(entry, 'utf8'));
-            const re = /([^\.\/\\]+)\.(?:[a-z]+)$/i;
-            const fileName = re.exec(filePath[0])[1];
-            if (
-              fs.existsSync(
-                PATH_CONFIG(
-                  'project',
-                  `${projectName}/${projectName}_module/${fileName}.json`
-                )
-              )
-            ) {
-              message.info('该流程块已存在');
-            } else {
-              fs.writeFileSync(
-                PATH_CONFIG(
-                  'project',
-                  `${projectName}/${projectName}_module/${fileName}.json`
-                ),
-                JSON.stringify({
-                  graphDataMap: data,
-                })
-              );
-              const newModuleTree = [...moduleTreeRef.current];
-              if (!currentCheckedModuleTreeNodeRef.current) {
-                // 没有选中
-                newModuleTree.push({
-                  title: fileName,
-                  type: 'process',
-                  key: getModuleUniqueId(newModuleTree),
-                  graphDataMap: {},
-                });
-              } else {
-                traverseTree(newModuleTree, item => {
-                  if (currentCheckedModuleTreeNodeRef.current === item.key) {
-                    if (item.type === 'process') {
-                      // 选中的是流程
-                      newModuleTree.push({
-                        title: fileName,
-                        type: 'process',
-                        key: getModuleUniqueId(newModuleTree),
-                        graphDataMap: {},
-                      });
-                    } else {
-                      // 选中的是目录
-                      item.children.push({
-                        title: fileName,
-                        type: 'process',
-                        key: getModuleUniqueId(newModuleTree),
-                        graphDataMap: {},
-                      });
-                    }
-                  }
-                });
-              }
-              changeModuleTree(newModuleTree);
-              fs.readFile(
-                PATH_CONFIG(
-                  'project',
-                  `${projectName}/${projectName}_module/manifest.json`
-                ),
-                function(err, data) {
-                  if (!err) {
-                    let description = JSON.parse(data.toString());
-                    console.log(description);
-                    fs.writeFile(
-                      PATH_CONFIG(
-                        'project',
-                        `${projectName}/${projectName}_module/manifest.json`
-                      ),
-                      JSON.stringify({
-                        ...description,
-                        moduleTree: newModuleTree,
-                      }),
-                      function(err) {
-                        if (err) {
-                          console.error(err);
-                        }
-                      }
-                    );
-                  }
-                }
-              );
-            }
-          };
           ipcRenderer.removeAllListeners('chooseItem');
           ipcRenderer.send(
             'choose-directory-dialog',
@@ -429,6 +479,19 @@ export default memo(
             ['openFile']
           );
           ipcRenderer.on('chooseItem', handleFilePath);
+        },
+      },
+      {
+        description: '导出',
+        type: 'upload',
+        onClick: () => {
+          console.log(treeTabRef.current);
+          if (isEffectProcess()) {
+            setIsExport(true);
+            setModalVisible(true);
+          } else {
+            message.error('请选中流程再导出');
+          }
         },
       },
       {
@@ -474,59 +537,111 @@ export default memo(
           <NewProcess resetVisible={resetVisible} tag={visible} />
         )}
         <Modal
-          title="流程发布至控制台"
+          title={isExport ? '导出' : '流程发布至控制台'}
           visible={modalVisible}
           footer={
             <div>
               <Button
                 onClick={() => {
                   setModalVisible(false);
+                  setIsExport(false);
                 }}
               >
                 取消
               </Button>
-              <Button
-                type="dashed"
-                onClick={() => {
-                  setModalVisible(false);
-                  let processName = '';
-                  try {
-                    transformProcessToPython();
-                    traverseTree(processTree, item => {
-                      if (item.key === currentCheckedTreeNode) {
-                        processName = item.title;
+              {isExport ? (
+                <Button
+                  onClick={() => {
+                    if (exportType === 'python') {
+                      try {
+                        transformProcessToPython();
+                        // traverseTree(processTree, item => {
+                        //   if (item.key === currentCheckedTreeNode) {
+                        //     processName = item.title;
+                        //   }
+                        // });
+                        getDownLoadPath(
+                          downProcessZipToLocal,
+                          getProcessName(),
+                          descText,
+                          versionText
+                        );
+                      } catch (e) {
+                        message.error('代码转换出错，请检查流程图');
+                        console.log(e);
                       }
-                    });
-                    downloadPython(
-                      downProcessZipToLocal,
-                      processName,
-                      descText,
-                      versionText
-                    );
-                  } catch (e) {
-                    message.error('代码转换出错，请检查流程图');
-                    console.log(e);
-                  }
-                }}
-              >
-                下载到本地
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => {
-                  hanldePublishModalOk();
-                }}
-              >
-                发布
-              </Button>
+                    } else {
+                      getDownLoadPath(exportProcess);
+                    }
+
+                    setModalVisible(false);
+                    setIsExport(false);
+                  }}
+                >
+                  导出
+                </Button>
+              ) : (
+                <Fragment>
+                  <Button
+                    type="dashed"
+                    onClick={() => {
+                      setModalVisible(false);
+                      let processName = '';
+                      try {
+                        transformProcessToPython();
+                        traverseTree(processTree, item => {
+                          if (item.key === currentCheckedTreeNode) {
+                            processName = item.title;
+                          }
+                        });
+                        getDownLoadPath(
+                          downProcessZipToLocal,
+                          processName,
+                          descText,
+                          versionText
+                        );
+                      } catch (e) {
+                        message.error('代码转换出错，请检查流程图');
+                        console.log(e);
+                      }
+                    }}
+                  >
+                    下载到本地
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      hanldePublishModalOk();
+                    }}
+                  >
+                    发布
+                  </Button>
+                </Fragment>
+              )}
             </div>
           }
           // onOk={hanldePublishModalOk}
           onCancel={() => {
+            setIsExport(false);
             setModalVisible(false);
           }}
         >
           <Form {...layout} labelAlign="left">
+            {isExport && (
+              <FormItem label="类型">
+                <Radio.Group
+                  defaultValue={exportType}
+                  onChange={e => setExportType(e.target.value)}
+                >
+                  <Tooltip title="json文件，可以给其他电脑使用">
+                    <Radio value={'json'}>共享文件</Radio>
+                  </Tooltip>
+                  <Tooltip title="python文件，可供私有机器人离线使用">
+                    <Radio value={'python'}>机器人文件</Radio>
+                  </Tooltip>
+                </Radio.Group>
+              </FormItem>
+            )}
             <FormItem label="描述">
               <TextArea
                 placeholder="请输入流程描述"

@@ -1,7 +1,7 @@
 import './ParamPanel.scss';
 
 import React, { useEffect, useState, Fragment } from 'react';
-import { Input, Select, AutoComplete } from 'antd';
+import { Input, Select, AutoComplete, Tooltip } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
 import event from '../../eventCenter';
@@ -472,7 +472,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
       {checkedBlock.key && checkedBlock.key.indexOf('module') !== -1 ? (
         <Fragment>
           {checkedBlock.properties.map(item => {
-            if (item.cnName !== '标签名称') {
+            if (item.cnName === '输入参数') {
               return (
                 <Fragment>
                   <div className="parampanel-required">{item.cnName}</div>
@@ -485,31 +485,47 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                               className="param-title"
                               title={valueItem.name}
                             >
-                              变量名
-                            </span>
-                            <div style={{ flex: 1, overflow: 'hidden' }}>
-                              <Input
-                                defaultValue={valueItem.name} // 可以加上 param.default 在参数面板显示默认值
-                                onChange={e => {
-                                  valueItem.name = e.target.value;
-                                  handleEmitCodeTransform(cards);
-                                }}
-                                onKeyDown={e => stopDeleteKeyDown(e)}
-                              />
-                            </div>
-                          </div>
-                          <div className="parampanel-item">
-                            <span
-                              className="param-title"
-                              title={valueItem.name}
-                            >
-                              {item.cnName === '流程块返回' ? '描述' : '值'}
+                              {valueItem.name}
                             </span>
                             <div style={{ flex: 1, overflow: 'hidden' }}>
                               <Input
                                 defaultValue={valueItem.value} // 可以加上 param.default 在参数面板显示默认值
                                 onChange={e => {
                                   valueItem.value = e.target.value;
+                                  handleEmitCodeTransform(cards);
+                                }}
+                                onKeyDown={e => stopDeleteKeyDown(e)}
+                              />
+                            </div>
+                          </div>
+                        </Fragment>
+                      );
+                    })}
+                  </div>
+                </Fragment>
+              );
+            } else if (item.cnName === '流程块返回') {
+              return (
+                <Fragment>
+                  <div className="parampanel-required">{item.cnName}</div>
+                  <div className="parampanel-content">
+                    {item.value.map(valueItem => {
+                      return (
+                        <Fragment>
+                          <div className="parampanel-item">
+                            <Tooltip placement="left" title={valueItem.value}>
+                              <span
+                                className="param-title"
+                                title={valueItem.name}
+                              >
+                                返回值
+                              </span>
+                            </Tooltip>
+                            <div style={{ flex: 1, overflow: 'hidden' }}>
+                              <Input
+                                defaultValue={valueItem.name} // 可以加上 param.default 在参数面板显示默认值
+                                onChange={e => {
+                                  valueItem.name = e.target.value;
                                   handleEmitCodeTransform(cards);
                                 }}
                                 onKeyDown={e => stopDeleteKeyDown(e)}
