@@ -31,10 +31,17 @@ export default ({ position, handleDelete, handleRename }) => {
     };
 
     const contextMenu = document.querySelector('.rightClickMenu');
+    const rightPanel = document.querySelector('.rightclick-panel');
 
     document.addEventListener('click', handleClose);
+    if (rightPanel) {
+      rightPanel.addEventListener('mousedown', handleClose);
+    }
     return () => {
       document.removeEventListener('click', handleClose);
+      if (rightPanel) {
+        rightPanel.removeEventListener('mousedown', handleClose);
+      }
     };
   }, [left, top]);
   return (

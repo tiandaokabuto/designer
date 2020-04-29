@@ -14,6 +14,7 @@ import {
   writeGlobalConfig,
 } from '../../../../../login/utils';
 import event from '../../eventCenter';
+import { encrypt } from '@/login/utils';
 
 const fs = require('fs');
 
@@ -52,7 +53,10 @@ const readGlobalConfig = (callback, flag = false) => {
   const path = `${currPath}/globalconfig/config.json`;
   fs.readFile(path, async function(err, data) {
     if (!err) {
-      const { automicList, ip } = JSON.parse(data.toString());
+      const { automicList, ip } =
+        data.toString().indexOf('{') === -1
+          ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
+          : JSON.parse(data.toString());
       if (flag || !automicList) {
         // 调起接口 返回数据 TODO...
         const getAbialityStructure = () => {

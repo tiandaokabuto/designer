@@ -55,10 +55,12 @@ export const readGlobalConfig = callback => {
     if (err) {
       writeFileRecursive(
         path,
-        JSON.stringify({
-          ip: '172.168.201.90',
-          port: '9999',
-        }),
+        encrypt.argEncryptByDES(
+          JSON.stringify({
+            ip: '172.168.201.90',
+            port: '9999',
+          })
+        ),
         function(err) {
           if (!err) {
             callback && callback('172.168.201.90', '9999');
@@ -66,21 +68,18 @@ export const readGlobalConfig = callback => {
         }
       );
     } else {
-      const {
-        ip,
-        port,
-        userName,
-        password,
-        serialNumber,
-        userDay,
-      } = JSON.parse(data.toString());
+      const { ip, port, userName, password, serialNumber, userDay, offLine } =
+        data.toString().indexOf('{') === -1
+          ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
+          : JSON.parse(data.toString());
       callback(
         ip,
         port,
         userName,
         password,
         serialNumber,
-        JSON.parse(data.toString()).offLine,
+        offLine,
+        // JSON.parse(encrypt.argDecryptByDES(data.toString())).offLine,
         userDay
       );
     }
@@ -91,13 +90,19 @@ export const writeGlobalConfig = content => {
   const path = `${currPath}/globalconfig/config.json`;
   fs.readFile(path, function(err, data) {
     if (!err) {
-      const config = data.toString() ? JSON.parse(data.toString()) : {};
+      const config = data.toString()
+        ? data.toString().indexOf('{') === -1
+          ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
+          : JSON.parse(data.toString())
+        : {};
       fs.writeFile(
         path,
-        JSON.stringify({
-          ...config,
-          ...content,
-        }),
+        encrypt.argEncryptByDES(
+          JSON.stringify({
+            ...config,
+            ...content,
+          })
+        ),
         function() {}
       );
     }

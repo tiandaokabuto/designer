@@ -1,6 +1,7 @@
 import { message } from 'antd';
 
 import store from '@/store';
+import { encrypt } from '@/login/utils';
 import { findNodeByKey, changeModifyState } from '../../utils';
 import { setGraphDataMap } from '../../../reduxActions';
 
@@ -17,7 +18,7 @@ const getAutoMicListMap = automicList => {
     } else {
       result = {
         ...result,
-        [child.item.main]: child.item,
+        [child.item.pkg + child.item.main + child.item.module]: child.item,
       };
     }
   }
@@ -156,7 +157,10 @@ const isEqualType = (standard, current, isParam = false) => {
 const verifyCards = (current, standard) => {
   let flag = false;
   traverseAllCards(current, node => {
-    const isEqual = isEqualType(standard[node.main], node);
+    const isEqual = isEqualType(
+      standard[node.pkg + node.main + node.module],
+      node
+    );
     if (!isEqual) {
       flag = true;
       node.isCompatable = true;
@@ -198,7 +202,10 @@ export default () => {
           encoding: 'utf-8',
         }
       );
-      const { automicList = [] } = JSON.parse(data);
+      const { automicList = [] } =
+        data.toString().indexOf('{') === -1
+          ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
+          : JSON.parse(data.toString());
       const temp = automicList.find(item => item.key === 'aviable').children;
       const automicListMap = getAutoMicListMap(temp);
       let isCompatable = false;

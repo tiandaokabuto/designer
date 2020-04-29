@@ -270,16 +270,16 @@ const BasicStatement = useInjectContext(props => {
                     '键盘-目标中输入文本',
                     '截取Windows控件图片',
                     '判断元素是否存在',
+                    '上传文件',
                   ];
                   if (cmdNameArr.includes(card.cmdName)) {
-                    console.log(PATH_CONFIG('windowHook'));
                     try {
                       const worker = exec(PATH_CONFIG('windowHook'));
                     } catch (e) {
                       console.log(e);
                     }
-                    console.log('调用testHook');
                   }
+                  ipcRenderer.removeAllListeners('updateXpath');
                   ipcRenderer.on(
                     'updateXpath',
                     (e, { xpath, imageData, targetId }) => {
