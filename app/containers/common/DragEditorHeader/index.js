@@ -379,7 +379,9 @@ export default memo(
             '选择',
             ['openFile']
           );
-          ipcRenderer.on('chooseItem', getChooseFilePath);
+          ipcRenderer.on('chooseItem', (e, filePath) => {
+            getChooseFilePath(filePath, 'process');
+          });
         },
       },
       {

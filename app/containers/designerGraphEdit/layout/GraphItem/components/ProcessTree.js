@@ -180,7 +180,9 @@ const menu = (
         ipcRenderer.send('choose-directory-dialog', 'showOpenDialog', '选择', [
           'openFile',
         ]);
-        ipcRenderer.on('chooseItem', getChooseFilePath);
+        ipcRenderer.on('chooseItem', (e, filePath) => {
+          getChooseFilePath(filePath, 'processModule');
+        });
       }}
     >
       导入流程块
