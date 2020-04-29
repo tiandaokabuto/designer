@@ -203,7 +203,7 @@ const transformBasicStatement = (
       if (outputParam) {
         result.output += `\n${paddingStart(
           depth
-        )}${outputParam} = RPA_${tail}(${inputParamKV})\n`;
+        )}${outputParam} = RPA_Atomic_${tail}(${inputParamKV})\n`;
       } else {
         result.output += `\n${paddingStart(
           depth

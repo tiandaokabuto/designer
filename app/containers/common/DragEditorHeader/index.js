@@ -42,6 +42,7 @@ import {
   checkAndMakeDir,
   isDirNode,
   getUniqueId,
+  getChooseFilePath,
 } from '../utils';
 import {
   updateCurrentPagePosition,
@@ -232,107 +233,7 @@ export default memo(
       zip.writeZip(`${filePath}.zip`);
     };
 
-    const handleFilePath = (e, filePath) => {
-      const unzip = new adm_zip(filePath[0]);
-      const entry = unzip.getEntry('manifest.json');
-      const data = JSON.parse(unzip.readAsText(entry, 'utf8'));
-      const re = /([^\.\/\\]+)\.(?:[a-z]+)$/i;
-      const fileName = re.exec(filePath[0])[1];
-      if (treeTabRef.current === 'processModule') {
-        if (
-          fs.existsSync(
-            PATH_CONFIG(
-              'project',
-              `${projectName}/${projectName}_module/${fileName}.json`
-            )
-          )
-        ) {
-          message.info('该流程块已存在');
-        } else {
-          // 写入文件
-          fs.writeFileSync(
-            PATH_CONFIG(
-              'project',
-              `${projectName}/${projectName}_module/${fileName}.json`
-            ),
-            JSON.stringify({
-              graphDataMap: data,
-            })
-          );
-          const newModuleTree = [...moduleTreeRef.current];
-          // 没有选中流程块或者目录
-          if (!currentCheckedModuleTreeNodeRef.current) {
-            newModuleTree.push({
-              title: fileName,
-              type: 'process',
-              key: getModuleUniqueId(newModuleTree),
-              graphDataMap: {},
-            });
-          } else {
-            // 对redux中的moduleTree进行修改
-            traverseTree(newModuleTree, item => {
-              if (currentCheckedModuleTreeNodeRef.current === item.key) {
-                // 选中的是流程
-                if (item.type === 'process') {
-                  newModuleTree.push({
-                    title: fileName,
-                    type: 'process',
-                    key: getModuleUniqueId(newModuleTree),
-                    graphDataMap: {},
-                  });
-                } else {
-                  // 选中的是目录
-                  item.children.push({
-                    title: fileName,
-                    type: 'process',
-                    key: getModuleUniqueId(newModuleTree),
-                    graphDataMap: {},
-                  });
-                }
-              }
-            });
-          }
-          changeModuleTree(newModuleTree);
-          persistentModuleStorage(newModuleTree, projectName);
-        }
-      } else {
-        if (
-          fs.existsSync(PATH_CONFIG('project', `${projectName}/${fileName}`))
-        ) {
-          message.info('流程已存在');
-        } else {
-          let newProcessTree = [...processTreeRef.current];
-          const isDirNodeBool = isDirNode(
-            processTreeRef.current,
-            currentCheckedTreeNodeRef.current
-          );
-          const isLeafNodeOrUndefined =
-            currentCheckedTreeNodeRef.current === undefined || !isDirNodeBool;
-          const uniqueid = getUniqueId(processTreeRef.current);
-          checkAndMakeDir(PATH_CONFIG('project', `${projectName}/${fileName}`));
-          if (isLeafNodeOrUndefined) {
-            newProcessTree.push({
-              title: fileName,
-              key: uniqueid,
-              type: 'process',
-              isLeaf: true,
-              data,
-            });
-          } else {
-            isDirNodeBool.children.push({
-              title: fileName,
-              key: uniqueid,
-              type: 'process',
-              isLeaf: true,
-              data,
-            });
-          }
-          event.emit('expandKeys', isDirNodeBool.key);
-          changeProcessTree(newProcessTree);
-          persistentStorage();
-        }
-      }
-    };
+    const handleFilePath = (e, filePath) => {};
 
     const TOOLS_DESCRIPTION_FOR_CODEBLOCK = useMemo(
       () => [
@@ -478,7 +379,7 @@ export default memo(
             '选择',
             ['openFile']
           );
-          ipcRenderer.on('chooseItem', handleFilePath);
+          ipcRenderer.on('chooseItem', getChooseFilePath);
         },
       },
       {
@@ -582,7 +483,7 @@ export default memo(
                 </Button>
               ) : (
                 <Fragment>
-                  <Button
+                  {/* <Button
                     type="dashed"
                     onClick={() => {
                       setModalVisible(false);
@@ -607,7 +508,7 @@ export default memo(
                     }}
                   >
                     下载到本地
-                  </Button>
+                  </Button> */}
                   <Button
                     type="primary"
                     onClick={() => {

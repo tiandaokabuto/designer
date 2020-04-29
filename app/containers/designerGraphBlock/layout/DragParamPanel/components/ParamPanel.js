@@ -1,6 +1,6 @@
 import './ParamPanel.scss';
 
-import React, { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState, useRef, Fragment } from 'react';
 import { Input, Select, AutoComplete, Tooltip } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
@@ -69,6 +69,8 @@ const getComponentType = (
   setFlag,
   handleValidate
 ) => {
+  const xpathKeyRef = useRef('');
+
   useEffect(() => {
     handleValidate({
       value: param.value,
@@ -254,10 +256,14 @@ const getComponentType = (
         const handleMutiply = value => {
           param.value = getVariableList(value)[param.mutiplyIndex];
         };
-
+        const select = window.getSelection().toString();
+        console.log(select, 'select');
+        if (!select) {
+          xpathKeyRef.current = uniqueId('key_');
+        }
         return (
           <AutoComplete
-            key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
+            key={keyFlag || param.enName === 'xpath' ? xpathKeyRef.current : ''}
             defaultValue={String(param.value || param.default)}
             dataSource={(dataSource || []).concat(appendDataSource)}
             onSelect={value => {

@@ -2,6 +2,7 @@ import { message } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
 import { findNodeById, generateUniqueId } from './utils';
+import { encrypt } from '@/login/utils';
 import {
   setGraphDataMap,
   updateGraphData,
@@ -47,7 +48,10 @@ class NodeHandler {
             ),
             (err, data) => {
               if (!err) {
-                const { graphDataMap } = JSON.parse(data.toString());
+                const { graphDataMap } =
+                  data.toString().indexOf('{') === -1
+                    ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
+                    : JSON.parse(data.toString());
                 setGraphDataMap(key, graphDataMap);
               } else {
                 console.log(err);

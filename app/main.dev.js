@@ -222,7 +222,7 @@ const createWindow = async () => {
     func,
     label = '存储',
     properties = [],
-    filters = [{ name: 'All Files', extensions: ['*'] }]
+    filters = [{ name: 'All Files', extensions: ['zip'] }]
   ) {
     dialog[func](mainWindow, {
       buttonLabel: label,

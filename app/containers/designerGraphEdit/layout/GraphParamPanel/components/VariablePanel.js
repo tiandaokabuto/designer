@@ -4,6 +4,7 @@ import uniqueId from 'lodash/uniqueId';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
 import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
+import { synchroGraphDataToProcessTree } from '../../../../reduxActions';
 import event from '../../../../designerGraphBlock/layout/eventCenter';
 
 import './VariablePanel.scss';
@@ -76,6 +77,7 @@ export default ({
                     });
                   }
                   noticyChange();
+                  synchroGraphDataToProcessTree();
                   handleEmitCodeTransform && handleEmitCodeTransform();
                 }}
                 onKeyDown={e => stopDeleteKeyDown(e)}
@@ -89,6 +91,7 @@ export default ({
                   onChange={e => {
                     varibale.value = e.target.value;
                     noticyChange();
+                    synchroGraphDataToProcessTree();
                     handleEmitCodeTransform && handleEmitCodeTransform();
                   }}
                   onKeyDown={e => stopDeleteKeyDown(e)}
@@ -102,6 +105,7 @@ export default ({
                   className="variablePanel-btn"
                   onClick={() => {
                     handleVariableDelete(index);
+                    synchroGraphDataToProcessTree();
                     handleEmitCodeTransform && handleEmitCodeTransform();
                     event.emit('varibaleDelete', varibale);
                   }}

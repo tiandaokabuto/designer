@@ -17,7 +17,17 @@ import LoginFromInput from './components/LoginFromInput';
 const { ipcRenderer, remote } = require('electron');
 
 let userDay = getUserDay();
-console.log(encrypt.argEncryptByDES('2020-12-31'));
+console.log(encrypt.argEncryptByDES('{}'));
+console.log(
+  encrypt.argDecryptByDES(
+    'nD/4FWXHNPndqHJ+uqy4XL5EmVhX4ip+ihJpJLUb9SKBI5W8rTMvNATYBnhUlmDO5xSHqmN8kEMeBGc4vYRMnA89hVTlGJ/NX4MO/Cda4U5VAOXK8HGSNFt8dNNIfRFqLBD5V6mGvip4JBPXEHCj6UJCfkIA/Qf4WUI8tqgxDO50WaNxne7Oq6dv6eck/hHnEtHctykMnxHKGnTCJcaAM5zRH1J3Rp4MJhrUJeqyOgWNeILHjpXrBD1KOGSz+x4/LvDbjxe8a1g='
+  )
+);
+console.log(
+  encrypt.argDecryptByDES(
+    'nD/4FWXHNPlSjduJjsZYvwjJtLdsLPTJGEasKFAo7CJ/jiF3SWLOVveZh2EC2KPileByEgh6JNKwQ3b5QVm4wvW0UpR29/JyW2NRqunjiTXEGnqMrSEZwdnXXCx644tU56rOq6bR7PAVhEkpgLqfojKPS2grUBJBzx/gU1fVCfuf1Ux3ogzlJpwteBeKe34LTXWq+kljbCNDVfwUATnexxPH201ArH1wzKLTvDiaWLbNaewfExZ7s+1mbwvb2avElTvSEfSqxL7EGnqMrSEZweN7NmUjyjMaoq+j+nsKbJ4W+Cjc1VGc/f7kngcQ8Mbndo4jNeNlGbgCthCf0gojhDKBfeflv6brflzGvHZIf2dSI2n5SMJM+BWESSmAup+iGPGiC7C4cXFKwRq2BmPbPKcx5dLTSGfnXoZjuKu5TX+KBXR1olc4k8fQCKh8CMBeVWL/AJLosy0Fa3+I2zl99Itkqxm89Rz43ahyfrqsuFy+RJlYV+IqfooSaSS1G/UigSOVvK0zLzQE2AZ4VJZgzucUh6pjfJBDHgRnOL2ETJwPPYVU5RifzV+DDvwnWuFOVQDlyvBxkjRbfHTTSH0RaiwQ+Vephr4qeCQT1xBwo+lCQn5CAP0H+FlCPLaoMQzudFmjcZ3uzqunb+nnJP4R5xLR3LcpDJ8Ryhp0wiXGgDOc0R9Sd0aeDCYa1CXqsjoFjXiCx46V6wQ9Sjhks/seP5O9BLUO0sgkUijzXwsF6dczN+olvan3jcQCFBQf5GesridpNeUDQr3wwP/mG+v0lVEp3UHJhQ8a7/ByBo/mXvbgNiWyyw0idcr8QhPtVVrMoiWHGFyP5Sl+czEQc3D4q1iZx2z6VhiwR8MWeYq6371sC3WcPFE8j5EoRUS9UmBGVzUT17YHydOuyjl5u8goqg9+S0z0oMMzmOMPUqDYl+B7N6cIVsDA6Tn2npPUCTTmKWr4RyUY8X4bGGrcztGK+Et5U9AYrpzJDF/VGqrWo1uSTdgXZvjrY38o1dgGGZuY'
+  )
+);
 
 const Login = () => {
   const [userName, setUserName] = useState('');
