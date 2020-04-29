@@ -3,10 +3,12 @@ import { Modal, Button } from 'antd';
 
 import './index.scss';
 
-const fs = require('fs');
+/* const fs = require('fs'); */
+// 涉及git的同步问题，每次更改后不会同步下来，pull下来的时候还是原始版本，改为手动更改
+const version = '03.2.1';
 
 export default function HelpModel({ visible, handleCancel }) {
-  const [version, setVersion] = useState('');
+  /* const [version, setVersion] = useState('');
 
   useEffect(() => {
     getVerison(setVersion);
@@ -22,7 +24,7 @@ export default function HelpModel({ visible, handleCancel }) {
         callBack(version);
       }
     });
-  };
+  }; */
 
   return (
     <Modal
@@ -44,9 +46,7 @@ export default function HelpModel({ visible, handleCancel }) {
           <h2 className="help-model-title-enTitle">SD-RPA</h2>
         </div>
         <div className="help-model-version">
-          <Button className="help-model-version-test" onClick={getVerison}>
-            检测版本
-          </Button>
+          <Button className="help-model-version-test">检测版本</Button>
           <p className="help-model-version-text help-model-version-current">
             当前版本号：{version}
           </p>
