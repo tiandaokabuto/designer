@@ -9,3 +9,4 @@ export const ContinueStatementTag = /*        */ 0b01000000;
 export const SleepStatementTag = /*           */ 0b10000000;
 export const VariableDeclareTag = /*          */ 0b00000011;
 export const CustomCodeBlockTag = /*          */ 0b00000101;
+export const ModuleBlockTag = /*              */ 0b00001001;

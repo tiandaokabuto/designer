@@ -49,6 +49,7 @@ export default ({
       $$typeof: 1,
       text: title,
       title,
+      subtype: 9,
       properties: graphDataMap.properties,
       // properties: [],
       graphDataMap,
