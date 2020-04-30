@@ -699,12 +699,6 @@ export const openProject = name => {
               dirItemData.toString().indexOf('{') === -1
                 ? JSON.parse(encrypt.argDecryptByDES(dirItemData.toString()))
                 : JSON.parse(dirItemData.toString());
-            if (dirItem === '222') {
-              console.log(
-                JSON.parse(encrypt.argDecryptByDES(dirItemData.toString()))
-              );
-              console.log(resultData);
-            }
             // 以流程名为映射关系
             traverseTree(processTree, treeItem => {
               if (treeItem.title === dirItem) {
