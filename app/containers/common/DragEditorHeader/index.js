@@ -189,14 +189,17 @@ export default memo(
         find.description = '停止';
         find.onClick = function() {
           // 终止流程
-          exec(`${process.cwd()}/app/pythonUtils/stop.bat ${uuid}`, err => {
-            if (!err) {
-              message.success('停止成功');
-            } else {
-              message.error('停止失败');
+          exec(
+            `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/stopUtils/stop.bat ${uuid}`,
+            err => {
+              if (!err) {
+                message.success('停止成功');
+              } else {
+                message.error('停止失败');
+              }
+              console.log(err);
             }
-            console.log(err);
-          });
+          );
           const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
             item => item.description === '停止'
           );
