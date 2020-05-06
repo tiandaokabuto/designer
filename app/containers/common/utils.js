@@ -373,7 +373,7 @@ export const renameNodeByKey = (
 
 /**
  * 检查和创建路径
- * @param {} dirName 路径
+ * @param {} dirName 完整路径 ../a/b/c.py
  */
 export function checkAndMakeDir(dirName) {
   if (fs.existsSync(dirName)) {
@@ -383,6 +383,14 @@ export function checkAndMakeDir(dirName) {
       fs.mkdirSync(dirName);
       return true;
     }
+    return false;
+  }
+}
+
+export function checkAndMakeDirH(dirName) {
+  if (!fs.existsSync(dirName)) {
+    checkAndMakeDir(path.dirname(dirName));
+    fs.mkdirSync(dirName);
   }
 }
 
