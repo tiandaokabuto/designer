@@ -4,8 +4,8 @@ import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import ItemTypes from '../../statementTypes';
 import { CHANGE_CARDDATA } from '../../../../../actions/codeblock';
-
-import PATH_CONFIG from '@/constants/localFilePath.js';
+import { encrypt } from '@/login/utils';
+import PATH_CONFIG from '@/constants/localFilePath';
 
 const fs = require('fs');
 
@@ -32,14 +32,16 @@ export default ({
     if (typeof title === 'string') {
       titleRef.current = title;
     }
-    const { graphDataMap } = JSON.parse(
-      fs.readFileSync(
-        PATH_CONFIG(
-          'project',
-          `${currentProject}/${currentProject}_module/${titleRef.current}.json`
-        )
+    const data = fs.readFileSync(
+      PATH_CONFIG(
+        'project',
+        `${currentProject}/${currentProject}_module/${titleRef.current}.json`
       )
     );
+    const { graphDataMap } =
+      data.toString().indexOf('{') === -1
+        ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
+        : JSON.parse(data.toString());
     newItem = {
       ...item,
       type: ItemTypes.CARD,
@@ -47,6 +49,7 @@ export default ({
       $$typeof: 1,
       text: title,
       title,
+      subtype: 9,
       properties: graphDataMap.properties,
       // properties: [],
       graphDataMap,

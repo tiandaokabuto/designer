@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Tree, Modal, Icon } from 'antd';
+import { Tree, Modal, Icon, Dropdown, Menu } from 'antd';
 import { useSelector } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
 import { ItemPanel, Item } from 'gg-editor';
@@ -24,12 +24,15 @@ import {
   setAllModifiedState,
   setNodeModifiedState,
   traverseTree,
+  getChooseFilePath,
   // persistentModuleStorage,
 } from '../../../../common/utils';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
 import { fromTextArea } from 'codemirror';
 import event from '../../../../designerGraphBlock/layout/eventCenter';
+
+const { ipcRenderer } = require('electron');
 
 const TreeNodeTitle = ({
   title,
@@ -167,6 +170,25 @@ const transformTreeTitle = (
   recurise(result);
   return result;
 };
+
+const menu = (
+  <Menu>
+    <Menu.Item
+      key="1"
+      onClick={e => {
+        ipcRenderer.removeAllListeners('chooseItem');
+        ipcRenderer.send('choose-directory-dialog', 'showOpenDialog', '选择', [
+          'openFile',
+        ]);
+        ipcRenderer.on('chooseItem', (e, filePath) => {
+          getChooseFilePath(filePath, 'processModule');
+        });
+      }}
+    >
+      导入流程块
+    </Menu.Item>
+  </Menu>
+);
 
 export default ({ type }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -426,107 +448,126 @@ export default ({ type }) => {
     <div
       style={{
         height: 'calc(100vh - 150px)',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
-      <Tree
-        className={
-          type === 'secondModule' ? 'atomicCList-tree' : 'draggable-tree'
-        }
-        // className="draggable-tree"
-        expandedKeys={expandedKeys}
-        defaultExpandAll={true}
-        switcherIcon={type === 'secondModule' ? '' : <Switcher />}
-        showIcon={type === 'secondModule' ? false : true}
-        draggable={type === 'secondModule' ? false : true}
-        blockNode
-        onExpand={expandKeys => {
-          setExpandedKeys(expandKeys);
-        }}
-        onRightClick={({ event, node }) => {
-          setPosition({
-            left: event.pageX + 40,
-            top: event.pageY - 20,
-            node: node.props,
-          });
-        }}
-        onDragEnter={onDragEnter}
-        onDrop={onDrop}
-        onDragStart={onDragStart}
-        treeData={
-          type === 'process'
-            ? transformTreeTitle(
-                processTree,
-                type,
-                currentProject,
-                blockTreeTab
-              )
-            : transformTreeTitle(moduleTree, type, currentProject, blockTreeTab)
-        }
-        selectedKeys={
-          type === 'process'
-            ? [currentCheckedTreeNode]
-            : [currentCheckedModuleTreeNode]
-        }
-        onSelect={(selectedKey, e) => {
-          if (type === 'process') {
-            if (currentCheckedTreeNode === undefined) {
-              // 首次打开时currentCheckedTreeNode为undefined
-              setSelectedKey(selectedKey[0]);
-              changeCheckedTreeNode(selectedKey[0]);
-            } else {
-              // 选择自身以外的其他节点
-              if (selectedKey.length !== 0) {
-                const isModified = hasNodeModified(
+      <div className="tree-panel">
+        <Tree
+          className={
+            type === 'secondModule' ? 'atomicCList-tree' : 'draggable-tree'
+          }
+          // className="draggable-tree"
+          expandedKeys={expandedKeys}
+          defaultExpandAll={true}
+          switcherIcon={type === 'secondModule' ? '' : <Switcher />}
+          showIcon={type === 'secondModule' ? false : true}
+          draggable={type === 'secondModule' ? false : true}
+          blockNode
+          onExpand={expandKeys => {
+            setExpandedKeys(expandKeys);
+          }}
+          onRightClick={({ event, node }) => {
+            setPosition({
+              left: event.pageX + 40,
+              top: event.pageY - 20,
+              node: node.props,
+            });
+          }}
+          onDragEnter={onDragEnter}
+          onDrop={onDrop}
+          onDragStart={onDragStart}
+          treeData={
+            type === 'process'
+              ? transformTreeTitle(
                   processTree,
-                  currentCheckedTreeNode
-                );
-                // 当前选中节点是否有更改
-                if (isModified) {
+                  type,
+                  currentProject,
+                  blockTreeTab
+                )
+              : transformTreeTitle(
+                  moduleTree,
+                  type,
+                  currentProject,
+                  blockTreeTab
+                )
+          }
+          selectedKeys={
+            type === 'process'
+              ? [currentCheckedTreeNode]
+              : [currentCheckedModuleTreeNode]
+          }
+          onSelect={(selectedKey, e) => {
+            if (type === 'process') {
+              if (currentCheckedTreeNode === undefined) {
+                // 首次打开时currentCheckedTreeNode为undefined
+                setSelectedKey(selectedKey[0]);
+                changeCheckedTreeNode(selectedKey[0]);
+              } else {
+                // 选择自身以外的其他节点
+                if (selectedKey.length !== 0) {
+                  const isModified = hasNodeModified(
+                    processTree,
+                    currentCheckedTreeNode
+                  );
+                  // 当前选中节点是否有更改
+                  if (isModified) {
+                    setSelectedKey(selectedKey[0]);
+                    setModalVisible(true); // 提示保存
+                  } else {
+                    setSelectedKey(selectedKey[0]);
+                    changeCheckedTreeNode(selectedKey[0]);
+                  }
+                }
+              }
+            } else {
+              if (currentCheckedModuleTreeNode === undefined) {
+                setSelectedKey(selectedKey[0]);
+                changeCheckedModuleTreeNode(selectedKey[0]);
+              } else {
+                if (selectedKey.length !== 0) {
                   setSelectedKey(selectedKey[0]);
-                  setModalVisible(true); // 提示保存
-                } else {
-                  setSelectedKey(selectedKey[0]);
-                  changeCheckedTreeNode(selectedKey[0]);
+                  changeCheckedModuleTreeNode(selectedKey[0]);
                 }
               }
             }
-          } else {
-            if (currentCheckedModuleTreeNode === undefined) {
-              setSelectedKey(selectedKey[0]);
-              changeCheckedModuleTreeNode(selectedKey[0]);
-            } else {
-              if (selectedKey.length !== 0) {
-                setSelectedKey(selectedKey[0]);
-                changeCheckedModuleTreeNode(selectedKey[0]);
-              }
-            }
-          }
-        }}
-      />
-      <ContextMenu
-        position={position}
-        handleDelete={handleDelete}
-        handleRename={handleRename}
-      />
-      <ConfirmModal
-        visible={modalVisible}
-        content="请确认是否保存?"
-        onCancel={() => {
-          setModalVisible(false);
-        }}
-        onCancelOk={() => {
-          resetGraphEditData();
-          changeCheckedTreeNode(selectedKey);
-          setModalVisible(false);
-        }}
-        onOk={() => {
-          setNodeModifiedState(processTree, currentCheckedTreeNode); // 把hasmodified改成false
-          persistentStorage(); // 保存currentCheckedTreeNode的内容
-          resetGraphEditData(); // 重设GraphEditData
-          changeCheckedTreeNode(selectedKey); // 修改当前选中
-          setModalVisible(false); // 关闭对话框
-        }}
-      />
+          }}
+        />
+        <ContextMenu
+          position={position}
+          handleDelete={handleDelete}
+          handleRename={handleRename}
+        />
+        <ConfirmModal
+          visible={modalVisible}
+          content="请确认是否保存?"
+          onCancel={() => {
+            setModalVisible(false);
+          }}
+          onCancelOk={() => {
+            resetGraphEditData();
+            changeCheckedTreeNode(selectedKey);
+            setModalVisible(false);
+          }}
+          onOk={() => {
+            setNodeModifiedState(processTree, currentCheckedTreeNode); // 把hasmodified改成false
+            persistentStorage(); // 保存currentCheckedTreeNode的内容
+            resetGraphEditData(); // 重设GraphEditData
+            changeCheckedTreeNode(selectedKey); // 修改当前选中
+            setModalVisible(false); // 关闭对话框
+          }}
+        />
+      </div>
+      {type === 'processModule' && (
+        <Dropdown overlay={menu} trigger={['contextMenu']}>
+          <div
+            className="rightclick-panel"
+            style={{
+              height: '100%',
+            }}
+          ></div>
+        </Dropdown>
+      )}
     </div>
   );
 };
