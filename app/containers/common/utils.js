@@ -32,7 +32,7 @@ const adm_zip = require('adm-zip');
  */
 export const newProject = (name, callback) => {
   clearGrapheditorData();
-  fs.mkdir(PATH_CONFIG('project', name), { recursive: true }, function (err) {
+  fs.mkdir(PATH_CONFIG('project', name), { recursive: true }, function(err) {
     if (!err) {
       // 修改左侧自定义目录树
       changeProcessTree([]);
@@ -47,7 +47,7 @@ export const newProject = (name, callback) => {
       fs.mkdir(
         PATH_CONFIG('project', `${name}/${name}_module`),
         { recursive: true },
-        function (err) {
+        function(err) {
           callback();
           // 修改流程块树
           changeModuleTree([]);
@@ -69,7 +69,7 @@ export const newProject = (name, callback) => {
  * 读取项目文件夹下的所有项目
  * @param {*} path
  */
-export const readAllFileName = (path) => {
+export const readAllFileName = path => {
   try {
     fs.mkdirSync(`${process.cwd()}/project`);
   } catch (err) {}
@@ -129,11 +129,11 @@ export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
       if (Array.isArray(parent)) {
         // parent为数组，parent = processTree时，在第一层
         // 父节点是否是数组
-        let index = parent.findIndex((item) => item.key === key); // 从数组中找到这个元素的index
-        let target = parent.find((item) => item.key === key);
+        let index = parent.findIndex(item => item.key === key); // 从数组中找到这个元素的index
+        let target = parent.find(item => item.key === key);
         // 把该目录下的全部流程都删除
         if (target.children) {
-          traverseTree(target.children, (item) => {
+          traverseTree(target.children, item => {
             if (item.type === 'process') {
               if (type === 'process') {
                 deleteFolderRecursive(
@@ -166,10 +166,10 @@ export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
         parent.splice(index, 1); // 在tree中删掉该元素
       } else {
         // parent不是processTree的情况
-        let index = parent.children.findIndex((item) => item.key === key);
-        const target = parent.children.find((item) => item.key === key);
+        let index = parent.children.findIndex(item => item.key === key);
+        const target = parent.children.find(item => item.key === key);
         if (target.children) {
-          traverseTree(target.children, (item) => {
+          traverseTree(target.children, item => {
             if (item.type === 'process') {
               if (type === 'process') {
                 deleteFolderRecursive(
@@ -213,9 +213,9 @@ export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
  * 递归删除文件夹
  * @param {*} path 路径
  */
-export const deleteFolderRecursive = (path) => {
+export const deleteFolderRecursive = path => {
   if (fs.existsSync(path)) {
-    fs.readdirSync(path).forEach(function (file) {
+    fs.readdirSync(path).forEach(function(file) {
       var curPath = path + '/' + file;
       if (fs.statSync(curPath).isDirectory()) {
         // recurse
@@ -258,17 +258,17 @@ export const renameNodeByKey = (
       <Input
         autoFocus
         defaultValue={node.title}
-        onBlur={(e) => {
+        onBlur={e => {
           const newTitle = e.target.value;
           if (node.type === 'process') {
             const dirs = fs.readdirSync(PATH_CONFIG('project', name));
-            const item = dirs.find((item) => newTitle === item);
+            const item = dirs.find(item => newTitle === item);
             if (!item) {
               node.title = newTitle;
               fs.rename(
                 PATH_CONFIG('project', `${name}/${oldTitle}`),
                 PATH_CONFIG('project', `${name}/${newTitle}`),
-                (err) => {
+                err => {
                   if (err) {
                     message.error(err);
                   }
@@ -300,13 +300,13 @@ export const renameNodeByKey = (
       <Input
         autoFocus
         defaultValue={node.title}
-        onBlur={(e) => {
+        onBlur={e => {
           const newTitle = e.target.value;
           if (node.type === 'process') {
             const dirs = fs.readdirSync(
               PATH_CONFIG('project', `${name}/${name}_module`)
             );
-            const item = dirs.find((item) => `${newTitle}.json` === item);
+            const item = dirs.find(item => `${newTitle}.json` === item);
             if (!item) {
               node.title = newTitle;
               // 重命名对应的json文件
@@ -373,7 +373,7 @@ export const renameNodeByKey = (
 
 /**
  * 检查和创建路径
- * @param {} dirName 路径
+ * @param {} dirName 路径 ../a/b/c/d
  */
 export function checkAndMakeDir(dirName) {
   if (fs.existsSync(dirName)) {
@@ -400,9 +400,9 @@ export const persistentStorage = (
   console.log('保存流程');
   let tree = JSON.parse(JSON.stringify(processTree));
   if (modifiedNodesArr) {
-    traverseTree(tree, (treeItem) => {
+    traverseTree(tree, treeItem => {
       if (treeItem.type === 'process') {
-        const find = modifiedNodesArr.find((item) => item === treeItem.key);
+        const find = modifiedNodesArr.find(item => item === treeItem.key);
         if (find) {
           fs.writeFileSync(
             PATH_CONFIG('project', `${name}/${treeItem.title}/manifest.json`),
@@ -414,7 +414,7 @@ export const persistentStorage = (
     });
   } else {
     // 遍历树
-    traverseTree(tree, (treeItem) => {
+    traverseTree(tree, treeItem => {
       // 匹配点击的流程
       if (treeItem.type === 'process') {
         if (treeItem.key === node) {
@@ -428,7 +428,7 @@ export const persistentStorage = (
     });
   }
   // 重新覆写processTree
-  fs.readFile(PATH_CONFIG('project', `${name}/manifest.json`), function (
+  fs.readFile(PATH_CONFIG('project', `${name}/manifest.json`), function(
     err,
     data
   ) {
@@ -445,7 +445,7 @@ export const persistentStorage = (
             processTree: tree,
           })
         ),
-        function (err) {
+        function(err) {
           if (err) {
             console.error(err);
           }
@@ -459,7 +459,7 @@ export const persistentModuleStorage = (moduleTree, name) => {
   // let tree = JSON.parse(JSON.stringify(moduleTree));
   fs.readFile(
     PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
-    function (err, data) {
+    function(err, data) {
       if (!err) {
         let description =
           data.toString().indexOf('{') === -1
@@ -473,7 +473,7 @@ export const persistentModuleStorage = (moduleTree, name) => {
               moduleTree,
             })
           ),
-          function (err) {
+          function(err) {
             if (err) {
               console.error(err);
             }
@@ -496,7 +496,7 @@ export const hasDuplicateKey = (tree, new_key) => {
   }
 };
 
-export const getUniqueId = (tree) => {
+export const getUniqueId = tree => {
   let new_key = uniqueId('key_');
   while (true) {
     if (hasDuplicateKey(tree, new_key)) {
@@ -508,7 +508,7 @@ export const getUniqueId = (tree) => {
   }
 };
 
-export const getModuleUniqueId = (tree) => {
+export const getModuleUniqueId = tree => {
   let new_key = uniqueId('key_module_');
   while (true) {
     if (hasDuplicateKey(tree, new_key)) {
@@ -665,7 +665,7 @@ export const newModuleDir = (
  */
 export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
   const files = fs.readdirSync(PATH_CONFIG('project', currentProject));
-  return files.find((item) => item === title);
+  return files.find(item => item === title);
   // const isDirNodeBool = isDirNode(tree, checkedTreeNode);
   // // 不在同级下建目录或流程跳过检验
   // if (!isDirNodeBool) return false;
@@ -677,8 +677,8 @@ export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
  * 打开项目
  * @param {*} name 项目名
  */
-export const openProject = (name) => {
-  fs.readFile(PATH_CONFIG('project', `${name}/manifest.json`), function (
+export const openProject = name => {
+  fs.readFile(PATH_CONFIG('project', `${name}/manifest.json`), function(
     err,
     data
   ) {
@@ -689,7 +689,7 @@ export const openProject = (name) => {
           ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
           : JSON.parse(data.toString());
       // 遍历项目文件夹下面的流程文件夹，读取manifest.json里流程的数据，写入processTree
-      dirs.forEach((dirItem) => {
+      dirs.forEach(dirItem => {
         if (dirItem !== 'manifest.json' && dirItem !== `${name}_module`) {
           try {
             const dirItemData = fs.readFileSync(
@@ -700,7 +700,7 @@ export const openProject = (name) => {
                 ? JSON.parse(encrypt.argDecryptByDES(dirItemData.toString()))
                 : JSON.parse(dirItemData.toString());
             // 以流程名为映射关系
-            traverseTree(processTree, (treeItem) => {
+            traverseTree(processTree, treeItem => {
               if (treeItem.title === dirItem) {
                 treeItem.data = resultData;
               }
@@ -714,7 +714,7 @@ export const openProject = (name) => {
       checkAndMakeDir(PATH_CONFIG('project', `${name}/${name}_module`));
       fs.readFile(
         PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
-        function (err, data) {
+        function(err, data) {
           if (!err) {
             const { moduleTree } =
               data.toString().indexOf('{') === -1
@@ -740,7 +740,7 @@ export const openProject = (name) => {
   });
 };
 
-export const formatDateTime = (time) => {
+export const formatDateTime = time => {
   return moment(time).format('YYYY-MM-DD HH:mm');
 };
 
@@ -767,14 +767,14 @@ export const traverseTree = (tree, callback) => {
 };
 
 export const setAllModifiedState = (processTree, state = false) => {
-  traverseTree(processTree, (node) => {
+  traverseTree(processTree, node => {
     node.hasModified = state;
   });
   changeProcessTree([...processTree]);
 };
 
 export const setNodeModifiedState = (processTree, checkedNode) => {
-  traverseTree(processTree, (node) => {
+  traverseTree(processTree, node => {
     if (node.key === checkedNode) {
       node.hasModified = false;
     }
@@ -782,9 +782,9 @@ export const setNodeModifiedState = (processTree, checkedNode) => {
   changeProcessTree([...processTree]);
 };
 
-export const getModifiedNodes = (processTree) => {
+export const getModifiedNodes = processTree => {
   const modifiedNodesArr = [];
-  traverseTree(processTree, (node) => {
+  traverseTree(processTree, node => {
     if (node.hasModified) {
       modifiedNodesArr.push(node.key);
     }
@@ -795,7 +795,7 @@ function deleteFolder(path) {
   let files = [];
   if (fs.existsSync(path)) {
     files = fs.readdirSync(path);
-    files.forEach(function (file, index) {
+    files.forEach(function(file, index) {
       let curPath = path + '/' + file;
       if (fs.statSync(curPath).isDirectory()) {
         // recurse
@@ -848,7 +848,7 @@ export const downProcessZipToLocal = (
         level: 9,
       },
     })
-    .then(function (content) {
+    .then(function(content) {
       deleteFolder(filePath);
       fs.writeFileSync(filePath + '.zip', content);
     });
@@ -868,7 +868,7 @@ export const addToReuse = () => {
   const files = fs.readdirSync(
     PATH_CONFIG('project', `${currentProject}/${currentProject}_module`)
   );
-  const item = files.find((item) => item === `${title}.json`);
+  const item = files.find(item => item === `${title}.json`);
   if (!item) {
     // 把流程块数据写入文件
     fs.writeFileSync(
@@ -903,7 +903,7 @@ export const exportCustomProcessBlock = () => {
     grapheditor: { graphDataMap, checkedGraphBlockId },
   } = store.getState();
 
-  getDownloadPath((filePath) => {
+  getDownloadPath(filePath => {
     try {
       fs.mkdirSync(filePath);
     } catch (err) {
@@ -916,7 +916,7 @@ export const exportCustomProcessBlock = () => {
     fs.writeFileSync(
       filePath + '/manifest.json',
       encrypt.argEncryptByDES(JSON.stringify(data)),
-      function (err) {
+      function(err) {
         console.log(err);
       }
     );
@@ -931,7 +931,7 @@ export const exportCustomProcessBlock = () => {
           level: 9,
         },
       })
-      .then(function (content) {
+      .then(function(content) {
         deleteFolder(filePath);
         fs.writeFileSync(filePath + '.zip', content);
         message.success('导出成功');
@@ -1009,7 +1009,7 @@ export const getChooseFilePath = (filePath, importType) => {
         });
       } else {
         // 对redux中的moduleTree进行修改
-        traverseTree(newModuleTree, (item) => {
+        traverseTree(newModuleTree, item => {
           if (currentCheckedModuleTreeNode === item.key) {
             // 选中的是流程
             if (item.type === 'process') {

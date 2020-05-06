@@ -40,15 +40,20 @@ describe('varibalePanel', () => {
       { name: '', value: '' },
       { name: '', value: '' },
     ]);
-    component.find('.variablePanel-btn__delete').at(0).simulate('click');
+    component
+      .find('.variablePanel-btn__delete')
+      .at(0)
+      .simulate('click');
     expect(blockNode.variable.length).toBe(1);
   });
 
+  // disabled为true时button的数量
   it('test disabled', () => {
     const { blockNode, buttons, component } = setup(true);
     expect(buttons.length).toBe(0);
   });
 
+  // handleEmitCodeTransform转换代码
   it('test handleEmitCodeTransform', () => {
     const { blockNode, buttons, component, handleEmitCodeTransform } = setup();
     buttons.at(0).simulate('click');
@@ -59,6 +64,7 @@ describe('varibalePanel', () => {
         value: '123',
       },
     });
+    // 调用的次数
     expect(handleEmitCodeTransform.mock.calls.length).toBe(1);
   });
 });

@@ -122,6 +122,7 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
         ) {
           transformCustomCodeStatement(padding, statement, result, moduleMap);
         } else {
+          console.log(statement);
           transformBasicStatement(padding, statement, result, moduleMap, depth);
         }
         result.output += '\n';
