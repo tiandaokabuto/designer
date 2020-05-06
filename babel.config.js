@@ -35,7 +35,7 @@ module.exports = (api) => {
         {
           libraryName: 'antd',
           libraryDirectory: 'es',
-          style: 'less',
+          style: 'css',
         },
       ], // antd按需加载
       // Stage 0
@@ -70,17 +70,5 @@ module.exports = (api) => {
 
       ...(development ? developmentPlugins : productionPlugins),
     ],
-    env: {
-      node: {
-        plugins: [
-          [
-            'babel-plugin-transform-require-ignore',
-            {
-              extensions: ['.less', '.scss'],
-            },
-          ],
-        ],
-      },
-    },
   };
 };
