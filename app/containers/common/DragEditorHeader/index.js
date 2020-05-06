@@ -51,7 +51,7 @@ import {
 } from '../../reduxActions';
 import api from '../../../api';
 import { handleScreenCapture } from '@/containers/shared';
-import PATH_CONFIG from '@/constants/localFilePath';
+import PATH_CONFIG from '@/constants/localFilePath.js';
 
 import NewProcess from './NewProcess';
 
@@ -79,28 +79,30 @@ export default memo(
     };
 
     const currentCheckedTreeNode = useSelector(
-      state => state.grapheditor.currentCheckedTreeNode
+      (state) => state.grapheditor.currentCheckedTreeNode
     );
     const currentCheckedTreeNodeRef = useRef(null);
     currentCheckedTreeNodeRef.current = currentCheckedTreeNode;
 
     const currentCheckedModuleTreeNode = useSelector(
-      state => state.grapheditor.currentCheckedModuleTreeNode
+      (state) => state.grapheditor.currentCheckedModuleTreeNode
     );
     const currentCheckedModuleTreeNodeRef = useRef(null);
     currentCheckedModuleTreeNodeRef.current = currentCheckedModuleTreeNode;
 
-    const treeTab = useSelector(state => state.grapheditor.treeTab);
+    const treeTab = useSelector((state) => state.grapheditor.treeTab);
     const treeTabRef = useRef(null);
     treeTabRef.current = treeTab;
 
-    const projectName = useSelector(state => state.grapheditor.currentProject);
+    const projectName = useSelector(
+      (state) => state.grapheditor.currentProject
+    );
 
-    const processTree = useSelector(state => state.grapheditor.processTree);
+    const processTree = useSelector((state) => state.grapheditor.processTree);
     const processTreeRef = useRef(null);
     processTreeRef.current = processTree;
 
-    const moduleTree = useSelector(state => state.grapheditor.moduleTree);
+    const moduleTree = useSelector((state) => state.grapheditor.moduleTree);
     const moduleTreeRef = useRef(null);
     moduleTreeRef.current = moduleTree;
 
@@ -128,25 +130,25 @@ export default memo(
 
     const verifyCompatibility = useVerifyCompatibility();
 
-    const getProcessVersion = processName => {
+    const getProcessVersion = (processName) => {
       axios
         .get(api('getProcessVersion'), {
           params: {
             processName,
           },
         })
-        .then(res => res.data)
-        .then(res => {
+        .then((res) => res.data)
+        .then((res) => {
           let version = res.data;
           if (res.code !== -1 && version) {
-            version = version.replace(/[\d]+$/, match => +match + 1);
+            version = version.replace(/[\d]+$/, (match) => +match + 1);
             handleVersionTextChange(version);
             return version;
           }
           setVersionText('1.0.0');
           return false;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     };
 
     const hanldePublishModalOk = () => {
@@ -167,7 +169,7 @@ export default memo(
       }
     };
 
-    const handleVersionTextChange = version => {
+    const handleVersionTextChange = (version) => {
       const reg = /^([0]|[1-9][0-9]*)(\.([0]|[1-9][0-9]*)){1,2}$/;
       setVersionText(version);
       if (reg.test(version)) {
@@ -183,12 +185,12 @@ export default memo(
         uuidRef.current = uuid;
 
         const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
-          item => item.description === '运行'
+          (item) => item.description === '运行'
         );
         find.description = '停止';
-        find.onClick = function() {
+        find.onClick = function () {
           // 终止流程
-          exec(`${process.cwd()}/app/pythonUtils/stop.bat ${uuid}`, err => {
+          exec(`${process.cwd()}/app/pythonUtils/stop.bat ${uuid}`, (err) => {
             if (!err) {
               message.success('停止成功');
             } else {
@@ -197,7 +199,7 @@ export default memo(
             console.log(err);
           });
           const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
-            item => item.description === '停止'
+            (item) => item.description === '停止'
           );
           find.description = '运行';
           find.onClick = handleOperation;
@@ -206,7 +208,7 @@ export default memo(
         transformProcessToPython();
         executePython(uuid, () => {
           const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
-            item => item.description === '停止'
+            (item) => item.description === '停止'
           );
           find.description = '运行';
           find.onClick = handleOperation;
@@ -215,7 +217,7 @@ export default memo(
         forceUpdate();
       } catch (e) {
         const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
-          item => item.description === '停止' || item.description === '运行'
+          (item) => item.description === '停止' || item.description === '运行'
         );
         find.description = '运行';
         find.onClick = handleOperation;
@@ -224,7 +226,7 @@ export default memo(
       }
     };
 
-    const exportProcess = filePath => {
+    const exportProcess = (filePath) => {
       const zip = new adm_zip();
       zip.addLocalFolder(
         `${process.cwd()}/project/${projectName}/${getProcessName()}`
@@ -270,7 +272,7 @@ export default memo(
             });
           } else {
             // 对redux中的moduleTree进行修改
-            traverseTree(newModuleTree, item => {
+            traverseTree(newModuleTree, (item) => {
               if (currentCheckedModuleTreeNodeRef.current === item.key) {
                 // 选中的是流程
                 if (item.type === 'process') {
@@ -589,7 +591,7 @@ export default memo(
                       let processName = '';
                       try {
                         transformProcessToPython();
-                        traverseTree(processTree, item => {
+                        traverseTree(processTree, (item) => {
                           if (item.key === currentCheckedTreeNode) {
                             processName = item.title;
                           }
@@ -631,7 +633,7 @@ export default memo(
               <FormItem label="类型">
                 <Radio.Group
                   defaultValue={exportType}
-                  onChange={e => setExportType(e.target.value)}
+                  onChange={(e) => setExportType(e.target.value)}
                 >
                   <Tooltip title="json文件，可以给其他电脑使用">
                     <Radio value={'json'}>共享文件</Radio>
@@ -646,7 +648,7 @@ export default memo(
               <TextArea
                 placeholder="请输入流程描述"
                 autoSize={{ minRows: 6, maxRows: 8 }}
-                onChange={e => {
+                onChange={(e) => {
                   setDescText(e.target.value);
                 }}
               />
@@ -656,7 +658,7 @@ export default memo(
                 className={versionTipVisible ? 'errorFomat' : ''}
                 placeholder="请输入版本号"
                 value={versionText}
-                onChange={e => {
+                onChange={(e) => {
                   handleVersionTextChange(e.target.value);
                 }}
               />

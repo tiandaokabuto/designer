@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ItemTypes from '../../statementTypes';
 import { CHANGE_CARDDATA } from '../../../../../actions/codeblock';
 
-import PATH_CONFIG from '@/constants/localFilePath';
+import PATH_CONFIG from '@/constants/localFilePath.js';
 
 const fs = require('fs');
 
@@ -19,7 +19,7 @@ export default ({
   updateCheckedBlockId = () => {},
 }) => {
   const dispatch = useDispatch();
-  const cards = useSelector(state => state.blockcode.cards);
+  const cards = useSelector((state) => state.blockcode.cards);
   const cardsRef = useRef(null);
   cardsRef.current = cards;
 
@@ -62,7 +62,7 @@ export default ({
   }
   const [{ isDragging }, drag] = useDrag({
     item: newItem,
-    collect: monitor => ({
+    collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
     end: (item, monitor) => {

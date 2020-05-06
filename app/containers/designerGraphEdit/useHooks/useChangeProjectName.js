@@ -4,14 +4,14 @@ import { message } from 'antd';
 import { readAllFileName } from '../../common/utils';
 import { changeCurrentProject } from '../../reduxActions';
 
-import PATH_CONFIG from '@/constants/localFilePath';
+import PATH_CONFIG from '@/constants/localFilePath.js';
 
 const fs = require('fs');
 
 export default () => {
   return useDebounce((current, change) => {
     const existFileList = readAllFileName() || [];
-    if (existFileList.some(item => item.name === change)) {
+    if (existFileList.some((item) => item.name === change)) {
       message.info('当前项目名已存在');
       return;
     }
@@ -19,7 +19,7 @@ export default () => {
     fs.rename(
       PATH_CONFIG('project', current),
       PATH_CONFIG('project', change),
-      function(err) {
+      function (err) {
         if (!err) {
           changeCurrentProject(change);
           console.log(current);
@@ -27,7 +27,7 @@ export default () => {
           fs.rename(
             PATH_CONFIG('project', `${change}/${current}_module`),
             PATH_CONFIG('project', `${change}/${change}_module`),
-            function(err) {
+            function (err) {
               if (!err) {
                 console.log('更改module文件夹');
               } else {

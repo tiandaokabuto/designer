@@ -11,7 +11,7 @@ import RecentBackImg from '../images/recent_back.png';
 import DiffImg from '../images/diff.png';
 import CloseImg from '../images/close.png';
 
-import PATH_CONFIG from '@/constants/localFilePath';
+import PATH_CONFIG from '@/constants/localFilePath.js';
 
 import {
   newProject,
@@ -42,7 +42,7 @@ export default useInjectContext(({ history }) => {
       dataIndex: 'name',
       width: '50%',
       ellipsis: true,
-      render: title => {
+      render: (title) => {
         return <span style={{ color: 'rgba(50, 166, 127, 1)' }}>{title}</span>;
       },
     },
@@ -65,10 +65,10 @@ export default useInjectContext(({ history }) => {
             <SDIcon
               style={{ marginLeft: '10px' }}
               url={CloseImg}
-              onClick={e => {
+              onClick={(e) => {
                 e.stopPropagation();
                 deleteFolderRecursive(PATH_CONFIG('project', record.name));
-                setFlag(flag => !flag);
+                setFlag((flag) => !flag);
               }}
             ></SDIcon>
           </div>
@@ -114,7 +114,7 @@ export default useInjectContext(({ history }) => {
           <div className="recentproject-leftcontent-newproject">
             <Input
               placeholder="请输入新建项目名称"
-              onChange={e => {
+              onChange={(e) => {
                 setName(e.target.value);
               }}
             />
@@ -150,9 +150,9 @@ export default useInjectContext(({ history }) => {
               y: 'calc(100vh - 400px)',
             }}
             ellipsis={true}
-            onRow={record => {
+            onRow={(record) => {
               return {
-                onClick: event => {
+                onClick: (event) => {
                   // 打开对应的项目
                   openProject(record.name);
                   changeCurrentProject(record.name);

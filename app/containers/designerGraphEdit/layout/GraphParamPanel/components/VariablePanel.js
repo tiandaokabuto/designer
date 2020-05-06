@@ -26,14 +26,14 @@ export default ({
     noticyChange();
     forceUpdate();
   };
-  const handleVariableDelete = index => {
+  const handleVariableDelete = (index) => {
     variableList.splice(index, 1);
     noticyChange();
     forceUpdate();
   };
   if (variableList === null || !Array.isArray(variableList)) return null;
 
-  const stopDeleteKeyDown = e => {
+  const stopDeleteKeyDown = (e) => {
     if (e.keyCode === 46) {
       e.nativeEvent.stopImmediatePropagation();
     }
@@ -65,11 +65,10 @@ export default ({
               <Input
                 placeholder="变量"
                 value={varibale.name}
-                // key={uniqueId('variable_')}
-                onChange={e => {
+                onChange={(e) => {
                   varibale.name = e.target.value;
                   if (varibale.listeners) {
-                    varibale.listeners.forEach(callback => {
+                    varibale.listeners.forEach((callback) => {
                       if (typeof callback === 'function') {
                         callback(e.target.value);
                       }
@@ -78,7 +77,7 @@ export default ({
                   noticyChange();
                   handleEmitCodeTransform && handleEmitCodeTransform();
                 }}
-                onKeyDown={e => stopDeleteKeyDown(e)}
+                onKeyDown={(e) => stopDeleteKeyDown(e)}
               />
               {disabled ? (
                 <span style={{ marginLeft: 6 }}>{varibale.value}</span>
@@ -86,12 +85,12 @@ export default ({
                 <Input
                   placeholder="值"
                   value={varibale.value}
-                  onChange={e => {
+                  onChange={(e) => {
                     varibale.value = e.target.value;
                     noticyChange();
                     handleEmitCodeTransform && handleEmitCodeTransform();
                   }}
-                  onKeyDown={e => stopDeleteKeyDown(e)}
+                  onKeyDown={(e) => stopDeleteKeyDown(e)}
                 />
               )}
               {disabled ? (
@@ -99,7 +98,7 @@ export default ({
               ) : (
                 <Icon
                   type="delete"
-                  className="variablePanel-btn"
+                  className="variablePanel-btn variablePanel-btn__delete"
                   onClick={() => {
                     handleVariableDelete(index);
                     handleEmitCodeTransform && handleEmitCodeTransform();

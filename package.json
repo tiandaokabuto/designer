@@ -30,7 +30,7 @@
     "start": "cross-env NODE_ENV=production electron ./app/main.prod.js",
     "start-main-dev": "cross-env START_HOT=1 NODE_ENV=development electron -r @babel/register ./app/main.dev.js",
     "start-renderer-dev": "cross-env NODE_ENV=development webpack-dev-server --config configs/webpack.config.renderer.dev.babel.js",
-    "test": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 jest",
+    "test": "cross-env NODE_ENV=test BABEL_ENV=node BABEL_DISABLE_CACHE=1 jest",
     "test-all": "yarn lint && yarn flow && yarn build && yarn test && yarn build-e2e && yarn test-e2e",
     "test-e2e": "node -r @babel/register ./internals/scripts/CheckBuildsExist.js && cross-env NODE_ENV=test testcafe electron:./app ./test/e2e/HomePage.e2e.js",
     "test-e2e-live": "node -r @babel/register ./internals/scripts/CheckBuildsExist.js && cross-env NODE_ENV=test testcafe --live electron:./app ./test/e2e/HomePage.e2e.js",
@@ -152,17 +152,18 @@
       "\\.(css|less|sass|scss)$": "identity-obj-proxy"
     },
     "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "json"
+      "js"
     ],
     "moduleDirectories": [
       "node_modules",
       "app/node_modules"
     ],
     "transform": {
-      "^.+\\.jsx?$": "babel-jest"
+      "^.+\\.js?$": "babel-jest"
     },
+    "transformIgnorePatterns": [
+      "node_modules/(?!antd)/"
+    ],
     "setupFiles": [
       "./internals/scripts/CheckBuildsExist.js"
     ]
@@ -270,6 +271,7 @@
     "antd": "^3.26.5",
     "async-validator": "^3.2.4",
     "axios": "^0.19.1",
+    "babel-plugin-transform-require-ignore": "^0.1.1",
     "body-parser": "^1.19.0",
     "codemirror": "^5.51.0",
     "connected-react-router": "^6.6.1",

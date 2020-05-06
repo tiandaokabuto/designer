@@ -13,7 +13,7 @@ const productionPlugins = [
   require('babel-plugin-transform-react-remove-prop-types'),
 ];
 
-module.exports = api => {
+module.exports = (api) => {
   // see docs about api at https://babeljs.io/docs/en/config-files#apicache
 
   const development = api.env(developmentEnvironments);
@@ -35,7 +35,7 @@ module.exports = api => {
         {
           libraryName: 'antd',
           libraryDirectory: 'es',
-          style: 'css',
+          style: 'less',
         },
       ], // antd按需加载
       // Stage 0
@@ -70,5 +70,17 @@ module.exports = api => {
 
       ...(development ? developmentPlugins : productionPlugins),
     ],
+    env: {
+      node: {
+        plugins: [
+          [
+            'babel-plugin-transform-require-ignore',
+            {
+              extensions: ['.less', '.scss'],
+            },
+          ],
+        ],
+      },
+    },
   };
 };

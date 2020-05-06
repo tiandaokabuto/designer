@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import ItemTypes from '../../statementTypes';
 
-import PATH_CONFIG from '@/constants/localFilePath';
+import PATH_CONFIG from '@/constants/localFilePath.js';
 
 const fs = require('fs');
 
@@ -60,7 +60,7 @@ export default ({
     //   text: item.text !== undefined ? item.text : item.title.props.title,
     // },
     item: newItem,
-    collect: monitor => ({
+    collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
     end: (item, monitor) => {
