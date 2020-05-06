@@ -16,8 +16,8 @@ import {
 import store from '../../store';
 import { readDir } from '../../nodejs';
 import event from '../designerGraphBlock/layout/eventCenter';
-import PATH_CONFIG from '@/constants/localFilePath';
-import { encrypt } from '@/login/utils';
+import PATH_CONFIG from '../../constants/localFilePath'; //'@/constants/localFilePath';
+import { encrypt } from '../../login/utils'; //'@/login/utils';
 
 const fs = require('fs');
 const process = require('process');

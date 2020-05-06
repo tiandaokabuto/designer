@@ -33,7 +33,7 @@ import {
 } from '../../actions/temporaryvariable';
 import store from '../../store';
 
-const { dispatch } = store || {};
+const { dispatch } = store || { dispatch: () => {} };
 
 export const changeBlockTreeTab = (tab) => {
   dispatch({
