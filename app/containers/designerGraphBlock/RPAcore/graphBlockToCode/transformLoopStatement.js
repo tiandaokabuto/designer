@@ -7,7 +7,7 @@ const transformLoopStatement = (padding, dataStructure, result) => {
   if (select === 'for_list' && node[select]) {
     loopcondition = `${node[select][0].value} in ${node[select][1].value}`;
   } else if (select === 'for_dict' && node[select]) {
-    loopcondition = `${node[select][0].value},${node[select][1].value} in ${node[select][2].value}`;
+    loopcondition = `${node[select][0].value},${node[select][1].value} in ${node[select][2].value}.items()`;
   } else if (select === 'for_times' && node[select]) {
     loopcondition = `${node[select][0].value} in range(${node[select][1].value},${node[select][2].value},${node[select][3].value})`;
   } else if (select === 'for_condition' && node.tag === 2) {
