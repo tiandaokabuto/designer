@@ -26,7 +26,7 @@ const JSZIP = require('jszip');
 const zip = new JSZIP();
 const adm_zip = require('adm-zip');
 /**
- * 新建项目
+ * 新建项目(待测)
  * @param {*} name 项目名称
  * @param {*} callback 项目创建完成后的回调函数
  */
@@ -105,6 +105,11 @@ export const isDirNode = (tree, key) => {
   return false;
 };
 
+/**
+ * 根据key值在tree中找到相应的节点
+ * @param {*} tree
+ * @param {*} key
+ */
 export const findNodeByKey = (tree, key) => {
   for (const child of tree) {
     if (child.key === key) {
@@ -119,9 +124,13 @@ export const findNodeByKey = (tree, key) => {
 };
 
 /**
- * 删除树下的某个结点
+ * TODO:抽取删除文件的逻辑，并返回被删除的节点
+ * 根据key删除tree里面的节点（待测）
+ * @param {*} type 判断流程树or复用流程块树
  * @param {*} tree
- * @param {*} key
+ * @param {*} name 项目名
+ * @param {*} key 删除的节点的key
+ * @param {*} parent
  */
 export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
   for (const child of tree) {
@@ -210,7 +219,8 @@ export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
 };
 
 /**
- * 递归删除文件夹
+ * TODO:整合两个删除文件的方法
+ * 递归删除文件夹(待测)
  * @param {*} path 路径
  */
 export const deleteFolderRecursive = path => {
@@ -228,19 +238,47 @@ export const deleteFolderRecursive = path => {
     fs.rmdirSync(path);
   }
 };
-
-export const findParentNodeByKey = (tree, key, parent = tree) => {
-  for (const child of tree) {
-    if (child.key === key) {
-      return parent;
-    }
-    if (child.children) {
-      const bool = findParentNodeByKey(child.children, key, child);
-      if (bool) return bool;
-    }
+function deleteFolder(path) {
+  let files = [];
+  if (fs.existsSync(path)) {
+    files = fs.readdirSync(path);
+    files.forEach(function(file, index) {
+      let curPath = path + '/' + file;
+      if (fs.statSync(curPath).isDirectory()) {
+        // recurse
+        deleteFolder(curPath);
+      } else {
+        // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
   }
-};
+}
 
+// export const findParentNodeByKey = (tree, key, parent = tree) => {
+//   for (const child of tree) {
+//     if (child.key === key) {
+//       return parent;
+//     }
+//     if (child.children) {
+//       const bool = findParentNodeByKey(child.children, key, child);
+//       if (bool) return bool;
+//     }
+//   }
+// };
+
+/**
+ * TODO:抽取加密的逻辑达到语义化，抽取title组件
+ * 根据key重命名节点(待测)
+ * @param {*} tree
+ * @param {*} key
+ * @param {*} persistentStorage
+ * @param {*} restoreCheckedTreeNode
+ * @param {*} name
+ * @param {*} type
+ * @param {*} persistentModuleStorage
+ */
 export const renameNodeByKey = (
   tree,
   key,
@@ -373,7 +411,7 @@ export const renameNodeByKey = (
 
 /**
  * 检查和创建路径
- * @param {} dirName 路径 ../a/b/c/d
+ * @param {} dirName 完整路径 ../a/b/c.py
  */
 export function checkAndMakeDir(dirName) {
   if (fs.existsSync(dirName)) {
@@ -383,13 +421,30 @@ export function checkAndMakeDir(dirName) {
       fs.mkdirSync(dirName);
       return true;
     }
+    return false;
+  }
+}
+/**
+ * TODO:修改checkAndMakeDir
+ * 优化写法(待测)
+ * @param {*} dirName
+ */
+export function checkAndMakeDirH(dirName) {
+  // dirName: ../a/b/c
+  if (!fs.existsSync(dirName)) {
+    // path.dirname(dirName)  =>  ../a/b
+    checkAndMakeDir(path.dirname(dirName));
+    fs.mkdirSync(dirName);
   }
 }
 
 /**
- * 数据持久化保存到本地，按当前点击的流程保存
+ * TODO:只有一个节点修改的时候也使用modifiedNodesArr进行保存，不使用node
+ * 数据持久化保存到本地，按当前点击的流程保存(待测)
+ * @param {*} modifiedNodesArr
  * @param {*} processTree
  * @param {*} name
+ * @param {*} node
  */
 export const persistentStorage = (
   modifiedNodesArr,
@@ -397,7 +452,6 @@ export const persistentStorage = (
   name,
   node
 ) => {
-  console.log('保存流程');
   let tree = JSON.parse(JSON.stringify(processTree));
   if (modifiedNodesArr) {
     traverseTree(tree, treeItem => {
@@ -455,6 +509,12 @@ export const persistentStorage = (
   });
 };
 
+/**
+ * TODO: 跟persitentStorage方法中重叠的部分进行抽取
+ * (待测)
+ * @param {*} moduleTree
+ * @param {*} name
+ */
 export const persistentModuleStorage = (moduleTree, name) => {
   // let tree = JSON.parse(JSON.stringify(moduleTree));
   fs.readFile(
@@ -484,6 +544,11 @@ export const persistentModuleStorage = (moduleTree, name) => {
   );
 };
 
+/**
+ * 判断树中是否有重复的节点(待测)
+ * @param {*} tree
+ * @param {*} new_key
+ */
 export const hasDuplicateKey = (tree, new_key) => {
   for (const child of tree) {
     if (child.key === new_key) {
@@ -496,6 +561,11 @@ export const hasDuplicateKey = (tree, new_key) => {
   }
 };
 
+/**
+ * TODO: getModuleUniqueId整合
+ * 获得Id(待测)
+ * @param {*} tree
+ */
 export const getUniqueId = tree => {
   let new_key = uniqueId('key_');
   while (true) {
@@ -538,8 +608,8 @@ export const uuid = () => {
  * @param {*} name
  * @param {*} processTree
  * @param {*} checkedTreeNode
+ * @param {*} currentProject
  */
-
 export const newProcess = (
   type,
   name,
@@ -626,6 +696,13 @@ export const newProcess = (
   return [newProcessTree, uniqueid];
 };
 
+/**
+ * TODO: 整合与上一个方法重叠的部分
+ * @param {} name
+ * @param {*} moduleTree
+ * @param {*} checkedModuleTreeNode
+ * @param {*} currentProject
+ */
 export const newModuleDir = (
   name,
   moduleTree,
@@ -666,14 +743,10 @@ export const newModuleDir = (
 export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
   const files = fs.readdirSync(PATH_CONFIG('project', currentProject));
   return files.find(item => item === title);
-  // const isDirNodeBool = isDirNode(tree, checkedTreeNode);
-  // // 不在同级下建目录或流程跳过检验
-  // if (!isDirNodeBool) return false;
-  // const children = isDirNodeBool.children;
-  // return children.find(item => item.title === title);
 };
 
 /**
+ * TODO: 抽取判断是否加密的逻辑
  * 打开项目
  * @param {*} name 项目名
  */
@@ -744,11 +817,31 @@ export const formatDateTime = time => {
   return moment(time).format('YYYY-MM-DD HH:mm');
 };
 
-// 流程保存相关接口
+/**
+ * 流程保存相关接口
+ * @param {*} processTree
+ * @param {*} key
+ * @param {*} modifyState
+ */
 export const changeModifyState = (processTree, key, modifyState) => {
   const node = findNodeByKey(processTree, key);
   if (!node) return;
   node.hasModified = modifyState;
+  changeProcessTree([...processTree]);
+};
+
+/**
+ * TODO:整合changeModifyState
+ * (待测)
+ * @param {*} processTree
+ * @param {*} checkedNode
+ */
+export const setNodeModifiedState = (processTree, checkedNode) => {
+  traverseTree(processTree, node => {
+    if (node.key === checkedNode) {
+      node.hasModified = false;
+    }
+  });
   changeProcessTree([...processTree]);
 };
 
@@ -773,15 +866,6 @@ export const setAllModifiedState = (processTree, state = false) => {
   changeProcessTree([...processTree]);
 };
 
-export const setNodeModifiedState = (processTree, checkedNode) => {
-  traverseTree(processTree, node => {
-    if (node.key === checkedNode) {
-      node.hasModified = false;
-    }
-  });
-  changeProcessTree([...processTree]);
-};
-
 export const getModifiedNodes = processTree => {
   const modifiedNodesArr = [];
   traverseTree(processTree, node => {
@@ -791,23 +875,6 @@ export const getModifiedNodes = processTree => {
   });
   return modifiedNodesArr;
 };
-function deleteFolder(path) {
-  let files = [];
-  if (fs.existsSync(path)) {
-    files = fs.readdirSync(path);
-    files.forEach(function(file, index) {
-      let curPath = path + '/' + file;
-      if (fs.statSync(curPath).isDirectory()) {
-        // recurse
-        deleteFolder(curPath);
-      } else {
-        // delete file
-        fs.unlinkSync(curPath);
-      }
-    });
-    fs.rmdirSync(path);
-  }
-}
 
 /**
  * 下载发布流程到本地

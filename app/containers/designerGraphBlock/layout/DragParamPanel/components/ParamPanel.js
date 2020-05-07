@@ -599,53 +599,6 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
           </div>
         </Fragment>
       )}
-      {/* <div className="parampanel-required">必选项</div>
-      <div className="parampanel-content">
-        {(checkedBlock.properties.required || []).map((param, index) => {
-          if (param.enName === 'return_string') {
-            return (
-              <OutputPanel
-                key={checkedBlock.id + index}
-                output={param.value}
-                handleEmitCodeTransform={() => {
-                  handleEmitCodeTransform(cards);
-                }}
-              />
-            );
-          }
-          return (
-            <LoopSelectContext.Provider
-              key={checkedBlock.id + index}
-              value={{ loopSelect, setLoopSelect }}
-            >
-              <ParamItem
-                param={param}
-                handleEmitCodeTransform={handleEmitCodeTransform}
-                cards={cards}
-                flag={flag}
-                aiHintList={aiHintList}
-                setFlag={setFlag}
-              />
-            </LoopSelectContext.Provider>
-          );
-        })}
-      </div>
-      <div className="parampanel-optional">选填项</div>
-      <div className="parampanel-content">
-        {(checkedBlock.properties.optional || []).map((param, index) => {
-          return (
-            <ParamItem
-              key={checkedBlock.id + index}
-              param={param}
-              handleEmitCodeTransform={handleEmitCodeTransform}
-              cards={cards}
-              flag={flag}
-              aiHintList={aiHintList}
-              setFlag={setFlag}
-            />
-          );
-        })}
-      </div> */}
     </div>
   );
 };

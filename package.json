@@ -271,7 +271,6 @@
     "antd": "^3.26.5",
     "async-validator": "^3.2.4",
     "axios": "^0.19.1",
-    "babel-plugin-transform-require-ignore": "^0.1.1",
     "body-parser": "^1.19.0",
     "codemirror": "^5.51.0",
     "connected-react-router": "^6.6.1",
