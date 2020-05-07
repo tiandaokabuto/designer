@@ -49,7 +49,6 @@ export default ({
         }}
         onChange={e => {
           param.tag = e.target.value;
-          console.log('change radio');
           param.forceUpdate = param.forceUpdate + 1;
           setTag(e.target.value);
           handleEmitCodeTransform(cards);
@@ -63,7 +62,7 @@ export default ({
           自定义模式
         </Radio>
       </Radio.Group>
-      {tag === 1 ? (
+      {param.tag === 1 ? (
         <div className="condition-param">
           <div>
             <div className="condition-param-ifcondition">
