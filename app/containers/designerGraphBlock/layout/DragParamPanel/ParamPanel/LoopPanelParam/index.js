@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 import LabelParam from '../components/LabelParam';
 import ConditionParam from '../ConditionParam/index';
 
-export default ({
+const LoopParam = ({
   param,
   handleEmitCodeTransform,
   cards,
@@ -137,3 +138,26 @@ export default ({
     </Fragment>
   );
 };
+LoopParam.propTypes = {
+  param: PropTypes.object.isRequired,
+  keyFlag: PropTypes.bool.isRequired,
+  setFlag: PropTypes.func.isRequired,
+  cards: PropTypes.array,
+  handleEmitCodeTransform: PropTypes.func,
+  stopDeleteKeyDown: PropTypes.func,
+  loopSelect: PropTypes.string,
+  aiHintList: PropTypes.object,
+  appendDataSource: PropTypes.array,
+  handleValidate: PropTypes.func,
+};
+LoopParam.defaultProps = {
+  handleEmitCodeTransform: () => {},
+  stopDeleteKeyDown: () => {},
+  loopSelect: 'for_list',
+  aiHintList: {},
+  appendDataSource: [],
+  handleValidate: () => {},
+  cards: [],
+};
+
+export default LoopParam;

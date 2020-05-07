@@ -170,7 +170,7 @@ AutoCompleteInputParam.propTypes = {
 };
 
 AutoComplete.defaultProps = {
-  aiHintList: { next: [] },
+  aiHintList: {},
 };
 
 export default AutoCompleteInputParam;
