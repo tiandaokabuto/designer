@@ -1,8 +1,7 @@
 import React, { Fragment, useEffect } from 'react';
-import { Input } from 'antd';
 
-import LoopParam from './LoopParam';
-import ConditionParam from '../ConditionParam';
+import LabelParam from '../components/LabelParam';
+import ConditionParam from '../ConditionParam/index';
 
 export default ({
   param,
@@ -121,7 +120,7 @@ export default ({
     <Fragment>
       {param[loopSelect]
         ? param[loopSelect].map(item => (
-            <LoopParam
+            <LabelParam
               param={item}
               aiHintList={aiHintList}
               appendDataSource={appendDataSource}

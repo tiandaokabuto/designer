@@ -3,7 +3,6 @@ import { Input, Radio, Select, Icon } from 'antd';
 import { withPropsAPI } from 'gg-editor';
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 
-import ConditionParam from '../../../../designerGraphBlock/layout/DragParamPanel/components/ConditionParam';
 import VariablePanel from './VariablePanel';
 import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
 

@@ -2,7 +2,7 @@ import React, { useMemo, memo } from 'react';
 import { useSelector } from 'react-redux';
 import { Input } from 'antd';
 
-import './outputPanel.scss';
+import './index.scss';
 
 export default ({ output, handleEmitCodeTransform }) => {
   const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);

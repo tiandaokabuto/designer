@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { Input, Radio, Select, Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
-import './ConditionParam.scss';
+import './index.scss';
 
 const { Option } = Select;
 
