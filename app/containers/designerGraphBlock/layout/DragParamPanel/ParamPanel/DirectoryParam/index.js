@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Radio } from 'antd';
 
-import Param from './LoopPanelParam/LoopParam';
-import FileParam from './FileParam';
+import Param from '../components/LabelParam';
+import FileParam from '../FileParam';
 
 export default ({
   param,

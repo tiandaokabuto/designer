@@ -2,10 +2,10 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Table, Form, Input, Icon, message } from 'antd';
 import axios from 'axios';
 
-import AutoCompleteInputParam from './AutoCompleteInputParam';
-import api from '../../../../../api';
+import AutoCompleteInputParam from '../components/AutoCompleteInputParam';
+import api from '../../../../../../api';
 
-import './TaskDataName.scss';
+import './index.scss';
 
 const originColumns = [
   {

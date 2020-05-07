@@ -1,7 +1,6 @@
 import React from 'react';
-import { Input } from 'antd';
 
-import AutoCompleteInputParam from '../AutoCompleteInputParam';
+import AutoCompleteInputParam from './AutoCompleteInputParam';
 
 export default ({
   param,

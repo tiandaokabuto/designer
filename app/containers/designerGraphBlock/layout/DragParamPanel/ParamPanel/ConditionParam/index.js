@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { Input, Radio, Select, Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
-import './ConditionParam.scss';
+import './index.scss';
 
 const { Option } = Select;
 
@@ -49,14 +49,19 @@ export default ({
         }}
         onChange={e => {
           param.tag = e.target.value;
+          console.log('change radio');
           param.forceUpdate = param.forceUpdate + 1;
           setTag(e.target.value);
           handleEmitCodeTransform(cards);
         }}
         defaultValue={param.tag}
       >
-        <Radio value={1}>向导模式</Radio>
-        <Radio value={2}>自定义模式</Radio>
+        <Radio className="condition-radio" value={1}>
+          向导模式
+        </Radio>
+        <Radio className="condition-radio" value={2}>
+          自定义模式
+        </Radio>
       </Radio.Group>
       {tag === 1 ? (
         <div className="condition-param">
@@ -68,7 +73,7 @@ export default ({
               <span>
                 <Icon
                   type="plus"
-                  className="condition-param-btn"
+                  className="condition-param-btn add-btn"
                   onClick={() => {
                     handleAdd();
                   }}
@@ -115,7 +120,7 @@ export default ({
                     />
                     <Icon
                       type="delete"
-                      className="condition-param-btn"
+                      className="condition-param-btn delete-btn"
                       onClick={() => {
                         handleDelete(index);
                         param.forceUpdate = param.forceUpdate + 1;
@@ -146,6 +151,7 @@ export default ({
         </div>
       ) : (
         <Input
+          className="condition-param-customize-input"
           defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
           key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
           onChange={e => {
