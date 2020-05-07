@@ -221,7 +221,7 @@ export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
 
 /**
  * TODO:整合两个删除文件的方法
- * 递归删除文件夹(待测)
+ * 递归删除文件夹(已完成单元测试)(以 deleteFolderRecursive 为准)
  * @param {*} path 路径
  */
 export const deleteFolderRecursive = (path) => {
@@ -427,7 +427,7 @@ export function checkAndMakeDir(dirName) {
 }
 /**
  * TODO:修改checkAndMakeDir
- * 优化写法(待测)
+ * 优化写法(已完成单元测试)
  * @param {*} dirName
  */
 export function checkAndMakeDirH(dirName) {

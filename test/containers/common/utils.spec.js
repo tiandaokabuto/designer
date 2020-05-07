@@ -5,6 +5,8 @@ import {
   deleteNodeByKey,
   getUniqueId,
   changeModifyState,
+  checkAndMakeDirH,
+  deleteFolderRecursive,
 } from '../../../app/containers/common/utils';
 import uniqueId from 'lodash/uniqueId';
 
@@ -122,5 +124,15 @@ describe('test utils', () => {
     expect(
       changeModifyState(processTree, '1-1', false).hasModified
     ).toBeFalsy();
+  });
+  it('test checkAndMakeDirH deleteFolderRecursive', () => {
+    const fs = require('fs');
+    checkAndMakeDirH(__dirname + '/a/b');
+    let result = fs.existsSync(__dirname + '/a/b');
+    expect(result).toBeTruthy();
+
+    deleteFolderRecursive(__dirname + '/a');
+    result = fs.existsSync(__dirname + '/a/b');
+    expect(result).toBeFalsy();
   });
 });
