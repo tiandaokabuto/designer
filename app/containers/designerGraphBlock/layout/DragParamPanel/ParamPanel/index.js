@@ -1,7 +1,7 @@
-import './ParamPanel.scss';
+import './index.scss';
 
 import React, { useEffect, useState, useRef, Fragment } from 'react';
-import { Input, Select, AutoComplete, Tooltip } from 'antd';
+import { Input, Select, Tooltip } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
 import event from '../../eventCenter';
@@ -11,47 +11,20 @@ import {
   useVerifyInput,
 } from '../../useHooks';
 import ConditionParam from './ConditionParam';
-import LoopConditionParam from './LoopPanelParam/index';
-import OutputPanel from './OutputPanel';
+import LoopPanelParam from './LoopPanelParam';
+import OutputPanel from './OutputParam';
 import FileParam from './FileParam';
-import FileParamPanel from './FileParamPanel';
-import TaskDataName from './TaskDataName';
-// import AutoCompleteInputParam from './AutoCompleteInputParam';
+import DirectoryParam from './DirectoryParam';
+import TaskDataParam from './TaskDataParam';
+import AutoCompleteInputParam from './components/AutoCompleteInputParam';
 
 const { Option } = Select;
-const { TextArea } = Input;
 
 const COMPONENT_TYPE = {
   INPUT: 0,
   SELECT: 1,
   FILEPATHINPUT: 2,
   DIRECTORY: 3,
-};
-
-const getMutiplyValue = (item, type) => {
-  const tempOutput = item.value.replace(/\(|\)/g, '');
-  const result = [];
-  if (tempOutput) {
-    const variableList = tempOutput.split(',');
-    item.paramType.forEach((group, index) => {
-      if (group.find(el => el === type)) {
-        result.push(variableList[index]);
-      }
-    });
-    return result;
-  }
-  return [];
-};
-
-const getVariableList = item => {
-  const tempOutput =
-    typeof item === 'string'
-      ? item.replace(/\(|\)/g, '')
-      : item.value.replace(/\(|\)/g, '');
-  if (tempOutput) {
-    return tempOutput.split(',');
-  }
-  return [];
 };
 
 const stopDeleteKeyDown = e => {
@@ -167,7 +140,7 @@ const getComponentType = (
     return (
       <LoopSelectContext.Consumer>
         {({ loopSelect }) => (
-          <LoopConditionParam
+          <LoopPanelParam
             param={param}
             cards={cards}
             aiHintList={aiHintList}
@@ -184,7 +157,7 @@ const getComponentType = (
     );
   } else if (param.enName === 'taskDataName') {
     return (
-      <TaskDataName
+      <TaskDataParam
         param={param}
         aiHintList={aiHintList}
         appendDataSource={appendDataSource}
@@ -197,7 +170,7 @@ const getComponentType = (
   switch (param.componentType) {
     case COMPONENT_TYPE.INPUT:
       if (param.enName !== 'outPut') {
-        /* return (
+        return (
           <AutoCompleteInputParam
             param={param}
             aiHintList={aiHintList}
@@ -206,122 +179,6 @@ const getComponentType = (
             handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
             handleValidate={handleValidate}
           />
-        ); */
-        const paramType = param.paramType;
-        const hasParamType = paramType && Array.isArray(paramType);
-        // 待匹配的下拉列表
-        const dataSource =
-          hasParamType &&
-          Array.from(
-            new Set(
-              paramType.reduce((prev, next) => {
-                return prev.concat(
-                  aiHintList[next]
-                    ? [
-                        ...new Set(
-                          aiHintList[next]
-                            .map(item =>
-                              item.isVariable
-                                ? item.name
-                                : item.isMutiply
-                                ? getMutiplyValue(item, next)
-                                : item.value
-                            )
-                            .flat()
-                            .filter(Boolean)
-                        ),
-                      ]
-                    : []
-                );
-              }, [])
-            )
-          );
-        // 待匹配的依赖项
-        const depList =
-          (hasParamType &&
-            paramType.reduce((prev, next) => {
-              return prev.concat(aiHintList[next] || []);
-            }, [])) ||
-          [];
-
-        const needTextArea =
-          paramType === 0 ||
-          (Array.isArray(paramType) &&
-            paramType.length === 1 &&
-            paramType[0] === 'Number');
-
-        const handleWatchChange = value => {
-          param.value = value;
-        };
-        const handleMutiply = value => {
-          param.value = getVariableList(value)[param.mutiplyIndex];
-        };
-
-        const isSelected = window.getSelection().toString();
-        if (!isSelected) {
-          xpathKeyRef.current = uniqueId('key_');
-        }
-
-        return (
-          <AutoComplete
-            key={keyFlag || param.enName === 'xpath' ? xpathKeyRef.current : ''}
-            defaultValue={String(param.value || param.default)}
-            dataSource={(dataSource || []).concat(appendDataSource)}
-            onSelect={value => {
-              const dep = depList.find(item => {
-                if (item.isVariable) {
-                  return item.name === value;
-                }
-                if (item.isMutiply) {
-                  return item.value
-                    .replace(/\)|\(/g, '')
-                    .split(',')
-                    .find(child => child === value);
-                }
-                return item.value === value;
-              });
-
-              if (dep) {
-                const handleChange = dep.isMutiply
-                  ? handleMutiply
-                  : handleWatchChange;
-                if (dep.listeners) {
-                  dep.listeners.push(handleChange);
-                } else {
-                  dep.listeners = [handleChange];
-                }
-                const variableList = getVariableList(dep);
-                param.watchDep = dep;
-                param.mutiplyIndex = variableList.findIndex(el => el === value);
-                param.handleWatchChange = handleChange;
-              }
-            }}
-            onChange={value => {
-              if (param.watchDep) {
-                if (param.watchDep.listeners) {
-                  param.watchDep.listeners = param.watchDep.listeners.filter(
-                    item => item !== param.handleWatchChange
-                  );
-                }
-              }
-              param.value = value;
-              handleEmitCodeTransform(cards);
-              // 验证
-              handleValidate({
-                value,
-              });
-            }}
-            // 不对DataSource进行查询，详情咨询吴炯
-            filterOption={() => true}
-          >
-            {!needTextArea ? (
-              <TextArea
-                className="custom"
-                style={{ height: 32 }}
-                onKeyDown={e => stopDeleteKeyDown(e)}
-              />
-            ) : null}
-          </AutoComplete>
         );
       }
       return (
@@ -363,7 +220,7 @@ const getComponentType = (
       );
     case COMPONENT_TYPE.FILEPATHINPUT:
       return (
-        <FileParamPanel
+        <DirectoryParam
           key={param.enName}
           param={param}
           keyFlag={keyFlag}

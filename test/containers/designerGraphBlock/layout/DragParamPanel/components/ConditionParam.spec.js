@@ -4,7 +4,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import { Provider } from 'react-redux';
 import renderer from 'react-test-renderer';
 import store from '../../app/store';
-import ConditionParam from '../../../../../../app/containers/designerGraphBlock/layout/DragParamPanel/components/ConditionParam';
+import ConditionParam from '../../../../../../app/containers/designerGraphBlock/layout/DragParamPanel/ParamPanel/ConditionParam';
 
 Enzyme.configure({ adapter: new Adapter() });
 

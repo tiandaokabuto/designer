@@ -5,7 +5,7 @@ import GGEditor from 'gg-editor';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 
 import { useTransformToPython } from '../useHooks';
-import ParamPanel from './components/ParamPanel';
+import ParamPanel from './ParamPanel';
 import { findNodeById } from '../shared/utils';
 import GraphContainer from '../../../designerGraphEdit/layout/GraphContainer';
 import VariablePanel from '../../../designerGraphEdit/layout/GraphParamPanel/components/VariablePanel';
