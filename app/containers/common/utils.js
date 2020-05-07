@@ -271,7 +271,7 @@ function deleteFolder(path) {
 
 /**
  * TODO:抽取加密的逻辑达到语义化，抽取title组件
- * 根据key重命名节点(待测)
+ * 根据key重命名节点
  * @param {*} tree
  * @param {*} key
  * @param {*} persistentStorage
@@ -290,7 +290,6 @@ export const renameNodeByKey = (
   persistentModuleStorage
 ) => {
   const node = findNodeByKey(tree, key);
-  console.log(persistentStorage);
   const oldTitle = node.title;
   if (type === 'process') {
     node.title = (
@@ -408,6 +407,7 @@ export const renameNodeByKey = (
     );
     changeModuleTree([...tree]);
   }
+  return node;
 };
 
 /**
@@ -835,7 +835,6 @@ export const changeModifyState = (processTree, key, modifyState) => {
 
 /**
  * TODO:整合changeModifyState
- * (待测)
  * @param {*} processTree
  * @param {*} checkedNode
  */
