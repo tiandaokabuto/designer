@@ -19,6 +19,7 @@ import {
   readAllFileName,
   formatDateTime as FormatDateTime,
   deleteFolderRecursive,
+  checkProjectExist,
 } from '../common/utils';
 import {
   changeCurrentProject,
@@ -95,6 +96,24 @@ export default useInjectContext(({ history }) => {
   ];
 
   const isJump = history.location.state && history.location.state.jump;
+
+  const handleCreatNewProject = () => {
+    if (!name) {
+      message.info('请填写项目名称');
+      return;
+    }
+    if (checkProjectExist) {
+      message.info('项目已存在，请重新填写');
+      return false;
+    }
+    history.push('/designGraphEdit');
+    setTimeout(() => {
+      newProject(name, () => {
+        changeCurrentProject(name);
+      });
+    }, 0);
+  };
+
   return (
     <div>
       <GraphBlockHeader tag="recentProject" />
@@ -126,20 +145,13 @@ export default useInjectContext(({ history }) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onClick={() => {
-                if (!name) {
-                  message.info('请填写项目名称');
-                  return;
-                }
-                history.push('/designGraphEdit');
-                setTimeout(() => {
-                  newProject(name, () => {
-                    changeCurrentProject(name);
-                  });
-                }, 0);
-              }}
+              onClick={handleCreatNewProject}
             >
-              <img src={DiffImg} style={{ marginRight: '14px' }}></img>
+              <img
+                src={DiffImg}
+                alt="projectIcon"
+                style={{ marginRight: '14px' }}
+              />
               新建项目
             </Button>
           </div>

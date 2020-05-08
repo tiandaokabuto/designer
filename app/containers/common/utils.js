@@ -1048,3 +1048,12 @@ export const getDecryptOrNormal = data => {
     return JSON.parse(data.toString());
   }
 };
+
+/**
+ * 查找项目名是否存在
+ * @param {*} projectName 项目名
+ */
+export const checkProjectExist = projectName => {
+  const projectPath = PATH_CONFIG('project', `${projectName}`);
+  return fs.existsSync(projectPath);
+};
