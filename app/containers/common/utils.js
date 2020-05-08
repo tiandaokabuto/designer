@@ -221,7 +221,7 @@ export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
 
 /**
  * TODO:整合两个删除文件的方法
- * 递归删除文件夹(待测)
+ * 递归删除文件夹(已完成单元测试)(以 deleteFolderRecursive 为准)
  * @param {*} path 路径
  */
 export const deleteFolderRecursive = (path) => {
@@ -271,7 +271,7 @@ function deleteFolder(path) {
 
 /**
  * TODO:抽取加密的逻辑达到语义化，抽取title组件
- * 根据key重命名节点(待测)
+ * 根据key重命名节点
  * @param {*} tree
  * @param {*} key
  * @param {*} persistentStorage
@@ -290,7 +290,6 @@ export const renameNodeByKey = (
   persistentModuleStorage
 ) => {
   const node = findNodeByKey(tree, key);
-  console.log(persistentStorage);
   const oldTitle = node.title;
   if (type === 'process') {
     node.title = (
@@ -408,6 +407,7 @@ export const renameNodeByKey = (
     );
     changeModuleTree([...tree]);
   }
+  return node;
 };
 
 /**
@@ -427,7 +427,7 @@ export function checkAndMakeDir(dirName) {
 }
 /**
  * TODO:修改checkAndMakeDir
- * 优化写法(待测)
+ * 优化写法(已完成单元测试)
  * @param {*} dirName
  */
 export function checkAndMakeDirH(dirName) {
@@ -835,7 +835,6 @@ export const changeModifyState = (processTree, key, modifyState) => {
 
 /**
  * TODO:整合changeModifyState
- * (待测)
  * @param {*} processTree
  * @param {*} checkedNode
  */
