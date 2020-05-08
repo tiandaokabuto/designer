@@ -21,7 +21,6 @@ const LoopParam = ({
     if (!Array.isArray(param.for_list)) {
       param.for_list = [
         {
-          ...param,
           id: 'listKeyword',
           enName: 'value',
           cnName: '值',
@@ -29,7 +28,6 @@ const LoopParam = ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'listArray',
           enName: 'arrayRet',
           cnName: '数组',
@@ -41,7 +39,6 @@ const LoopParam = ({
     if (!Array.isArray(param.for_dict)) {
       param.for_dict = [
         {
-          ...param,
           id: 'dictKey',
           enName: 'key',
           cnName: '键',
@@ -49,7 +46,6 @@ const LoopParam = ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'dictValue',
           enName: 'value',
           cnName: '值',
@@ -57,7 +53,6 @@ const LoopParam = ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'dictVar',
           enName: 'dictVar',
           cnName: '字典',
@@ -69,7 +64,6 @@ const LoopParam = ({
     if (!Array.isArray(param.for_times)) {
       param.for_times = [
         {
-          ...param,
           id: 'timeIndex',
           enName: 'index',
           cnName: '索引名称',
@@ -77,7 +71,6 @@ const LoopParam = ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'timeStartIndex',
           enName: 'startIndex',
           cnName: '初始值',
@@ -85,7 +78,6 @@ const LoopParam = ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'timeEndIndex',
           enName: 'endIndex',
           cnName: '结束值',
@@ -93,7 +85,6 @@ const LoopParam = ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'timeStep',
           enName: 'step',
           cnName: '每次增加',
