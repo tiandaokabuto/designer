@@ -33,6 +33,15 @@ exports[`test RPA test transformCustomCodeStatement 1`] = `
 </div>
 `;
 
+exports[`test RPA test transformLoopStatement 1`] = `
+<div>
+  <div>
+            for item in [1,2,3]:
+
+  </div>
+</div>
+`;
+
 exports[`test RPA test transformPrintStatement 1`] = `
 <div>
   <div>

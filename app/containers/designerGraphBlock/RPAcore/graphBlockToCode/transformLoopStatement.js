@@ -1,5 +1,4 @@
 const transformLoopStatement = (padding, dataStructure, result) => {
-  console.log(dataStructure, 'dataStructure');
   const select = dataStructure['properties']['required'][0].value;
   const node = dataStructure['properties']['required'][1];
   const valueConditionList = node.valueList;
