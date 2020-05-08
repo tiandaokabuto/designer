@@ -11,7 +11,7 @@ const transformReturnStatement = (
   result,
   blockNode = {}
 ) => {
-  console.log(JSON.stringify(dataStructure), JSON.stringify(blockNode));
+  // console.log(JSON.stringify(dataStructure), JSON.stringify(blockNode));
   result.output += `${padding}`;
   const returnList =
     (blockNode.properties &&

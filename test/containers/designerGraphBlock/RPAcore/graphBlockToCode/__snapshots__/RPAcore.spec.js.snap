@@ -50,3 +50,21 @@ exports[`test RPA test transformReturnStatement 1`] = `
   </div>
 </div>
 `;
+
+exports[`test RPA test transformSleepStatement 1`] = `
+<div>
+  <div>
+            sleep( 2 )
+     - 
+    sleep
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformVariableDeclar 1`] = `
+<div>
+  <div>
+            新变量1 = 2323
+  </div>
+</div>
+`;

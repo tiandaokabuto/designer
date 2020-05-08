@@ -9,6 +9,8 @@ import transformCustomCodeStatement from '../../../../../app/containers/designer
 import transformLoopStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformLoopStatement';
 import transformPrintStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformPrintStatement';
 import transformReturnStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformReturnStatement';
+import transformSleepStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformSleepStatement';
+import transformVariableDeclar from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformVariableDeclar';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -320,6 +322,110 @@ describe('test RPA', () => {
               },
             ],
             pythonCode: 'pass\n',
+          }}
+        />
+      </div>
+    );
+
+    expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
+  });
+  it('test transformSleepStatement', () => {
+    const Component = function ({ padding, dataStructure, result }) {
+      const [output, moduleMap] = transformSleepStatement(
+        padding,
+        dataStructure,
+        result,
+        new Map()
+      );
+      return (
+        <div>
+          {output} - {moduleMap.get('time')}
+        </div>
+      );
+    };
+
+    const Rpa = (
+      <div>
+        <Component
+          padding={paddingStart(2)}
+          dataStructure={{
+            visible: '',
+            subtype: 128,
+            module: 'time',
+            main: 'sleep',
+            $$typeof: 1,
+            text: '延迟',
+            pkg: 'sleep',
+            properties: {
+              optional: [],
+              required: [
+                {
+                  paramType: 1,
+                  componentType: 0,
+                  default: '',
+                  cnName: '延迟时间',
+                  enName: 'delay',
+                  value: '2',
+                },
+              ],
+            },
+            id: 'node_1',
+            userDesc: '',
+            _userDesc: '',
+          }}
+          result={{
+            output: '',
+          }}
+        />
+      </div>
+    );
+    expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
+  });
+  it('test transformVariableDeclar', () => {
+    const Component = function ({ padding, dataStructure, result }) {
+      return (
+        <div>{transformVariableDeclar(padding, dataStructure, result)}</div>
+      );
+    };
+
+    const Rpa = (
+      <div>
+        <Component
+          padding={paddingStart(2)}
+          dataStructure={{
+            subtype: 3,
+            main: 'vardefine',
+            $$typeof: 1,
+            text: '变量赋值',
+            visibleTemplate: '变量名称{{newVar}} 赋值为 {{init}}',
+            pkg: 'Control',
+            properties: {
+              optional: [],
+              required: [
+                {
+                  componentType: 0,
+                  default: '',
+                  cnName: '变量名称',
+                  enName: 'newVar',
+                  value: '新变量1',
+                  _value: '新变量1',
+                },
+                {
+                  componentType: 0,
+                  default: '',
+                  cnName: '变量值',
+                  enName: 'init',
+                  value: '2323',
+                  _value: '2323',
+                },
+              ],
+            },
+            id: 'node_1',
+            userDesc: '',
+            _userDesc: '',
+          }}
+          result={{
+            output: '',
           }}
         />
       </div>
