@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test RPA test transformBreakStatement 1`] = `
+<div>
+  <div>
+            break
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformConditionalStatement 1`] = `
+<div>
+  <div>
+            if (name != 2) and (sd &gt; er) :
+
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformContinueStatement 1`] = `
+<div>
+  <div>
+            continue
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformCustomCodeStatement 1`] = `
+<div>
+  <div>
+            这是一段测试的代码
+  </div>
+</div>
+`;

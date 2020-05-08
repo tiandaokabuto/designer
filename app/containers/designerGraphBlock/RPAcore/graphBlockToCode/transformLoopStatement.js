@@ -1,4 +1,5 @@
 const transformLoopStatement = (padding, dataStructure, result) => {
+  console.log(dataStructure, 'dataStructure');
   const select = dataStructure['properties']['required'][0].value;
   const node = dataStructure['properties']['required'][1];
   const valueConditionList = node.valueList;
@@ -36,6 +37,7 @@ const transformLoopStatement = (padding, dataStructure, result) => {
     });
   }
   result.output += `${padding}${looptype} ${loopcondition}:\n`;
+  return result.output;
 };
 
 export default transformLoopStatement;
