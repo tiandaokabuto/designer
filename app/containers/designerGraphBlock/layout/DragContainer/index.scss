@@ -113,6 +113,7 @@
     }
   }
   &-content {
+    user-select: text;
     display: inline-block;
     padding: 24px;
     height: calc(100% - 40px);
