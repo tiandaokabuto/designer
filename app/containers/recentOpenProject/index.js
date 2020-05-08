@@ -42,7 +42,7 @@ export default useInjectContext(({ history }) => {
       dataIndex: 'name',
       width: '50%',
       ellipsis: true,
-      render: (title) => {
+      render: title => {
         return <span style={{ color: 'rgba(50, 166, 127, 1)' }}>{title}</span>;
       },
     },
@@ -59,18 +59,19 @@ export default useInjectContext(({ history }) => {
       ellipsis: true,
       width: '200px',
       render: (text, record) => {
+        const time = FormatDateTime(text);
         return (
           <div>
-            <FormatDateTime />
+            {time}
             <SDIcon
               style={{ marginLeft: '10px' }}
               url={CloseImg}
-              onClick={(e) => {
+              onClick={e => {
                 e.stopPropagation();
                 deleteFolderRecursive(PATH_CONFIG('project', record.name));
-                setFlag((flag) => !flag);
+                setFlag(flag => !flag);
               }}
-            ></SDIcon>
+            />
           </div>
         );
       },
@@ -114,7 +115,7 @@ export default useInjectContext(({ history }) => {
           <div className="recentproject-leftcontent-newproject">
             <Input
               placeholder="请输入新建项目名称"
-              onChange={(e) => {
+              onChange={e => {
                 setName(e.target.value);
               }}
             />
@@ -150,9 +151,9 @@ export default useInjectContext(({ history }) => {
               y: 'calc(100vh - 400px)',
             }}
             ellipsis={true}
-            onRow={(record) => {
+            onRow={record => {
               return {
-                onClick: (event) => {
+                onClick: event => {
                   // 打开对应的项目
                   openProject(record.name);
                   changeCurrentProject(record.name);

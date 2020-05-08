@@ -451,6 +451,7 @@ export const persistentStorage = (
       }
     });
   }
+  updateProjextModifyTime(name);
   // 重新覆写processTree
   persistentManifest(tree, name, 'processTree');
 };
@@ -482,6 +483,16 @@ export const persistentManifest = (tree, name, type) => {
       );
     }
   });
+};
+
+/**
+ * 通过添加和删除文件来更新项目的更新时间
+ * @param {*} projectName 项目名
+ */
+export const updateProjextModifyTime = projectName => {
+  const updateTextPath = PATH_CONFIG('project', `${projectName}/update`);
+  checkAndMakeDir(updateTextPath);
+  deleteFolderRecursive(updateTextPath);
 };
 
 /**
