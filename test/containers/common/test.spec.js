@@ -18,7 +18,6 @@ describe('test', () => {
         <MockCounter />
       </div>
     );
-    console.log(Component.html());
     expect(Component.find('.container').text()).toBe('hhh');
   });
 });
