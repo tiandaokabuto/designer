@@ -14,7 +14,7 @@ import PATH_CONFIG from '@/constants/localFilePath.js';
 import event from '../../../designerGraphBlock/layout/eventCenter';
 import { cloneDeep } from 'lodash';
 
-import { changeModifyState } from '../../../common/utils';
+import { changeModifyState, getDecryptOrNormal } from '../../../common/utils';
 
 import store from '../../../../store';
 
@@ -50,10 +50,8 @@ class NodeHandler {
             ),
             (err, data) => {
               if (!err) {
-                const { graphDataMap } =
-                  data.toString().indexOf('{') === -1
-                    ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
-                    : JSON.parse(data.toString());
+                const { graphDataMap } = getDecryptOrNormal(data);
+
                 graphDataMap.properties[0].value = movingModuleNode.title;
                 setGraphDataMap(key, graphDataMap);
               } else {

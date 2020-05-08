@@ -6,7 +6,7 @@ import { Icon, message } from 'antd';
 import axios from 'axios';
 import { cloneDeep } from 'lodash';
 
-import { traverseTree } from '../../../../common/utils';
+import { traverseTree, getDecryptOrNormal } from '../../../../common/utils';
 import { updateAutomicList } from '../../../../reduxActions';
 import api from '../../../../../api';
 import {
@@ -53,10 +53,7 @@ const readGlobalConfig = (callback, flag = false) => {
   const path = `${currPath}/globalconfig/config.json`;
   fs.readFile(path, async function(err, data) {
     if (!err) {
-      const { automicList, ip } =
-        data.toString().indexOf('{') === -1
-          ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
-          : JSON.parse(data.toString());
+      const { automicList, ip } = getDecryptOrNormal(data);
       if (flag || !automicList) {
         // 调起接口 返回数据 TODO...
         const getAbialityStructure = () => {

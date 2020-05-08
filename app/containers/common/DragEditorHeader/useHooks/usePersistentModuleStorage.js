@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { persistentModuleStorage } from '../../utils';
+import { persistentModuleStorage, persistentManifest } from '../../utils';
 
 import store from '../../../../store';
 
@@ -8,10 +8,11 @@ export default () => {
     const {
       grapheditor: { moduleTree, currentProject, currentCheckedModuleTreeNode },
     } = store.getState();
-    persistentModuleStorage(
-      moduleTree,
-      currentProject,
-      currentCheckedModuleTreeNode
-    );
+    persistentManifest(moduleTree, currentProject, 'moduleTree');
+    // persistentModuleStorage(
+    //   moduleTree,
+    //   currentProject,
+    //   currentCheckedModuleTreeNode
+    // );
   };
 };

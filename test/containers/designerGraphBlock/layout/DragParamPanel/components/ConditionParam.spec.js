@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import Enzyme, { mount, shallow } from 'enzyme';
+import React from 'react';
+import Enzyme, { mount, shallow, render } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { Provider } from 'react-redux';
 import renderer from 'react-test-renderer';
@@ -8,10 +8,9 @@ import ConditionParam from '../../../../../../app/containers/designerGraphBlock/
 
 Enzyme.configure({ adapter: new Adapter() });
 
-function setup(keyFlag = false) {
+function setup() {
   const handleEmitCodeTransform = jest.fn(() => {});
   const stopDeleteKeyDown = jest.fn(() => {});
-  const setFlag = jest.fn(() => {});
   const cards = [];
   const param = { tag: 1, valueList: [], value: '', forceUpdate: 0 };
 
@@ -19,8 +18,6 @@ function setup(keyFlag = false) {
     <ConditionParam
       param={param}
       cards={cards}
-      setFlag={setFlag}
-      keyFlag={keyFlag}
       handleEmitCodeTransform={handleEmitCodeTransform}
       stopDeleteKeyDown={stopDeleteKeyDown}
     ></ConditionParam>
@@ -55,6 +52,19 @@ describe('conditionParam', () => {
         connect: '',
       },
     ]);
+    component.unmount();
+  });
+
+  it('test guide delete', () => {
+    const { radios, component, addBtn, param, btns } = setup();
+    addBtn.at(0).simulate('click');
+    addBtn.at(0).simulate('click');
+    expect(param.valueList.length).toBe(2);
+    const deleteBtn = component.find('.delete-btn');
+    deleteBtn.at(0).simulate('click');
+    deleteBtn.at(1).simulate('click');
+    expect(param.valueList.length).toBe(0);
+    component.unmount();
   });
 
   it('test customize', () => {
@@ -72,10 +82,7 @@ describe('conditionParam', () => {
       },
     });
     expect(param.value).toBe('abcdefg');
-    // expect(input.length).toBe(3);
-    // console.log(input.get(0));
-    // console.log(input.get(1));
-    // console.log(input.get(2));
+    component.unmount();
   });
 
   it('test guide input', () => {
@@ -90,7 +97,25 @@ describe('conditionParam', () => {
         connect: '',
       },
     ]);
-    const input = component.find('.ant-input');
-    console.log(input.length);
+    const input = component.find('.condition-param-ifcondition .ant-input');
+    input.at(0).simulate('change', {
+      target: {
+        value: 'v1input',
+      },
+    });
+    input.at(1).simulate('change', {
+      target: {
+        value: 'v2input',
+      },
+    });
+    expect(param.valueList).toEqual([
+      {
+        v1: 'v1input',
+        v2: 'v2input',
+        rule: '',
+        connect: '',
+      },
+    ]);
+    component.unmount();
   });
 });

@@ -6,6 +6,7 @@ import ItemTypes from '../../statementTypes';
 import { CHANGE_CARDDATA } from '../../../../../actions/codeblock';
 import { encrypt } from '@/login/utils';
 import PATH_CONFIG from '@/constants/localFilePath';
+import { getDecryptOrNormal } from '../../../../common/utils';
 
 const fs = require('fs');
 
@@ -19,7 +20,7 @@ export default ({
   updateCheckedBlockId = () => {},
 }) => {
   const dispatch = useDispatch();
-  const cards = useSelector((state) => state.blockcode.cards);
+  const cards = useSelector(state => state.blockcode.cards);
   const cardsRef = useRef(null);
   cardsRef.current = cards;
 
@@ -38,10 +39,7 @@ export default ({
         `${currentProject}/${currentProject}_module/${titleRef.current}.json`
       )
     );
-    const { graphDataMap } =
-      data.toString().indexOf('{') === -1
-        ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
-        : JSON.parse(data.toString());
+    const { graphDataMap } = getDecryptOrNormal(data);
     newItem = {
       ...item,
       type: ItemTypes.CARD,
@@ -65,7 +63,7 @@ export default ({
   }
   const [{ isDragging }, drag] = useDrag({
     item: newItem,
-    collect: (monitor) => ({
+    collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
     end: (item, monitor) => {
