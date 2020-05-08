@@ -32,9 +32,14 @@ import './index.scss';
 export default useInjectContext(({ history }) => {
   const [name, setName] = useState('');
   const [flag, setFlag] = useState(false);
+  const [isJump, setIsJump] = useState(
+    history.location.state && history.location.state.jump
+  );
+
   const fileList = useMemo(() => {
     return readAllFileName();
   }, [flag]);
+
   const [modalVisible, setModalVisible] = useState(false);
   const processs = require('process');
   const columns = [
@@ -61,6 +66,23 @@ export default useInjectContext(({ history }) => {
       width: '200px',
       render: (text, record) => {
         const time = FormatDateTime(text);
+        const handleDeletProject = e => {
+          e.stopPropagation();
+          deleteFolderRecursive(PATH_CONFIG('project', record.name));
+          setFlag(flag => !flag);
+          const historyState = history.location.state;
+          if (
+            historyState &&
+            historyState.projectName &&
+            historyState.projectName === record.name
+          ) {
+            if (historyState.jump) {
+              historyState.jump = false;
+              setIsJump(false);
+            }
+          }
+        };
+
         return (
           <div>
             {time}
@@ -68,45 +90,46 @@ export default useInjectContext(({ history }) => {
               style={{ marginLeft: '10px' }}
               url={CloseImg}
               onClick={e => {
-                e.stopPropagation();
-                deleteFolderRecursive(PATH_CONFIG('project', record.name));
-                setFlag(flag => !flag);
+                handleDeletProject(e);
               }}
             />
           </div>
         );
       },
     },
-    // {
-    //   title: '',
-    //   dataIndex: 'action',
-    //   render: (text, record) => {
-    //     return (
-    //       <SDIcon
-    //         url={CloseImg}
-    //         onClick={e => {
-    //           e.stopPropagation();
-    //           deleteFolderRecursive(PATH_CONFIG('project', record.name));
-    //           setFlag(flag => !flag);
-    //         }}
-    //       ></SDIcon>
-    //     );
-    //   },
-    // },
+    /* {
+      title: '',
+      dataIndex: 'action',
+      render: (text, record) => {
+        return (
+          <SDIcon
+            url={CloseImg}
+            onClick={e => {
+              e.stopPropagation();
+              deleteFolderRecursive(PATH_CONFIG('project', record.name));
+              setFlag(flag => !flag);
+            }}
+          ></SDIcon>
+        );
+      },
+    }, */
   ];
-
-  const isJump = history.location.state && history.location.state.jump;
 
   const handleCreatNewProject = () => {
     if (!name) {
       message.info('请填写项目名称');
       return;
     }
-    if (checkProjectExist) {
+    if (checkProjectExist(name)) {
       message.info('项目已存在，请重新填写');
       return false;
     }
-    history.push('/designGraphEdit');
+    history.push({
+      pathname: '/designGraphEdit',
+      state: {
+        projectName: name,
+      },
+    });
     setTimeout(() => {
       newProject(name, () => {
         changeCurrentProject(name);
@@ -171,7 +194,12 @@ export default useInjectContext(({ history }) => {
                   changeCurrentProject(record.name);
                   // clearGrapheditorData();
                   resetGraphEditData();
-                  history.push('/designGraphEdit');
+                  history.push({
+                    pathname: '/designGraphEdit',
+                    state: {
+                      projectName: record.name,
+                    },
+                  });
                 },
               };
             }}
