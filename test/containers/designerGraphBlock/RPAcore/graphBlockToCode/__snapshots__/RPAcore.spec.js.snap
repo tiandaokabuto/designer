@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test RPA test transformBreakStatement 1`] = `
+<div>
+  <div>
+            break
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformConditionalStatement 1`] = `
+<div>
+  <div>
+            if (name != 2) and (sd &gt; er) :
+
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformContinueStatement 1`] = `
+<div>
+  <div>
+            continue
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformCustomCodeStatement 1`] = `
+<div>
+  <div>
+            这是一段测试的代码
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformLoopStatement 1`] = `
+<div>
+  <div>
+            for item in [1,2,3]:
+
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformPrintStatement 1`] = `
+<div>
+  <div>
+            logger.warning("[WARNING]--" + str("name-{}").format(3))
+     - 
+    logger
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformReturnStatement 1`] = `
+<div>
+  <div>
+            return name
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformSleepStatement 1`] = `
+<div>
+  <div>
+            sleep( 2 )
+     - 
+    sleep
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformVariableDeclar 1`] = `
+<div>
+  <div>
+            新变量1 = 2323
+  </div>
+</div>
+`;

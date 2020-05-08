@@ -19,6 +19,7 @@ import {
   readAllFileName,
   formatDateTime as FormatDateTime,
   deleteFolderRecursive,
+  checkProjectExist,
 } from '../common/utils';
 import {
   changeCurrentProject,
@@ -31,9 +32,14 @@ import './index.scss';
 export default useInjectContext(({ history }) => {
   const [name, setName] = useState('');
   const [flag, setFlag] = useState(false);
+  const [isJump, setIsJump] = useState(
+    history.location.state && history.location.state.jump
+  );
+
   const fileList = useMemo(() => {
     return readAllFileName();
   }, [flag]);
+
   const [modalVisible, setModalVisible] = useState(false);
   const processs = require('process');
   const columns = [
@@ -42,7 +48,7 @@ export default useInjectContext(({ history }) => {
       dataIndex: 'name',
       width: '50%',
       ellipsis: true,
-      render: (title) => {
+      render: title => {
         return <span style={{ color: 'rgba(50, 166, 127, 1)' }}>{title}</span>;
       },
     },
@@ -59,41 +65,78 @@ export default useInjectContext(({ history }) => {
       ellipsis: true,
       width: '200px',
       render: (text, record) => {
+        const time = FormatDateTime(text);
+        const handleDeletProject = e => {
+          e.stopPropagation();
+          deleteFolderRecursive(PATH_CONFIG('project', record.name));
+          setFlag(flag => !flag);
+          const historyState = history.location.state;
+          if (
+            historyState &&
+            historyState.projectName &&
+            historyState.projectName === record.name
+          ) {
+            if (historyState.jump) {
+              historyState.jump = false;
+              setIsJump(false);
+            }
+          }
+        };
+
         return (
           <div>
-            <FormatDateTime />
+            {time}
             <SDIcon
               style={{ marginLeft: '10px' }}
               url={CloseImg}
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteFolderRecursive(PATH_CONFIG('project', record.name));
-                setFlag((flag) => !flag);
+              onClick={e => {
+                handleDeletProject(e);
               }}
-            ></SDIcon>
+            />
           </div>
         );
       },
     },
-    // {
-    //   title: '',
-    //   dataIndex: 'action',
-    //   render: (text, record) => {
-    //     return (
-    //       <SDIcon
-    //         url={CloseImg}
-    //         onClick={e => {
-    //           e.stopPropagation();
-    //           deleteFolderRecursive(PATH_CONFIG('project', record.name));
-    //           setFlag(flag => !flag);
-    //         }}
-    //       ></SDIcon>
-    //     );
-    //   },
-    // },
+    /* {
+      title: '',
+      dataIndex: 'action',
+      render: (text, record) => {
+        return (
+          <SDIcon
+            url={CloseImg}
+            onClick={e => {
+              e.stopPropagation();
+              deleteFolderRecursive(PATH_CONFIG('project', record.name));
+              setFlag(flag => !flag);
+            }}
+          ></SDIcon>
+        );
+      },
+    }, */
   ];
 
-  const isJump = history.location.state && history.location.state.jump;
+  const handleCreatNewProject = () => {
+    if (!name) {
+      message.info('请填写项目名称');
+      return;
+    }
+    if (checkProjectExist(name)) {
+      message.info('项目已存在，请重新填写');
+      return false;
+    }
+    history.push({
+      pathname: '/designGraphEdit',
+      state: {
+        projectName: name,
+      },
+    });
+    setTimeout(() => {
+      newProject(name, () => {
+        changeCurrentProject(name);
+      });
+    }, 0);
+  };
+
   return (
     <div>
       <GraphBlockHeader tag="recentProject" />
@@ -114,7 +157,7 @@ export default useInjectContext(({ history }) => {
           <div className="recentproject-leftcontent-newproject">
             <Input
               placeholder="请输入新建项目名称"
-              onChange={(e) => {
+              onChange={e => {
                 setName(e.target.value);
               }}
             />
@@ -125,20 +168,13 @@ export default useInjectContext(({ history }) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onClick={() => {
-                if (!name) {
-                  message.info('请填写项目名称');
-                  return;
-                }
-                history.push('/designGraphEdit');
-                setTimeout(() => {
-                  newProject(name, () => {
-                    changeCurrentProject(name);
-                  });
-                }, 0);
-              }}
+              onClick={handleCreatNewProject}
             >
-              <img src={DiffImg} style={{ marginRight: '14px' }}></img>
+              <img
+                src={DiffImg}
+                alt="projectIcon"
+                style={{ marginRight: '14px' }}
+              />
               新建项目
             </Button>
           </div>
@@ -150,15 +186,20 @@ export default useInjectContext(({ history }) => {
               y: 'calc(100vh - 400px)',
             }}
             ellipsis={true}
-            onRow={(record) => {
+            onRow={record => {
               return {
-                onClick: (event) => {
+                onClick: event => {
                   // 打开对应的项目
                   openProject(record.name);
                   changeCurrentProject(record.name);
                   // clearGrapheditorData();
                   resetGraphEditData();
-                  history.push('/designGraphEdit');
+                  history.push({
+                    pathname: '/designGraphEdit',
+                    state: {
+                      projectName: record.name,
+                    },
+                  });
                 },
               };
             }}

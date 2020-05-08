@@ -36,6 +36,7 @@ const transformLoopStatement = (padding, dataStructure, result) => {
     });
   }
   result.output += `${padding}${looptype} ${loopcondition}:\n`;
+  return result.output;
 };
 
 export default transformLoopStatement;

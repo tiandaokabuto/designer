@@ -17,7 +17,7 @@ import { transformBlockToCode } from '../../designerGraphBlock/RPAcore';
 import { updateEditorBlockPythonCode } from '../../reduxActions';
 import transformVariable from './transformVariable';
 
-const padding = length => '    '.repeat(length);
+const padding = (length) => '    '.repeat(length);
 
 export const transformEditorProcess = (
   graphData,
@@ -41,13 +41,12 @@ export const transformEditorProcess = (
       const funcName = `RPA_${currentId}`; //uniqueId('RPA_');
       result.output =
         `def ${funcName}(${params
-          .filter(item => item.name)
-          .map(item => item.name)
-          .join(',')}):\n${transformBlockToCode(
-          blockData.cards || [],
-          1,
-          blockData
-        ).output || '\n'}` + result.output;
+          .filter((item) => item.name)
+          .map((item) => item.name)
+          .join(',')}):\n${
+          transformBlockToCode(blockData.cards || [], 1, blockData).output ||
+          '\n'
+        }` + result.output;
 
       if (
         !notWhile &&
@@ -60,13 +59,13 @@ export const transformEditorProcess = (
       // 如果跟循环没有关系的话就直接执行当前的代码块
       // 解析当前模块传入的参数和返回的参数
       const return_string = blockData['properties'][2].value
-        .map(item => item.name)
+        .map((item) => item.name)
         .join(',');
       result.output += `${padding(depth)}${
         return_string ? return_string + ' = ' : ''
       }${funcName}(${params
-        .filter(item => item.name)
-        .map(item => item.name + ' = ' + item.value)
+        .filter((item) => item.name)
+        .map((item) => item.name + ' = ' + item.value)
         .join(',')})\n`;
       const next = findTargetIdBySourceId(graphData.edges, currentId);
       next &&
@@ -125,8 +124,6 @@ export const transformEditorProcess = (
 
       const isCircle = isYesCircleExist || isNoCircleExist;
 
-      console.log(isCircle, 'isCircle');
-
       if (
         !isCircle ||
         findCommonTarget(
@@ -142,7 +139,6 @@ export const transformEditorProcess = (
           findNodeByLabelAndId(graphData.edges, currentId, '否'),
           findNodeByLabelAndId(graphData.edges, currentId, '是')
         );
-        console.log(breakPoint, 'breakPoint');
         // 寻找label为是的出点进行解析
         const nextTrue = findNodeByLabelAndId(graphData.edges, currentId, '是');
         nextTrue && (result.output += `${padding(depth)}if ${condition}:\n`);
@@ -188,9 +184,9 @@ export const transformEditorProcess = (
           );
       } else if (hasTwoEntryPoint(graphData.edges, currentId)) {
         result.output += `${padding(depth)}while ( True ):\n`;
-        result.output += `${padding(depth + 1)}if ${condition}:\n${padding(
-          depth + 2
-        )}break\n`;
+        result.output += `${padding(depth + 1)}if${
+          isYesCircleExist ? ' not' : ''
+        } ${condition}:\n${padding(depth + 2)}break\n`;
         let nextLabel = isYesCircleExist ? '是' : '否';
         const nextNode = findNodeByLabelAndId(
           graphData.edges,
@@ -225,9 +221,9 @@ export const transformEditorProcess = (
           );
       } else {
         // 处理存在循环的情况
-        result.output += `${padding(depth)}if ${condition}:\n${padding(
-          depth + 1
-        )}break\n`;
+        result.output += `${padding(depth)}if${
+          isYesCircleExist ? ' not' : ''
+        } ${condition}:\n${padding(depth + 1)}break\n`;
         let nextLabel = isYesCircleExist ? '否' : '是';
         const nextNode = findNodeByLabelAndId(
           graphData.edges,
@@ -276,7 +272,7 @@ export default (graphData, graphDataMap) => {
     writeFileRecursive(
       `${process.cwd()}/python/temp.py`,
       result.output,
-      function() {
+      function () {
         console.log('保存成功');
       }
     );

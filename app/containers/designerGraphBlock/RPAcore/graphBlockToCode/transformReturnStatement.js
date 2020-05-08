@@ -1,16 +1,24 @@
+/**
+ * (已进行单元测试)
+ * @param {*} padding
+ * @param {*} dataStructure
+ * @param {*} result
+ * @param {*} blockNode
+ */
 const transformReturnStatement = (
   padding,
   dataStructure,
   result,
   blockNode = {}
 ) => {
+  // console.log(JSON.stringify(dataStructure), JSON.stringify(blockNode));
   result.output += `${padding}`;
   const returnList =
     (blockNode.properties &&
-      blockNode.properties.find(item => item.enName === 'output').value) ||
+      blockNode.properties.find((item) => item.enName === 'output').value) ||
     [];
   const return_string = dataStructure['properties']['required'][0].value.map(
-    item => item.name || 'None'
+    (item) => item.name || 'None'
   );
 
   return_string.length = returnList.length;
@@ -20,6 +28,7 @@ const transformReturnStatement = (
     }
   }
   result.output += `return ${return_string.join(', ')}`;
+  return result.output;
 };
 
 export default transformReturnStatement;
