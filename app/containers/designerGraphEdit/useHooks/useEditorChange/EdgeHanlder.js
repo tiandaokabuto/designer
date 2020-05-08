@@ -20,10 +20,11 @@ class EdgeHandler {
     if (description.action === 'add') {
       // 连线操作
       const graphData = save();
-      const source = description.model.source;
-      const target = description.model.target;
-      const nodes = graphData.nodes;
-      const edges = graphData.edges;
+      const { source } = description.model;
+      const { dataMap } = description.item;
+      const { nodes, edges } = graphData;
+      const { shape } = dataMap[source];
+      // 条件连线限制
       const rhombusNode = nodes.find(
         item => item.id === source && item.shape === 'rhombus-node'
       );
@@ -53,6 +54,20 @@ class EdgeHandler {
         } else {
           this.apiAction('undo');
           message.info('判断节点输出连线不能多于两条');
+        }
+      } else if (shape === 'start-node' || shape === 'processblock') {
+        // 开始、流程块节点连线限制
+        const dataMapArray = Object.values(dataMap);
+        const tipText = `${
+          shape === 'start-node' ? '开始' : '流程块'
+        }节点输出连线不能多于两条`;
+        const edge = dataMapArray.filter(item =>
+          item.source ? item.source === source : false
+        );
+        if (edge.length > 1) {
+          console.log(this.RegistryCenterImpl);
+          this.apiAction('undo');
+          message.info(tipText);
         }
       }
     }

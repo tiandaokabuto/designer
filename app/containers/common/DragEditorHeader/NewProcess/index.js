@@ -78,7 +78,7 @@ export default ({ resetVisible, tag }) => {
       visible={visible}
       width="50vw"
       bodyStyle={{
-        height: '50vh',
+        // height: '50vh',
         overflow: 'auto',
       }}
       centered
