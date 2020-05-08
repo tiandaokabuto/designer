@@ -7,6 +7,7 @@ import transformConditionalStatement from '../../../../../app/containers/designe
 import transformContinueStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformContinueStatement';
 import transformCustomCodeStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformCustomCodeStatement';
 import transformLoopStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformLoopStatement';
+import transformPrintStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformPrintStatement';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -144,4 +145,95 @@ describe('test RPA', () => {
     expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
   });
   // it('test transformLoopStatement', () => {});
+  it('test transformPrintStatement', () => {
+    const map = new Map();
+    const Component = function ({ padding, dataStructure, result }) {
+      const [output, moduleT] = transformPrintStatement(
+        padding,
+        dataStructure,
+        result,
+        map
+      );
+      return (
+        <div>
+          {output} - {moduleT}
+        </div>
+      );
+    };
+
+    const Rpa = (
+      <div>
+        <Component
+          padding={paddingStart(2)}
+          dataStructure={{
+            visible: '',
+            subtype: 8,
+            main: 'print',
+            $$typeof: 1,
+            text: '控制台打印',
+            pkg: 'Control',
+            properties: {
+              optional: [
+                {
+                  paramType: 0,
+                  componentType: 1,
+                  default: 'format',
+                  cnName: '替换类型',
+                  enName: 'replaceType',
+                  valueMapping: [
+                    { name: 'format', value: 'format' },
+                    { name: 'format_map', value: 'format_map' },
+                  ],
+                  value: '',
+                  desc: '选择打印输出的替换类型',
+                },
+                {
+                  paramType: 0,
+                  componentType: 0,
+                  default: '',
+                  cnName: '传参',
+                  enName: 'params',
+                  valueMapping: [],
+                  value: '3',
+                  desc: 'format函数的入参',
+                },
+              ],
+              required: [
+                {
+                  componentType: 0,
+                  default: '',
+                  cnName: '模版字符串',
+                  enName: 'template_string',
+                  value: '"name-{}"',
+                },
+                {
+                  paramType: 0,
+                  componentType: 1,
+                  default: '',
+                  cnName: '日志等级',
+                  enName: 'logLevel',
+                  valueMapping: [
+                    { name: 'INFO', value: 'info' },
+                    { name: 'WARNING', value: 'warning' },
+                    { name: 'ERROR', value: 'error' },
+                    { name: 'DEBUG', value: 'debug' },
+                  ],
+                  value: 'warning',
+                  desc: '选择打印输出日志等级',
+                },
+              ],
+            },
+            id: 'node_23',
+            userDesc: '',
+            _userDesc: '',
+          }}
+          result={{
+            output: '',
+          }}
+        />
+      </div>
+    );
+    // expect(map.has('sendiRPA.logHandler')).toBeTruthy();
+    expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
+  });
 });

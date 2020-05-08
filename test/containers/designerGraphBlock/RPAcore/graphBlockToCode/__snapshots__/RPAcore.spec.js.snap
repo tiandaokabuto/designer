@@ -32,3 +32,13 @@ exports[`test RPA test transformCustomCodeStatement 1`] = `
   </div>
 </div>
 `;
+
+exports[`test RPA test transformPrintStatement 1`] = `
+<div>
+  <div>
+            logger.warning("[WARNING]--" + str("name-{}").format(3))
+     - 
+    logger
+  </div>
+</div>
+`;
