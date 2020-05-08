@@ -8,6 +8,12 @@ export default arr => {
     const {
       grapheditor: { processTree, currentProject, currentCheckedTreeNode },
     } = store.getState();
-    persistentStorage(arr, processTree, currentProject, currentCheckedTreeNode);
+    console.log(arr);
+    persistentStorage(
+      arr ? arr : currentCheckedTreeNode ? [currentCheckedTreeNode] : [],
+      processTree,
+      currentProject,
+      currentCheckedTreeNode
+    );
   };
 };

@@ -202,7 +202,7 @@ export default ({ history, tag }) => {
             if (modifiedNodesArr.current.length !== 0) {
               setModalVisible(true);
             } else {
-              handleWindowOperation('close');
+              // handleWindowOperation('close');
             }
           }}
         />
@@ -226,7 +226,7 @@ export default ({ history, tag }) => {
           setAllModifiedState(processTree); // 把所有已修改的状态改为false
           persistentStorage(modifiedNodesArr.current); // 保存当前正在修改的
           setTimeout(() => {
-            handleWindowOperation('close');
+            // handleWindowOperation('close');
           }, 100);
         }}
       />
