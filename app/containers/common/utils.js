@@ -25,6 +25,25 @@ const path = require('path');
 const JSZIP = require('jszip');
 const zip = new JSZIP();
 const adm_zip = require('adm-zip');
+const defaultGraphData = {
+  nodes: [
+    {
+      type: 'node',
+      size: '40*40',
+      shape: 'start-node',
+      color: '#FA8C16',
+      label: '开始',
+      x: 436,
+      y: 30,
+      index: 0,
+      style: {
+        stroke: 'rgba(61, 109, 204, 1)',
+        fill: '#ecf5f6',
+      },
+    },
+  ],
+};
+
 /**
  * 新建项目(待测)
  * @param {*} name 项目名称
@@ -220,7 +239,6 @@ export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
 };
 
 /**
- * TODO:整合两个删除文件的方法
  * 递归删除文件夹(已完成单元测试)(以 deleteFolderRecursive 为准)
  * @param {*} path 路径
  */
@@ -239,34 +257,6 @@ export const deleteFolderRecursive = path => {
     fs.rmdirSync(path);
   }
 };
-// function deleteFolder(path) {
-//   let files = [];
-//   if (fs.existsSync(path)) {
-//     files = fs.readdirSync(path);
-//     files.forEach(function(file) {
-//       let curPath = path + '/' + file;
-//       if (fs.statSync(curPath).isDirectory()) {
-//         // recurse
-//         deleteFolder(curPath);
-//       } else {
-//         // delete file
-//         fs.unlinkSync(curPath);
-//       }
-//     });
-//     fs.rmdirSync(path);
-//   }
-// }
-// export const findParentNodeByKey = (tree, key, parent = tree) => {
-//   for (const child of tree) {
-//     if (child.key === key) {
-//       return parent;
-//     }
-//     if (child.children) {
-//       const bool = findParentNodeByKey(child.children, key, child);
-//       if (bool) return bool;
-//     }
-//   }
-// };
 
 /**
  * TODO:抽取加密的逻辑达到语义化，抽取title组件
@@ -277,7 +267,6 @@ export const deleteFolderRecursive = path => {
  * @param {*} restoreCheckedTreeNode
  * @param {*} name
  * @param {*} type
- * @param {*} persistentModuleStorage
  */
 export const renameNodeByKey = (
   tree,
@@ -285,8 +274,7 @@ export const renameNodeByKey = (
   persistentStorage,
   restoreCheckedTreeNode,
   name,
-  type,
-  persistentModuleStorage
+  type
 ) => {
   const node = findNodeByKey(tree, key);
   const oldTitle = node.title;
@@ -407,22 +395,6 @@ export const renameNodeByKey = (
 };
 
 /**
- * 检查和创建路径
- * @param {} dirName 完整路径 ../a/b/c.py
- */
-// export function checkAndMakeDir(dirName) {
-//   if (fs.existsSync(dirName)) {
-//     return true;
-//   } else {
-//     if (checkAndMakeDir(path.dirname(dirName))) {
-//       fs.mkdirSync(dirName);
-//       return true;
-//     }
-//     return false;
-//   }
-// }
-
-/**
  * TODO:修改checkAndMakeDir
  * 优化写法(已完成单元测试)
  * @param {*} dirName
@@ -484,7 +456,7 @@ export const persistentStorage = (
 };
 
 /**
- * 保存
+ * 保存流程树/流程块树的描述文件
  * @param {*} tree
  * @param {*} name 项目名
  * @param {*} type processTree/moduleTree
@@ -511,14 +483,6 @@ export const persistentManifest = (tree, name, type) => {
     }
   });
 };
-
-/**
- * 跟persitentStorage方法中重叠的部分进行抽取
- * (待测)
- * @param {*} moduleTree
- * @param {*} name
- */
-// export const persistentModuleStorage = (moduleTree, name) => {};
 
 /**
  * 判断树中是否有重复的节点(已进行单元测试)
@@ -555,18 +519,6 @@ export const getUniqueId = (tree, keyType = 'key_') => {
   }
 };
 
-// export const getModuleUniqueId = tree => {
-//   let new_key = uniqueId('key_module_');
-//   while (true) {
-//     if (hasDuplicateKey(tree, new_key)) {
-//       new_key = uniqueId('key_module_');
-//       continue;
-//     } else {
-//       return new_key;
-//     }
-//   }
-// };
-
 export const uuid = () => {
   let s = [];
   const hexDigits = '0123456789abcdef';
@@ -599,24 +551,7 @@ export const newProcess = (
   const isLeafNodeOrUndefined = checkedTreeNode === undefined || !isDirNodeBool;
   const uniqueid = getUniqueId(processTree);
   // defaultGraphData: 新流程图加一个开始节点
-  const defaultGraphData = {
-    nodes: [
-      {
-        type: 'node',
-        size: '40*40',
-        shape: 'start-node',
-        color: '#FA8C16',
-        label: '开始',
-        x: 436,
-        y: 30,
-        index: 0,
-        style: {
-          stroke: 'rgba(61, 109, 204, 1)',
-          fill: '#ecf5f6',
-        },
-      },
-    ],
-  };
+
   if (nodeType === 'process') {
     checkAndMakeDir(PATH_CONFIG('project', `${currentProject}/${name}`));
     // 如果是作为根结点添加, 那么逻辑如下
@@ -801,20 +736,6 @@ export const changeModifyState = (processTree, key, modifyState) => {
   changeProcessTree([...processTree]);
   return node;
 };
-
-/**
- * TODO:整合changeModifyState
- * @param {*} processTree
- * @param {*} checkedNode
- */
-// export const setNodeModifiedState = (processTree, checkedNode) => {
-//   traverseTree(processTree, node => {
-//     if (node.key === checkedNode) {
-//       node.hasModified = false;
-//     }
-//   });
-//   changeProcessTree([...processTree]);
-// };
 
 export const hasNodeModified = (processTree, key) => {
   const node = findNodeByKey(processTree, key);
