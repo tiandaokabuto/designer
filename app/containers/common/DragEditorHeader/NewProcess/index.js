@@ -7,7 +7,7 @@ import {
   newModuleDir,
   persistentStorage,
   isNameExist,
-  persistentModuleStorage,
+  persistentManifest,
 } from '../../utils';
 
 const FormItem = Form.Item;
@@ -63,7 +63,8 @@ export default ({ resetVisible, tag }) => {
         );
         setVisible(false);
         resetVisible(undefined);
-        persistentModuleStorage(newModuleTree, currentProject, uniqueid);
+        persistentManifest(newModuleTree, currentProject, 'moduleTree');
+        // persistentModuleStorage(newModuleTree, currentProject, uniqueid);
         console.log('选择了流程块');
       } else {
         message.info('流程块页面不能新增流程');

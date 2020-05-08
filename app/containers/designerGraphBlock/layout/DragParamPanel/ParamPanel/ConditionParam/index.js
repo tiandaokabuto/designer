@@ -16,7 +16,7 @@ export default ({
   const [flag, forceUpdate] = useForceUpdate();
   const [tag, setTag] = useState(param.tag);
 
-  const handleDelete = (index) => {
+  const handleDelete = index => {
     param.valueList.splice(index, 1);
     forceUpdate();
   };
@@ -40,9 +40,8 @@ export default ({
           display: 'flex',
           marginBottom: '10px',
         }}
-        onChange={(e) => {
+        onChange={e => {
           param.tag = e.target.value;
-          console.log('change radio');
           param.forceUpdate = param.forceUpdate + 1;
           setTag(e.target.value);
           handleEmitCodeTransform(cards);
@@ -79,7 +78,7 @@ export default ({
                   <Input
                     placeholder="输入文本"
                     defaultValue={item.v1}
-                    onChange={(e) => {
+                    onChange={e => {
                       item.v1 = e.target.value;
                       param.forceUpdate = param.forceUpdate + 1;
                       handleEmitCodeTransform(cards);
@@ -89,13 +88,13 @@ export default ({
                     style={{ width: '100%' }}
                     defaultValue={item.rule}
                     dropdownMatchSelectWidth={false}
-                    onChange={(value) => {
+                    onChange={value => {
                       item.rule = value;
                       param.forceUpdate = param.forceUpdate + 1;
                       handleEmitCodeTransform(cards);
                     }}
                   >
-                    {(param.valueMapping || []).map((ruleItem) => (
+                    {(param.valueMapping || []).map(ruleItem => (
                       <Option key={ruleItem.value} value={ruleItem.value}>
                         {ruleItem.name}
                       </Option>
@@ -104,7 +103,7 @@ export default ({
                   <Input
                     placeholder="输入"
                     defaultValue={item.v2}
-                    onChange={(e) => {
+                    onChange={e => {
                       item.v2 = e.target.value;
                       param.forceUpdate = param.forceUpdate + 1;
                       handleEmitCodeTransform(cards);
@@ -123,7 +122,7 @@ export default ({
                 <div className="condition-param-ifcondition">
                   <Radio.Group
                     defaultValue={item.connect}
-                    onChange={(e) => {
+                    onChange={e => {
                       item.connect = e.target.value;
                       param.forceUpdate = param.forceUpdate + 1;
                       handleEmitCodeTransform(cards);
@@ -145,12 +144,12 @@ export default ({
           className="condition-param-customize-input"
           defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
           // key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
-          onChange={(e) => {
+          onChange={e => {
             param.value = e.target.value;
             handleEmitCodeTransform(cards);
             param.forceUpdate = param.forceUpdate + 1;
           }}
-          onKeyDown={(e) => stopDeleteKeyDown(e)}
+          onKeyDown={e => stopDeleteKeyDown(e)}
         />
       )}
     </div>

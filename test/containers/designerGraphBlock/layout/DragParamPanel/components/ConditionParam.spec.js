@@ -3,15 +3,14 @@ import Enzyme, { mount, shallow, render } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { Provider } from 'react-redux';
 import renderer from 'react-test-renderer';
-import store from '../../../../../../app/store';
+// import store from '../../../../../../app/store';
 import ConditionParam from '../../../../../../app/containers/designerGraphBlock/layout/DragParamPanel/ParamPanel/ConditionParam';
 
 Enzyme.configure({ adapter: new Adapter() });
 
-function setup(keyFlag = false) {
+function setup() {
   const handleEmitCodeTransform = jest.fn(() => {});
   const stopDeleteKeyDown = jest.fn(() => {});
-  const setFlag = jest.fn(() => {});
   const cards = [];
   const param = { tag: 1, valueList: [], value: '', forceUpdate: 0 };
 
@@ -19,8 +18,6 @@ function setup(keyFlag = false) {
     <ConditionParam
       param={param}
       cards={cards}
-      setFlag={setFlag}
-      keyFlag={keyFlag}
       handleEmitCodeTransform={handleEmitCodeTransform}
       stopDeleteKeyDown={stopDeleteKeyDown}
     ></ConditionParam>
@@ -35,20 +32,90 @@ function setup(keyFlag = false) {
 }
 
 describe('conditionParam', () => {
-  it('test buttons', () => {
-    const { radios, component, addBtn, param } = setup();
-
-    // radios.at(1).simulate('change', {
-    //   target: {
-    //     value: 2,
-    //   },
-    // });
-    // expect(param.tag).toBe(2);
+  it('test guide add', () => {
+    const { radios, component, addBtn, param, btns } = setup();
     addBtn.at(0).simulate('click');
     expect(param.valueList.length).toBe(1);
+    addBtn.at(0).simulate('click');
+    expect(param.valueList.length).toBe(2);
+    expect(param.valueList).toEqual([
+      {
+        v1: '',
+        v2: '',
+        rule: '',
+        connect: '',
+      },
+      {
+        v1: '',
+        v2: '',
+        rule: '',
+        connect: '',
+      },
+    ]);
+    component.unmount();
+  });
 
-    const deleteButton = component.find('.condition-param-ifcondition');
+  it('test guide delete', () => {
+    const { radios, component, addBtn, param, btns } = setup();
+    addBtn.at(0).simulate('click');
+    addBtn.at(0).simulate('click');
+    expect(param.valueList.length).toBe(2);
+    const deleteBtn = component.find('.delete-btn');
+    deleteBtn.at(0).simulate('click');
+    deleteBtn.at(1).simulate('click');
+    expect(param.valueList.length).toBe(0);
+    component.unmount();
+  });
 
-    expect(deleteButton.length).toBe(2);
+  it('test customize', () => {
+    const { radios, component, addBtn, param, btns } = setup();
+    radios.at(1).simulate('change', {
+      target: {
+        value: 2,
+      },
+    });
+    expect(param.tag).toBe(2);
+    const input = component.find('.condition-param-customize-input');
+    input.at(0).simulate('change', {
+      target: {
+        value: 'abcdefg',
+      },
+    });
+    expect(param.value).toBe('abcdefg');
+    component.unmount();
+  });
+
+  it('test guide input', () => {
+    const { radios, component, addBtn, param, btns } = setup();
+    addBtn.at(0).simulate('click');
+    expect(param.valueList.length).toBe(1);
+    expect(param.valueList).toEqual([
+      {
+        v1: '',
+        v2: '',
+        rule: '',
+        connect: '',
+      },
+    ]);
+    const input = component.find('.condition-param-ifcondition .ant-input');
+    input.at(0).simulate('change', {
+      target: {
+        value: 'v1input',
+      },
+    });
+    input.at(1).simulate('change', {
+      target: {
+        value: 'v2input',
+      },
+    });
+    expect(param.valueList).toEqual([
+      {
+        v1: 'v1input',
+        v2: 'v2input',
+        rule: '',
+        connect: '',
+      },
+    ]);
+    component.unmount();
   });
 });

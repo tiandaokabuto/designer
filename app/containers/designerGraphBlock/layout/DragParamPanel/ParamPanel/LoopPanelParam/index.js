@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 import LabelParam from '../components/LabelParam';
 import ConditionParam from '../ConditionParam/index';
 
-export default ({
+const LoopParam = ({
   param,
   handleEmitCodeTransform,
   cards,
@@ -20,7 +21,6 @@ export default ({
     if (!Array.isArray(param.for_list)) {
       param.for_list = [
         {
-          ...param,
           id: 'listKeyword',
           enName: 'value',
           cnName: '值',
@@ -28,7 +28,6 @@ export default ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'listArray',
           enName: 'arrayRet',
           cnName: '数组',
@@ -40,7 +39,6 @@ export default ({
     if (!Array.isArray(param.for_dict)) {
       param.for_dict = [
         {
-          ...param,
           id: 'dictKey',
           enName: 'key',
           cnName: '键',
@@ -48,7 +46,6 @@ export default ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'dictValue',
           enName: 'value',
           cnName: '值',
@@ -56,7 +53,6 @@ export default ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'dictVar',
           enName: 'dictVar',
           cnName: '字典',
@@ -68,7 +64,6 @@ export default ({
     if (!Array.isArray(param.for_times)) {
       param.for_times = [
         {
-          ...param,
           id: 'timeIndex',
           enName: 'index',
           cnName: '索引名称',
@@ -76,7 +71,6 @@ export default ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'timeStartIndex',
           enName: 'startIndex',
           cnName: '初始值',
@@ -84,7 +78,6 @@ export default ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'timeEndIndex',
           enName: 'endIndex',
           cnName: '结束值',
@@ -92,7 +85,6 @@ export default ({
           paramType: ['String'],
         },
         {
-          ...param,
           id: 'timeStep',
           enName: 'step',
           cnName: '每次增加',
@@ -137,3 +129,26 @@ export default ({
     </Fragment>
   );
 };
+LoopParam.propTypes = {
+  param: PropTypes.object.isRequired,
+  keyFlag: PropTypes.bool.isRequired,
+  setFlag: PropTypes.func.isRequired,
+  cards: PropTypes.array,
+  handleEmitCodeTransform: PropTypes.func,
+  stopDeleteKeyDown: PropTypes.func,
+  loopSelect: PropTypes.string,
+  aiHintList: PropTypes.object,
+  appendDataSource: PropTypes.array,
+  handleValidate: PropTypes.func,
+};
+LoopParam.defaultProps = {
+  handleEmitCodeTransform: () => {},
+  stopDeleteKeyDown: () => {},
+  loopSelect: 'for_list',
+  aiHintList: {},
+  appendDataSource: [],
+  handleValidate: () => {},
+  cards: [],
+};
+
+export default LoopParam;

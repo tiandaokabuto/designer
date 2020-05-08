@@ -22,7 +22,7 @@ import {
   renameNodeByKey,
   hasNodeModified,
   setAllModifiedState,
-  setNodeModifiedState,
+  changeModifyState,
   traverseTree,
   getChooseFilePath,
   // persistentModuleStorage,
@@ -550,7 +550,7 @@ export default ({ type }) => {
             setModalVisible(false);
           }}
           onOk={() => {
-            setNodeModifiedState(processTree, currentCheckedTreeNode); // 把hasmodified改成false
+            changeModifyState(processTree, currentCheckedTreeNode, false); // 把hasmodified改成false
             persistentStorage(); // 保存currentCheckedTreeNode的内容
             resetGraphEditData(); // 重设GraphEditData
             changeCheckedTreeNode(selectedKey); // 修改当前选中

@@ -2,7 +2,11 @@ import { message } from 'antd';
 
 import store from '@/store';
 import { encrypt } from '@/login/utils';
-import { findNodeByKey, changeModifyState } from '../../utils';
+import {
+  findNodeByKey,
+  changeModifyState,
+  getDecryptOrNormal,
+} from '../../utils';
 import { setGraphDataMap } from '../../../reduxActions';
 
 const fs = require('fs');
@@ -202,10 +206,7 @@ export default () => {
           encoding: 'utf-8',
         }
       );
-      const { automicList = [] } =
-        data.toString().indexOf('{') === -1
-          ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
-          : JSON.parse(data.toString());
+      const { automicList = [] } = getDecryptOrNormal(data);
       const temp = automicList.find(item => item.key === 'aviable').children;
       const automicListMap = getAutoMicListMap(temp);
       let isCompatable = false;

@@ -53,10 +53,15 @@ export default ({ history, tag }) => {
     {
       title: '项目',
       onClick: () => {
+        const projectName =
+          history.location.state && history.location.state.projectName
+            ? history.location.state.projectName
+            : '';
         history.push({
           pathname: '/',
           state: {
             jump: true,
+            projectName,
           },
         });
       },
