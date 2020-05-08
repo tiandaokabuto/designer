@@ -5,7 +5,7 @@ import {
   deleteNodeByKey,
   getUniqueId,
   changeModifyState,
-  checkAndMakeDirH,
+  checkAndMakeDir,
   deleteFolderRecursive,
 } from '../../../app/containers/common/utils';
 import uniqueId from 'lodash/uniqueId';
@@ -127,7 +127,7 @@ describe('test utils', () => {
   });
   it('test checkAndMakeDirH deleteFolderRecursive', () => {
     const fs = require('fs');
-    checkAndMakeDirH(__dirname + '/a/b');
+    checkAndMakeDir(__dirname + '/a/b');
     let result = fs.existsSync(__dirname + '/a/b');
     expect(result).toBeTruthy();
 

@@ -1,7 +1,10 @@
+/**
+ * (已进行单元测试)
+ * @param {*} padding
+ * @param {*} dataStructure
+ * @param {*} result
+ */
 const transformConditionalStatement = (padding, dataStructure, result) => {
-  // const looptype = dataStructure['properties']['required'][0].value;
-  // const loopcondition = dataStructure['properties']['required'][1].value;
-  // result.output += `${padding}${looptype} ${loopcondition}:\n`;
   const { tag, value, valueList = [] } = dataStructure['properties'][
     'required'
   ][0];
@@ -30,6 +33,7 @@ const transformConditionalStatement = (padding, dataStructure, result) => {
     });
     result.output += `:\n`;
   }
+  return result.output;
 };
 
 export default transformConditionalStatement;

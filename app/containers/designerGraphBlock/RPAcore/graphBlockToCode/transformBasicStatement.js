@@ -6,7 +6,7 @@ import { resolve } from 'dns';
 import moment from 'moment';
 const fs = require('fs');
 
-const paddingStart = length => '    '.repeat(length);
+const paddingStart = (length) => '    '.repeat(length);
 
 const handleModuleImport = (dataStructure, result, moduleMap) => {
   if (dataStructure.module) {
@@ -42,7 +42,7 @@ const handleMainFnGeneration = (dataStructure, params, result, padding) => {
     dataStructure.properties.required[1].selectedRows
   ) {
     const selectedRows = dataStructure.properties.required[1].selectedRows;
-    selectedRows.map(item => {
+    selectedRows.map((item) => {
       if (item.variableName !== '') {
         result.output += `${padding}${item.variableName} = ${dataStructure.properties.required[0].value}['${item.headerName}']\n`;
       }
@@ -58,7 +58,7 @@ const handleNote = (cmdDesc, result, padding, dataStructure) => {
   }
 };
 
-const handleFormJsonGenerate = dataStructure => {
+const handleFormJsonGenerate = (dataStructure) => {
   if (
     dataStructure.layout &&
     dataStructure.layout.data &&
@@ -66,7 +66,7 @@ const handleFormJsonGenerate = dataStructure => {
   ) {
     const data = dataStructure.layout.data;
     const dataMap = dataStructure.layout.dataMap;
-    return JSON.stringify(data.map(item => dataMap[item.i]));
+    return JSON.stringify(data.map((item) => dataMap[item.i]));
   }
   return 'None';
 };
@@ -107,18 +107,18 @@ const transformBasicStatement = (
               '[' +
               temp
                 .filter(
-                  item =>
+                  (item) =>
                     !['submit-btn', 'cancel-btn', 'image'].includes(
                       item.type
                     ) || item.key
                 )
-                .map(item => item.key)
+                .map((item) => item.key)
                 .join(',') +
               ',' +
               '] = ';
             params +=
               'variables = [' +
-              temp.map(item => item.value || '').join(',') +
+              temp.map((item) => item.value || '').join(',') +
               '], ';
           }
 
@@ -163,54 +163,6 @@ const transformBasicStatement = (
       }
     });
   handleMainFnGeneration(dataStructure, params, result, padding);
-  // } else {
-  //   console.log('没有require');
-  //   if (dataStructure.graphDataMap && dataStructure.graphDataMap.cards) {
-  //     const tail = uuid();
-  //     const inputParamKV = dataStructure.properties
-  //       .find(item => item.cnName === '输入参数')
-  //       .value.map(item => `${item.name} = ${item.value}`)
-  //       .join(',');
-  //     const inputParamK = dataStructure.properties
-  //       .find(item => item.cnName === '输入参数')
-  //       .value.map(item => `${item.name}`)
-  //       .join(',');
-  //     const outputParam = dataStructure.properties
-  //       .find(item => item.cnName === '流程块返回')
-  //       .value.map(item => item.name)
-  //       .join(',');
-  //     const variables = transformVariable(
-  //       dataStructure.graphDataMap.variable,
-  //       depth + 1
-  //     );
-  //     if (inputParamK) {
-  //       result.output += `def RPA_Atomic_${tail}(${inputParamK})\n`;
-  //     } else {
-  //       result.output += `def RPA_Atomic_${tail}()\n`;
-  //     }
-
-  //     result.output += `${variables}`;
-  //     dataStructure.graphDataMap.cards.forEach(item => {
-  //       transformBasicStatement(
-  //         paddingStart(depth + 1),
-  //         item,
-  //         result,
-  //         moduleMap,
-  //         depth + 1
-  //       );
-  //     });
-  //     if (outputParam) {
-  //       result.output += `\n${paddingStart(
-  //         depth
-  //       )}${outputParam} = RPA_Atomic_${tail}(${inputParamKV})\n`;
-  //     } else {
-  //       result.output += `\n${paddingStart(
-  //         depth
-  //       )}RPA_Atomic_${tail}(${inputParamKV})\n`;
-  //     }
-  //   }
-  //   // console.log(padding, dataStructure, result, moduleMap);
-  // }
 };
 
 export default transformBasicStatement;
