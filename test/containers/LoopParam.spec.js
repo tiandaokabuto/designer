@@ -145,5 +145,6 @@ describe('循环组件', () => {
       aiHintList,
     });
     expect(wrapper.find("[data-testid='param']").children()).toHaveLength(8);
+    wrapper.unmount();
   });
 });
