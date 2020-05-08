@@ -5,14 +5,15 @@ import { Input } from 'antd';
 import './index.scss';
 
 export default ({ output, handleEmitCodeTransform }) => {
-  const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+  const graphDataMap = useSelector((state) => state.grapheditor.graphDataMap);
   const checkedGraphBlockId = useSelector(
-    state => state.grapheditor.checkedGraphBlockId
+    (state) => state.grapheditor.checkedGraphBlockId
   );
 
-  const returnList = graphDataMap
-    .get(checkedGraphBlockId)
-    .properties.find(item => item.enName === 'output').value;
+  const returnList =
+    graphDataMap
+      .get(checkedGraphBlockId)
+      .properties.find((item) => item.enName === 'output').value || [];
   returnList.forEach((item, index) => {
     if (output[index] === undefined) {
       output.push({
@@ -35,7 +36,7 @@ export default ({ output, handleEmitCodeTransform }) => {
           <Input
             // key={item.name || '0'}
             defaultValue={item.name}
-            onChange={e => {
+            onChange={(e) => {
               item.name = e.target.value;
               handleEmitCodeTransform();
             }}

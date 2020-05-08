@@ -42,3 +42,11 @@ exports[`test RPA test transformPrintStatement 1`] = `
   </div>
 </div>
 `;
+
+exports[`test RPA test transformReturnStatement 1`] = `
+<div>
+  <div>
+            return name
+  </div>
+</div>
+`;

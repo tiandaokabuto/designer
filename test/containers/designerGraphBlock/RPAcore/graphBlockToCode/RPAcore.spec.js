@@ -8,6 +8,7 @@ import transformContinueStatement from '../../../../../app/containers/designerGr
 import transformCustomCodeStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformCustomCodeStatement';
 import transformLoopStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformLoopStatement';
 import transformPrintStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformPrintStatement';
+import transformReturnStatement from '../../../../../app/containers/designerGraphBlock/RPAcore/graphBlockToCode/transformReturnStatement';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -234,6 +235,96 @@ describe('test RPA', () => {
       </div>
     );
     // expect(map.has('sendiRPA.logHandler')).toBeTruthy();
+    expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
+  });
+  it('test transformReturnStatement', () => {
+    const Component = function ({ padding, dataStructure, result, blockNode }) {
+      return (
+        <div>
+          {transformReturnStatement(padding, dataStructure, result, blockNode)}
+        </div>
+      );
+    };
+
+    const Rpa = (
+      <div>
+        <Component
+          padding={paddingStart(2)}
+          dataStructure={{
+            visible: '',
+            subtype: 16,
+            main: 'return',
+            $$typeof: 1,
+            text: '流程块返回',
+            pkg: 'Control',
+            properties: {
+              optional: [],
+              required: [
+                {
+                  componentType: 0,
+                  default: '',
+                  cnName: '返回值表达式',
+                  enName: 'return_string',
+                  value: [{ name: 'name', value: '哈哈哈' }],
+                },
+              ],
+            },
+            id: 'node_12',
+            userDesc: '',
+            _userDesc: '',
+          }}
+          result={{
+            output: '',
+          }}
+          blockNode={{
+            shape: 'processblock',
+            properties: [
+              {
+                cnName: '标签名称',
+                enName: 'label',
+                value: '流程块',
+                default: '',
+              },
+              { cnName: '输入参数', enName: 'param', value: [], default: '' },
+              {
+                cnName: '流程块返回',
+                enName: 'output',
+                value: [{ name: 'name', value: '哈哈哈' }],
+                default: '',
+              },
+            ],
+            variable: [],
+            cards: [
+              {
+                visible: '',
+                subtype: 16,
+                main: 'return',
+                $$typeof: 1,
+                text: '流程块返回',
+                pkg: 'Control',
+                properties: {
+                  optional: [],
+                  required: [
+                    {
+                      componentType: 0,
+                      default: '',
+                      cnName: '返回值表达式',
+                      enName: 'return_string',
+                      value: [{ name: 'name', value: '哈哈哈' }],
+                    },
+                  ],
+                },
+                id: 'node_12',
+                userDesc: '',
+                _userDesc: '',
+              },
+            ],
+            pythonCode: 'pass\n',
+          }}
+        />
+      </div>
+    );
+
     expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
   });
 });
