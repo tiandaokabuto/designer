@@ -25,18 +25,15 @@ appexpress.use(bodyParser.urlencoded({ extended: false }));
 // 本地监听8888端口 获取动态的xpath元素回填
 
 // --------------------------- express版本
-appexpress.post('/query', function(req, res) {
+appexpress.post('/query', function (req, res) {
   if (targetId === undefined) {
     res.sendStatus(500);
   } else {
     res.sendStatus(200);
   }
 });
-appexpress.post('/upload', function(req, res) {
+appexpress.post('/upload', function (req, res) {
   try {
-    // const result = JSON.stringify(req.body);
-    // const str = result.replace(/}}/, '}');
-    // const finallyResult = str ? JSON.parse(str) : {};
     const finallyResult = req.body;
 
     //将结果通知给渲染进程
@@ -96,13 +93,13 @@ const installExtensions = async () => {
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
 
   return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload))
+    extensions.map((name) => installer.default(installer[name], forceDownload))
   ).catch(console.log);
 };
 
 const createLoginWindow = () => {
   loginWindow = new BrowserWindow({
-    show: false,
+    show: true,
     width: 800,
     height: 500,
     //useContentSize: true,
@@ -122,7 +119,7 @@ const createLoginWindow = () => {
 
   loginWindow.loadURL(`file://${__dirname}/login.html`);
 
-  loginWindow.on('ready-to-show', function() {
+  loginWindow.on('ready-to-show', function () {
     loginWindow.show();
   });
 };
@@ -156,12 +153,12 @@ const createMainWindow = () => {
 
     mainWindow.webContents.send('updateIpAndPort');
 
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-      mainWindow.focus();
-    }
+    // if (process.env.START_MINIMIZED) {
+    //   mainWindow.minimize();
+    // } else {
+    //   mainWindow.show();
+    //   mainWindow.focus();
+    // }
   });
 
   mainWindow.on('closed', () => {
@@ -171,6 +168,7 @@ const createMainWindow = () => {
 
 const createWindow = async () => {
   createLoginWindow();
+  createMainWindow();
   // if (
   //   process.env.NODE_ENV === 'development' ||
   //   process.env.DEBUG_PROD === 'true'
@@ -186,20 +184,23 @@ const createWindow = async () => {
   // 登录成功切换到主页面
   ipcMain.on('loginSuccess', () => {
     // loginWindow.hide();
-    createMainWindow();
-    loginWindow && loginWindow.destroy();
-    // mainWindow.show();
-    // mainWindow.focus();
+    // createMainWindow();
+    // loginWindow && loginWindow.destroy();
+    mainWindow.show();
+    mainWindow.focus();
   });
 
   // 退出登录切换到登录页面
   ipcMain.on('signOut', () => {
-    createLoginWindow();
-    mainWindow && mainWindow.destroy();
+    // createLoginWindow();
+    mainWindow.hide();
+    loginWindow.show();
+    loginWindow.focus();
+    // mainWindow && mainWindow.destroy();
   });
 
   // 选择文件存储路径
-  ipcMain.on('open-directory-dialog', function(
+  ipcMain.on('open-directory-dialog', function (
     event,
     func,
     label = '存储',
@@ -217,7 +218,7 @@ const createWindow = async () => {
     });
   });
 
-  ipcMain.on('choose-directory-dialog', function(
+  ipcMain.on('choose-directory-dialog', function (
     event,
     func,
     label = '存储',
@@ -234,19 +235,19 @@ const createWindow = async () => {
           event.sender.send('chooseItem', filePaths);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   });
 
   // 创建登录窗口
 
-  ipcMain.on('min', e => mainWindow.minimize());
-  ipcMain.on('max', e => mainWindow.maximize());
+  ipcMain.on('min', (e) => mainWindow.minimize());
+  ipcMain.on('max', (e) => mainWindow.maximize());
   ipcMain.on('close', () => {
     app.quit();
   });
-  ipcMain.on('unmaximize', e => {
+  ipcMain.on('unmaximize', (e) => {
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize();
     } else {
@@ -259,7 +260,7 @@ const createWindow = async () => {
     console.log('再次触发选取操作', id);
     if (isNetStart) return;
 
-    appexpress.listen(8888, function() {
+    appexpress.listen(8888, function () {
       console.log('服务器已启动');
     });
     isNetStart = true;

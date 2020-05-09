@@ -23,7 +23,7 @@ import { isArray } from './utils';
 import { uuid } from '../../../common/utils';
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
 
-const paddingStart = length => '    '.repeat(length);
+const paddingStart = (length) => '    '.repeat(length);
 
 const result = {
   output: '',
@@ -46,16 +46,16 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
           if (statement.graphDataMap && statement.graphDataMap.cards) {
             const tail = uuid();
             const inputParamKV = statement.properties
-              .find(item => item.cnName === '输入参数')
-              .value.map(item => `${item.name} = ${item.value}`)
+              .find((item) => item.cnName === '输入参数')
+              .value.map((item) => `${item.name} = ${item.value}`)
               .join(',');
             const inputParamK = statement.properties
-              .find(item => item.cnName === '输入参数')
-              .value.map(item => `${item.name}`)
+              .find((item) => item.cnName === '输入参数')
+              .value.map((item) => `${item.name}`)
               .join(',');
             const outputParam = statement.properties
-              .find(item => item.cnName === '流程块返回')
-              .value.map(item => item.name)
+              .find((item) => item.cnName === '流程块返回')
+              .value.map((item) => item.name)
               .join(',');
             const variables = transformVariable(
               statement.graphDataMap.variable,
@@ -122,7 +122,6 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
         ) {
           transformCustomCodeStatement(padding, statement, result, moduleMap);
         } else {
-          console.log(statement);
           transformBasicStatement(padding, statement, result, moduleMap, depth);
         }
         result.output += '\n';
@@ -168,8 +167,8 @@ const transformModuleImport = (result, moduleMap, depth) => {
 const transformModuleVariable = (result, depth, variable) => {
   if (Array.isArray(variable)) {
     result.output += `${variable
-      .filter(item => item.name && item.value)
-      .map(item => paddingStart(depth) + item.name + ' = ' + item.value)
+      .filter((item) => item.name && item.value)
+      .map((item) => paddingStart(depth) + item.name + ' = ' + item.value)
       .join('\n')}\n`;
   }
 };
