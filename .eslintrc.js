@@ -13,5 +13,6 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-fragments': 'off',
     'no-else-return': 'off',
+    'no-restricted-syntax': 0,
   },
 };
