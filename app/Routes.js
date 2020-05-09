@@ -21,11 +21,9 @@ export default () => (
           style={{
             width: '100%',
             height: '100vh',
-            backgroundColor: 'skyblue',
+            backgroundColor: 'white',
           }}
-        >
-          正在跳转中...
-        </div>
+        ></div>
       }
     >
       <Switch>

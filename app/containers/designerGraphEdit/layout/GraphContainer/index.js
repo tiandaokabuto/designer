@@ -220,9 +220,9 @@ export default useInjectContext(
               ) {
                 updateCurrentPagePosition('block');
                 synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
-                setTimeout(() => {
+                Promise.resolve(true).then(() => {
                   history.push('/designerGraphBlock');
-                }, 0);
+                });
               }
             }}
             onEdgeClick={() => {
