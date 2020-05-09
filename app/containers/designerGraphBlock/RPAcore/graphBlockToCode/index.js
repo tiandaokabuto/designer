@@ -8,6 +8,7 @@ import transformContinueStatement from './transformContinueStatement';
 import transformSleepStatement from './transformSleepStatement';
 import transformVariableDeclar from './transformVariableDeclar';
 import transformCustomCodeStatement from './transformCustomCodeStatement';
+import memoize from './reselect';
 import {
   BasicStatementTag,
   PrintStatementTag,
@@ -42,7 +43,6 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
           statement.subtype && // ModuleBlockTag
           (statement.subtype & ModuleBlockTag) === ModuleBlockTag
         ) {
-          console.log('翻译复用流程块');
           if (statement.graphDataMap && statement.graphDataMap.cards) {
             const tail = uuid();
             const inputParamKV = statement.properties
@@ -90,7 +90,23 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
           statement.subtype &&
           (statement.subtype & PrintStatementTag) === PrintStatementTag
         ) {
-          transformPrintStatement(padding, statement, result, moduleMap);
+          if (!statement.transformPrintStatement) {
+            statement.transformPrintStatement = memoize(
+              transformPrintStatement
+            );
+          }
+          const buffer = statement.transformPrintStatement(
+            padding,
+            statement,
+            { output: '' },
+            moduleMap
+          );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
+          // transformPrintStatement(padding, statement, result, moduleMap);
         } else if (
           statement.subtype &&
           (statement.subtype & ReturnStatementTag) === ReturnStatementTag
@@ -122,7 +138,23 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
         ) {
           transformCustomCodeStatement(padding, statement, result, moduleMap);
         } else {
-          transformBasicStatement(padding, statement, result, moduleMap, depth);
+          if (!statement.transformBasicStatement) {
+            statement.transformBasicStatement = memoize(
+              transformBasicStatement
+            );
+          }
+          const buffer = statement.transformBasicStatement(
+            padding,
+            statement,
+            { output: '' },
+            moduleMap
+          );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
+          // transformBasicStatement(padding, statement, result, moduleMap, depth);
         }
         result.output += '\n';
         break;

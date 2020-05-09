@@ -1,8 +1,7 @@
 import { isArray } from './utils';
-// import { transformEditorProcess } from '../../../designerGraphEdit/RPAcore/index';
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
 import { uuid } from '../../../common/utils';
-import { resolve } from 'dns';
+import memoize from './reselect';
 import moment from 'moment';
 const fs = require('fs');
 
@@ -71,13 +70,8 @@ const handleFormJsonGenerate = (dataStructure) => {
   return 'None';
 };
 
-const transformBasicStatement = (
-  padding,
-  dataStructure,
-  result,
-  moduleMap,
-  depth
-) => {
+const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
+  console.log('哈哈哈哈哈基本语句执行了');
   handleModuleImport(dataStructure, result, moduleMap);
   handleNote(dataStructure.cmdDesc, result, padding, dataStructure);
   result.output += `${padding}`;
@@ -163,6 +157,7 @@ const transformBasicStatement = (
       }
     });
   handleMainFnGeneration(dataStructure, params, result, padding);
+  return [result.output, moduleMap];
 };
 
-export default transformBasicStatement;
+export default memoize(transformBasicStatement);
