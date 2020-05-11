@@ -1,3 +1,6 @@
+/**
+ * (待测)
+ */
 import { message } from 'antd';
 
 import store from '@/store';
@@ -11,7 +14,7 @@ import { setGraphDataMap } from '../../../reduxActions';
 
 const fs = require('fs');
 
-const getAutoMicListMap = automicList => {
+const getAutoMicListMap = (automicList) => {
   let result = {};
   for (const child of automicList) {
     if (child.children) {
@@ -44,7 +47,7 @@ const traverseAllCards = (cards, callback) => {
   }
 };
 
-const getStandardProperties = shape => {
+const getStandardProperties = (shape) => {
   switch (shape) {
     case 'processblock':
       return [
@@ -99,7 +102,7 @@ const getStandardProperties = shape => {
   }
 };
 
-const isPlainObject = obj => {
+const isPlainObject = (obj) => {
   if (typeof obj !== 'object' || obj === null) return false;
   let proto = obj;
   while (Object.getPrototypeOf(proto) !== null) {
@@ -112,7 +115,7 @@ const hasOwnPropertyKey = (obj, key) => {
   return Object.hasOwnProperty(obj, key);
 };
 
-const typeOf = obj => {
+const typeOf = (obj) => {
   return Object.prototype.toString.call(obj);
 };
 
@@ -160,7 +163,7 @@ const isEqualType = (standard, current, isParam = false) => {
 
 const verifyCards = (current, standard) => {
   let flag = false;
-  traverseAllCards(current, node => {
+  traverseAllCards(current, (node) => {
     const isEqual = isEqualType(
       standard[node.pkg + node.main + node.module],
       node
@@ -207,7 +210,7 @@ export default () => {
         }
       );
       const { automicList = [] } = getDecryptOrNormal(data);
-      const temp = automicList.find(item => item.key === 'aviable').children;
+      const temp = automicList.find((item) => item.key === 'aviable').children;
       const automicListMap = getAutoMicListMap(temp);
       let isCompatable = false;
       let hasModified = false;

@@ -3,8 +3,7 @@ import { Modal, Form, Input, Select, message } from 'antd';
 import { useSelector } from 'react-redux';
 
 import {
-  newProcess,
-  newModuleDir,
+  newProcessOrDir,
   persistentStorage,
   isNameExist,
   persistentManifest,
@@ -43,23 +42,26 @@ export default ({ resetVisible, tag }) => {
           `${tag === 'newprocess' ? '流程名' : '目录名'}重复,请重新填写!`
         );
       }
-      const [newProcessTree, uniqueid] = newProcess(
+      const [newProcessTree, uniqueid] = newProcessOrDir(
         tag === 'newprocess' ? 'process' : 'dir',
         name,
         processTree,
         checkedTreeNode,
-        currentProject
+        currentProject,
+        'process'
       );
       setVisible(false);
       resetVisible(undefined);
-      persistentStorage(undefined, newProcessTree, currentProject, uniqueid);
+      persistentStorage([uniqueid], newProcessTree, currentProject, uniqueid);
     } else {
       if (tag !== 'newprocess') {
-        const [newModuleTree, uniqueid] = newModuleDir(
+        const [newModuleTree, uniqueid] = newProcessOrDir(
+          '',
           name,
           moduleTree,
           checkedModuleTreeNode,
-          currentProject
+          currentProject,
+          'processModule'
         );
         setVisible(false);
         resetVisible(undefined);
@@ -78,7 +80,7 @@ export default ({ resetVisible, tag }) => {
       visible={visible}
       width="50vw"
       bodyStyle={{
-        height: '50vh',
+        // height: '50vh',
         overflow: 'auto',
       }}
       centered

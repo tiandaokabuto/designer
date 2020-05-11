@@ -15,21 +15,22 @@ class EdgeHandler {
     this.propsAPI = propsAPI;
   }
 
-  handleEdgeChange = description => {
+  handleEdgeChange = (description) => {
     const { getSelected, executeCommand, update, save } = this.propsAPI;
     if (description.action === 'add') {
       // 连线操作
       const graphData = save();
-      const source = description.model.source;
-      const target = description.model.target;
-      const nodes = graphData.nodes;
-      const edges = graphData.edges;
+      const { source } = description.model;
+      const { dataMap } = description.item;
+      const { nodes, edges } = graphData;
+      const { shape } = dataMap[source];
+      // 条件连线限制
       const rhombusNode = nodes.find(
-        item => item.id === source && item.shape === 'rhombus-node'
+        (item) => item.id === source && item.shape === 'rhombus-node'
       );
       if (rhombusNode) {
         const edgeChangeItem = description.item;
-        const arr = edges.filter(item => item.source === rhombusNode.id);
+        const arr = edges.filter((item) => item.source === rhombusNode.id);
         if (arr.length === 1) {
           executeCommand(() => {
             update(edgeChangeItem, {
@@ -54,6 +55,17 @@ class EdgeHandler {
           this.apiAction('undo');
           message.info('判断节点输出连线不能多于两条');
         }
+      } else if (shape === 'start-node' || shape === 'processblock') {
+        // 开始、流程块节点连线限制
+        const dataMapArray = Object.values(dataMap);
+        const tipText = `${
+          shape === 'start-node' ? '开始' : '流程块'
+        }节点输出连线不能多于两条`;
+        const edge = dataMapArray.filter((item) => item.source === source);
+        if (edge.length > 1) {
+          this.apiAction('undo');
+          message.info(tipText);
+        }
       }
     }
     // 保存当前流程图的任意更新不加区分
@@ -67,7 +79,7 @@ class EdgeHandler {
     changeModifyState(processTree, currentCheckedTreeNode, true);
   };
 
-  apiAction = command => {
+  apiAction = (command) => {
     setTimeout(() => {
       this.propsAPI.executeCommand(command);
     }, 0);

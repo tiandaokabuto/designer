@@ -271,7 +271,7 @@ export default useInjectContext(
                     }
                   }}
                   treeData={treeData}
-                ></Tree>
+                />
                 <ContextMenu
                   position={position}
                   addToLovedList={addToLovedList}

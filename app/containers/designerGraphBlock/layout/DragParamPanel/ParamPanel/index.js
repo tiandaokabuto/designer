@@ -314,10 +314,11 @@ const LoopSelectContext = React.createContext({
 });
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
+  const { main } = checkedBlock;
   const [flag, setFlag] = useState(false);
   // loopSelect：循环类型，循环类型更改的时候需要改变循环条件
   const [loopSelect, setLoopSelect] = useState(
-    checkedBlock.main === 'loop' && checkedBlock.properties.required[0].value
+    main === 'loop' && checkedBlock.properties.required[0].value
       ? checkedBlock.properties.required[0].value
       : 'for_list'
   );
@@ -339,6 +340,8 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
       event.removeListener('forceUpdate', handleForceUpdate);
     };
   }, []);
+
+  const isDescUseOriginDate = main === 'loop' || main === 'condition';
 
   return (
     <div className="parampanel">
