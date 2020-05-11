@@ -8,7 +8,6 @@ import cloneDeep from 'lodash/cloneDeep';
  * @param {*} moduleMap
  */
 const transformSleepStatement = (padding, dataStructure, result, moduleMap) => {
-  console.log('sleep ------ 执行了');
   moduleMap.set('time', 'sleep');
   result.output += `${padding}`;
   const delay = dataStructure['properties']['required'][0].value;

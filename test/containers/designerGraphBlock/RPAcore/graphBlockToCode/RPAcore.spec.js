@@ -294,7 +294,6 @@ describe('test RPA', () => {
         result,
         new Map()
       );
-      console.log(moduleMap, 'moduleMap');
       return (
         <div>
           {output} - {moduleMap.get('sendiRPA.logHandler')}
