@@ -99,7 +99,7 @@ const installExtensions = async () => {
 
 const createLoginWindow = () => {
   loginWindow = new BrowserWindow({
-    show: true,
+    show: false,
     width: 800,
     height: 500,
     //useContentSize: true,
