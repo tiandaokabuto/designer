@@ -1,3 +1,5 @@
+import memoize from './reselect';
+
 /**
  * (已进行单元测试)
  * @param {*} padding
@@ -10,4 +12,4 @@ const transformBreakStatement = (padding, dataStructure, result) => {
   return result.output;
 };
 
-export default transformBreakStatement;
+export default memoize(transformBreakStatement);

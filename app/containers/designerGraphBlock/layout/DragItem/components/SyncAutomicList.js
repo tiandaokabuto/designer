@@ -9,6 +9,7 @@ import { cloneDeep } from 'lodash';
 import { traverseTree, getDecryptOrNormal } from '../../../../common/utils';
 import { updateAutomicList } from '../../../../reduxActions';
 import api from '../../../../../api';
+import store from '../../../../../store';
 import {
   readGlobalConfig as readConfig,
   writeGlobalConfig,
@@ -30,7 +31,7 @@ const generateIcon = (type, style = DEFAULT_STYLE) => (
 
 const automicListToTree = (list = [], map) => {
   const result = [];
-  list.forEach(node => {
+  list.forEach((node) => {
     if (node.pKey === '-1') {
       node.icon = generateIcon('hdd');
       result.push(node);
@@ -38,7 +39,7 @@ const automicListToTree = (list = [], map) => {
     }
     node.icon = generateIcon('branches');
     node.item = map[node.item];
-    let parent = list.find(child => child.key === node.pKey);
+    let parent = list.find((child) => child.key === node.pKey);
     if (!parent) return;
     if (!parent.children) {
       parent.children = [node];
@@ -51,7 +52,7 @@ const automicListToTree = (list = [], map) => {
 
 const readGlobalConfig = (callback, flag = false) => {
   const path = `${currPath}/globalconfig/config.json`;
-  fs.readFile(path, async function(err, data) {
+  fs.readFile(path, async function (err, data) {
     if (!err) {
       const { automicList, ip } = getDecryptOrNormal(data);
       if (flag || !automicList) {
@@ -59,15 +60,15 @@ const readGlobalConfig = (callback, flag = false) => {
         const getAbialityStructure = () => {
           return axios
             .get(api('selectCodeJson'))
-            .then(res => {
+            .then((res) => {
               if (res && res.data) return res.data;
               throw res;
             })
-            .then(res => {
+            .then((res) => {
               if (res && res.data) return res.data;
               throw res;
             })
-            .catch(error => {
+            .catch((error) => {
               throw error;
             });
         };
@@ -75,15 +76,15 @@ const readGlobalConfig = (callback, flag = false) => {
         const getAbilityTree = () => {
           return axios
             .get(api('selectMenuJson'))
-            .then(res => {
+            .then((res) => {
               if (res && res.data) return res.data;
               throw res;
             })
-            .then(res => {
+            .then((res) => {
               if (res && res.data) return res.data;
               throw res;
             })
-            .catch(error => {
+            .catch((error) => {
               throw error;
             });
         };
@@ -94,7 +95,7 @@ const readGlobalConfig = (callback, flag = false) => {
           message.info('刷新成功');
           const resultTree = automicListToTree(abilityTree, abilityStructure); // 转换后的tree
           const prevPending = automicList
-            ? automicList.filter(item =>
+            ? automicList.filter((item) =>
                 ['favorite', 'recent'].includes(item.key)
               )
             : [];
@@ -103,9 +104,9 @@ const readGlobalConfig = (callback, flag = false) => {
             const recentChild = prevPending[1].children;
             const deepResultTree = cloneDeep(resultTree);
             if (favoriteChild.length !== 0) {
-              const newArr = favoriteChild.map(favoriteItem => {
+              const newArr = favoriteChild.map((favoriteItem) => {
                 let newItem = null;
-                traverseTree(deepResultTree, item => {
+                traverseTree(deepResultTree, (item) => {
                   if (item.key === favoriteItem.key) {
                     newItem = item;
                   }
@@ -116,9 +117,9 @@ const readGlobalConfig = (callback, flag = false) => {
               prevPending[0].children = newArr;
             }
             if (recentChild.length !== 0) {
-              const newArr = recentChild.map(recentItem => {
+              const newArr = recentChild.map((recentItem) => {
                 let newItem = null;
-                traverseTree(deepResultTree, item => {
+                traverseTree(deepResultTree, (item) => {
                   if (item.key === recentItem.key) {
                     newItem = item;
                   }
@@ -168,7 +169,7 @@ const readGlobalConfig = (callback, flag = false) => {
           // callback && callback([]);
         }
       } else {
-        traverseTree(automicList, node => {
+        traverseTree(automicList, (node) => {
           if (node.pKey === -1) {
             node.icon = generateIcon('hdd');
           } else {
@@ -184,9 +185,12 @@ const readGlobalConfig = (callback, flag = false) => {
 
 export default class SyncAutomicList extends Component {
   componentDidMount() {
-    // 获取本地的数据结构做数据更新
-    readGlobalConfig(this.updateAutomicList);
     event.addListener('update_list', this.handleUpdate);
+    // 获取本地的数据结构做数据更新
+    const {
+      blockcode: { automicList },
+    } = store.getState();
+    if (!automicList.length) readGlobalConfig(this.updateAutomicList);
   }
 
   componentWillUnmount() {
@@ -197,7 +201,7 @@ export default class SyncAutomicList extends Component {
     readGlobalConfig(this.updateAutomicList, true);
   };
 
-  updateAutomicList = treeData => {
+  updateAutomicList = (treeData) => {
     if (treeData.length > 0) updateAutomicList(treeData);
   };
 

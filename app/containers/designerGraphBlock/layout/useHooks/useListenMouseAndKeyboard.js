@@ -25,7 +25,7 @@ export const keyDownMap = {
   isShiftDown: false,
 };
 
-const getUniqueId = arr => {
+const getUniqueId = (arr) => {
   let newId = uniqueId(PREFIX_ID);
   while (arr.includes(newId)) {
     newId = uniqueId(PREFIX_ID);
@@ -65,7 +65,7 @@ const extractTraverse = async (cards, callback) => {
 
 const extractCheckedData = (cards, checkedId) => {
   const result = [];
-  extractTraverse(cards, node => {
+  extractTraverse(cards, (node) => {
     if (checkedId.includes(node.id)) {
       result.push(cloneDeep(node));
       return true;
@@ -75,9 +75,9 @@ const extractCheckedData = (cards, checkedId) => {
   return result;
 };
 
-const getOrderedNodeList = cards => {
+const getOrderedNodeList = (cards) => {
   const currentIdList = [];
-  traverseAllCards(cards, node => {
+  traverseAllCards(cards, (node) => {
     currentIdList.push(node.id);
   });
   return currentIdList;
@@ -86,16 +86,16 @@ const getOrderedNodeList = cards => {
 const attachedNodeId = (cards, append) => {
   const currentIdList = getOrderedNodeList(cards);
 
-  traverseAllCards(append, node => {
+  traverseAllCards(append, (node) => {
     node.id = getUniqueId(currentIdList);
     currentIdList.push(node.id);
   });
 };
 
 export default () => {
-  const checkedId = useSelector(state => state.blockcode.checkedId);
-  const cards = useSelector(state => state.blockcode.cards);
-  const clipboardData = useSelector(state => state.blockcode.clipboardData);
+  const checkedId = useSelector((state) => state.blockcode.checkedId);
+  const cards = useSelector((state) => state.blockcode.cards);
+  const clipboardData = useSelector((state) => state.blockcode.clipboardData);
 
   const setKeyState = useCallback((key, bool) => {
     if (key === 'ctrl') {
@@ -111,37 +111,21 @@ export default () => {
     return keyDownMap.isShiftDown;
   };
   useEffect(() => {
-    const handleKeyDown = e => {
-      switch (e.keyCode) {
-        case KEYCODEMAP.ctrl:
-          setKeyState('ctrl', true);
-          break;
-        case KEYCODEMAP.shift:
-          setKeyState('shift', true);
-          break;
-        default:
-        // do nothing
-      }
+    const handleKeyDown = (e) => {
+      setKeyState('ctrl', e.ctrlKey);
+      setKeyState('shift', e.shiftKey);
     };
-    const handleKeyUp = e => {
-      switch (e.keyCode) {
-        case KEYCODEMAP.ctrl:
-          setKeyState('ctrl', false);
-          break;
-        case KEYCODEMAP.shift:
-          setKeyState('shift', false);
-          break;
-        default:
-        // do nothing
-      }
+    const handleKeyUp = (e) => {
+      setKeyState('ctrl', e.ctrlKey);
+      setKeyState('shift', e.shiftKey);
     };
-    const handleMouseDown = e => {
+    const handleMouseDown = (e) => {
       const id = e.target.dataset.id;
       let newCheckedId = checkedId.concat();
       if (!id) return;
       if (isCtrlKeyDown()) {
         if (newCheckedId.includes(id)) {
-          newCheckedId = newCheckedId.filter(g => g !== id);
+          newCheckedId = newCheckedId.filter((g) => g !== id);
           updateCheckedBlockId(newCheckedId);
         } else {
           newCheckedId.unshift(id);
@@ -158,8 +142,10 @@ export default () => {
           // firstIndex -> current
           const startNode = newCheckedId.shift();
           const orderedIdList = getOrderedNodeList(cards);
-          let startIndex = orderedIdList.findIndex(item => item === startNode);
-          let lastIndex = orderedIdList.findIndex(item => item === id);
+          let startIndex = orderedIdList.findIndex(
+            (item) => item === startNode
+          );
+          let lastIndex = orderedIdList.findIndex((item) => item === id);
           let isReverse = false;
           if (startIndex > lastIndex) {
             isReverse = true;

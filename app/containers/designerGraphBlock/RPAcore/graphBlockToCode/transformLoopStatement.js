@@ -1,4 +1,6 @@
+import memoize from './reselect';
 const transformLoopStatement = (padding, dataStructure, result) => {
+  console.log('循环执行了');
   const select = dataStructure['properties']['required'][0].value;
   const node = dataStructure['properties']['required'][1];
   const valueConditionList = node.valueList;

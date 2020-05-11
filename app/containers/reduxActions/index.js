@@ -1,6 +1,5 @@
 import {
   CHANGE_GRAPHDATA,
-  CHANGE_CURRENTEDITINGBLOCKID,
   SYNCHRO_GRAPHDATAMAP,
   SET_GRAPHDATAMAP,
   CHANGE_CHECKEDGRAPHBLOCKID,
@@ -104,16 +103,6 @@ export const updateGraphData = (graphData = []) => {
   dispatch({
     type: CHANGE_GRAPHDATA,
     payload: graphData,
-  });
-};
-
-/**
- * 更新当前正在编辑的流程块的id
- */
-export const updateCurrentEditingProcessBlock = (id) => {
-  dispatch({
-    type: CHANGE_CURRENTEDITINGBLOCKID,
-    payload: id,
   });
 };
 

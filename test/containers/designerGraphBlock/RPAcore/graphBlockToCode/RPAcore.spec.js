@@ -287,17 +287,17 @@ describe('test RPA', () => {
     expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
   });
   it('test transformPrintStatement', () => {
-    const map = new Map();
     const Component = function ({ padding, dataStructure, result }) {
-      const [output, moduleT] = transformPrintStatement(
+      const [output, moduleMap] = transformPrintStatement(
         padding,
         dataStructure,
         result,
-        map
+        new Map()
       );
+      console.log(moduleMap, 'moduleMap');
       return (
         <div>
-          {output} - {moduleT}
+          {output} - {moduleMap.get('sendiRPA.logHandler')}
         </div>
       );
     };
