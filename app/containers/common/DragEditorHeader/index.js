@@ -175,15 +175,14 @@ export default memo(
       }
     };
 
-    const handleOperation = () => {
+    const handleOperation = list => {
       try {
         const uuid = new Date().getTime().toString(16);
         uuidRef.current = uuid;
 
-        const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
-          item => item.description === '运行'
-        );
+        const find = list.find(item => item.description === '运行');
         find.description = '停止';
+        console.log(find, '---改变成停止之后');
         find.onClick = function() {
           // 终止流程
           exec(
@@ -197,29 +196,31 @@ export default memo(
               console.log(err);
             }
           );
-          const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
-            item => item.description === '停止'
-          );
+          const find = list.find(item => item.description === '停止');
           find.description = '运行';
-          find.onClick = handleOperation;
+          find.onClick = () => {
+            handleOperation(list);
+          };
           forceUpdate();
         };
         transformProcessToPython();
         executePython(uuid, () => {
-          const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
-            item => item.description === '停止'
-          );
+          const find = list.find(item => item.description === '停止');
           find.description = '运行';
-          find.onClick = handleOperation;
+          find.onClick = () => {
+            handleOperation(list);
+          };
           forceUpdate();
         });
         forceUpdate();
       } catch (e) {
-        const find = TOOLS_DESCRIPTION_FOR_PROCESS.find(
+        const find = list.find(
           item => item.description === '停止' || item.description === '运行'
         );
         find.description = '运行';
-        find.onClick = handleOperation;
+        find.onClick = () => {
+          handleOperation(list);
+        };
         forceUpdate();
         message.error('代码转换出错，请检查流程图');
       }
@@ -278,7 +279,9 @@ export default memo(
           type: 'iconzhihang',
           IconFont: true,
           // disabled: true,
-          onClick: handleOperation,
+          onClick: () => {
+            handleOperation(TOOLS_DESCRIPTION_FOR_CODEBLOCK);
+          },
         },
         {
           description: '录制',
@@ -354,7 +357,9 @@ export default memo(
         description: '运行',
         type: 'iconrecordlight',
         IconFont: true,
-        onClick: handleOperation,
+        onClick: () => {
+          handleOperation(TOOLS_DESCRIPTION_FOR_PROCESS);
+        },
       },
       {
         description: '发布',
