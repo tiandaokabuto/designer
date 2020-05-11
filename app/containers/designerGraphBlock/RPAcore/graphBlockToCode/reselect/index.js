@@ -11,7 +11,6 @@ function areArgumentsShallowlyEqual(equalityCheck, prev, next) {
   const length = prev.length;
   for (let i = 0; i < 2; i++) {
     if (!equalityCheck(prev[i], next[i])) {
-      console.log(prev[i], next[i]);
       return false;
     }
   }
