@@ -273,7 +273,7 @@ export default (graphData, graphDataMap) => {
       `${process.cwd()}/python/temp.py`,
       result.output,
       function () {
-        console.log('保存成功');
+        // console.log('保存成功');
       }
     );
   }
