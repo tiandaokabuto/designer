@@ -8,6 +8,7 @@ import transformContinueStatement from './transformContinueStatement';
 import transformSleepStatement from './transformSleepStatement';
 import transformVariableDeclar from './transformVariableDeclar';
 import transformCustomCodeStatement from './transformCustomCodeStatement';
+import transformModuleBlockStatement from './transformModuleBlockStatement';
 import memoize from './reselect';
 import {
   BasicStatementTag,
@@ -21,10 +22,10 @@ import {
   ModuleBlockTag,
 } from '../../layout/statementTags';
 import { isArray } from './utils';
-import { uuid } from '../../../common/utils';
+
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
 
-const paddingStart = (length) => '    '.repeat(length);
+const paddingStart = length => '    '.repeat(length);
 
 const result = {
   output: '',
@@ -44,47 +45,14 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
           (statement.subtype & ModuleBlockTag) === ModuleBlockTag
         ) {
           if (statement.graphDataMap && statement.graphDataMap.cards) {
-            const tail = uuid();
-            const inputParamKV = statement.properties
-              .find((item) => item.cnName === '输入参数')
-              .value.map((item) => `${item.name} = ${item.value}`)
-              .join(',');
-            const inputParamK = statement.properties
-              .find((item) => item.cnName === '输入参数')
-              .value.map((item) => `${item.name}`)
-              .join(',');
-            const outputParam = statement.properties
-              .find((item) => item.cnName === '流程块返回')
-              .value.map((item) => item.name)
-              .join(',');
-            const variables = transformVariable(
-              statement.graphDataMap.variable,
-              depth + 1
+            transformModuleBlockStatement(
+              padding,
+              statement,
+              result,
+              blockNode,
+              transformBlockToCodeImpl,
+              depth
             );
-            if (inputParamK) {
-              result.output += `${paddingStart(
-                depth
-              )}def RPA_Atomic_${tail}(${inputParamK}):\n\n`;
-            } else {
-              result.output += `${paddingStart(
-                depth
-              )}def RPA_Atomic_${tail}():\n\n`;
-            }
-            result.output += `${variables}`;
-            transformBlockToCodeImpl(
-              statement.graphDataMap.cards,
-              depth + 1,
-              blockNode
-            );
-            if (outputParam) {
-              result.output += `\n${paddingStart(
-                depth
-              )}${outputParam} = RPA_Atomic_${tail}(${inputParamKV})\n`;
-            } else {
-              result.output += `\n${paddingStart(
-                depth
-              )}RPA_Atomic_${tail}(${inputParamKV})\n`;
-            }
           }
         } else if (
           statement.subtype &&
@@ -199,8 +167,8 @@ const transformModuleImport = (result, moduleMap, depth) => {
 const transformModuleVariable = (result, depth, variable) => {
   if (Array.isArray(variable)) {
     result.output += `${variable
-      .filter((item) => item.name && item.value)
-      .map((item) => paddingStart(depth) + item.name + ' = ' + item.value)
+      .filter(item => item.name && item.value)
+      .map(item => paddingStart(depth) + item.name + ' = ' + item.value)
       .join('\n')}\n`;
   }
 };
