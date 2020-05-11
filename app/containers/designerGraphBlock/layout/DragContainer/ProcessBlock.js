@@ -68,9 +68,9 @@ export default memo(({ readOnly = false }) => {
     : null;
   useListenMouseAndKeyboard();
 
-  const cards = useSelector(state => state.blockcode.cards);
+  const cards = useSelector((state) => state.blockcode.cards);
   const currentPagePosition = useSelector(
-    state => state.temporaryvariable.currentPagePosition
+    (state) => state.temporaryvariable.currentPagePosition
   );
   const currentPagePositionRef = useRef(null);
   currentPagePositionRef.current = currentPagePosition;
@@ -79,7 +79,7 @@ export default memo(({ readOnly = false }) => {
   const [isDraggingNode, setIsDraggingNode] = useState({});
 
   const changeCardData = useCallback(
-    useDebounce(data => {
+    useDebounce((data) => {
       if (isEqual(data, cards)) return;
       console.log('阻断通知cards的变化');
       // dispatch({
@@ -115,9 +115,9 @@ export default memo(({ readOnly = false }) => {
 
           const currentLevel = findIFNodeLevelById(cards, bufId, layer);
 
-          const deleteNode = dragNodes.find(item => item.id === dragItem.id);
+          const deleteNode = dragNodes.find((item) => item.id === dragItem.id);
           const deleteIndex = dragNodes.findIndex(
-            item => item.id === dragItem.id
+            (item) => item.id === dragItem.id
           );
           // 删除和插入操作 先克隆一个副本
           const cloneCards = cloneDeep(cards);
@@ -143,12 +143,12 @@ export default memo(({ readOnly = false }) => {
           }
           if (hoverNodes === undefined) return;
           if (!isMainProcessPlaceholder(hoverItem.id)) {
-            hoverNodes = hoverNodes.find(item => item.id === bufId).children;
+            hoverNodes = hoverNodes.find((item) => item.id === bufId).children;
           }
-          const deleteNode = dragNodes.find(item => item.id === dragItem.id);
+          const deleteNode = dragNodes.find((item) => item.id === dragItem.id);
 
           const deleteIndex = dragNodes.findIndex(
-            item => item.id === dragItem.id
+            (item) => item.id === dragItem.id
           );
 
           // 删除和插入操作 先克隆一个副本
@@ -172,10 +172,10 @@ export default memo(({ readOnly = false }) => {
           const bufId = hoverItem.id.replace(/-tail/, '');
           hoverNodes = findNodeLevelById(cards, bufId);
           if (hoverNodes === undefined) return;
-          hoverNodes = hoverNodes.find(item => item.id === bufId).children;
-          const deleteNode = dragNodes.find(item => item.id === dragItem.id);
+          hoverNodes = hoverNodes.find((item) => item.id === bufId).children;
+          const deleteNode = dragNodes.find((item) => item.id === dragItem.id);
           const deleteIndex = dragNodes.findIndex(
-            item => item.id === dragItem.id
+            (item) => item.id === dragItem.id
           );
 
           // 删除和插入操作 先克隆一个副本
@@ -193,12 +193,14 @@ export default memo(({ readOnly = false }) => {
       }
 
       // 首先找到各自的id在当前node中的序号
-      const deleteNode = dragNodes.find(item => item.id === dragItem.id);
+      const deleteNode = dragNodes.find((item) => item.id === dragItem.id);
 
-      const deleteIndex = dragNodes.findIndex(item => item.id === dragItem.id);
+      const deleteIndex = dragNodes.findIndex(
+        (item) => item.id === dragItem.id
+      );
 
       const insertIndex = hoverNodes.findIndex(
-        item => item.id === hoverItem.id
+        (item) => item.id === hoverItem.id
       );
 
       if (deleteIndex === -1 || insertIndex === -1) {
@@ -268,48 +270,49 @@ export default memo(({ readOnly = false }) => {
     switch (card.$$typeof) {
       case BasicStatementTag:
         return (
-          <ContextMenuTrigger id={MENU_TYPE} key={card.id} holdToDisplay={1000}>
-            <BasicStatement
-              index={index}
-              id={card.id}
-              text={card.text}
-              card={card}
-              visible={card.visible || ''}
-              visibleTemplate={card.visibleTemplate || ''}
-              readOnly={readOnly}
-            />
-          </ContextMenuTrigger>
+          // <ContextMenuTrigger id={MENU_TYPE} key={card.id} holdToDisplay={1000}>
+          <BasicStatement
+            index={index}
+            id={card.id}
+            key={card.id}
+            text={card.text}
+            card={card}
+            visible={card.visible || ''}
+            visibleTemplate={card.visibleTemplate || ''}
+            readOnly={readOnly}
+          />
         );
       case LoopStatementTag:
         // 循环结构
         return (
-          <ContextMenuTrigger id={MENU_TYPE} key={card.id} holdToDisplay={1000}>
-            <LoopStatement
-              id={card.id}
-              index={index}
-              card={card}
-              readOnly={readOnly}
-            />
-          </ContextMenuTrigger>
+          // <ContextMenuTrigger id={MENU_TYPE} key={card.id} holdToDisplay={1000}>
+          <LoopStatement
+            key={card.id}
+            id={card.id}
+            index={index}
+            card={card}
+            readOnly={readOnly}
+          />
+          // </ContextMenuTrigger>
         );
       case ConditionalStatementTag:
         return (
-          <ContextMenuTrigger id={MENU_TYPE} key={card.id} holdToDisplay={1000}>
-            <ConditionalStatement
-              key={card.id}
-              id={card.id}
-              index={index}
-              card={card}
-              readOnly={readOnly}
-            />
-          </ContextMenuTrigger>
+          // <ContextMenuTrigger id={MENU_TYPE} key={card.id} holdToDisplay={1000}>
+          <ConditionalStatement
+            key={card.id}
+            id={card.id}
+            index={index}
+            card={card}
+            readOnly={readOnly}
+          />
+          // </ContextMenuTrigger>
         );
       default:
       // do nothing
     }
   };
 
-  const renderTailStatement = props => {
+  const renderTailStatement = (props) => {
     return <BasicStatement {...props} card={{ id: props.id }} isTail={true} />;
   };
 

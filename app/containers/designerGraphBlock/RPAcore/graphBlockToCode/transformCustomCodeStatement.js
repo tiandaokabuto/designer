@@ -1,3 +1,4 @@
+import memoize from './reselect';
 /**
  * (已进行单元测试)
  * @param {*} padding
@@ -15,4 +16,4 @@ const transformCustomCodeStatement = (padding, dataStructure, result) => {
   return result.output;
 };
 
-export default transformCustomCodeStatement;
+export default memoize(transformCustomCodeStatement);

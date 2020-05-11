@@ -1,5 +1,5 @@
 import './index.scss';
-import React, { useState, Fragment, useRef } from 'react';
+import React, { useState, Fragment, useRef, memo } from 'react';
 import { Icon, Dropdown, Menu } from 'antd';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ import SaveConfirmModel from '../../designerGraphEdit/layout/GraphItem/component
 
 const { ipcRenderer, remote } = require('electron');
 
-const generateMenu = arr => {
+const generateMenu = (arr) => {
   return (
     <Menu>
       {arr.map((subMenu, index) => {
@@ -30,11 +30,12 @@ const generateMenu = arr => {
  * 处理窗口的缩小、全屏、关闭操作
  * @param {*} op
  */
-const handleWindowOperation = op => {
+const handleWindowOperation = (op) => {
   ipcRenderer.send(op);
 };
 
-export default ({ history, tag }) => {
+export default memo(({ history, tag }) => {
+  console.log('hhhhh');
   const [modalVisible, setModalVisible] = useState(false);
   const [visible, setVisible] = useState(undefined);
   const [helpModelVisible, setHelpModelVisible] = useState(false);
@@ -44,7 +45,8 @@ export default ({ history, tag }) => {
   const resetVisible = () => {
     setVisible(undefined);
   };
-  const processTree = useSelector(state => state.grapheditor.processTree);
+  const processTree = useSelector((state) => state.grapheditor.processTree);
+  const persistentStorage = usePersistentStorage();
   const modifiedNodesArr = useRef([]);
   // const [modifiedNodesArr, setModifiedNodesArr] = useState([]);
 
@@ -106,15 +108,15 @@ export default ({ history, tag }) => {
     }
     axios
       .get(api('signOut'))
-      .then(res => res.data)
-      .then(json => {
+      .then((res) => res.data)
+      .then((json) => {
         if (~json.code) {
           ipcRenderer.send('signOut');
           return true;
         }
         return false;
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
 
   const handleCancel = () => {
@@ -255,4 +257,4 @@ export default ({ history, tag }) => {
       />
     </div>
   );
-};
+});

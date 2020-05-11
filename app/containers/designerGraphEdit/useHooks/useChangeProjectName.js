@@ -22,8 +22,6 @@ export default () => {
       function (err) {
         if (!err) {
           changeCurrentProject(change);
-          console.log(current);
-          console.log(change);
           fs.rename(
             PATH_CONFIG('project', `${change}/${current}_module`),
             PATH_CONFIG('project', `${change}/${change}_module`),

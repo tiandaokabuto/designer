@@ -1,3 +1,5 @@
+import memoize from './reselect';
+
 /**
  * (已进行单元测试)
  * @param {*} padding
@@ -12,4 +14,4 @@ const transformVariableDeclar = (padding, dataStructure, result) => {
   return result.output;
 };
 
-export default transformVariableDeclar;
+export default memoize(transformVariableDeclar);

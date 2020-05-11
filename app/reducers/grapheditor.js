@@ -3,7 +3,6 @@ import {
   SET_GRAPHDATAMAP,
   DELETE_GRAPHDATAMAP,
   CLEAR_GRAPHDATAMAP,
-  CHANGE_CURRENTEDITINGBLOCKID,
   SYNCHRO_GRAPHDATAMAP,
   CHANGE_CHECKEDGRAPHBLOCKID,
   CHANGE_EDITORBLOCKPYTHONCODE,
@@ -11,7 +10,6 @@ import {
   CHANGE_CHECKEDTREENODE,
   CHANGE_CURRENTPROJECT,
   SYNCHRO_GRAPHDATATOPROCESSTREE,
-  CHANGE_CURRENTEDITINGPROCESSID,
   RESET_ALLGRAPHEDITDATA,
   RESET_GRAPHERITORALLDATA,
   CHANGE_CHECKED_MODULE_TREE_NODE,
@@ -27,14 +25,12 @@ import { isDirNode, findNodeByKey } from '../containers/common/utils';
 const defaultState = {
   graphData: {},
   graphDataMap: new Map(), // 保存针对每个流程图的数据结构
-  currentEditingId: undefined, // 当前编辑的是哪个流程块
   checkedGraphBlockId: undefined,
   editorBlockPythonCode: '',
   treeTab: 'process',
   processTree: [], // 当前项目的自定义流程树结构
   moduleTree: [], // 当前项目的复用流程块树结构
   currentCheckedModuleTreeNode: undefined, // 当前选中的复用块
-  currentEditingProcessId: undefined, // 当前编辑的是项目下的哪个流程
   currentCheckedTreeNode: undefined,
   currentProject: undefined,
   savingModuleData: undefined,
@@ -42,7 +38,7 @@ const defaultState = {
   movingModuleNodeData: undefined,
 };
 
-const objChangeMap = obj => {
+const objChangeMap = (obj) => {
   let map = new Map();
   for (let key in obj) {
     map.set(key, obj[key]);
@@ -50,24 +46,23 @@ const objChangeMap = obj => {
   return map;
 };
 
-const mapChangeObj = map => {
+const mapChangeObj = (map) => {
   let obj = {};
   for (let [k, v] of map) {
     obj[k] = v;
   }
   return obj;
 };
-const mapChangeJson = map => JSON.stringify(mapChangeObj(map));
-const jsonChangeMap = json => objChangeMap(JSON.parse(json));
+const mapChangeJson = (map) => JSON.stringify(mapChangeObj(map));
+const jsonChangeMap = (json) => objChangeMap(JSON.parse(json));
 
-const changeEditingProcessId = (state, currentCheckedTreeNode) => {
+const updateGraphData = (state, currentCheckedTreeNode) => {
   // 判断是否为目录结点不做任务操作
   const node = findNodeByKey(state.processTree, currentCheckedTreeNode);
   if (!node || node.type === 'dir') {
     return {};
   } else {
     return {
-      currentEditingProcessId: currentCheckedTreeNode,
       graphData: node.data.graphData,
       graphDataMap: node.data.graphDataMap
         ? jsonChangeMap(node.data.graphDataMap)
@@ -76,7 +71,7 @@ const changeEditingProcessId = (state, currentCheckedTreeNode) => {
   }
 };
 
-const updateProcessTree = state => {
+const updateProcessTree = (state) => {
   const { processTree, graphDataMap, graphData } = state;
   const node = findNodeByKey(processTree, state.currentCheckedTreeNode);
   if (!node) return processTree;
@@ -85,7 +80,7 @@ const updateProcessTree = state => {
     graphData,
   };
 
-  return processTree;
+  return {};
 };
 
 export default (state = defaultState, action) => {
@@ -96,12 +91,10 @@ export default (state = defaultState, action) => {
         ...state,
         graphData: {},
         graphDataMap: new Map(), // 保存针对每个流程图的数据结构
-        currentEditingId: undefined, // 当前编辑的是哪个流程块
         checkedGraphBlockId: undefined,
         editorBlockPythonCode: '',
         processTree: [], // 当前项目的自定义流程树结构
         currentCheckedModuleTreeNode: undefined, // 当前选中的复用块
-        currentEditingProcessId: undefined, // 当前编辑的是项目下的哪个流程
         currentCheckedTreeNode: undefined,
       };
     case CHANGE_GRAPHDATA:
@@ -128,16 +121,11 @@ export default (state = defaultState, action) => {
         ...state,
         graphDataMap: new Map(),
       };
-    case CHANGE_CURRENTEDITINGBLOCKID:
-      return {
-        ...state,
-        currentEditingId: action.payload,
-      };
     case SYNCHRO_GRAPHDATAMAP:
-      mapData = state.graphDataMap.get(state.currentEditingId) || {};
+      mapData = state.graphDataMap.get(state.checkedGraphBlockId) || {};
       return {
         ...state,
-        graphDataMap: state.graphDataMap.set(state.currentEditingId, {
+        graphDataMap: state.graphDataMap.set(state.checkedGraphBlockId, {
           ...mapData,
           ...action.payload,
         }),
@@ -182,7 +170,7 @@ export default (state = defaultState, action) => {
         ...state,
         currentCheckedTreeNode: action.payload,
         // 判断当前点击的是否为流程结点 切换当前编辑的流程结点
-        ...changeEditingProcessId(state, action.payload),
+        ...updateGraphData(state, action.payload),
       };
     case CHANGE_CURRENTPROJECT:
       return {
