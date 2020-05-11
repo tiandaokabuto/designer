@@ -4,12 +4,11 @@ import { Icon, Dropdown, Menu } from 'antd';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
-import { ConfirmModal } from '../components';
 import NewProject from './NewProject';
 import api from '../../../api';
-import { getModifiedNodes, setAllModifiedState } from '../utils';
-import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
+import { getModifiedNodes } from '../utils';
 import HelpModel from './HelpModel';
+import SaveConfirmModel from '../../designerGraphEdit/layout/GraphItem/components/SaveConfirmModel';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -39,31 +38,40 @@ export default ({ history, tag }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [visible, setVisible] = useState(undefined);
   const [helpModelVisible, setHelpModelVisible] = useState(false);
+  const [saveEvent, setSaveEvent] = useState('');
   const globalUserName = remote.getGlobal('sharedObject').userName;
 
   const resetVisible = () => {
     setVisible(undefined);
   };
   const processTree = useSelector(state => state.grapheditor.processTree);
-  const persistentStorage = usePersistentStorage();
   const modifiedNodesArr = useRef([]);
   // const [modifiedNodesArr, setModifiedNodesArr] = useState([]);
+
+  const jumpToProject = () => {
+    const historyState = history.location.state;
+    const projectName =
+      historyState && historyState.projectName ? historyState.projectName : '';
+    history.push({
+      pathname: '/',
+      state: {
+        jump: true,
+        projectName,
+      },
+    });
+  };
 
   const TOOLS_DESCRIPTION = [
     {
       title: '项目',
       onClick: () => {
-        const projectName =
-          history.location.state && history.location.state.projectName
-            ? history.location.state.projectName
-            : '';
-        history.push({
-          pathname: '/',
-          state: {
-            jump: true,
-            projectName,
-          },
-        });
+        modifiedNodesArr.current = getModifiedNodes(processTree);
+        if (modifiedNodesArr.current.length !== 0) {
+          setSaveEvent('jumpToProject');
+          setModalVisible(true);
+        } else {
+          jumpToProject();
+        }
       },
     },
     {
@@ -111,6 +119,24 @@ export default ({ history, tag }) => {
 
   const handleCancel = () => {
     setHelpModelVisible(false);
+  };
+
+  const handleSaveModelCancelOk = () => {
+    if (saveEvent === 'jumpToProject') {
+      jumpToProject();
+    } else if (saveEvent === 'close') {
+      handleWindowOperation('close');
+    }
+  };
+
+  const handleSaveModelOk = () => {
+    if (saveEvent === 'jumpToProject') {
+      jumpToProject();
+    } else if (saveEvent === 'close') {
+      setTimeout(() => {
+        handleWindowOperation('close');
+      }, 100);
+    }
   };
 
   return (
@@ -205,9 +231,10 @@ export default ({ history, tag }) => {
           onClick={() => {
             modifiedNodesArr.current = getModifiedNodes(processTree);
             if (modifiedNodesArr.current.length !== 0) {
+              setSaveEvent('close');
               setModalVisible(true);
             } else {
-              // handleWindowOperation('close');
+              handleWindowOperation('close');
             }
           }}
         />
@@ -218,22 +245,13 @@ export default ({ history, tag }) => {
       {visible === 'openproject' && (
         <NewProject resetVisible={resetVisible} tag="open" />
       )}
-      <ConfirmModal
-        visible={modalVisible}
-        content="请确认是否保存?"
-        onCancel={() => {
-          setModalVisible(false);
-        }}
-        onCancelOk={() => {
-          handleWindowOperation('close');
-        }}
-        onOk={() => {
-          setAllModifiedState(processTree); // 把所有已修改的状态改为false
-          persistentStorage(modifiedNodesArr.current); // 保存当前正在修改的
-          setTimeout(() => {
-            // handleWindowOperation('close');
-          }, 100);
-        }}
+      <SaveConfirmModel
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        type="saveAll"
+        modifiedNodes={modifiedNodesArr.current}
+        onCancelOk={handleSaveModelCancelOk}
+        onOk={handleSaveModelOk}
       />
     </div>
   );

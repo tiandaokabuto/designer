@@ -244,6 +244,7 @@ export default useInjectContext(
                 <div className="dragger-editor-item-search">
                   <Input
                     placeholder="请输入"
+                    allowClear
                     onChange={e => {
                       setFilter(e.target.value);
                     }}
@@ -275,7 +276,7 @@ export default useInjectContext(
                     }
                   }}
                   treeData={treeData}
-                ></Tree>
+                />
                 <ContextMenu
                   position={position}
                   addToLovedList={addToLovedList}

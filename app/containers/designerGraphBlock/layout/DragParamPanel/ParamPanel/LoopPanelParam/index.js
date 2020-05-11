@@ -25,6 +25,7 @@ const LoopParam = ({
           enName: 'value',
           cnName: '值',
           value: '',
+          default: '',
           paramType: ['String'],
         },
         {
@@ -32,6 +33,7 @@ const LoopParam = ({
           enName: 'arrayRet',
           cnName: '数组',
           value: '',
+          default: '',
           paramType: ['List'],
         },
       ];
@@ -43,6 +45,7 @@ const LoopParam = ({
           enName: 'key',
           cnName: '键',
           value: '',
+          default: '',
           paramType: ['String'],
         },
         {
@@ -50,6 +53,7 @@ const LoopParam = ({
           enName: 'value',
           cnName: '值',
           value: '',
+          default: '',
           paramType: ['String'],
         },
         {
@@ -57,6 +61,7 @@ const LoopParam = ({
           enName: 'dictVar',
           cnName: '字典',
           value: '',
+          default: '',
           paramType: ['Dictionary'],
         },
       ];
@@ -68,6 +73,7 @@ const LoopParam = ({
           enName: 'index',
           cnName: '索引名称',
           value: '',
+          default: '',
           paramType: ['String'],
         },
         {
@@ -75,6 +81,7 @@ const LoopParam = ({
           enName: 'startIndex',
           cnName: '初始值',
           value: '',
+          default: '',
           paramType: ['String'],
         },
         {
@@ -82,6 +89,7 @@ const LoopParam = ({
           enName: 'endIndex',
           cnName: '结束值',
           value: '',
+          default: '',
           paramType: ['String'],
         },
         {
@@ -89,6 +97,7 @@ const LoopParam = ({
           enName: 'step',
           cnName: '每次增加',
           value: '',
+          default: '',
           paramType: ['String'],
         },
       ];
