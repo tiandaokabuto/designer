@@ -349,17 +349,8 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
         <div className="parampanel-desc">
           <span>命令描述符</span>
           <Input
-<<<<<<< HEAD
-            defaultValue={
-              isDescUseOriginDate
-                ? checkedBlock.userDesc
-                : checkedBlock._userDesc
-            }
-            onChange={e => {
-=======
             defaultValue={checkedBlock._userDesc}
             onChange={(e) => {
->>>>>>> 9dd64cca85d7fd5100a8e67c0a6fc6bb144cb6ce
               checkedBlock.userDesc = e.target.value;
               handleEmitCodeTransform(cards);
             }}
