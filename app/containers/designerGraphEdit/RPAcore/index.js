@@ -277,4 +277,5 @@ export default (graphData, graphDataMap) => {
       }
     );
   }
+  return result.output;
 };
