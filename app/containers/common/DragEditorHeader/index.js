@@ -64,8 +64,8 @@ const adm_zip = require('adm-zip');
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const layout = {
-  labelCol: { span: 3 },
-  wrapperCol: { span: 21 },
+  labelCol: { span: 4 },
+  wrapperCol: { span: 20 },
 };
 
 export default memo(
@@ -104,9 +104,11 @@ export default memo(
 
     const [modalVisible, setModalVisible] = useState(false);
     const [versionTipVisible, setVersionTipVisible] = useState(false);
+    const [versionTipVisible2, setVersionTipVisible2] = useState(false);
     const [descText, setDescText] = useState('');
     const [exportType, setExportType] = useState('json');
     const [versionText, setVersionText] = useState('1.0.0'); // 默认值
+    const [originVersion, setOriginVersion] = useState('1.0.0'); // 默认值
 
     const [_, forceUpdate] = useForceUpdate();
 
@@ -137,11 +139,13 @@ export default memo(
         .then(res => {
           let version = res.data;
           if (res.code !== -1 && version) {
-            version = version.replace(/[\d]+$/, match => +match + 1);
-            handleVersionTextChange(version);
-            return version;
+            setOriginVersion(version);
+            const nextVersion = version.replace(/[\d]+$/, match => +match + 1);
+            setVersionText(nextVersion);
+            return nextVersion;
           }
           setVersionText('1.0.0');
+          setOriginVersion('1.0.0');
           return false;
         })
         .catch(err => console.log(err));
@@ -150,6 +154,8 @@ export default memo(
     const hanldePublishModalOk = () => {
       if (versionTipVisible) {
         message.error('版本格式错误，请检查您的版本号');
+      } else if (versionTipVisible2) {
+        message.error('新版本号小于当前版本号，请重新输入');
       } else {
         setModalVisible(false);
 
@@ -168,10 +174,30 @@ export default memo(
     const handleVersionTextChange = version => {
       const reg = /^([0]|[1-9][0-9]*)(\.([0]|[1-9][0-9]*)){1,2}$/;
       setVersionText(version);
+      // 格式匹配
       if (reg.test(version)) {
         setVersionTipVisible(false);
+        const originVersionArray = originVersion.split('.');
+        const currentVersionArray = version.split('.');
+        const minLength =
+          originVersionArray.length > currentVersionArray.length
+            ? currentVersionArray.length
+            : originVersionArray.length;
+        let isVerisonSmallerThanOriginVerison = false;
+        // origin: 2.0 current: 1.0.1
+        for (let i = 0; i < minLength; i += 1) {
+          if (originVersionArray[i] > currentVersionArray[i]) {
+            isVerisonSmallerThanOriginVerison = true;
+            setVersionTipVisible2(true);
+            break;
+          }
+        }
+        if (!isVerisonSmallerThanOriginVerison) {
+          setVersionTipVisible2(false);
+        }
       } else {
         setVersionTipVisible(true);
+        setVersionTipVisible2(false);
       }
     };
 
@@ -556,9 +582,14 @@ export default memo(
                 }}
               />
             </FormItem>
-            <FormItem label="版本号" className="versionInput">
+            <FormItem label="当前版本号" className="versionInput">
+              <span style={{ paddingLeft: '12px' }}>{originVersion}</span>
+            </FormItem>
+            <FormItem label="最新版本号" className="versionInput">
               <Input
-                className={versionTipVisible ? 'errorFomat' : ''}
+                className={
+                  versionTipVisible || versionTipVisible2 ? 'errorFomat' : ''
+                }
                 placeholder="请输入版本号"
                 value={versionText}
                 onChange={e => {
@@ -569,6 +600,9 @@ export default memo(
                 <span className="versionTip">
                   版本号格式错误，版本号的格式为x.x或者x.x.x，x为正整数
                 </span>
+              )}
+              {versionTipVisible2 && (
+                <span className="versionTip">最新版本应大于当前版本</span>
               )}
             </FormItem>
           </Form>
