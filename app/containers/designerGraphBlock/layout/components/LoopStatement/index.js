@@ -3,11 +3,13 @@ import { useDrag, useDrop } from 'react-dnd';
 import { Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import cloneDeep from 'lodash/cloneDeep';
+import { useSelector } from 'react-redux';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 import {
   useDropTarget,
   useDeleteNodeById,
+  useTransformToPython,
   useVisibleDynamicUpdate,
   useChangeCheckedBlockColor,
 } from '../../useHooks';
@@ -23,13 +25,10 @@ const style = {
   backgroundClip: 'padding-box',
   // cursor: 'move',
   position: 'relative',
-  // paddingLeft: '28px',
-  // overflow: 'hidden',
   marginRight: '8px',
-  //minHeight: '104px',
 };
 
-const LoopStatement = useInjectContext(props => {
+const LoopStatement = useInjectContext((props) => {
   const {
     id,
     text,
@@ -48,7 +47,11 @@ const LoopStatement = useInjectContext(props => {
     useDragSource,
   } = props;
 
+  const cards = useSelector((state) => state.blockcode.cards);
+
   const [isFold, setFold] = useState(false);
+
+  const handleEmitCodeTransform = useTransformToPython();
 
   const [backgroundColor] = useChangeCheckedBlockColor(id);
 
@@ -124,16 +127,16 @@ const LoopStatement = useInjectContext(props => {
           <span
             data-id={id}
             key={uniqueId('visible_')}
-            onClick={e => {
+            onClick={(e) => {
               const anchor = e.target.dataset.anchor;
               changeToEditableTemplate(anchor);
               // 触发变量的修改
             }}
-            onDragStart={e => {
+            onDragStart={(e) => {
               e.preventDefault();
             }}
             onBlur={save}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.keyCode === 13) {
                 save(e);
               }
@@ -143,6 +146,14 @@ const LoopStatement = useInjectContext(props => {
         </div>
         {!readOnly && (
           <div className="loopstatement-header-operation">
+            <Icon
+              type="eye"
+              onClick={() => {
+                card.ignore = !card.ignore;
+                card.hasModified = true;
+                handleEmitCodeTransform(cards);
+              }}
+            />
             <Icon
               type="delete"
               onClick={() => {

@@ -240,7 +240,9 @@ const BasicStatement = useInjectContext((props) => {
                 <Icon
                   type="eye"
                   onClick={() => {
-                    console.log('kkk2');
+                    card.ignore = !card.ignore;
+                    card.hasModified = true;
+                    handleEmitCodeTransform(cards);
                   }}
                 />
                 <Icon

@@ -8,6 +8,7 @@ import NewProject from './NewProject';
 import api from '../../../api';
 import { getModifiedNodes } from '../utils';
 import HelpModel from './HelpModel';
+import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
 import SaveConfirmModel from '../../designerGraphEdit/layout/GraphItem/components/SaveConfirmModel';
 
 const { ipcRenderer, remote } = require('electron');
@@ -35,7 +36,6 @@ const handleWindowOperation = (op) => {
 };
 
 export default memo(({ history, tag }) => {
-  console.log('hhhhh');
   const [modalVisible, setModalVisible] = useState(false);
   const [visible, setVisible] = useState(undefined);
   const [helpModelVisible, setHelpModelVisible] = useState(false);

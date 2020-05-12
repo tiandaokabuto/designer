@@ -32,8 +32,14 @@ const result = {
 
 const moduleMap = new Map();
 
-const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
+const transformBlockToCodeImpl = (
+  dataStructure,
+  depth = 0,
+  blockNode,
+  options = {}
+) => {
   if (!dataStructure) return;
+  console.log(options);
   const padding = paddingStart(depth);
   dataStructure.forEach((statement, index) => {
     switch (statement.$$typeof) {
@@ -74,7 +80,8 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
             transformBlockToCodeImpl(
               statement.graphDataMap.cards,
               depth + 1,
-              blockNode
+              blockNode,
+              options
             );
             if (outputParam) {
               result.output += `\n${paddingStart(
@@ -147,7 +154,8 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
             padding,
             statement,
             { output: '' },
-            moduleMap
+            moduleMap,
+            options
           );
           if (Array.isArray(buffer)) {
             result.output += buffer[0];
@@ -159,15 +167,23 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
         result.output += '\n';
         break;
       case 2: // while or for
-        transformLoopStatement(padding, statement, result);
-        transformBlockToCodeImpl(statement.children, depth + 1, blockNode);
+        transformLoopStatement(padding, statement, result, options);
+        transformBlockToCodeImpl(statement.children, depth + 1, blockNode, {
+          ...options,
+          ignore: options.ignore || statement.ignore,
+        });
         break;
       case 4:
         transformConditionalStatement(padding, statement, result);
         if (!statement.ifChildren.length) {
           result.output += `${paddingStart(depth + 1)}pass\n`;
         } else {
-          transformBlockToCodeImpl(statement.ifChildren, depth + 1, blockNode);
+          transformBlockToCodeImpl(
+            statement.ifChildren,
+            depth + 1,
+            blockNode,
+            options
+          );
         }
 
         result.output += `${padding}else:\n`;
@@ -177,7 +193,8 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
           transformBlockToCodeImpl(
             statement.elseChildren,
             depth + 1,
-            blockNode
+            blockNode,
+            options
           );
         }
       default:
@@ -211,7 +228,7 @@ export default (dataStructure, depth = 0, blockNode) => {
     transformModuleVariable(result, depth, blockNode.variable || []);
   }
   moduleMap.clear();
-  transformBlockToCodeImpl(dataStructure, depth, blockNode);
+  transformBlockToCodeImpl(dataStructure, depth, blockNode, {});
   transformModuleImport(result, moduleMap, depth);
   if (result.output === '\n' || result.output == '\n\n') {
     result.output = paddingStart(depth) + 'pass\n';
