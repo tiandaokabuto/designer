@@ -44,24 +44,22 @@ export default useInjectContext(
       updateCurrentPagePosition,
     }) => {
       const { getSelected, executeCommand, update, save, find } = propsAPI;
-      const graphData = useSelector((state) => state.grapheditor.graphData);
-      const graphDataMap = useSelector(
-        (state) => state.grapheditor.graphDataMap
-      );
+      const graphData = useSelector(state => state.grapheditor.graphData);
+      const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
       const checkedGraphBlockId = useSelector(
-        (state) => state.grapheditor.checkedGraphBlockId
+        state => state.grapheditor.checkedGraphBlockId
       );
       const graphDataMapRef = useRef(new Map());
       graphDataMapRef.current = graphDataMap;
       const currentCheckedTreeNode = useSelector(
-        (state) => state.grapheditor.currentCheckedTreeNode
+        state => state.grapheditor.currentCheckedTreeNode
       );
 
       // 当前所处的页面位置
       const currentPagePosition = useSelector(
-        (state) => state.temporaryvariable.currentPagePosition
+        state => state.temporaryvariable.currentPagePosition
       );
-      const processTree = useSelector((state) => state.grapheditor.processTree);
+      const processTree = useSelector(state => state.grapheditor.processTree);
 
       const node = findNodeByKey(processTree, currentCheckedTreeNode);
       // 自适应当前画布的大小
@@ -77,12 +75,12 @@ export default useInjectContext(
           updateGraphData(save());
           synchroGraphDataToProcessTree();
         };
-        const handleZoomOut = (frequency) => {
+        const handleZoomOut = frequency => {
           for (let i = 0; i < frequency; i += 1) {
             executeCommand('zoomOut');
           }
         };
-        const handleZoomIn = (frequency) => {
+        const handleZoomIn = frequency => {
           for (let i = 0; i < frequency; i += 1) {
             executeCommand('zoomIn');
           }
@@ -101,6 +99,24 @@ export default useInjectContext(
 
       const [modalVisible, setModalVisible] = useState(false);
       const [loopType, setLoopType] = useState('while');
+
+      const handlCopyClick = () => {
+        console.log('触发复制');
+        copyModule();
+      };
+
+      useEffect(() => {
+        const arr = document.getElementsByClassName('command');
+        arr[0].addEventListener('click', handlCopyClick);
+        // for (let i = 0; i < arr.length; i++) {
+        //   if (arr[i].innerText === '复制') {
+
+        //   }
+        // }
+        return () => {
+          arr[0].removeEventListener('click', handlCopyClick);
+        };
+      }, []);
 
       useEffect(() => {
         const handleModalChange = () => {
@@ -135,7 +151,7 @@ export default useInjectContext(
               background: showHead ? 'rgba(252, 252, 252, 1)' : '',
               height: showHead ? '100%' : '',
             }}
-            onAfterChange={(value) => {
+            onAfterChange={value => {
               // 将每次的状态更新保存下来
               registerDataChange(value);
             }}
@@ -150,7 +166,7 @@ export default useInjectContext(
                   }
                 : {}),
             }}
-            onNodeClick={(node) => {
+            onNodeClick={node => {
               if (
                 node.item &&
                 ['processblock', 'rhombus-node'].includes(node.item.model.shape)
@@ -202,18 +218,16 @@ export default useInjectContext(
             //     // do nothing
             //   }
             // }}
-            onContextMenu={(node) => {
+            onContextMenu={node => {
               // console.log($0.firstChild.textContent);
               const arr = document.getElementsByClassName('command');
               for (let i = 0; i < arr.length; i++) {
                 if (arr[i].innerText === '复制') {
-                  arr[i].addEventListener('click', () => {
-                    copyModule();
-                  });
+                  arr[i].addEventListener('click', handlCopyClick);
                 }
               }
             }}
-            onDoubleClick={(node) => {
+            onDoubleClick={node => {
               if (
                 node.item &&
                 ['processblock'].includes(node.item.model.shape)
@@ -228,7 +242,7 @@ export default useInjectContext(
             onEdgeClick={() => {
               isUnSelected = false;
             }}
-            onBeforeItemSelected={(node) => {
+            onBeforeItemSelected={node => {
               // 选中状态下点击选中其他块，会先触发onNodeClick,再触发onAfterItemUnselected,最后触发onBeforeItemSelected
               // 这种状态暂时叫做重新选择，在此处记录重新选择的id
               if (
@@ -272,7 +286,7 @@ export default useInjectContext(
             }}
           >
             <Radio.Group
-              onChange={(e) => setLoopType(e.target.value)}
+              onChange={e => setLoopType(e.target.value)}
               value={loopType}
               style={{
                 display: 'flex',
