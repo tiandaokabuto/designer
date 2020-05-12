@@ -36,7 +36,6 @@ const handleWindowOperation = op => {
 };
 
 export default memo(({ history, tag }) => {
-  console.log('hhhhh');
   const [modalVisible, setModalVisible] = useState(false);
   const [visible, setVisible] = useState(undefined);
   const [helpModelVisible, setHelpModelVisible] = useState(false);
