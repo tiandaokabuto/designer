@@ -43,7 +43,8 @@ if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
 }
 
 export default merge.smart(baseConfig, {
-  devtool: 'cheap-inline-source-map',
+  // devtool: 'cheap-inline-source-map',
+  devtool: 'inline-source-map',
 
   mode: 'development',
 
@@ -227,11 +228,11 @@ export default merge.smart(baseConfig, {
       },
     ],
   },
-  optimization: {
-    splitChunks: {
-      chunks: 'async',
-    },
-  },
+  // optimization: {
+  //   splitChunks: {
+  //     chunks: 'async',
+  //   },
+  // },
   resolve: {
     alias: {
       'react-dom': '@hot-loader/react-dom',

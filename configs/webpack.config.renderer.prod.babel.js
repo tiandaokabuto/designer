@@ -175,9 +175,9 @@ export default merge.smart(baseConfig, {
   },
 
   optimization: {
-    splitChunks: {
-      chunks: 'all',
-    },
+    // splitChunks: {
+    //   chunks: 'all',
+    // },
     minimizer: process.env.E2E_BUILD
       ? []
       : [
