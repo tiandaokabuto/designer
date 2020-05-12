@@ -6,8 +6,14 @@ import memoize from './reselect';
  * @param {*} dataStructure
  * @param {*} result
  */
-const transformContinueStatement = (padding, dataStructure, result) => {
-  result.output += `${padding}`;
+const transformContinueStatement = (
+  padding,
+  dataStructure,
+  result,
+  options
+) => {
+  const ignore = options.ignore || dataStructure.ignore ? '# ' : '';
+  result.output += `${padding}${ignore}`;
   result.output += `continue`;
   return result.output;
 };

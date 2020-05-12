@@ -77,10 +77,10 @@ const transformBasicStatement = (
   moduleMap,
   options = {}
 ) => {
-  console.log('哈哈哈哈哈基本语句执行了', options.ignore);
   const ignore = options.ignore || dataStructure.ignore ? '# ' : '';
   handleModuleImport(dataStructure, result, moduleMap);
   handleNote(dataStructure.cmdDesc, result, padding, dataStructure);
+  console.log('哈哈哈哈哈基本语句执行了', options, ignore);
   result.output += `${padding}${ignore}`;
   let params = ''; // 生成参数类型
   // if (dataStructure.properties.required) {

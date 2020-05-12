@@ -39,7 +39,6 @@ const transformBlockToCodeImpl = (
   options = {}
 ) => {
   if (!dataStructure) return;
-  console.log(options);
   const padding = paddingStart(depth);
   dataStructure.forEach((statement, index) => {
     switch (statement.$$typeof) {
@@ -106,39 +105,67 @@ const transformBlockToCodeImpl = (
             padding,
             statement,
             { output: '' },
-            moduleMap
+            moduleMap,
+            options
           );
           if (Array.isArray(buffer)) {
             result.output += buffer[0];
           } else {
             result.output += buffer;
           }
-          // transformPrintStatement(padding, statement, result, moduleMap);
         } else if (
           statement.subtype &&
           (statement.subtype & ReturnStatementTag) === ReturnStatementTag
         ) {
-          transformReturnStatement(padding, statement, result, blockNode);
+          if (!statement.transformReturnStatement) {
+            statement.transformReturnStatement = memoize(
+              transformReturnStatement
+            );
+          }
+          const buffer = statement.transformReturnStatement(
+            padding,
+            statement,
+            { output: '' },
+            blockNode,
+            options
+          );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
         } else if (
           statement.subtype &&
           (statement.subtype & BreakStatementTag) === BreakStatementTag
         ) {
-          transformBreakStatement(padding, statement, result);
+          transformBreakStatement(padding, statement, result, options);
         } else if (
           statement.subtype && // ContinueStatementTag
           (statement.subtype & ContinueStatementTag) === ContinueStatementTag
         ) {
-          transformContinueStatement(padding, statement, result);
+          transformContinueStatement(padding, statement, result, options);
         } else if (
           statement.subtype && // VariableDeclareTag
           (statement.subtype & SleepStatementTag) === SleepStatementTag
         ) {
-          transformSleepStatement(padding, statement, result, moduleMap);
+          transformSleepStatement(
+            padding,
+            statement,
+            result,
+            moduleMa,
+            options
+          );
         } else if (
           statement.subtype && // CustomCodeBlockTag
           (statement.subtype & VariableDeclareTag) === VariableDeclareTag
         ) {
-          transformVariableDeclar(padding, statement, result, moduleMap);
+          transformVariableDeclar(
+            padding,
+            statement,
+            result,
+            moduleMap,
+            options
+          );
         } else if (
           statement.subtype && // CustomCodeBlockTag
           (statement.subtype & CustomCodeBlockTag) === CustomCodeBlockTag
@@ -162,7 +189,6 @@ const transformBlockToCodeImpl = (
           } else {
             result.output += buffer;
           }
-          // transformBasicStatement(padding, statement, result, moduleMap, depth);
         }
         result.output += '\n';
         break;
