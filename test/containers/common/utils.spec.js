@@ -7,17 +7,26 @@ import {
   changeModifyState,
   checkAndMakeDir,
   deleteFolderRecursive,
+  newProject,
+  persistentStorage,
+  renameNodeByKey,
+  persistentManifest,
+  getDecryptOrNormal,
 } from '../../../app/containers/common/utils';
-import uniqueId from 'lodash/uniqueId';
+import PATH_CONFIG from '../../../app/constants/localFilePath';
 
 let processTree = null;
 let dir = null;
 let process = null;
+const fs = require('fs');
 beforeEach(() => {
   process = {
     type: 'process',
     key: '2-1',
     title: '测试流程三',
+    data: {
+      name: '21',
+    },
   };
   dir = {
     type: 'dir',
@@ -35,6 +44,9 @@ beforeEach(() => {
         type: 'process',
         key: '2-3',
         title: '测试流程四',
+        data: {
+          name: '23',
+        },
       },
     ],
   };
@@ -43,17 +55,26 @@ beforeEach(() => {
       type: 'process',
       key: '1-1',
       title: '测试流程一',
+      data: {
+        name: '11',
+      },
     },
     {
       type: 'process',
       key: '1-2',
       title: '测试流程二',
+      data: {
+        name: '12',
+      },
     },
     dir,
     {
       type: 'process',
       key: '1-4',
       title: '测试流程五',
+      data: {
+        name: '14',
+      },
     },
   ];
 });
@@ -70,11 +91,17 @@ describe('test utils', () => {
       type: 'process',
       key: '1-1',
       title: '测试流程一',
+      data: {
+        name: '11',
+      },
     });
     expect(findNodeByKey(processTree, '2-3')).toEqual({
       type: 'process',
       key: '2-3',
       title: '测试流程四',
+      data: {
+        name: '23',
+      },
     });
     expect(findNodeByKey(processTree, '3-5')).toBeFalsy();
     expect(findNodeByKey(processTree, '1-3')).toBe(dir);
@@ -93,6 +120,9 @@ describe('test utils', () => {
       type: 'process',
       key: '1-1',
       title: '测试流程一',
+      data: {
+        name: '11',
+      },
     });
     expect(findNodeByKey(processTree, '1-1')).toBeFalsy();
     expect(findNodeByKey(processTree, '1-3')).toBeTruthy();
@@ -100,16 +130,19 @@ describe('test utils', () => {
     expect(findNodeByKey(processTree, '1-3')).toBeFalsy();
   });
   it('test getUniqueId', () => {
-    let uinqueId = getUniqueId(processTree);
+    let uniqueId = getUniqueId(processTree);
     expect(findNodeByKey(processTree, uniqueId)).toBeFalsy();
-    uinqueId = getUniqueId(processTree);
+    uniqueId = getUniqueId(processTree);
     expect(findNodeByKey(processTree, uniqueId)).toBeFalsy();
-    uinqueId = getUniqueId(processTree);
+    uniqueId = getUniqueId(processTree);
     expect(findNodeByKey(processTree, uniqueId)).toBeFalsy();
-    uinqueId = getUniqueId(processTree);
+    uniqueId = getUniqueId(processTree);
     expect(findNodeByKey(processTree, uniqueId)).toBeFalsy();
-    uinqueId = getUniqueId(processTree);
+    uniqueId = getUniqueId(processTree);
     expect(findNodeByKey(processTree, uniqueId)).toBeFalsy();
+    expect(uniqueId.indexOf('key_module_')).toBe(-1);
+    uniqueId = getUniqueId(processTree, 'key_module_');
+    expect(uniqueId.indexOf('key_module_')).not.toBe(-1);
   });
   it('test changeModifyState', () => {
     expect(
@@ -125,14 +158,71 @@ describe('test utils', () => {
       changeModifyState(processTree, '1-1', false).hasModified
     ).toBeFalsy();
   });
-  it('test checkAndMakeDirH deleteFolderRecursive', () => {
-    const fs = require('fs');
+  it('test checkAndMakeDir deleteFolderRecursive', () => {
     checkAndMakeDir(__dirname + '/a/b');
     let result = fs.existsSync(__dirname + '/a/b');
     expect(result).toBeTruthy();
-
     deleteFolderRecursive(__dirname + '/a');
     result = fs.existsSync(__dirname + '/a/b');
     expect(result).toBeFalsy();
   });
+  it('test newProject', done => {
+    newProject('testNewProject', () => {
+      expect(
+        fs.existsSync(PATH_CONFIG('project', 'testNewProject'))
+      ).toBeTruthy();
+      expect(
+        fs.existsSync(PATH_CONFIG('project', 'testNewProject/manifest.json'))
+      ).toBeTruthy();
+      expect(
+        fs.existsSync(
+          PATH_CONFIG('project', 'testNewProject/testNewProject_module')
+        )
+      ).toBeTruthy();
+      expect(
+        fs.existsSync(
+          PATH_CONFIG(
+            'project',
+            'testNewProject/testNewProject_module/manifest.json'
+          )
+        )
+      ).toBeTruthy();
+
+      done();
+    });
+  });
+  it('test persistentManifest', done => {
+    newProject('testPersistent', () => {
+      const beforeStat = fs.statSync(
+        PATH_CONFIG('project', 'testPersistent/manifest.json')
+      );
+      persistentManifest(processTree, 'testPersistent', 'processTree', () => {
+        const afterStat = fs.statSync(
+          PATH_CONFIG('project', 'testPersistent/manifest.json')
+        );
+        expect(beforeStat.ctimeMs === afterStat.ctimeMs).toBeFalsy();
+        done();
+      });
+    });
+  });
+  it('test persistentStorage', () => {
+    const tree = persistentStorage([], processTree, 'testPersistent');
+    expect(findNodeByKey(tree, '1-1')).toEqual({
+      type: 'process',
+      key: '1-1',
+      title: '测试流程一',
+      data: {},
+    });
+    expect(findNodeByKey(tree, '2-3')).toEqual({
+      type: 'process',
+      key: '2-3',
+      title: '测试流程四',
+      data: {},
+    });
+  });
+});
+
+afterEach(() => {
+  deleteFolderRecursive(PATH_CONFIG('project', 'testPersistent'));
+  deleteFolderRecursive(PATH_CONFIG('project', 'testNewProject'));
 });

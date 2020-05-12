@@ -46,7 +46,7 @@ const defaultGraphData = {
 };
 
 /**
- * 新建项目(待测)
+ * 新建项目(已进行单元测试)
  * @param {*} name 项目名称
  * @param {*} callback 项目创建完成后的回调函数
  */
@@ -68,7 +68,6 @@ export const newProject = (name, callback) => {
         PATH_CONFIG('project', `${name}/${name}_module`),
         { recursive: true },
         function(err) {
-          callback();
           // 修改流程块树
           changeModuleTree([]);
           const initialModuleTreeJson = {
@@ -79,6 +78,7 @@ export const newProject = (name, callback) => {
             PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
             encrypt.argEncryptByDES(JSON.stringify(initialModuleTreeJson))
           );
+          callback && callback();
         }
       );
     }
@@ -290,14 +290,11 @@ export const persistentStorage = (
   node
 ) => {
   let tree = cloneDeep(processTree);
-  console.log(modifiedNodesArr);
-  console.log(node);
   if (modifiedNodesArr) {
     traverseTree(tree, treeItem => {
       if (treeItem.type === 'process') {
         const find = modifiedNodesArr.find(item => item === treeItem.key);
         if (find) {
-          console.log(find, 'find');
           fs.writeFileSync(
             PATH_CONFIG('project', `${name}/${treeItem.title}/manifest.json`),
             encrypt.argEncryptByDES(JSON.stringify(treeItem.data))
@@ -310,6 +307,7 @@ export const persistentStorage = (
   updateProjextModifyTime(name);
   // 重新覆写processTree
   persistentManifest(tree, name, 'processTree');
+  return tree;
 };
 
 /**
@@ -318,7 +316,7 @@ export const persistentStorage = (
  * @param {*} name 项目名
  * @param {*} type processTree/moduleTree
  */
-export const persistentManifest = (tree, name, type) => {
+export const persistentManifest = (tree, name, type, callback) => {
   let path = '';
   if (type === 'processTree') {
     path = `${name}/manifest.json`;
@@ -337,6 +335,7 @@ export const persistentManifest = (tree, name, type) => {
           })
         )
       );
+      callback && callback();
     }
   });
 };
