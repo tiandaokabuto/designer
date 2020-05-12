@@ -4,7 +4,6 @@ import isEqual from 'lodash/isEqual';
 
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 import { useStore, useSelector, useDispatch } from 'react-redux';
-import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 import BasicStatement from '../components/BasicStatement';
 import LoopStatement from '../components/LoopStatement';
@@ -270,7 +269,6 @@ export default memo(({ readOnly = false }) => {
     switch (card.$$typeof) {
       case BasicStatementTag:
         return (
-          // <ContextMenuTrigger id={MENU_TYPE} key={card.id} holdToDisplay={1000}>
           <BasicStatement
             index={index}
             id={card.id}
@@ -285,7 +283,6 @@ export default memo(({ readOnly = false }) => {
       case LoopStatementTag:
         // 循环结构
         return (
-          // <ContextMenuTrigger id={MENU_TYPE} key={card.id} holdToDisplay={1000}>
           <LoopStatement
             key={card.id}
             id={card.id}
@@ -293,11 +290,9 @@ export default memo(({ readOnly = false }) => {
             card={card}
             readOnly={readOnly}
           />
-          // </ContextMenuTrigger>
         );
       case ConditionalStatementTag:
         return (
-          // <ContextMenuTrigger id={MENU_TYPE} key={card.id} holdToDisplay={1000}>
           <ConditionalStatement
             key={card.id}
             id={card.id}
@@ -305,7 +300,6 @@ export default memo(({ readOnly = false }) => {
             card={card}
             readOnly={readOnly}
           />
-          // </ContextMenuTrigger>
         );
       default:
       // do nothing
@@ -361,14 +355,6 @@ export default memo(({ readOnly = false }) => {
             setIsDraggingNode,
           })}
       </div>
-      {/* <ContextMenu id={MENU_TYPE}>
-        <MenuItem onClick={handleClick} data={{ action: 'Added' }}>
-          Add 1 count
-        </MenuItem>
-        <MenuItem onClick={handleClick} data={{ action: 'Removed' }}>
-          Remove 1 count
-        </MenuItem>
-      </ContextMenu> */}
     </InjectProvider>
   );
 });

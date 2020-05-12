@@ -2,20 +2,29 @@
  * Build config for electron renderer process
  */
 
-import path from 'path';
-import webpack from 'webpack';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import merge from 'webpack-merge';
-import TerserPlugin from 'terser-webpack-plugin';
-import baseConfig from './webpack.config.base';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+const path = require('path');
+// import path from 'path';
+const webpack = require('webpack');
+// import webpack from 'webpack';
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+// import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+// import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+const merge = require('webpack-merge');
+// import merge from 'webpack-merge';
+const TerserPlugin = require('terser-webpack-plugin');
+// import TerserPlugin from 'terser-webpack-plugin';
+const baseConfig = require('./webpack.config.base');
+// import baseConfig from './webpack.config.base';
+const CheckNodeEnv = require('../internals/scripts/CheckNodeEnv');
+// import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
 CheckNodeEnv('production');
 
-export default merge.smart(baseConfig, {
-  devtool: 'source-map',
+module.exports = exports = merge.smart(baseConfig, {
+  devtool: 'cheap-module-source-map',
 
   mode: 'production',
 
@@ -70,28 +79,28 @@ export default merge.smart(baseConfig, {
           },
         ],
       },
-      // Add SASS support  - compile all .global.scss files and pipe it to style.css
-      {
-        test: /\.global\.(scss|sass)$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
-              importLoaders: 1,
-            },
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-        ],
-      },
+      // // Add SASS support  - compile all .global.scss files and pipe it to style.css
+      // {
+      //   test: /\.global\.(scss|sass)$/,
+      //   use: [
+      //     {
+      //       loader: MiniCssExtractPlugin.loader,
+      //     },
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         sourceMap: true,
+      //         importLoaders: 1,
+      //       },
+      //     },
+      //     {
+      //       loader: 'sass-loader',
+      //       options: {
+      //         sourceMap: true,
+      //       },
+      //     },
+      //   ],
+      // },
       // Add SASS support  - compile all other .scss files and pipe it to style.css
       {
         test: /^((?!\.global).)*\.(scss|sass)$/,
@@ -175,9 +184,10 @@ export default merge.smart(baseConfig, {
   },
 
   optimization: {
-    splitChunks: {
-      chunks: 'all',
-    },
+    usedExports: true,
+    // splitChunks: {
+    //   chunks: 'initial',
+    // },
     minimizer: process.env.E2E_BUILD
       ? []
       : [
@@ -188,6 +198,7 @@ export default merge.smart(baseConfig, {
           }),
           new OptimizeCSSAssetsPlugin({
             cssProcessorOptions: {
+              preset: ['default', { discardComments: { removeAll: true } }],
               map: {
                 inline: false,
                 annotation: true,
@@ -209,16 +220,17 @@ export default merge.smart(baseConfig, {
      */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
+      OPEN_ANALYZER: 'true',
     }),
 
     new MiniCssExtractPlugin({
       filename: '[name].css',
     }),
-
-    new BundleAnalyzerPlugin({
-      analyzerMode:
-        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
-      openAnalyzer: process.env.OPEN_ANALYZER === 'true',
-    }),
+    new BundleAnalyzerPlugin(),
+    // new BundleAnalyzerPlugin({
+    //   analyzerMode:
+    //     process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
+    //   openAnalyzer: process.env.OPEN_ANALYZER === 'true',
+    // }),
   ],
 });

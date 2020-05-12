@@ -2,7 +2,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Input, message, Icon } from 'antd';
-import { uniqueId, cloneDeep } from 'lodash';
+import uniqueId from 'lodash/uniqueId';
+import cloneDeep from 'lodash/cloneDeep';
 import moment from 'moment';
 import useGetDownloadPath from './DragEditorHeader/useHooks/useGetDownloadPath';
 import {
@@ -52,7 +53,7 @@ const defaultGraphData = {
  */
 export const newProject = (name, callback) => {
   clearGrapheditorData();
-  fs.mkdir(PATH_CONFIG('project', name), { recursive: true }, function(err) {
+  fs.mkdir(PATH_CONFIG('project', name), { recursive: true }, function (err) {
     if (!err) {
       // 修改左侧自定义目录树
       changeProcessTree([]);
@@ -67,7 +68,7 @@ export const newProject = (name, callback) => {
       fs.mkdir(
         PATH_CONFIG('project', `${name}/${name}_module`),
         { recursive: true },
-        function(err) {
+        function (err) {
           callback();
           // 修改流程块树
           changeModuleTree([]);
@@ -89,7 +90,7 @@ export const newProject = (name, callback) => {
  * 读取项目文件夹下的所有项目
  * @param {*} path
  */
-export const readAllFileName = path => {
+export const readAllFileName = (path) => {
   try {
     fs.mkdirSync(`${process.cwd()}/project`);
   } catch (err) {}
@@ -145,7 +146,7 @@ export const findNodeByKey = (tree, key) => {
 
 const deleteFileByKey = (target, name, type) => {
   if (target.children) {
-    traverseTree(target.children, item => {
+    traverseTree(target.children, (item) => {
       if (item.type === 'process') {
         if (type === 'process') {
           deleteFolderRecursive(
@@ -183,15 +184,15 @@ export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
       if (Array.isArray(parent)) {
         // parent为数组，parent = processTree时，在第一层
         // 父节点是否是数组
-        let index = parent.findIndex(item => item.key === key); // 从数组中找到这个元素的index
-        let target = parent.find(item => item.key === key);
+        let index = parent.findIndex((item) => item.key === key); // 从数组中找到这个元素的index
+        let target = parent.find((item) => item.key === key);
         // 把该目录下的全部流程都删除
         deleteFileByKey(target, name, type);
         return parent.splice(index, 1)[0]; // 在tree中删掉该元素
       } else {
         // parent不是processTree的情况
-        let index = parent.children.findIndex(item => item.key === key);
-        const target = parent.children.find(item => item.key === key);
+        let index = parent.children.findIndex((item) => item.key === key);
+        const target = parent.children.find((item) => item.key === key);
         deleteFileByKey(target, name, type);
         return parent.children.splice(index, 1)[0];
       }
@@ -208,9 +209,9 @@ export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
  * 递归删除文件夹(已完成单元测试)(以 deleteFolderRecursive 为准)
  * @param {*} path 路径
  */
-export const deleteFolderRecursive = path => {
+export const deleteFolderRecursive = (path) => {
   if (fs.existsSync(path)) {
-    fs.readdirSync(path).forEach(function(file) {
+    fs.readdirSync(path).forEach(function (file) {
       var curPath = path + '/' + file;
       if (fs.statSync(curPath).isDirectory()) {
         // recurse
@@ -293,9 +294,9 @@ export const persistentStorage = (
   console.log(modifiedNodesArr);
   console.log(node);
   if (modifiedNodesArr) {
-    traverseTree(tree, treeItem => {
+    traverseTree(tree, (treeItem) => {
       if (treeItem.type === 'process') {
-        const find = modifiedNodesArr.find(item => item === treeItem.key);
+        const find = modifiedNodesArr.find((item) => item === treeItem.key);
         if (find) {
           console.log(find, 'find');
           fs.writeFileSync(
@@ -325,7 +326,7 @@ export const persistentManifest = (tree, name, type) => {
   } else {
     path = `${name}/${name}_module/manifest.json`;
   }
-  fs.readFile(PATH_CONFIG('project', path), function(err, data) {
+  fs.readFile(PATH_CONFIG('project', path), function (err, data) {
     if (!err) {
       let description = getDecryptOrNormal(data);
       fs.writeFileSync(
@@ -345,7 +346,7 @@ export const persistentManifest = (tree, name, type) => {
  * 通过添加和删除文件来更新项目的更新时间
  * @param {*} projectName 项目名
  */
-export const updateProjextModifyTime = projectName => {
+export const updateProjextModifyTime = (projectName) => {
   const updateTextPath = PATH_CONFIG('project', `${projectName}/update`);
   checkAndMakeDir(updateTextPath);
   deleteFolderRecursive(updateTextPath);
@@ -508,15 +509,15 @@ export const newProcessOrDir = (
  */
 export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
   const files = fs.readdirSync(PATH_CONFIG('project', currentProject));
-  return files.find(item => item === title);
+  return files.find((item) => item === title);
 };
 
 /**
  * 打开项目
  * @param {*} name 项目名
  */
-export const openProject = name => {
-  fs.readFile(PATH_CONFIG('project', `${name}/manifest.json`), function(
+export const openProject = (name) => {
+  fs.readFile(PATH_CONFIG('project', `${name}/manifest.json`), function (
     err,
     data
   ) {
@@ -527,7 +528,7 @@ export const openProject = name => {
       //   ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
       //   : JSON.parse(data.toString());
       // 遍历项目文件夹下面的流程文件夹，读取manifest.json里流程的数据，写入processTree
-      dirs.forEach(dirItem => {
+      dirs.forEach((dirItem) => {
         if (dirItem !== 'manifest.json' && dirItem !== `${name}_module`) {
           try {
             const dirItemData = fs.readFileSync(
@@ -536,7 +537,7 @@ export const openProject = name => {
             const resultData = getDecryptOrNormal(dirItemData);
 
             // 以流程名为映射关系
-            traverseTree(processTree, treeItem => {
+            traverseTree(processTree, (treeItem) => {
               if (treeItem.title === dirItem) {
                 treeItem.data = resultData;
               }
@@ -550,7 +551,7 @@ export const openProject = name => {
       checkAndMakeDir(PATH_CONFIG('project', `${name}/${name}_module`));
       fs.readFile(
         PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
-        function(err, data) {
+        function (err, data) {
           if (!err) {
             const { moduleTree } = getDecryptOrNormal(data);
             changeModuleTree(moduleTree);
@@ -573,7 +574,7 @@ export const openProject = name => {
   });
 };
 
-export const formatDateTime = time => {
+export const formatDateTime = (time) => {
   return moment(time).format('YYYY-MM-DD HH:mm');
 };
 
@@ -606,15 +607,15 @@ export const traverseTree = (tree, callback) => {
 };
 
 export const setAllModifiedState = (processTree, state = false) => {
-  traverseTree(processTree, node => {
+  traverseTree(processTree, (node) => {
     node.hasModified = state;
   });
   changeProcessTree([...processTree]);
 };
 
-export const getModifiedNodes = processTree => {
+export const getModifiedNodes = (processTree) => {
   const modifiedNodesArr = [];
-  traverseTree(processTree, node => {
+  traverseTree(processTree, (node) => {
     if (node.hasModified) {
       modifiedNodesArr.push(node.key);
     }
@@ -661,7 +662,7 @@ export const downProcessZipToLocal = (
         level: 9,
       },
     })
-    .then(function(content) {
+    .then(function (content) {
       deleteFolderRecursive(filePath);
       fs.writeFileSync(filePath + '.zip', content);
     });
@@ -681,7 +682,7 @@ export const addToReuse = () => {
   const files = fs.readdirSync(
     PATH_CONFIG('project', `${currentProject}/${currentProject}_module`)
   );
-  const item = files.find(item => item === `${title}.json`);
+  const item = files.find((item) => item === `${title}.json`);
   if (!item) {
     // 把流程块数据写入文件
     fs.writeFileSync(
@@ -717,7 +718,7 @@ export const exportCustomProcessBlock = () => {
     grapheditor: { graphDataMap, checkedGraphBlockId },
   } = store.getState();
 
-  getDownloadPath(filePath => {
+  getDownloadPath((filePath) => {
     try {
       fs.mkdirSync(filePath);
     } catch (err) {
@@ -730,7 +731,7 @@ export const exportCustomProcessBlock = () => {
     fs.writeFileSync(
       filePath + '/manifest.json',
       encrypt.argEncryptByDES(JSON.stringify(data)),
-      function(err) {
+      function (err) {
         console.log(err);
       }
     );
@@ -745,7 +746,7 @@ export const exportCustomProcessBlock = () => {
           level: 9,
         },
       })
-      .then(function(content) {
+      .then(function (content) {
         deleteFolderRecursive(filePath);
         fs.writeFileSync(filePath + '.zip', content);
         message.success('导出成功');
@@ -820,7 +821,7 @@ export const getChooseFilePath = (filePath, importType) => {
         });
       } else {
         // 对redux中的moduleTree进行修改
-        traverseTree(newModuleTree, item => {
+        traverseTree(newModuleTree, (item) => {
           if (currentCheckedModuleTreeNode === item.key) {
             // 选中的是流程
             if (item.type === 'process') {
@@ -884,7 +885,7 @@ export const getChooseFilePath = (filePath, importType) => {
   }
 };
 
-export const getDecryptOrNormal = data => {
+export const getDecryptOrNormal = (data) => {
   if (data.toString().indexOf('{') === -1) {
     return JSON.parse(encrypt.argDecryptByDES(data.toString()));
   } else {
@@ -896,7 +897,7 @@ export const getDecryptOrNormal = data => {
  * 查找项目名是否存在
  * @param {*} projectName 项目名
  */
-export const checkProjectExist = projectName => {
+export const checkProjectExist = (projectName) => {
   const projectPath = PATH_CONFIG('project', `${projectName}`);
   return fs.existsSync(projectPath);
 };

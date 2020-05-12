@@ -7,14 +7,22 @@
  * https://webpack.js.org/concepts/hot-module-replacement/
  */
 
-import path from 'path';
-import fs from 'fs';
-import webpack from 'webpack';
-import chalk from 'chalk';
-import merge from 'webpack-merge';
-import { spawn, execSync } from 'child_process';
-import baseConfig from './webpack.config.base';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+// import path from 'path';
+const path = require('path');
+// import fs from 'fs';
+const fs = require('fs');
+// import webpack from 'webpack';
+const webpack = require('webpack');
+// import chalk from 'chalk';
+const chalk = require('chalk');
+const merge = require('webpack-merge');
+// import merge from 'webpack-merge';
+const { spawn, execSync } = require('child_process');
+// import { spawn, execSync } from 'child_process';
+const baseConfig = require('./webpack.config.base');
+// import baseConfig from './webpack.config.base';
+const CheckNodeEnv = require('../internals/scripts/CheckNodeEnv');
+// import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
 // at the dev webpack config is not accidentally run in a production environment
@@ -42,7 +50,7 @@ if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
   execSync('yarn build-dll');
 }
 
-export default merge.smart(baseConfig, {
+module.exports = exports = merge.smart(baseConfig, {
   devtool: 'cheap-inline-source-map',
 
   mode: 'development',

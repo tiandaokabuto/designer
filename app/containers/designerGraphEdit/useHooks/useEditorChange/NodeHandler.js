@@ -12,7 +12,7 @@ import {
 } from '../../../reduxActions';
 import PATH_CONFIG from '@/constants/localFilePath.js';
 import event from '../../../designerGraphBlock/layout/eventCenter';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 
 import { changeModifyState, getDecryptOrNormal } from '../../../common/utils';
 
@@ -26,7 +26,7 @@ class NodeHandler {
     this.propsAPI = propsAPI;
   }
 
-  handleNodeChange = description => {
+  handleNodeChange = (description) => {
     console.log(description.action);
     if (description.action === 'add') {
       const {
@@ -120,7 +120,8 @@ class NodeHandler {
       } else if (description.model.shape === 'start-node') {
         const graphData = this.propsAPI.save();
         if (
-          graphData.nodes.filter(node => node.shape === 'start-node').length > 1
+          graphData.nodes.filter((node) => node.shape === 'start-node').length >
+          1
         ) {
           message.info('只允许拖入一个开始结点');
           this.apiAction('undo');
@@ -134,7 +135,7 @@ class NodeHandler {
       } else if (description.model.shape === 'end-node') {
         const graphData = this.propsAPI.save();
         if (
-          graphData.nodes.filter(node => node.shape === 'end-node').length > 1
+          graphData.nodes.filter((node) => node.shape === 'end-node').length > 1
         ) {
           message.info('只允许拖入一个结束结点');
           this.apiAction('undo');
@@ -364,7 +365,7 @@ class NodeHandler {
         event.removeAllListeners('loopChooseEnd');
 
         event.emit('loopChoose');
-        event.addListener('loopChooseEnd', type => {
+        event.addListener('loopChooseEnd', (type) => {
           const processblockDesc = {
             shape: 'processblock',
             properties: [
@@ -436,7 +437,7 @@ class NodeHandler {
     changeModifyState(processTree, currentCheckedTreeNode, true);
   };
 
-  apiAction = command => {
+  apiAction = (command) => {
     setTimeout(() => {
       this.propsAPI.executeCommand(command);
     }, 0);
