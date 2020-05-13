@@ -184,10 +184,7 @@ module.exports = exports = merge.smart(baseConfig, {
   },
 
   optimization: {
-<<<<<<< HEAD
     usedExports: true,
-=======
->>>>>>> ba32fa7032ab9b452a48b61eacd2a448b7920415
     // splitChunks: {
     //   chunks: 'initial',
     // },
