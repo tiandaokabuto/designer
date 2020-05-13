@@ -28,7 +28,7 @@ export const transformEditorProcess = (
   breakPoint,
   notWhile = false
 ) => {
-  // 判断当前的结点类型 流程块结点 或者是 判断结点
+  // 判断当前的结点类型  流程块结点  或者是  判断结点
   const currentNode = findNodeById(graphData.nodes, currentId);
   if (currentId === breakPoint) return;
   const blockData = graphDataMap.get(currentId) || {};
