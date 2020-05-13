@@ -1,11 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  memo,
-  useMemo,
-  useRef,
-  Fragment,
-} from 'react';
+import React, { useState, memo, useEffect, useRef, Fragment } from 'react';
 import {
   Icon,
   Modal,
@@ -33,22 +26,15 @@ import useGetProcessName, {
   isEffectProcess,
 } from './useHooks/useGetProcessName';
 import {
-  setAllModifiedState,
   changeModifyState,
   downProcessZipToLocal,
-  traverseTree,
-  isDirNode,
-  getUniqueId,
   getChooseFilePath,
 } from '../utils';
 import {
   updateCurrentPagePosition,
-  changeModuleTree,
   changeBlockTreeTab,
-  changeProcessTree,
 } from '../../reduxActions';
 import api from '../../../api';
-import { handleScreenCapture } from '@/containers/shared';
 import PATH_CONFIG from '@/constants/localFilePath.js';
 
 import NewProcess from './NewProcess';
@@ -57,7 +43,6 @@ import './index.scss';
 
 const { remote, ipcRenderer } = require('electron');
 const { exec } = require('child_process');
-const fs = require('fs');
 const process = require('process');
 const adm_zip = require('adm-zip');
 
@@ -109,6 +94,8 @@ export default memo(
     const [exportType, setExportType] = useState('json');
     const [versionText, setVersionText] = useState('1.0.0'); // 默认值
     const [originVersion, setOriginVersion] = useState('1.0.0'); // 默认值
+    const [isRunCode, setIsRunCode] = useState(false); // 默认值
+    const [tools, setTools] = useState([]);
 
     const [_, forceUpdate] = useForceUpdate();
 
@@ -128,6 +115,8 @@ export default memo(
 
     const verifyCompatibility = useVerifyCompatibility();
 
+    const key = 'runCode';
+
     const getProcessVersion = processName => {
       axios
         .get(api('getProcessVersion'), {
@@ -137,7 +126,7 @@ export default memo(
         })
         .then(res => res.data)
         .then(res => {
-          let version = res.data;
+          const version = res.data;
           if (res.code !== -1 && version) {
             setOriginVersion(version);
             const nextVersion = version.replace(/[\d]+$/, match => +match + 1);
@@ -201,55 +190,37 @@ export default memo(
       }
     };
 
-    const handleOperation = list => {
+    const handleOperation = () => {
       try {
         const uuid = new Date().getTime().toString(16);
         uuidRef.current = uuid;
-
-        const find = list.find(item => item.description === '运行');
-        find.description = '停止';
-        console.log(find, '---改变成停止之后');
-        find.onClick = function() {
-          // 终止流程
-          exec(
-            `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/stopUtils/stop.bat ${uuid}`,
-            err => {
-              if (!err) {
-                message.success('停止成功');
-              } else {
-                message.error('停止失败');
-              }
-              console.log(err);
-            }
-          );
-          const find = list.find(item => item.description === '停止');
-          find.description = '运行';
-          find.onClick = () => {
-            handleOperation(list);
-          };
-          forceUpdate();
-        };
         transformProcessToPython();
         executePython(uuid, () => {
-          const find = list.find(item => item.description === '停止');
-          find.description = '运行';
-          find.onClick = () => {
-            handleOperation(list);
-          };
-          forceUpdate();
+          setIsRunCode(false);
         });
+        message.loading({ content: '程序运行中', duration: 0, key });
         forceUpdate();
       } catch (e) {
-        const find = list.find(
-          item => item.description === '停止' || item.description === '运行'
-        );
-        find.description = '运行';
-        find.onClick = () => {
-          handleOperation(list);
-        };
-        forceUpdate();
+        setIsRunCode(false);
         message.error('代码转换出错，请检查流程图');
       }
+    };
+
+    const handleStopProcess = () => {
+      // 终止流程
+      const stopFilePath = `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/stopUtils/stop.bat ${
+        uuidRef.current
+      }`;
+      message.warn({ content: '流程停止中', duration: 0, key });
+      exec(stopFilePath, err => {
+        if (!err) {
+          message.success({ content: '停止成功', key });
+        } else {
+          message.error({ content: '停止失败', key });
+        }
+        console.log(err);
+      });
+      setIsRunCode(false);
     };
 
     const exportProcess = filePath => {
@@ -260,10 +231,8 @@ export default memo(
       zip.writeZip(`${filePath}.zip`);
     };
 
-    const handleFilePath = (e, filePath) => {};
-
-    const TOOLS_DESCRIPTION_FOR_CODEBLOCK = useMemo(
-      () => [
+    useEffect(() => {
+      const toolsDescriptionForBlock = [
         {
           description: '返回',
           type: 'rollback',
@@ -277,15 +246,33 @@ export default memo(
         },
         {
           description: '上一步',
-          type: 'save',
+          type: 'undo',
           disabled: true,
           onClick: () => {},
         },
         {
           description: '下一步',
-          type: 'save',
+          type: 'sync',
           disabled: true,
           onClick: () => {},
+        },
+        {
+          description: '运行',
+          type: 'code',
+          hide: isRunCode,
+          onClick: () => {
+            setIsRunCode(true);
+            handleOperation();
+          },
+        },
+        {
+          description: '停止',
+          type: 'icontingzhi',
+          IconFont: true,
+          hide: !isRunCode,
+          onClick: () => {
+            handleStopProcess();
+          },
         },
         {
           description: '保存',
@@ -298,177 +285,182 @@ export default memo(
             );
             persistentStorage();
             message.success('保存成功');
-          }, //handlePublishProcess,
-        },
-        {
-          description: '运行',
-          type: 'iconzhihang',
-          IconFont: true,
-          // disabled: true,
-          onClick: () => {
-            handleOperation(TOOLS_DESCRIPTION_FOR_CODEBLOCK);
           },
         },
-        {
+        /*  {
           description: '录制',
           type: 'iconrecordlight',
           disabled: true,
           IconFont: true,
-        },
+        }, */
         {
           description: '发布',
           type: 'cloud-upload',
           disabled: true,
         },
         {
+          description: '导入',
+          disabled: true,
+          type: 'login',
+          rotate: 180,
+        },
+        {
           description: '导出',
           disabled: true,
-          type: 'upload',
+          type: 'logout',
         },
         {
           description: '控制台',
           disabled: true,
           type: 'desktop',
         },
-      ],
-      []
-    );
-
-    const TOOLS_DESCRIPTION_FOR_PROCESS = [
-      {
-        description: '新建目录',
-        type: 'rollback',
-        IconFont: false,
-        onClick: () => {
-          setVisible('newdir');
+      ];
+      const toolsDescriptionForProcess = [
+        {
+          description: '新建目录',
+          type: 'plus-circle',
+          IconFont: false,
+          onClick: () => {
+            setVisible('newdir');
+          },
         },
-      },
-      {
-        description: '新建流程',
-        type: 'save',
-        onClick: () => {
-          setVisible('newprocess');
+        {
+          description: '新建流程',
+          type: 'cluster',
+          onClick: () => {
+            setVisible('newprocess');
+          },
         },
-      },
-      {
-        description: '上一步',
-        type: 'save',
-        onClick: () => {
-          event.emit('undo');
+        {
+          description: '上一步',
+          type: 'undo',
+          onClick: () => {
+            event.emit('undo');
+          },
         },
-      },
-      {
-        description: '下一步',
-        type: 'save',
-        onClick: () => {
-          event.emit('redo');
+        {
+          description: '下一步',
+          type: 'sync',
+          onClick: () => {
+            event.emit('redo');
+          },
         },
-      },
-      {
-        description: '保存',
-        type: 'iconzhihang',
-        onClick: () => {
-          // 保存到本地
-          changeModifyState(
-            processTreeRef.current,
-            currentCheckedTreeNodeRef.current,
-            false
-          );
-          persistentStorage();
-          message.success('保存成功');
+        {
+          description: '运行',
+          type: 'code',
+          hide: isRunCode,
+          onClick: () => {
+            setIsRunCode(true);
+            handleOperation();
+          },
         },
-        IconFont: true,
-      },
-      {
-        description: '运行',
-        type: 'iconrecordlight',
-        IconFont: true,
-        onClick: () => {
-          handleOperation(TOOLS_DESCRIPTION_FOR_PROCESS);
+        {
+          description: '停止',
+          type: 'icontingzhi',
+          IconFont: true,
+          hide: !isRunCode,
+          onClick: () => {
+            handleStopProcess();
+          },
         },
-      },
-      {
-        description: '发布',
-        type: 'cloud-upload',
-        disabled: remote.getGlobal('sharedObject').userName === '',
-        onClick: () => {
-          if (isEffectProcess()) {
-            getProcessVersion(getProcessName());
-            setModalVisible(true);
-          } else {
-            message.error('未选择流程');
-          }
+        {
+          description: '保存',
+          type: 'save',
+          onClick: () => {
+            // 保存到本地
+            changeModifyState(
+              processTreeRef.current,
+              currentCheckedTreeNodeRef.current,
+              false
+            );
+            persistentStorage();
+            message.success('保存成功');
+          },
         },
-      },
-      {
-        description: '导入',
-        type: 'download',
-        // disabled: true,
-        onClick: () => {
-          ipcRenderer.removeAllListeners('chooseItem');
-          ipcRenderer.send(
-            'choose-directory-dialog',
-            'showOpenDialog',
-            '选择',
-            ['openFile']
-          );
-          ipcRenderer.on('chooseItem', (e, filePath) => {
-            getChooseFilePath(filePath, 'process');
-          });
+        {
+          description: '发布',
+          type: 'cloud-upload',
+          disabled: remote.getGlobal('sharedObject').userName === '',
+          onClick: () => {
+            if (isEffectProcess()) {
+              getProcessVersion(getProcessName());
+              setModalVisible(true);
+            } else {
+              message.error('未选择流程');
+            }
+          },
         },
-      },
-      {
-        description: '导出',
-        type: 'upload',
-        onClick: () => {
-          console.log(treeTabRef.current);
-          if (isEffectProcess()) {
-            setIsExport(true);
-            setModalVisible(true);
-          } else {
-            message.error('请选中流程再导出');
-          }
+        {
+          description: '导入',
+          type: 'login',
+          rotate: 180,
+          // disabled: true,
+          onClick: () => {
+            ipcRenderer.removeAllListeners('chooseItem');
+            ipcRenderer.send(
+              'choose-directory-dialog',
+              'showOpenDialog',
+              '选择',
+              ['openFile']
+            );
+            ipcRenderer.on('chooseItem', (e, filePath) => {
+              getChooseFilePath(filePath, 'process');
+            });
+          },
         },
-      },
-      {
-        description: '控制台',
-        type: 'desktop',
-        disabled: true,
-      },
-      {
-        description: '校验',
-        disabled: false,
-        type: 'swap',
-        onClick: verifyCompatibility,
-      },
-    ];
-
-    const [tools, setTools] = useState(
-      type === 'process'
-        ? TOOLS_DESCRIPTION_FOR_PROCESS
-        : TOOLS_DESCRIPTION_FOR_CODEBLOCK
-    );
+        {
+          description: '导出',
+          type: 'logout',
+          onClick: () => {
+            if (isEffectProcess()) {
+              setIsExport(true);
+              setModalVisible(true);
+            } else {
+              message.error('请选中流程再导出');
+            }
+          },
+        },
+        {
+          description: '控制台',
+          type: 'desktop',
+          disabled: true,
+        },
+        {
+          description: '校验',
+          disabled: false,
+          type: 'swap',
+          onClick: verifyCompatibility,
+        },
+      ];
+      if (type !== 'process') {
+        setTools(toolsDescriptionForBlock);
+      } else {
+        setTools(toolsDescriptionForProcess);
+      }
+    }, [isRunCode]);
 
     return (
       <div className="drageditor-header">
-        {tools.map((tool, index) => (
-          <span
-            key={index}
-            onClick={() => {
-              if (!tool.disabled && tool.onClick) tool.onClick();
-            }}
-            className={`drageditor-header-operation ${
-              tool.disabled ? 'drageditor-header-operation__disabled' : ''
-            }`}
-          >
-            {tool.IconFont ? (
-              <IconFont type={tool.type} />
-            ) : (
-              <Icon type={tool.type} />
-            )}
-            {tool.description}
-          </span>
-        ))}
+        {tools.map((tool, index) =>
+          tool.hide ? null : (
+            <span
+              key={tool.description}
+              onClick={() => {
+                if (!tool.disabled && tool.onClick) tool.onClick();
+              }}
+              className={`drageditor-header-operation ${
+                tool.disabled ? 'drageditor-header-operation__disabled' : ''
+              }`}
+            >
+              {tool.IconFont ? (
+                <IconFont type={tool.type} />
+              ) : (
+                <Icon type={tool.type} rotate={tool.rotate ? tool.rotate : 0} />
+              )}
+              {tool.description}
+            </span>
+          )
+        )}
         {(visible === 'newprocess' || visible === 'newdir') && (
           <NewProcess resetVisible={resetVisible} tag={visible} />
         )}
