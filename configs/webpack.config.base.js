@@ -9,18 +9,18 @@ const webpack = require('webpack');
 const { dependencies: externals } = require('../app/package.json');
 // import { dependencies as externals } from '../app/package.json';
 
-const threadLoader = require('thread-loader');
-threadLoader.warmup(
-  {
-    // pool options, like passed to loader options
-    // must match loader options to boot the correct pool
-  },
-  [
-    // modules to load
-    // can be any module, i. e.
-    'babel-loader',
-  ]
-);
+// const threadLoader = require('thread-loader');
+// threadLoader.warmup(
+//   {
+//     // pool options, like passed to loader options
+//     // must match loader options to boot the correct pool
+//   },
+//   [
+//     // modules to load
+//     // can be any module, i. e.
+//     'babel-loader',
+//   ]
+// );
 
 module.exports = exports = {
   externals: [...Object.keys(externals || {})],
