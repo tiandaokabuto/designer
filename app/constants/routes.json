@@ -1,7 +1,8 @@
 {
   "RecentOpenProject": "/",
-  "DESIGNGRAPHEDIT": "/designGraphEdit",
+  "DESIGNGRAPHEDIT": "/designGraph/edit",
   "COUNTER": "/counter",
-  "DesignerGraphBlock": "/designerGraphBlock",
-  "LOGIN": "/login"
+  "DesignerGraphBlock": "/designGraph/block",
+  "LOGIN": "/login",
+  "DESIGNGRAPH": "/designGraph"
 }

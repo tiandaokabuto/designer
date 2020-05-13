@@ -1,9 +1,6 @@
 import React from 'react';
 import Enzyme, { mount, shallow, render } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import { Provider } from 'react-redux';
-import renderer from 'react-test-renderer';
-// import store from '../../../../../../app/store';
 import ConditionParam from '../../../../../../app/containers/designerGraphBlock/layout/DragParamPanel/ParamPanel/ConditionParam';
 
 Enzyme.configure({ adapter: new Adapter() });
@@ -20,7 +17,7 @@ function setup() {
       cards={cards}
       handleEmitCodeTransform={handleEmitCodeTransform}
       stopDeleteKeyDown={stopDeleteKeyDown}
-    ></ConditionParam>
+    />
   );
 
   return {
@@ -42,12 +39,14 @@ describe('conditionParam', () => {
       {
         v1: '',
         v2: '',
+        id: 1,
         rule: '',
         connect: '',
       },
       {
         v1: '',
         v2: '',
+        id: 2,
         rule: '',
         connect: '',
       },
@@ -93,6 +92,7 @@ describe('conditionParam', () => {
       {
         v1: '',
         v2: '',
+        id: 1,
         rule: '',
         connect: '',
       },
@@ -112,6 +112,7 @@ describe('conditionParam', () => {
       {
         v1: 'v1input',
         v2: 'v2input',
+        id: 1,
         rule: '',
         connect: '',
       },

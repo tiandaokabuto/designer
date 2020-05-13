@@ -17,8 +17,8 @@ import './index.scss';
 export default useInjectContext(({ history }) => {
   return (
     <DndProvider backend={Backend}>
-      <GraphBlockHeader history={history} />
-      <DragEditorHeader type="block" />
+      {/* <GraphBlockHeader history={history} />
+      <DragEditorHeader type="block" /> */}
       <div className="dragger-editor">
         <DragItem />
         <DragContainer />

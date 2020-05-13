@@ -136,7 +136,7 @@ export default useInjectContext(({ history }) => {
       return false;
     }
     history.push({
-      pathname: '/designGraphEdit',
+      pathname: '/designGraph/edit',
       state: {
         projectName: name,
       },
@@ -206,7 +206,7 @@ export default useInjectContext(({ history }) => {
                   // clearGrapheditorData();
                   resetGraphEditData();
                   history.push({
-                    pathname: '/designGraphEdit',
+                    pathname: '/designGraph/edit',
                     state: {
                       projectName: record.name,
                     },

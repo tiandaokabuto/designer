@@ -23,8 +23,8 @@ import './index.scss';
 export default () => {
   return (
     <>
-      <GraphBlockHeader history={history} />
-      <DragEditorHeader type="process" />
+      {/* <GraphBlockHeader history={history} />
+      <DragEditorHeader type="process" /> */}
 
       <GGEditor className="designergraph editor">
         <GraphItem />

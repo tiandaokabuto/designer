@@ -20,7 +20,7 @@ class CustomCommand extends React.Component {
 
       // 正向命令逻辑
       execute(/* editor */) {
-        history.push('/designerGraphBlock');
+        history.push('/designGraph/block');
       },
 
       // 反向命令逻辑
