@@ -5,6 +5,7 @@ import { Input, message, Icon } from 'antd';
 import { uniqueId, cloneDeep } from 'lodash';
 import moment from 'moment';
 import useGetDownloadPath from './DragEditorHeader/useHooks/useGetDownloadPath';
+// import useTransformToPython from '../designerGraphBlock/layout/useHooks/useTransformToPython';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
@@ -19,6 +20,7 @@ import event from '../designerGraphBlock/layout/eventCenter';
 import PATH_CONFIG from '../../constants/localFilePath'; //'@/constants/localFilePath';
 import { encrypt } from '../../login/utils'; //'@/login/utils';
 import RenameInput from './components/RenameInput';
+import transformEditorGraphData from '../designerGraphEdit/RPAcore';
 
 const fs = require('fs');
 const process = require('process');
@@ -43,6 +45,18 @@ const defaultGraphData = {
       },
     },
   ],
+};
+
+export const transformPythonWithPoint = fromOrTo => {
+  const {
+    grapheditor: { graphData, graphDataMap, checkedGraphBlockId },
+  } = store.getState();
+  transformEditorGraphData(
+    graphData,
+    graphDataMap,
+    checkedGraphBlockId,
+    fromOrTo
+  );
 };
 
 /**
@@ -277,7 +291,7 @@ export function checkAndMakeDir(dirName) {
 }
 
 /**
- * 数据持久化保存到本地，按当前点击的流程保存(待测)
+ * 数据持久化保存到本地，按当前点击的流程保存(已完成单元测试)
  * @param {*} modifiedNodesArr
  * @param {*} processTree
  * @param {*} name
@@ -522,6 +536,7 @@ export const openProject = name => {
     if (!err) {
       const dirs = fs.readdirSync(PATH_CONFIG('project', name));
       const { processTree } = getDecryptOrNormal(data);
+      console.log(processTree);
       // data.toString().indexOf('{') === -1
       //   ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
       //   : JSON.parse(data.toString());

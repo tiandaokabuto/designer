@@ -15,6 +15,8 @@ import EndNode from '../RegisterNode/EndNode';
 import RhombusNode from '../RegisterNode/RhombusNode';
 import ReuseCommand from './components/EditorContextMenu/ReuseCommand';
 import CustomCommand from './components/EditorContextMenu/CustomCommand';
+import RunToHereCommand from './components/EditorContextMenu/RunToHereCommand';
+import RunFromHereCommand from './components/EditorContextMenu/RunFromHereCommand';
 
 import WhileJPG from '@/containers/images/while.jpg';
 import DoWhileJPG from '@/containers/images/doWhile.jpg';
@@ -264,8 +266,11 @@ export default useInjectContext(
           <RhombusNode />
           <EditorChange />
           <ReuseCommand />
-          {/* <HighlightEditor /> */}
           <CustomCommand />
+          <RunFromHereCommand />
+          <RunToHereCommand />
+          {/* <HighlightEditor /> */}
+
           {!showHead && <OutputPanel tag="graph" />}
 
           <Modal
