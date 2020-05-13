@@ -33,6 +33,8 @@ const FlowContextMenu = () => {
         <MenuItem command="添加到复用" text="添加到复用" />
         <MenuItem command="delete" text="删除" />
         <MenuItem command="导出到本地" text="导出到本地" />
+        <MenuItem command="执行到此处" text="执行到此处" />
+        <MenuItem command="从此处执行" text="从此处执行" />
       </NodeMenu>
 
       <EdgeMenu>

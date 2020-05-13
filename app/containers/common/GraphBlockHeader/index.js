@@ -10,10 +10,11 @@ import { getModifiedNodes } from '../utils';
 import HelpModel from './HelpModel';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
 import SaveConfirmModel from '../../designerGraphEdit/layout/GraphItem/components/SaveConfirmModel';
+import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
 
 const { ipcRenderer, remote } = require('electron');
 
-const generateMenu = (arr) => {
+const generateMenu = arr => {
   return (
     <Menu>
       {arr.map((subMenu, index) => {
@@ -31,7 +32,7 @@ const generateMenu = (arr) => {
  * 处理窗口的缩小、全屏、关闭操作
  * @param {*} op
  */
-const handleWindowOperation = (op) => {
+const handleWindowOperation = op => {
   ipcRenderer.send(op);
 };
 
@@ -45,7 +46,7 @@ export default memo(({ history, tag }) => {
   const resetVisible = () => {
     setVisible(undefined);
   };
-  const processTree = useSelector((state) => state.grapheditor.processTree);
+  const processTree = useSelector(state => state.grapheditor.processTree);
   const persistentStorage = usePersistentStorage();
   const modifiedNodesArr = useRef([]);
   // const [modifiedNodesArr, setModifiedNodesArr] = useState([]);
@@ -108,15 +109,15 @@ export default memo(({ history, tag }) => {
     }
     axios
       .get(api('signOut'))
-      .then((res) => res.data)
-      .then((json) => {
+      .then(res => res.data)
+      .then(json => {
         if (~json.code) {
           ipcRenderer.send('signOut');
           return true;
         }
         return false;
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
   };
 
   const handleCancel = () => {

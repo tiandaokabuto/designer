@@ -33,7 +33,7 @@ const COMPONENT_TYPE = {
   DIRECTORY: 3,
 };
 
-const stopDeleteKeyDown = (e) => {
+const stopDeleteKeyDown = e => {
   if (e.keyCode === 46) {
     e.nativeEvent.stopImmediatePropagation();
   }
@@ -69,7 +69,7 @@ const getComponentType = (
       <div className="sqlstr">
         <Input
           defaultValue={param.value.replace(/\s%\s.*/g, '')}
-          onChange={(e) => {
+          onChange={e => {
             param.value = e.target.value;
             const numOfPlace = (e.target.value.match(/\%s/g) || []).length;
             if (param.placeholder.length < numOfPlace) {
@@ -81,7 +81,7 @@ const getComponentType = (
             }
             handleEmitCodeTransform(cards);
           }}
-          onKeyDown={(e) => stopDeleteKeyDown(e)}
+          onKeyDown={e => stopDeleteKeyDown(e)}
         />
         请填写替换变量
         {param.placeholder.map((place, index) => {
@@ -92,17 +92,17 @@ const getComponentType = (
               style={{
                 marginBottom: 8,
               }}
-              onChange={(e) => {
+              onChange={e => {
                 param.placeholder[index] = e.target.value;
                 // 重新调整sql拼接形式
                 param.value =
                   param.value.replace(/\s%\s.*/g, '') +
                   ` % (${param.placeholder
-                    .filter((item) => item !== undefined)
+                    .filter(item => item !== undefined)
                     .join(', ')})`;
                 handleEmitCodeTransform(cards);
               }}
-              onKeyDown={(e) => stopDeleteKeyDown(e)}
+              onKeyDown={e => stopDeleteKeyDown(e)}
             />
           );
         })}
@@ -127,14 +127,14 @@ const getComponentType = (
             style={{ width: '100%' }}
             defaultValue={param.value || param.default}
             dropdownMatchSelectWidth={false}
-            onChange={(value) => {
+            onChange={value => {
               param.value = value;
               handleEmitCodeTransform(cards);
               setLoopSelect(value);
             }}
           >
             {param.valueMapping &&
-              param.valueMapping.map((item) => (
+              param.valueMapping.map(item => (
                 <Option key={item.value} value={item.value}>
                   {item.name}
                 </Option>
@@ -196,20 +196,20 @@ const getComponentType = (
         <Input
           defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
           key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
-          onChange={(e) => {
+          onChange={e => {
             param.value = e.target.value;
             markBlockIsUpdated();
             handleEmitCodeTransform(cards);
 
             if (param.listeners) {
-              param.listeners.forEach((callback) => {
+              param.listeners.forEach(callback => {
                 if (typeof callback === 'function') {
                   callback(e.target.value);
                 }
               });
             }
           }}
-          onKeyDown={(e) => stopDeleteKeyDown(e)}
+          onKeyDown={e => stopDeleteKeyDown(e)}
         />
       );
     case COMPONENT_TYPE.SELECT:
@@ -218,14 +218,14 @@ const getComponentType = (
           style={{ width: '100%' }}
           defaultValue={param.value || param.default}
           dropdownMatchSelectWidth={false}
-          onChange={(value) => {
+          onChange={value => {
             param.value = value;
             markBlockIsUpdated();
             handleEmitCodeTransform(cards);
           }}
         >
           {param.valueMapping &&
-            param.valueMapping.map((item) => (
+            param.valueMapping.map(item => (
               <Option key={item.value} value={item.value}>
                 {item.name}
               </Option>
@@ -350,23 +350,23 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
           <span>命令描述符</span>
           <Input
             defaultValue={checkedBlock._userDesc}
-            onChange={(e) => {
+            onChange={e => {
               checkedBlock.userDesc = e.target.value;
               handleEmitCodeTransform(cards);
             }}
-            onKeyDown={(e) => stopDeleteKeyDown(e)}
+            onKeyDown={e => stopDeleteKeyDown(e)}
           />
         </div>
       )}
       {checkedBlock.key && checkedBlock.key.indexOf('module') !== -1 ? (
         <Fragment>
-          {checkedBlock.properties.map((item) => {
+          {checkedBlock.properties.map(item => {
             if (item.cnName === '输入参数') {
               return (
                 <Fragment>
                   <div className="parampanel-required">{item.cnName}</div>
                   <div className="parampanel-content">
-                    {item.value.map((valueItem) => {
+                    {item.value.map(valueItem => {
                       return (
                         <Fragment>
                           <div className="parampanel-item">
@@ -379,11 +379,11 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                             <div style={{ flex: 1, overflow: 'hidden' }}>
                               <Input
                                 defaultValue={valueItem.value} // 可以加上 param.default 在参数面板显示默认值
-                                onChange={(e) => {
+                                onChange={e => {
                                   valueItem.value = e.target.value;
                                   handleEmitCodeTransform(cards);
                                 }}
-                                onKeyDown={(e) => stopDeleteKeyDown(e)}
+                                onKeyDown={e => stopDeleteKeyDown(e)}
                               />
                             </div>
                           </div>
@@ -398,7 +398,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                 <Fragment>
                   <div className="parampanel-required">{item.cnName}</div>
                   <div className="parampanel-content">
-                    {item.value.map((valueItem) => {
+                    {item.value.map(valueItem => {
                       return (
                         <Fragment>
                           <div className="parampanel-item">
@@ -413,11 +413,11 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                             <div style={{ flex: 1, overflow: 'hidden' }}>
                               <Input
                                 defaultValue={valueItem.name} // 可以加上 param.default 在参数面板显示默认值
-                                onChange={(e) => {
+                                onChange={e => {
                                   valueItem.name = e.target.value;
                                   handleEmitCodeTransform(cards);
                                 }}
-                                onKeyDown={(e) => stopDeleteKeyDown(e)}
+                                onKeyDown={e => stopDeleteKeyDown(e)}
                               />
                             </div>
                           </div>

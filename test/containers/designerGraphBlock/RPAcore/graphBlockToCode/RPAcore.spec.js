@@ -14,11 +14,11 @@ import transformVariableDeclar from '../../../../../app/containers/designerGraph
 
 Enzyme.configure({ adapter: new Adapter() });
 
-const paddingStart = (length) => '    '.repeat(length);
+const paddingStart = length => '    '.repeat(length);
 
 describe('test RPA', () => {
   it('test transformBreakStatement', () => {
-    const Component = function ({ padding, dataStructure, result }) {
+    const Component = function({ padding, dataStructure, result }) {
       return (
         <div>{transformBreakStatement(padding, dataStructure, result)}</div>
       );
@@ -39,7 +39,7 @@ describe('test RPA', () => {
     expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
   });
   it('test transformContinueStatement', () => {
-    const Component = function ({ padding, dataStructure, result }) {
+    const Component = function({ padding, dataStructure, result }) {
       return (
         <div>{transformContinueStatement(padding, dataStructure, result)}</div>
       );
@@ -60,7 +60,7 @@ describe('test RPA', () => {
     expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
   });
   it('test transformCustomCodeStatement', () => {
-    const Component = function ({ padding, dataStructure, result }) {
+    const Component = function({ padding, dataStructure, result }) {
       return (
         <div>
           {transformCustomCodeStatement(padding, dataStructure, result)}
@@ -85,7 +85,7 @@ describe('test RPA', () => {
     expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
   });
   it('test transformConditionalStatement', () => {
-    const Component = function ({ padding, dataStructure, result }) {
+    const Component = function({ padding, dataStructure, result }) {
       return (
         <div>
           {transformConditionalStatement(padding, dataStructure, result)}
@@ -147,147 +147,210 @@ describe('test RPA', () => {
 
     expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
   });
-  it('test transformLoopStatement', () => {
-    const Component = function ({ padding, dataStructure, result }) {
+  {
+    const Component = function({ padding, dataStructure, result }) {
       return (
         <div>{transformLoopStatement(padding, dataStructure, result)}</div>
       );
     };
 
-    const Rpa = (
-      <div>
-        <Component
-          padding={paddingStart(2)}
-          dataStructure={{
-            main: 'loop',
-            $$typeof: 2,
-            text: '循环控制',
-            visibleTemplate: '循环: 当满足{{loopcondition}} 时',
-            pkg: 'Control',
-            properties: {
-              optional: [],
-              required: [
-                {
-                  componentType: 1,
-                  default: '',
-                  cnName: '循环类型',
-                  enName: 'looptype',
-                  valueMapping: [
-                    { name: '遍历数组', value: 'for_list' },
-                    { name: '遍历字典', value: 'for_dict' },
-                    { name: '计次循环', value: 'for_times' },
-                    { name: '条件循环', value: 'for_condition' },
-                  ],
-                  value: 'for_list',
-                  _value: 'for_list',
-                },
-                {
-                  componentType: 0,
-                  default: '',
-                  cnName: '循环条件',
-                  valueList: [],
-                  enName: 'loopcondition',
-                  valueMapping: [
-                    { name: '等于', value: '==' },
-                    { name: '不等于', value: '!=' },
-                    { name: '大于', value: '>' },
-                    { name: '小于', value: '<' },
-                    { name: '大于等于', value: '>=' },
-                    { name: '小于等于', value: '<=' },
-                    { name: '空', value: 'is None' },
-                    { name: '非空', value: 'not None' },
-                  ],
-                  tag: 1,
-                  value: '',
-                  desc: '',
-                  forceUpdate: 12,
-                  _forceUpdate: 12,
-                  for_list: [
-                    {
-                      id: 'listKeyword',
-                      enName: 'value',
-                      cnName: '值',
-                      value: 'item',
-                      paramType: ['String'],
-                    },
-                    {
-                      id: 'listArray',
-                      enName: 'arrayRet',
-                      cnName: '数组',
-                      value: '[1,2,3]',
-                      paramType: ['List'],
-                    },
-                  ],
-                  for_dict: [
-                    {
-                      id: 'dictKey',
-                      enName: 'key',
-                      cnName: '键',
-                      value: '',
-                      paramType: ['String'],
-                    },
-                    {
-                      id: 'dictValue',
-                      enName: 'value',
-                      cnName: '值',
-                      value: '',
-                      paramType: ['String'],
-                    },
-                    {
-                      id: 'dictVar',
-                      enName: 'dictVar',
-                      cnName: '字典',
-                      value: '',
-                      paramType: ['Dictionary'],
-                    },
-                  ],
-                  for_times: [
-                    {
-                      id: 'timeIndex',
-                      enName: 'index',
-                      cnName: '索引名称',
-                      value: '',
-                      paramType: ['String'],
-                    },
-                    {
-                      id: 'timeStartIndex',
-                      enName: 'startIndex',
-                      cnName: '初始值',
-                      value: '',
-                      paramType: ['String'],
-                    },
-                    {
-                      id: 'timeEndIndex',
-                      enName: 'endIndex',
-                      cnName: '结束值',
-                      value: '',
-                      paramType: ['String'],
-                    },
-                    {
-                      id: 'timeStep',
-                      enName: 'step',
-                      cnName: '每次增加',
-                      value: '',
-                      paramType: ['String'],
-                    },
-                  ],
-                },
-              ],
-            },
-            children: [],
-            id: 'node_3',
-          }}
-          result={{
-            output: '',
-          }}
-        />
-      </div>
-    );
+    const dataStructure = {
+      main: 'loop',
+      $$typeof: 2,
+      text: '循环控制',
+      visibleTemplate: '循环: 当满足{{loopcondition}} 时',
+      pkg: 'Control',
+      properties: {
+        optional: [],
+        required: [
+          {
+            componentType: 1,
+            default: '',
+            cnName: '循环类型',
+            enName: 'looptype',
+            valueMapping: [
+              { name: '遍历数组', value: 'for_list' },
+              { name: '遍历字典', value: 'for_dict' },
+              { name: '计次循环', value: 'for_times' },
+              { name: '条件循环', value: 'for_condition' },
+            ],
+            value: 'for_list',
+            _value: 'for_list',
+          },
+          {
+            componentType: 0,
+            default: '',
+            cnName: '循环条件',
+            valueList: [],
+            enName: 'loopcondition',
+            valueMapping: [
+              { name: '等于', value: '==' },
+              { name: '不等于', value: '!=' },
+              { name: '大于', value: '>' },
+              { name: '小于', value: '<' },
+              { name: '大于等于', value: '>=' },
+              { name: '小于等于', value: '<=' },
+              { name: '空', value: 'is None' },
+              { name: '非空', value: 'not None' },
+            ],
+            tag: 1,
+            value: '',
+            desc: '',
+            forceUpdate: 12,
+            _forceUpdate: 12,
+            for_list: [
+              {
+                id: 'listKeyword',
+                enName: 'value',
+                cnName: '值',
+                value: 'item',
+                paramType: ['String'],
+              },
+              {
+                id: 'listArray',
+                enName: 'arrayRet',
+                cnName: '数组',
+                value: '[1,2,3]',
+                paramType: ['List'],
+              },
+            ],
+            for_dict: [
+              {
+                id: 'dictKey',
+                enName: 'key',
+                cnName: '键',
+                value: 'a',
+                paramType: ['String'],
+              },
+              {
+                id: 'dictValue',
+                enName: 'value',
+                cnName: '值',
+                value: 'b',
+                paramType: ['String'],
+              },
+              {
+                id: 'dictVar',
+                enName: 'dictVar',
+                cnName: '字典',
+                value: 'dict',
+                paramType: ['Dictionary'],
+              },
+            ],
+            for_times: [
+              {
+                id: 'timeIndex',
+                enName: 'index',
+                cnName: '索引名称',
+                value: 'i',
+                paramType: ['String'],
+              },
+              {
+                id: 'timeStartIndex',
+                enName: 'startIndex',
+                cnName: '初始值',
+                value: '0',
+                paramType: ['String'],
+              },
+              {
+                id: 'timeEndIndex',
+                enName: 'endIndex',
+                cnName: '结束值',
+                value: '10',
+                paramType: ['String'],
+              },
+              {
+                id: 'timeStep',
+                enName: 'step',
+                cnName: '每次增加',
+                value: '1',
+                paramType: ['String'],
+              },
+            ],
+          },
+        ],
+      },
+      children: [],
+      id: 'node_3',
+    };
 
-    expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
-  });
+    it('test transformLoopStatement for_list', () => {
+      const LoopList = (
+        <div>
+          <Component
+            padding={paddingStart(2)}
+            dataStructure={dataStructure}
+            result={{
+              output: '',
+            }}
+          />
+        </div>
+      );
+      const ListRenderer = renderer.create(LoopList);
+      expect(ListRenderer.toJSON()).toMatchSnapshot();
+    });
+
+    it('test transformLoopStatement for_dict', () => {
+      const LoopDict = (
+        <div>
+          <Component
+            padding={paddingStart(2)}
+            dataStructure={{
+              ...dataStructure,
+              properties: {
+                ...dataStructure.properties,
+                required: [
+                  {
+                    ...dataStructure.properties.required[0],
+                    value: 'for_dict',
+                    _value: 'for_dict',
+                  },
+                  dataStructure.properties.required[1],
+                ],
+              },
+            }}
+            result={{
+              output: '',
+            }}
+          />
+        </div>
+      );
+      const DictRender = renderer.create(LoopDict);
+      expect(DictRender.toJSON()).toMatchSnapshot();
+    });
+
+    it('test transformLoopStatement for_times', () => {
+      const LoopTime = (
+        <div>
+          <Component
+            padding={paddingStart(2)}
+            dataStructure={{
+              ...dataStructure,
+              properties: {
+                ...dataStructure.properties,
+                required: [
+                  {
+                    ...dataStructure.properties.required[0],
+                    value: 'for_times',
+                    _value: 'for_dict',
+                  },
+                  dataStructure.properties.required[1],
+                ],
+              },
+            }}
+            result={{
+              output: '',
+            }}
+          />
+        </div>
+      );
+      const TimerRender = renderer.create(LoopTime);
+      expect(TimerRender.toJSON()).toMatchSnapshot();
+    });
+  }
+
   it('test transformPrintStatement', () => {
-    const Component = function ({ padding, dataStructure, result }) {
+    const Component = function({ padding, dataStructure, result }) {
       const [output, moduleMap] = transformPrintStatement(
         padding,
         dataStructure,
@@ -377,7 +440,7 @@ describe('test RPA', () => {
     expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
   });
   it('test transformReturnStatement', () => {
-    const Component = function ({ padding, dataStructure, result, blockNode }) {
+    const Component = function({ padding, dataStructure, result, blockNode }) {
       return (
         <div>
           {transformReturnStatement(padding, dataStructure, result, blockNode)}
@@ -467,7 +530,7 @@ describe('test RPA', () => {
     expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
   });
   it('test transformSleepStatement', () => {
-    const Component = function ({ padding, dataStructure, result }) {
+    const Component = function({ padding, dataStructure, result }) {
       const [output, moduleMap] = transformSleepStatement(
         padding,
         dataStructure,
@@ -519,7 +582,7 @@ describe('test RPA', () => {
     expect(renderer.create(Rpa).toJSON()).toMatchSnapshot();
   });
   it('test transformVariableDeclar', () => {
-    const Component = function ({ padding, dataStructure, result }) {
+    const Component = function({ padding, dataStructure, result }) {
       return (
         <div>{transformVariableDeclar(padding, dataStructure, result)}</div>
       );

@@ -33,10 +33,28 @@ exports[`test RPA test transformCustomCodeStatement 1`] = `
 </div>
 `;
 
-exports[`test RPA test transformLoopStatement 1`] = `
+exports[`test RPA test transformLoopStatement for_dict 1`] = `
+<div>
+  <div>
+            for a,b in dict.items():
+
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformLoopStatement for_list 1`] = `
 <div>
   <div>
             for item in [1,2,3]:
+
+  </div>
+</div>
+`;
+
+exports[`test RPA test transformLoopStatement for_times 1`] = `
+<div>
+  <div>
+            for i in range(0,10,1):
 
   </div>
 </div>

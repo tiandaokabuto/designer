@@ -5,7 +5,12 @@ import transformEditorGraphData from '../RPAcore';
 
 const transformProcessToPython = (graphDataRef, graphDataMapRef) => () => {
   // 转化代码
-  transformEditorGraphData(graphDataRef.current, graphDataMapRef.current);
+  transformEditorGraphData(
+    graphDataRef.current,
+    graphDataMapRef.current,
+    undefined,
+    undefined
+  );
 };
 
 export default () => {

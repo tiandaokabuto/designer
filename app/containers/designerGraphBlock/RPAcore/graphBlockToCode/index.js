@@ -8,6 +8,7 @@ import transformContinueStatement from './transformContinueStatement';
 import transformSleepStatement from './transformSleepStatement';
 import transformVariableDeclar from './transformVariableDeclar';
 import transformCustomCodeStatement from './transformCustomCodeStatement';
+import transformModuleBlockStatement from './transformModuleBlockStatement';
 import memoize from './reselect';
 import {
   BasicStatementTag,
@@ -21,7 +22,7 @@ import {
   ModuleBlockTag,
 } from '../../layout/statementTags';
 import { isArray } from './utils';
-import { uuid } from '../../../common/utils';
+
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
 
 const paddingStart = (length) => '    '.repeat(length);
@@ -49,48 +50,14 @@ const transformBlockToCodeImpl = (
           (statement.subtype & ModuleBlockTag) === ModuleBlockTag
         ) {
           if (statement.graphDataMap && statement.graphDataMap.cards) {
-            const tail = uuid();
-            const inputParamKV = statement.properties
-              .find((item) => item.cnName === '输入参数')
-              .value.map((item) => `${item.name} = ${item.value}`)
-              .join(',');
-            const inputParamK = statement.properties
-              .find((item) => item.cnName === '输入参数')
-              .value.map((item) => `${item.name}`)
-              .join(',');
-            const outputParam = statement.properties
-              .find((item) => item.cnName === '流程块返回')
-              .value.map((item) => item.name)
-              .join(',');
-            const variables = transformVariable(
-              statement.graphDataMap.variable,
-              depth + 1
-            );
-            if (inputParamK) {
-              result.output += `${paddingStart(
-                depth
-              )}def RPA_Atomic_${tail}(${inputParamK}):\n\n`;
-            } else {
-              result.output += `${paddingStart(
-                depth
-              )}def RPA_Atomic_${tail}():\n\n`;
-            }
-            result.output += `${variables}`;
-            transformBlockToCodeImpl(
-              statement.graphDataMap.cards,
-              depth + 1,
+            transformModuleBlockStatement(
+              padding,
+              statement,
+              result,
               blockNode,
-              options
+              transformBlockToCodeImpl,
+              depth
             );
-            if (outputParam) {
-              result.output += `\n${paddingStart(
-                depth
-              )}${outputParam} = RPA_Atomic_${tail}(${inputParamKV})\n`;
-            } else {
-              result.output += `\n${paddingStart(
-                depth
-              )}RPA_Atomic_${tail}(${inputParamKV})\n`;
-            }
           }
         } else if (
           statement.subtype &&

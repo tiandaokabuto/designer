@@ -87,7 +87,7 @@ const Login = () => {
         },
       ];
 
-  const checkSerialNumberValid = (userSerialNumber) => {
+  const checkSerialNumberValid = userSerialNumber => {
     let decryptSerialNumber = encrypt.argDecryptByDES(userSerialNumber);
     // 用户电脑上的时间
     const validSystemDay = userDay.replace(/-/g, '');
@@ -104,10 +104,10 @@ const Login = () => {
   };
 
   const handleSignIn = () => {
-    const currWindow = remote.getCurrentWindow();
+    // const currWindow = remote.getCurrentWindow();
     if (offLine) {
       remote.getGlobal('sharedObject').userName = '';
-      currWindow.hide();
+      // currWindow.hide();
       ipcRenderer.send('loginSuccess');
       setShowTip(false);
     }
@@ -116,11 +116,11 @@ const Login = () => {
         userName,
         password: hex_sha1(password),
       })
-      .then((json) => {
+      .then(json => {
         if (~json.code) {
           remote.getGlobal('sharedObject').token = json.data.token;
           remote.getGlobal('sharedObject').userName = json.data.roleName;
-          currWindow.hide();
+          // currWindow.hide();
           ipcRenderer.send('loginSuccess');
           setShowTip(false);
           return true;
@@ -128,7 +128,7 @@ const Login = () => {
         setShowTip(true);
         return false;
       })
-      .catch((err) => {
+      .catch(err => {
         setShowTip(false);
         console.log(err);
       });
@@ -166,7 +166,7 @@ const Login = () => {
 
   useEffect(() => {
     axios.interceptors.response.use(
-      (response) => response.data,
+      response => response.data,
       () => {
         message.error('ip或端口配置错误');
       }
@@ -199,7 +199,7 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    document.onkeydown = function (e) {
+    document.onkeydown = function(e) {
       if (e.keyCode === 13) {
         config.context = `http://${ip}:${port}`;
         writeGlobalConfig({
@@ -239,7 +239,7 @@ const Login = () => {
         {LOGIN_ONLINE.map(({ handleInputVauleChange, ...pops }) => (
           <LoginFromInput
             {...pops}
-            handleInputVauleChange={(value) => handleInputVauleChange(value)}
+            handleInputVauleChange={value => handleInputVauleChange(value)}
           />
         ))}
         {offLine && (

@@ -50,8 +50,14 @@ if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
   execSync('yarn build-dll');
 }
 
+<<<<<<< HEAD
 module.exports = exports = merge.smart(baseConfig, {
   devtool: 'cheap-inline-source-map',
+=======
+export default merge.smart(baseConfig, {
+  // devtool: 'cheap-inline-source-map',
+  devtool: 'inline-source-map',
+>>>>>>> ba32fa7032ab9b452a48b61eacd2a448b7920415
 
   mode: 'development',
 
@@ -235,11 +241,11 @@ module.exports = exports = merge.smart(baseConfig, {
       },
     ],
   },
-  optimization: {
-    splitChunks: {
-      chunks: 'async',
-    },
-  },
+  // optimization: {
+  //   splitChunks: {
+  //     chunks: 'async',
+  //   },
+  // },
   resolve: {
     alias: {
       'react-dom': '@hot-loader/react-dom',
@@ -315,8 +321,8 @@ module.exports = exports = merge.smart(baseConfig, {
           env: process.env,
           stdio: 'inherit',
         })
-          .on('close', (code) => process.exit(code))
-          .on('error', (spawnError) => console.error(spawnError));
+          .on('close', code => process.exit(code))
+          .on('error', spawnError => console.error(spawnError));
       }
     },
   },

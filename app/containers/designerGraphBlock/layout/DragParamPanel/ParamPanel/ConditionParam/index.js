@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Input, Radio, Select, Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
@@ -16,6 +16,18 @@ export default ({
   const [flag, forceUpdate] = useForceUpdate();
   const [tag, setTag] = useState(param.tag);
 
+  // 兼容旧数据
+  useEffect(() => {
+    if (param.valueList.length > 0) {
+      if (param.valueList[0].id === undefined) {
+        param.valueList.map((item, index) => {
+          item.id = index;
+          return item;
+        });
+      }
+    }
+  }, []);
+
   const handleDelete = index => {
     param.valueList.splice(index, 1);
     forceUpdate();
@@ -23,11 +35,18 @@ export default ({
 
   const handleAdd = () => {
     if (param.valueList) {
+      let maxId = 0;
+      if (param.valueList.length !== 0) {
+        maxId = param.valueList[param.valueList.length - 1].id;
+      }
+      // 每次push到数组末尾，最大id为数组最后值的id
+      // 如更改添加方式，同时变更id添加方式
       param.valueList.push({
         v1: '',
         v2: '',
         rule: '',
         connect: '',
+        id: maxId + 1,
       });
       forceUpdate();
     }
@@ -73,7 +92,7 @@ export default ({
           </div>
           {(param.valueList || []).map((item, index) => {
             return (
-              <Fragment key={index}>
+              <Fragment key={item.id}>
                 <div className="condition-param-ifcondition">
                   <Input
                     placeholder="输入文本"

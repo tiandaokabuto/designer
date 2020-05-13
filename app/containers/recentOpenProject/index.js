@@ -2,7 +2,7 @@
  * 最近打开项目列表
  */
 import React, { useState, useMemo } from 'react';
-import { Table, Button, Input, Icon, message, Modal } from 'antd';
+import { Table, Button, Input, Icon, message, Popconfirm } from 'antd';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
 import GraphBlockHeader from '../common/GraphBlockHeader';
@@ -67,6 +67,7 @@ export default useInjectContext(({ history }) => {
       render: (text, record) => {
         const time = FormatDateTime(text);
         const handleDeletProject = e => {
+          console.log('!!!!!!!!!');
           e.stopPropagation();
           deleteFolderRecursive(PATH_CONFIG('project', record.name));
           setFlag(flag => !flag);
@@ -86,13 +87,23 @@ export default useInjectContext(({ history }) => {
         return (
           <div>
             {time}
-            <SDIcon
-              style={{ marginLeft: '10px' }}
-              url={CloseImg}
-              onClick={e => {
-                handleDeletProject(e);
+            <Popconfirm
+              title="确定要删除该项目吗?"
+              onConfirm={handleDeletProject}
+              onCancel={e => {
+                e.stopPropagation();
               }}
-            />
+              okText="确定"
+              cancelText="取消"
+            >
+              <SDIcon
+                style={{ marginLeft: '10px' }}
+                url={CloseImg}
+                onClick={e => {
+                  e.stopPropagation();
+                }}
+              />
+            </Popconfirm>
           </div>
         );
       },
