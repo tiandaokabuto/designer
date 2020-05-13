@@ -13,6 +13,7 @@ import {
   useVisibleDynamicUpdate,
   useChangeCheckedBlockColor,
 } from '../../useHooks';
+import { propagateIgnoreChange } from '../../DragContainer/utils';
 
 import ItemTypes from '../../statementTypes';
 
@@ -150,6 +151,8 @@ const LoopStatement = useInjectContext((props) => {
               type="eye"
               onClick={() => {
                 card.ignore = !card.ignore;
+                // propagateIgnoreChange
+                propagateIgnoreChange(card.children, card.ignore);
                 card.hasModified = true;
                 handleEmitCodeTransform(cards);
               }}

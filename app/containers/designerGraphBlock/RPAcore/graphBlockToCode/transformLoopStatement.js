@@ -1,5 +1,5 @@
 const transformLoopStatement = (padding, dataStructure, result, options) => {
-  const ignore = options.ignore || dataStructure.ignore ? '# ' : '';
+  const ignore = dataStructure.ignore ? '# ' : '';
   const select = dataStructure['properties']['required'][0].value;
   const node = dataStructure['properties']['required'][1];
   const valueConditionList = node.valueList;

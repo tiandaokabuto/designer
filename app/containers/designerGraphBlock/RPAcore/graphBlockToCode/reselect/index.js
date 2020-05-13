@@ -28,14 +28,7 @@ export default function memoize(func, equalityCheck = defaultEqualityCheck) {
   let lastArgs = null;
   let lastResult = null;
   let moduleMap = null;
-  let lastignore = null;
   return function () {
-    if (arguments[4]) {
-      if (arguments[4].ignore !== lastignore) {
-        arguments[1].hasModified = true;
-      }
-      lastignore = arguments[4].ignore;
-    }
     if (
       arguments[1].hasModified ||
       !areArgumentsShallowlyEqual(equalityCheck, lastArgs, arguments)

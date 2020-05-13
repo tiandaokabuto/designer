@@ -254,10 +254,16 @@ const transformBlockToCodeImpl = (
         break;
       case 2: // while or for
         transformLoopStatement(padding, statement, result, options);
-        transformBlockToCodeImpl(statement.children, depth + 1, blockNode, {
-          ...options,
-          ignore: options.ignore || statement.ignore,
-        });
+        transformBlockToCodeImpl(
+          statement.children,
+          depth + 1,
+          blockNode,
+          options
+        );
+        // transformBlockToCodeImpl(statement.children, depth + 1, blockNode, {
+        //   ...options,
+        //   ignore: options.ignore || statement.ignore,
+        // });
         break;
       case 4:
         transformConditionalStatement(padding, statement, result);
