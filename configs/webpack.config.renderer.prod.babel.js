@@ -226,7 +226,7 @@ module.exports = exports = merge.smart(baseConfig, {
     new MiniCssExtractPlugin({
       filename: '[name].css',
     }),
-    new BundleAnalyzerPlugin(),
+    // new BundleAnalyzerPlugin(),
     // new BundleAnalyzerPlugin({
     //   analyzerMode:
     //     process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
