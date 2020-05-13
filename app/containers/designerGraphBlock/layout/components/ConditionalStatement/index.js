@@ -143,7 +143,7 @@ const ConditionalStatement = useInjectContext((props) => {
           {!readOnly && (
             <>
               <Icon
-                type="eye"
+                type={isIgnore ? 'eye-invisible' : 'eye'}
                 onClick={() => {
                   card.ignore = !card.ignore;
                   // propagateIgnoreChange
