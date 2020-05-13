@@ -106,6 +106,7 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
         ) {
           transformCustomCodeStatement(padding, statement, result, moduleMap);
         } else {
+          console.log(moduleMap);
           if (!statement.transformBasicStatement) {
             statement.transformBasicStatement = memoize(
               transformBasicStatement
@@ -122,6 +123,7 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
           } else {
             result.output += buffer;
           }
+          console.log(moduleMap);
           // transformBasicStatement(padding, statement, result, moduleMap, depth);
         }
         result.output += '\n';
@@ -180,6 +182,7 @@ export default (dataStructure, depth = 0, blockNode) => {
   }
   moduleMap.clear();
   transformBlockToCodeImpl(dataStructure, depth, blockNode);
+  console.log(moduleMap);
   transformModuleImport(result, moduleMap, depth);
   if (result.output === '\n' || result.output == '\n\n') {
     result.output = paddingStart(depth) + 'pass\n';

@@ -1,4 +1,5 @@
 import uniqueId from 'lodash/uniqueId';
+import cloneDeep from 'lodash/cloneDeep';
 import { message } from 'antd';
 import {
   findStartNode,
@@ -252,13 +253,29 @@ export const transformEditorProcess = (
   }
 };
 
-export default (graphData, graphDataMap, id, fromOrTo) => {
-  console.log(id);
+export default (graphData, graphDataMap, clickId, fromOrTo) => {
+  console.log(clickId);
   console.log(fromOrTo);
   const result = {
     output: '',
   };
   const beginId = findStartNode(graphData.nodes || []);
+  if (fromOrTo === 'from') {
+    const copyGraphData = cloneDeep(graphData);
+    const copyNodesArr = copyGraphData.nodes;
+    const copyEdges = copyGraphData.edges;
+    const newArr = copyEdges.filter(item => {
+      return item.target !== clickId;
+    });
+    console.log(newArr);
+    // copyEdges.forEach((item, index) => {
+    //   if(item.source === beginId) {
+    //     item.target = clickId
+    //   }
+    //   if(item.target === )
+    // })
+  }
+
   if (beginId) {
     result.output += "if __name__ == '__main__':\n";
     transformEditorProcess(
