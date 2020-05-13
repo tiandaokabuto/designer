@@ -277,8 +277,8 @@ const transformBlockToCodeImpl = (
             options
           );
         }
-
-        result.output += `${padding}else:\n`;
+        const ignore = statement.ignore ? '# ' : '';
+        result.output += `${padding}${ignore}else:\n`;
         if (!statement.elseChildren.length) {
           result.output += `${paddingStart(depth + 1)}pass\n`;
         } else {

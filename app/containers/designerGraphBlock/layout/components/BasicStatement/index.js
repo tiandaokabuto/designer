@@ -87,7 +87,10 @@ const BasicStatement = useInjectContext((props) => {
     save,
   ] = useVisibleDynamicUpdate(id, visibleTemplate, readOnly);
 
-  const [backgroundColor] = useChangeCheckedBlockColor(id);
+  const [backgroundColor, isIgnore, setIsIgnore] = useChangeCheckedBlockColor(
+    id,
+    card
+  );
 
   const handleEmitCodeTransform = useTransformToPython();
 
@@ -238,8 +241,9 @@ const BasicStatement = useInjectContext((props) => {
                   }}
                 />
                 <Icon
-                  type="eye"
+                  type={isIgnore ? 'eye-invisible' : 'eye'}
                   onClick={() => {
+                    setIsIgnore();
                     card.ignore = !card.ignore;
                     card.hasModified = true;
                     handleEmitCodeTransform(cards);

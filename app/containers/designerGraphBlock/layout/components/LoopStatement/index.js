@@ -54,7 +54,10 @@ const LoopStatement = useInjectContext((props) => {
 
   const handleEmitCodeTransform = useTransformToPython();
 
-  const [backgroundColor] = useChangeCheckedBlockColor(id);
+  const [backgroundColor, isIgnore, setIsIgnore] = useChangeCheckedBlockColor(
+    id,
+    card
+  );
 
   const [
     canDrag,
@@ -104,7 +107,6 @@ const LoopStatement = useInjectContext((props) => {
   const deleteNodeById = useDeleteNodeById();
 
   drag(drop(ref));
-
   return (
     <div
       style={{ ...style, opacity }}
@@ -152,7 +154,11 @@ const LoopStatement = useInjectContext((props) => {
               onClick={() => {
                 card.ignore = !card.ignore;
                 // propagateIgnoreChange
+
                 propagateIgnoreChange(card.children, card.ignore);
+                setTimeout(() => {
+                  setIsIgnore();
+                }, 0);
                 card.hasModified = true;
                 handleEmitCodeTransform(cards);
               }}
