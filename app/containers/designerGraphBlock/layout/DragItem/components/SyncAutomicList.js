@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { Icon, message } from 'antd';
 import axios from 'axios';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 
 import { traverseTree, getDecryptOrNormal } from '../../../../common/utils';
 import { updateAutomicList } from '../../../../reduxActions';

@@ -40,12 +40,14 @@ describe('conditionParam', () => {
     expect(param.valueList.length).toBe(2);
     expect(param.valueList).toEqual([
       {
+        id: 1,
         v1: '',
         v2: '',
         rule: '',
         connect: '',
       },
       {
+        id: 2,
         v1: '',
         v2: '',
         rule: '',
@@ -91,6 +93,7 @@ describe('conditionParam', () => {
     expect(param.valueList.length).toBe(1);
     expect(param.valueList).toEqual([
       {
+        id: 1,
         v1: '',
         v2: '',
         rule: '',
@@ -110,6 +113,7 @@ describe('conditionParam', () => {
     });
     expect(param.valueList).toEqual([
       {
+        id: 1,
         v1: 'v1input',
         v2: 'v2input',
         rule: '',

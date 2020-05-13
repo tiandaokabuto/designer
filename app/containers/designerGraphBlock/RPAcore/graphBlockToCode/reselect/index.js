@@ -11,7 +11,6 @@ function areArgumentsShallowlyEqual(equalityCheck, prev, next) {
   const length = prev.length;
   for (let i = 0; i < 2; i++) {
     if (!equalityCheck(prev[i], next[i])) {
-      console.log(prev[i], next[i]);
       return false;
     }
   }
@@ -37,6 +36,8 @@ export default function memoize(func, equalityCheck = defaultEqualityCheck) {
       lastResult = func.apply(null, arguments);
       if (Array.isArray(lastResult)) {
         moduleMap = lastResult[1];
+      } else {
+        moduleMap = arguments[3];
       }
       arguments[1].hasModified = false;
     } else {
@@ -44,7 +45,6 @@ export default function memoize(func, equalityCheck = defaultEqualityCheck) {
         mergeMap(arguments[3], moduleMap);
       }
     }
-
     lastArgs = arguments;
     arguments[2].output = Array.isArray(lastResult)
       ? lastResult[0]

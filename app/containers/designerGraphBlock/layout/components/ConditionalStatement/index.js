@@ -2,6 +2,7 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { Icon } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
+import { useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
@@ -10,7 +11,9 @@ import {
   useDeleteNodeById,
   useVisibleDynamicUpdate,
   useChangeCheckedBlockColor,
+  useTransformToPython,
 } from '../../useHooks';
+import { propagateIgnoreChange } from '../../DragContainer/utils';
 
 import ItemTypes from '../../statementTypes';
 
@@ -26,7 +29,7 @@ const style = {
   marginRight: '8px',
 };
 
-const ConditionalStatement = useInjectContext(props => {
+const ConditionalStatement = useInjectContext((props) => {
   const {
     id,
     text,
@@ -47,7 +50,14 @@ const ConditionalStatement = useInjectContext(props => {
 
   const [isFold, setFold] = useState(false);
 
-  const [backgroundColor] = useChangeCheckedBlockColor(id);
+  const cards = useSelector((state) => state.blockcode.cards);
+
+  const [backgroundColor, isIgnore, setIsIgnore] = useChangeCheckedBlockColor(
+    id,
+    card
+  );
+
+  const handleEmitCodeTransform = useTransformToPython();
 
   const [
     canDrag,
@@ -112,16 +122,16 @@ const ConditionalStatement = useInjectContext(props => {
           <span
             key={uniqueId('visible_')}
             data-id={id}
-            onClick={e => {
+            onClick={(e) => {
               const anchor = e.target.dataset.anchor;
               changeToEditableTemplate(anchor);
               // 触发变量的修改
             }}
-            onDragStart={e => {
+            onDragStart={(e) => {
               e.preventDefault();
             }}
             onBlur={save}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.keyCode === 13) {
                 save(e);
               }
@@ -131,12 +141,29 @@ const ConditionalStatement = useInjectContext(props => {
         </div>
         <div className="IFItem-header-operation">
           {!readOnly && (
-            <Icon
-              type="delete"
-              onClick={() => {
-                deleteNodeById(id);
-              }}
-            />
+            <>
+              <Icon
+                type={isIgnore ? 'eye-invisible' : 'eye'}
+                onClick={() => {
+                  card.ignore = !card.ignore;
+                  // propagateIgnoreChange
+
+                  propagateIgnoreChange(card.ifChildren, card.ignore);
+                  propagateIgnoreChange(card.elseChildren, card.ignore);
+                  setTimeout(() => {
+                    setIsIgnore();
+                  }, 0);
+                  card.hasModified = true;
+                  handleEmitCodeTransform(cards);
+                }}
+              />
+              <Icon
+                type="delete"
+                onClick={() => {
+                  deleteNodeById(id);
+                }}
+              />
+            </>
           )}
           <Icon
             type={isFold ? 'up' : 'down'}

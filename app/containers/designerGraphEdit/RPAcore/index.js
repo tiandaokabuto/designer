@@ -29,7 +29,7 @@ export const transformEditorProcess = (
   breakPoint,
   notWhile = false
 ) => {
-  // 判断当前的结点类型 流程块结点 或者是 判断结点
+  // 判断当前的结点类型  流程块结点  或者是  判断结点
   const currentNode = findNodeById(graphData.nodes, currentId);
   if (currentId === breakPoint) return;
   const blockData = graphDataMap.get(currentId) || {};
@@ -260,32 +260,53 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
     output: '',
   };
   const beginId = findStartNode(graphData.nodes || []);
-  if (fromOrTo === 'from') {
-    const copyGraphData = cloneDeep(graphData);
-    const copyNodesArr = copyGraphData.nodes;
-    const copyEdges = copyGraphData.edges;
-    const newArr = copyEdges.filter(item => {
-      return item.target !== clickId;
-    });
-    console.log(newArr);
-    // copyEdges.forEach((item, index) => {
-    //   if(item.source === beginId) {
-    //     item.target = clickId
-    //   }
-    //   if(item.target === )
-    // })
-  }
 
   if (beginId) {
     result.output += "if __name__ == '__main__':\n";
-    transformEditorProcess(
-      graphData,
-      graphDataMap,
-      findTargetIdBySourceId(graphData.edges, beginId),
-      result,
-      1,
-      null
-    );
+    if (fromOrTo === 'from') {
+      // const copyGraphData = cloneDeep(graphData);
+      // const copyEdges = copyGraphData.edges;
+      // const newArr = copyEdges.filter(item => {
+      //   return item.target !== clickId;
+      // });
+      // const startNode = copyEdges.find(item => item.source === beginId);
+      // startNode.target = clickId;
+      // console.log(newArr);
+      // copyGraphData.edges = newArr;
+      // transformEditorProcess(
+      //   copyGraphData,
+      //   graphDataMap,
+      //   findTargetIdBySourceId(copyGraphData.edges, beginId),
+      //   result,
+      //   1,
+      //   null
+      // );
+    } else if (fromOrTo === 'to') {
+      // const copyGraphData = cloneDeep(graphData);
+      // const copyEdges = copyGraphData.edges;
+      // const newArr = copyEdges.filter(item => {
+      //   return item.source !== clickId;
+      // });
+      // copyGraphData.edges = newArr;
+      // transformEditorProcess(
+      //   copyGraphData,
+      //   graphDataMap,
+      //   findTargetIdBySourceId(copyGraphData.edges, beginId),
+      //   result,
+      //   1,
+      //   null
+      // );
+    } else {
+      transformEditorProcess(
+        graphData,
+        graphDataMap,
+        findTargetIdBySourceId(graphData.edges, beginId),
+        result,
+        1,
+        null
+      );
+    }
+
     result.output = '# -*- coding: UTF-8 -*-\n' + result.output;
     updateEditorBlockPythonCode(result.output);
     // 暂存到本地 project/python/temp.py
@@ -293,8 +314,10 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
       `${process.cwd()}/python/temp.py`,
       result.output,
       function() {
-        console.log('保存成功');
+        // console.log('保存成功');
       }
     );
   }
+
+  return result.output;
 };

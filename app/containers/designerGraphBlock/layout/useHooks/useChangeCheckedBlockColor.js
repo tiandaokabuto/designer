@@ -1,20 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
-export default id => {
-  const checkedId = useSelector(state => state.blockcode.checkedId);
+export default (id, card) => {
+  const checkedId = useSelector((state) => state.blockcode.checkedId);
   const [backgroundColor, setBackgroundColor] = useState('#fff');
+  const [isIgnore, setIsIgnore] = useState(card.ignore);
+  const prevBackgroundColor = useRef('#fff');
   useEffect(() => {
     if (checkedId && checkedId.includes(id)) {
       if (backgroundColor === '#fff') {
-        setBackgroundColor('#DAF2ED');
+        prevBackgroundColor.current = '#DAF2ED';
       }
     }
     if (!checkedId || !checkedId.includes(id)) {
       if (backgroundColor === '#DAF2ED') {
-        setBackgroundColor('#fff');
+        prevBackgroundColor.current = '#fff';
       }
     }
-  }, [checkedId, id, backgroundColor]);
-  return [backgroundColor];
+    if (isIgnore) {
+      setBackgroundColor('#aaa');
+    } else {
+      setBackgroundColor(prevBackgroundColor.current);
+    }
+  }, [checkedId, id, backgroundColor, isIgnore]);
+
+  useEffect(() => {
+    setIsIgnore(card.ignore);
+  }, [card.ignore]);
+  return [backgroundColor, isIgnore, () => setIsIgnore((ignore) => !ignore)];
 };

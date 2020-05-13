@@ -10,10 +10,13 @@
  *
  * @flow
  */
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
-import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
-import MenuBuilder from './menu';
+// import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+// import { autoUpdater } from 'electron-updater';
+// import log from 'electron-log';
+// import MenuBuilder from './menu';
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const log = require('electron-log');
+const MenuBuilder = require('./menu');
 
 const path = require('path');
 const net = require('net');
@@ -61,13 +64,13 @@ appexpress.post('/upload', function(req, res) {
   res.sendStatus(200);
 });
 
-export default class AppUpdater {
+module.exports = exports = class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
     autoUpdater.checkForUpdatesAndNotify();
   }
-}
+};
 
 let mainWindow = null;
 let loginWindow = null;
@@ -144,7 +147,7 @@ const createMainWindow = () => {
   mainWindow.setIcon(path.join(__dirname, 'small.png'));
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {

@@ -3,14 +3,17 @@ import { useDrag, useDrop } from 'react-dnd';
 import { Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import cloneDeep from 'lodash/cloneDeep';
+import { useSelector } from 'react-redux';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 import {
   useDropTarget,
   useDeleteNodeById,
+  useTransformToPython,
   useVisibleDynamicUpdate,
   useChangeCheckedBlockColor,
 } from '../../useHooks';
+import { propagateIgnoreChange } from '../../DragContainer/utils';
 
 import ItemTypes from '../../statementTypes';
 
@@ -23,13 +26,10 @@ const style = {
   backgroundClip: 'padding-box',
   // cursor: 'move',
   position: 'relative',
-  // paddingLeft: '28px',
-  // overflow: 'hidden',
   marginRight: '8px',
-  //minHeight: '104px',
 };
 
-const LoopStatement = useInjectContext(props => {
+const LoopStatement = useInjectContext((props) => {
   const {
     id,
     text,
@@ -48,9 +48,16 @@ const LoopStatement = useInjectContext(props => {
     useDragSource,
   } = props;
 
+  const cards = useSelector((state) => state.blockcode.cards);
+
   const [isFold, setFold] = useState(false);
 
-  const [backgroundColor] = useChangeCheckedBlockColor(id);
+  const handleEmitCodeTransform = useTransformToPython();
+
+  const [backgroundColor, isIgnore, setIsIgnore] = useChangeCheckedBlockColor(
+    id,
+    card
+  );
 
   const [
     canDrag,
@@ -100,7 +107,6 @@ const LoopStatement = useInjectContext(props => {
   const deleteNodeById = useDeleteNodeById();
 
   drag(drop(ref));
-
   return (
     <div
       style={{ ...style, opacity }}
@@ -124,16 +130,16 @@ const LoopStatement = useInjectContext(props => {
           <span
             data-id={id}
             key={uniqueId('visible_')}
-            onClick={e => {
+            onClick={(e) => {
               const anchor = e.target.dataset.anchor;
               changeToEditableTemplate(anchor);
               // 触发变量的修改
             }}
-            onDragStart={e => {
+            onDragStart={(e) => {
               e.preventDefault();
             }}
             onBlur={save}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.keyCode === 13) {
                 save(e);
               }
@@ -143,6 +149,20 @@ const LoopStatement = useInjectContext(props => {
         </div>
         {!readOnly && (
           <div className="loopstatement-header-operation">
+            <Icon
+              type={isIgnore ? 'eye-invisible' : 'eye'}
+              onClick={() => {
+                card.ignore = !card.ignore;
+                // propagateIgnoreChange
+
+                propagateIgnoreChange(card.children, card.ignore);
+                setTimeout(() => {
+                  setIsIgnore();
+                }, 0);
+                card.hasModified = true;
+                handleEmitCodeTransform(cards);
+              }}
+            />
             <Icon
               type="delete"
               onClick={() => {

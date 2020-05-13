@@ -70,11 +70,17 @@ const handleFormJsonGenerate = dataStructure => {
   return 'None';
 };
 
-const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
-  console.log('哈哈哈哈哈基本语句执行了');
+const transformBasicStatement = (
+  padding,
+  dataStructure,
+  result,
+  moduleMap,
+  options = {}
+) => {
+  const ignore = dataStructure.ignore ? '# ' : '';
   handleModuleImport(dataStructure, result, moduleMap);
   handleNote(dataStructure.cmdDesc, result, padding, dataStructure);
-  result.output += `${padding}`;
+  result.output += `${padding}${ignore}`;
   let params = ''; // 生成参数类型
   // if (dataStructure.properties.required) {
   dataStructure.properties.required.forEach((item, index) => {
@@ -157,8 +163,7 @@ const transformBasicStatement = (padding, dataStructure, result, moduleMap) => {
       }
     });
   handleMainFnGeneration(dataStructure, params, result, padding);
-  console.log(moduleMap);
-  return [result.output, moduleMap];
+  return [result.output, new Map(moduleMap)];
 };
 
 export default memoize(transformBasicStatement);

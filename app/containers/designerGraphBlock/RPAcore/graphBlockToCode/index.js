@@ -33,7 +33,12 @@ const result = {
 
 const moduleMap = new Map();
 
-const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
+const transformBlockToCodeImpl = (
+  dataStructure,
+  depth = 0,
+  blockNode,
+  options = {}
+) => {
   if (!dataStructure) return;
   const padding = paddingStart(depth);
   dataStructure.forEach((statement, index) => {
@@ -67,39 +72,127 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
             padding,
             statement,
             { output: '' },
-            moduleMap
+            moduleMap,
+            options
           );
           if (Array.isArray(buffer)) {
             result.output += buffer[0];
           } else {
             result.output += buffer;
           }
-          // transformPrintStatement(padding, statement, result, moduleMap);
         } else if (
           statement.subtype &&
           (statement.subtype & ReturnStatementTag) === ReturnStatementTag
         ) {
-          transformReturnStatement(padding, statement, result, blockNode);
+          if (!statement.transformReturnStatement) {
+            statement.transformReturnStatement = memoize(
+              transformReturnStatement
+            );
+          }
+          const buffer = statement.transformReturnStatement(
+            padding,
+            statement,
+            { output: '' },
+            blockNode,
+            options
+          );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
         } else if (
           statement.subtype &&
           (statement.subtype & BreakStatementTag) === BreakStatementTag
         ) {
-          transformBreakStatement(padding, statement, result);
+          if (!statement.transformBreakStatement) {
+            statement.transformBreakStatement = memoize(
+              transformBreakStatement
+            );
+          }
+          const buffer = statement.transformBreakStatement(
+            padding,
+            statement,
+            { output: '' },
+            moduleMap,
+            options
+          );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
+          // transformBreakStatement(padding, statement, result, options);
         } else if (
           statement.subtype && // ContinueStatementTag
           (statement.subtype & ContinueStatementTag) === ContinueStatementTag
         ) {
-          transformContinueStatement(padding, statement, result);
+          if (!statement.transformContinueStatement) {
+            statement.transformContinueStatement = memoize(
+              transformContinueStatement
+            );
+          }
+          const buffer = statement.transformContinueStatement(
+            padding,
+            statement,
+            { output: '' },
+            moduleMap,
+            options
+          );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
         } else if (
           statement.subtype && // VariableDeclareTag
           (statement.subtype & SleepStatementTag) === SleepStatementTag
         ) {
-          transformSleepStatement(padding, statement, result, moduleMap);
+          if (!statement.transformSleepStatement) {
+            statement.transformSleepStatement = memoize(
+              transformSleepStatement
+            );
+          }
+          const buffer = statement.transformSleepStatement(
+            padding,
+            statement,
+            { output: '' },
+            moduleMap,
+            options
+          );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
+          // transformSleepStatement(
+          //   padding,
+          //   statement,
+          //   result,
+          //   moduleMap,
+          //   options
+          // );
         } else if (
-          statement.subtype && // CustomCodeBlockTag
+          statement.subtype &&
           (statement.subtype & VariableDeclareTag) === VariableDeclareTag
         ) {
-          transformVariableDeclar(padding, statement, result, moduleMap);
+          if (!statement.transformVariableDeclar) {
+            statement.transformVariableDeclar = memoize(
+              transformVariableDeclar
+            );
+          }
+          const buffer = statement.transformVariableDeclar(
+            padding,
+            statement,
+            { output: '' },
+            moduleMap,
+            options
+          );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
         } else if (
           statement.subtype && // CustomCodeBlockTag
           (statement.subtype & CustomCodeBlockTag) === CustomCodeBlockTag
@@ -116,38 +209,52 @@ const transformBlockToCodeImpl = (dataStructure, depth = 0, blockNode) => {
             padding,
             statement,
             { output: '' },
-            moduleMap
+            moduleMap,
+            options
           );
           if (Array.isArray(buffer)) {
             result.output += buffer[0];
           } else {
             result.output += buffer;
           }
-          console.log(moduleMap);
-          // transformBasicStatement(padding, statement, result, moduleMap, depth);
         }
         result.output += '\n';
         break;
       case 2: // while or for
-        transformLoopStatement(padding, statement, result);
-        transformBlockToCodeImpl(statement.children, depth + 1, blockNode);
+        transformLoopStatement(padding, statement, result, options);
+        transformBlockToCodeImpl(
+          statement.children,
+          depth + 1,
+          blockNode,
+          options
+        );
+        // transformBlockToCodeImpl(statement.children, depth + 1, blockNode, {
+        //   ...options,
+        //   ignore: options.ignore || statement.ignore,
+        // });
         break;
       case 4:
         transformConditionalStatement(padding, statement, result);
         if (!statement.ifChildren.length) {
           result.output += `${paddingStart(depth + 1)}pass\n`;
         } else {
-          transformBlockToCodeImpl(statement.ifChildren, depth + 1, blockNode);
+          transformBlockToCodeImpl(
+            statement.ifChildren,
+            depth + 1,
+            blockNode,
+            options
+          );
         }
-
-        result.output += `${padding}else:\n`;
+        const ignore = statement.ignore ? '# ' : '';
+        result.output += `${padding}${ignore}else:\n`;
         if (!statement.elseChildren.length) {
           result.output += `${paddingStart(depth + 1)}pass\n`;
         } else {
           transformBlockToCodeImpl(
             statement.elseChildren,
             depth + 1,
-            blockNode
+            blockNode,
+            options
           );
         }
       default:
@@ -181,8 +288,7 @@ export default (dataStructure, depth = 0, blockNode) => {
     transformModuleVariable(result, depth, blockNode.variable || []);
   }
   moduleMap.clear();
-  transformBlockToCodeImpl(dataStructure, depth, blockNode);
-  console.log(moduleMap);
+  transformBlockToCodeImpl(dataStructure, depth, blockNode, {});
   transformModuleImport(result, moduleMap, depth);
   if (result.output === '\n' || result.output == '\n\n') {
     result.output = paddingStart(depth) + 'pass\n';

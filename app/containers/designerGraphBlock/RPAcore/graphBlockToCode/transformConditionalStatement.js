@@ -5,16 +5,17 @@
  * @param {*} result
  */
 const transformConditionalStatement = (padding, dataStructure, result) => {
+  const ignore = dataStructure.ignore ? '# ' : '';
   const { tag, value, valueList = [] } = dataStructure['properties'][
     'required'
   ][0];
   if (tag === 2) {
     // 自定义
     const loopcondition = dataStructure['properties']['required'][0].value;
-    result.output += `${padding}if ${loopcondition}:\n`;
+    result.output += `${padding}${ignore}if ${loopcondition}:\n`;
   } else {
     // 向导
-    result.output += `${padding}if `;
+    result.output += `${padding}${ignore}if `;
     valueList.forEach((item, index) => {
       if (index === valueList.length - 1) {
         // 最后一个，不把连接符填上

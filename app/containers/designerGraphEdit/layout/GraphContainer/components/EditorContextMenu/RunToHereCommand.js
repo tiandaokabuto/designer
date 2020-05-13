@@ -5,6 +5,8 @@ import {
   InjectProvider,
 } from 'react-hook-easier/lib/useInjectContext';
 
+import { transformPythonWithPoint } from '@/containers/common/utils';
+
 class RunToHereCommand extends React.Component {
   render() {
     const { propsAPI, history } = this.props;
@@ -21,6 +23,7 @@ class RunToHereCommand extends React.Component {
       // 正向命令逻辑
       execute(/* editor */) {
         console.log('执行到此处');
+        transformPythonWithPoint('to');
         console.log('执行正向命令');
       },
 

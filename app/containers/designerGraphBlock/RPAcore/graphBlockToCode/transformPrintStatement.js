@@ -7,8 +7,15 @@ import cloneDeep from 'lodash/cloneDeep';
  * @param {*} result
  * @param {*} moduleMap
  */
-const transformPrintStatement = (padding, dataStructure, result, moduleMap) => {
-  result.output += `${padding}`;
+const transformPrintStatement = (
+  padding,
+  dataStructure,
+  result,
+  moduleMap,
+  options
+) => {
+  const ignore = dataStructure.ignore ? '# ' : '';
+  result.output += `${padding}${ignore}`;
   moduleMap.set('sendiRPA.logHandler', 'logger');
   const template_string = dataStructure['properties']['required'][0].value;
   const level_string = dataStructure['properties']['required'][1].value;

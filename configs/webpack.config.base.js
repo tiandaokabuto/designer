@@ -2,23 +2,48 @@
  * Base webpack config used across other specific configs
  */
 
-import path from 'path';
-import webpack from 'webpack';
-import { dependencies as externals } from '../app/package.json';
+const path = require('path');
+// import path from 'path';
+const webpack = require('webpack');
+// import webpack from 'webpack';
+const { dependencies: externals } = require('../app/package.json');
+// import { dependencies as externals } from '../app/package.json';
 
-export default {
+// const threadLoader = require('thread-loader');
+// threadLoader.warmup(
+//   {
+//     // pool options, like passed to loader options
+//     // must match loader options to boot the correct pool
+//   },
+//   [
+//     // modules to load
+//     // can be any module, i. e.
+//     'babel-loader',
+//   ]
+// );
+
+module.exports = exports = {
   externals: [...Object.keys(externals || {})],
   module: {
     rules: [
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
+        use: [
+          {
+            loader: 'thread-loader',
+            options: {
+              workerParallelJobs: 50,
+              // workerNodeArgs: ['--max-old-space-size', '1024'],
+            },
           },
-        },
+          {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+            },
+          },
+        ],
       },
       {
         test: /node_modules[/\\](iconv-lite)[/\\].+/,
@@ -43,6 +68,7 @@ export default {
     modules: [path.join(__dirname, '..', 'app'), 'node_modules'],
     alias: {
       '@': path.join(__dirname, '..', 'app'),
+      // '@ant-design/icons/lib/dist$': path.resolve(__dirname, './src/icons.js'),
     },
   },
 
@@ -52,5 +78,7 @@ export default {
     }),
 
     new webpack.NamedModulesPlugin(),
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /zh-cn/),
+    // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ],
 };

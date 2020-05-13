@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test RPA test basic transform 1`] = `
+<div>
+  <div>
+    # -*- coding: UTF-8 -*-
+def RPA_88d30000():
+    pass
+def RPA_d58ed90d():
+    pass
+def RPA_8739ded2():
+    pass
+def RPA_abc38a04():
+    pass
+def RPA_b7d8d2e8():
+    pass
+def RPA_0c3fa4e0():
+    pass
+def RPA_08c7cc36():
+    pass
+if __name__ == '__main__':
+    while True:
+        RPA_08c7cc36()
+        if :
+            RPA_0c3fa4e0()
+            pass
+        else:
+            RPA_b7d8d2e8()
+            pass
+        RPA_abc38a04()
+        if :
+            RPA_8739ded2()
+            pass
+        else:
+            RPA_d58ed90d()
+            pass
+        RPA_88d30000()
+        if not :
+            break
+
+  </div>
+</div>
+`;

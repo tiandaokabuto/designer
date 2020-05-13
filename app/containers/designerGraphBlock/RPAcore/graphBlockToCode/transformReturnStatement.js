@@ -9,10 +9,11 @@ const transformReturnStatement = (
   padding,
   dataStructure,
   result,
-  blockNode = {}
+  blockNode = {},
+  options
 ) => {
-  // console.log(JSON.stringify(dataStructure), JSON.stringify(blockNode));
-  result.output += `${padding}`;
+  const ignore = dataStructure.ignore ? '# ' : '';
+  result.output += `${padding}${ignore}`;
   const returnList =
     (blockNode.properties &&
       blockNode.properties.find((item) => item.enName === 'output').value) ||

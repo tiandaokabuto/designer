@@ -69,9 +69,6 @@ export default (id, visibleTemplate) => {
           },
         });
         transformCondition(node.properties.required[0], setCondition);
-        return () => {
-          item = { ...item };
-        };
       }, [node]);
       return [true, `如果满足 ${condition} 则`, () => {}, () => {}];
     }
