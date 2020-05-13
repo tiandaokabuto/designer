@@ -11,7 +11,7 @@ const transformBreakStatement = (
   moduleMap,
   options
 ) => {
-  const ignore = options.ignore || dataStructure.ignore ? '# ' : '';
+  const ignore = dataStructure.ignore ? '# ' : '';
   result.output += `${padding}${ignore}`;
   result.output += `break`;
   return result.output;
