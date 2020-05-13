@@ -14,7 +14,7 @@ const transformSleepStatement = (
   options
 ) => {
   moduleMap.set('time', 'sleep');
-  const ignore = options.ignore || dataStructure.ignore ? '# ' : '';
+  const ignore = dataStructure.ignore ? '# ' : '';
   result.output += `${padding}${ignore}`;
   const delay = dataStructure['properties']['required'][0].value;
   result.output += `sleep( ${delay} )`;

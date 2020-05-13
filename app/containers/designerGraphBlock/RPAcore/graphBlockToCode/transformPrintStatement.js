@@ -14,7 +14,7 @@ const transformPrintStatement = (
   moduleMap,
   options
 ) => {
-  const ignore = options.ignore || dataStructure.ignore ? '# ' : '';
+  const ignore = dataStructure.ignore ? '# ' : '';
   result.output += `${padding}${ignore}`;
   moduleMap.set('sendiRPA.logHandler', 'logger');
   const template_string = dataStructure['properties']['required'][0].value;

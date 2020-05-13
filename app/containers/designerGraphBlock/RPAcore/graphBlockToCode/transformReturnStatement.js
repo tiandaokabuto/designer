@@ -12,7 +12,7 @@ const transformReturnStatement = (
   blockNode = {},
   options
 ) => {
-  const ignore = options.ignore || dataStructure.ignore ? '# ' : '';
+  const ignore = dataStructure.ignore ? '# ' : '';
   result.output += `${padding}${ignore}`;
   const returnList =
     (blockNode.properties &&
