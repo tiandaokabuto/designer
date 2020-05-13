@@ -150,7 +150,7 @@ const LoopStatement = useInjectContext((props) => {
         {!readOnly && (
           <div className="loopstatement-header-operation">
             <Icon
-              type="eye"
+              type={isIgnore ? 'eye-invisible' : 'eye'}
               onClick={() => {
                 card.ignore = !card.ignore;
                 // propagateIgnoreChange
