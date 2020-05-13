@@ -5,6 +5,7 @@ import { Input, message, Icon } from 'antd';
 import { uniqueId, cloneDeep } from 'lodash';
 import moment from 'moment';
 import useGetDownloadPath from './DragEditorHeader/useHooks/useGetDownloadPath';
+// import useTransformToPython from '../designerGraphBlock/layout/useHooks/useTransformToPython';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
@@ -19,6 +20,7 @@ import event from '../designerGraphBlock/layout/eventCenter';
 import PATH_CONFIG from '../../constants/localFilePath'; //'@/constants/localFilePath';
 import { encrypt } from '../../login/utils'; //'@/login/utils';
 import RenameInput from './components/RenameInput';
+import transformEditorGraphData from '../designerGraphEdit/RPAcore';
 
 const fs = require('fs');
 const process = require('process');
@@ -45,8 +47,20 @@ const defaultGraphData = {
   ],
 };
 
+export const transformPythonWithPoint = fromOrTo => {
+  const {
+    grapheditor: { graphData, graphDataMap, checkedGraphBlockId },
+  } = store.getState();
+  transformEditorGraphData(
+    graphData,
+    graphDataMap,
+    checkedGraphBlockId,
+    fromOrTo
+  );
+};
+
 /**
- * 新建项目(待测)
+ * 新建项目(已进行单元测试)
  * @param {*} name 项目名称
  * @param {*} callback 项目创建完成后的回调函数
  */
@@ -68,7 +82,6 @@ export const newProject = (name, callback) => {
         PATH_CONFIG('project', `${name}/${name}_module`),
         { recursive: true },
         function(err) {
-          callback();
           // 修改流程块树
           changeModuleTree([]);
           const initialModuleTreeJson = {
@@ -79,6 +92,7 @@ export const newProject = (name, callback) => {
             PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
             encrypt.argEncryptByDES(JSON.stringify(initialModuleTreeJson))
           );
+          callback && callback();
         }
       );
     }
@@ -277,7 +291,7 @@ export function checkAndMakeDir(dirName) {
 }
 
 /**
- * 数据持久化保存到本地，按当前点击的流程保存(待测)
+ * 数据持久化保存到本地，按当前点击的流程保存(已完成单元测试)
  * @param {*} modifiedNodesArr
  * @param {*} processTree
  * @param {*} name
@@ -290,14 +304,11 @@ export const persistentStorage = (
   node
 ) => {
   let tree = cloneDeep(processTree);
-  console.log(modifiedNodesArr);
-  console.log(node);
   if (modifiedNodesArr) {
     traverseTree(tree, treeItem => {
       if (treeItem.type === 'process') {
         const find = modifiedNodesArr.find(item => item === treeItem.key);
         if (find) {
-          console.log(find, 'find');
           fs.writeFileSync(
             PATH_CONFIG('project', `${name}/${treeItem.title}/manifest.json`),
             encrypt.argEncryptByDES(JSON.stringify(treeItem.data))
@@ -310,6 +321,7 @@ export const persistentStorage = (
   updateProjextModifyTime(name);
   // 重新覆写processTree
   persistentManifest(tree, name, 'processTree');
+  return tree;
 };
 
 /**
@@ -318,7 +330,7 @@ export const persistentStorage = (
  * @param {*} name 项目名
  * @param {*} type processTree/moduleTree
  */
-export const persistentManifest = (tree, name, type) => {
+export const persistentManifest = (tree, name, type, callback) => {
   let path = '';
   if (type === 'processTree') {
     path = `${name}/manifest.json`;
@@ -337,6 +349,7 @@ export const persistentManifest = (tree, name, type) => {
           })
         )
       );
+      callback && callback();
     }
   });
 };
@@ -523,6 +536,7 @@ export const openProject = name => {
     if (!err) {
       const dirs = fs.readdirSync(PATH_CONFIG('project', name));
       const { processTree } = getDecryptOrNormal(data);
+      console.log(processTree);
       // data.toString().indexOf('{') === -1
       //   ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
       //   : JSON.parse(data.toString());
