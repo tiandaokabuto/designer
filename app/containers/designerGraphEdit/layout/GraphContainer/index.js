@@ -42,7 +42,6 @@ export default useInjectContext(
       updateGraphData,
       synchroCodeBlock,
       changeCheckedGraphBlockId,
-      updateCurrentEditingProcessBlock,
       updateCurrentPagePosition,
     }) => {
       const { getSelected, executeCommand, update, save, find } = propsAPI;
@@ -236,9 +235,12 @@ export default useInjectContext(
               ) {
                 updateCurrentPagePosition('block');
                 synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
-                Promise.resolve(true).then(() => {
-                  history.push('/designerGraphBlock');
-                });
+                Promise.resolve(true)
+                  .then(() => {
+                    history.push('/designGraph/block');
+                    return true;
+                  })
+                  .catch(err => console.log(err));
               }
             }}
             onEdgeClick={() => {

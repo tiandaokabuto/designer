@@ -50,14 +50,9 @@ if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
   execSync('yarn build-dll');
 }
 
-<<<<<<< HEAD
-module.exports = exports = merge.smart(baseConfig, {
-  devtool: 'cheap-inline-source-map',
-=======
 export default merge.smart(baseConfig, {
   // devtool: 'cheap-inline-source-map',
   devtool: 'inline-source-map',
->>>>>>> ba32fa7032ab9b452a48b61eacd2a448b7920415
 
   mode: 'development',
 
