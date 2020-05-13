@@ -138,34 +138,94 @@ const transformBlockToCodeImpl = (
           statement.subtype &&
           (statement.subtype & BreakStatementTag) === BreakStatementTag
         ) {
-          transformBreakStatement(padding, statement, result, options);
+          if (!statement.transformBreakStatement) {
+            statement.transformBreakStatement = memoize(
+              transformBreakStatement
+            );
+          }
+          const buffer = statement.transformBreakStatement(
+            padding,
+            statement,
+            { output: '' },
+            moduleMap,
+            options
+          );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
+          // transformBreakStatement(padding, statement, result, options);
         } else if (
           statement.subtype && // ContinueStatementTag
           (statement.subtype & ContinueStatementTag) === ContinueStatementTag
         ) {
-          transformContinueStatement(padding, statement, result, options);
+          if (!statement.transformContinueStatement) {
+            statement.transformContinueStatement = memoize(
+              transformContinueStatement
+            );
+          }
+          const buffer = statement.transformContinueStatement(
+            padding,
+            statement,
+            { output: '' },
+            moduleMap,
+            options
+          );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
         } else if (
           statement.subtype && // VariableDeclareTag
           (statement.subtype & SleepStatementTag) === SleepStatementTag
         ) {
-          transformSleepStatement(
+          if (!statement.transformSleepStatement) {
+            statement.transformSleepStatement = memoize(
+              transformSleepStatement
+            );
+          }
+          const buffer = statement.transformSleepStatement(
             padding,
             statement,
-            result,
-            moduleMa,
-            options
-          );
-        } else if (
-          statement.subtype && // CustomCodeBlockTag
-          (statement.subtype & VariableDeclareTag) === VariableDeclareTag
-        ) {
-          transformVariableDeclar(
-            padding,
-            statement,
-            result,
+            { output: '' },
             moduleMap,
             options
           );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
+          // transformSleepStatement(
+          //   padding,
+          //   statement,
+          //   result,
+          //   moduleMap,
+          //   options
+          // );
+        } else if (
+          statement.subtype &&
+          (statement.subtype & VariableDeclareTag) === VariableDeclareTag
+        ) {
+          if (!statement.transformVariableDeclar) {
+            statement.transformVariableDeclar = memoize(
+              transformVariableDeclar
+            );
+          }
+          const buffer = statement.transformVariableDeclar(
+            padding,
+            statement,
+            { output: '' },
+            moduleMap,
+            options
+          );
+          if (Array.isArray(buffer)) {
+            result.output += buffer[0];
+          } else {
+            result.output += buffer;
+          }
         } else if (
           statement.subtype && // CustomCodeBlockTag
           (statement.subtype & CustomCodeBlockTag) === CustomCodeBlockTag

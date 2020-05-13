@@ -10,6 +10,7 @@ const transformContinueStatement = (
   padding,
   dataStructure,
   result,
+  moduleMap,
   options
 ) => {
   const ignore = options.ignore || dataStructure.ignore ? '# ' : '';
@@ -18,4 +19,4 @@ const transformContinueStatement = (
   return result.output;
 };
 
-export default memoize(transformContinueStatement);
+export default transformContinueStatement;

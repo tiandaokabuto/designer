@@ -43,6 +43,8 @@ export default function memoize(func, equalityCheck = defaultEqualityCheck) {
       lastResult = func.apply(null, arguments);
       if (Array.isArray(lastResult)) {
         moduleMap = lastResult[1];
+      } else {
+        moduleMap = arguments[3];
       }
       arguments[1].hasModified = false;
     } else {

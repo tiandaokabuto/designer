@@ -1,4 +1,3 @@
-import memoize from './reselect';
 import cloneDeep from 'lodash/cloneDeep';
 /**
  * (已进行单元测试)
@@ -22,4 +21,4 @@ const transformSleepStatement = (
   return [result.output, new Map(moduleMap)];
 };
 
-export default memoize(transformSleepStatement);
+export default transformSleepStatement;

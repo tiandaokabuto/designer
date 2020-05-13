@@ -6,7 +6,13 @@ import memoize from './reselect';
  * @param {*} dataStructure
  * @param {*} result
  */
-const transformVariableDeclar = (padding, dataStructure, result, options) => {
+const transformVariableDeclar = (
+  padding,
+  dataStructure,
+  result,
+  moduleMap,
+  options
+) => {
   const ignore = options.ignore || dataStructure.ignore ? '# ' : '';
   result.output += `${padding}${ignore}`;
   const variable = dataStructure['properties']['required'][0].value;
@@ -15,4 +21,4 @@ const transformVariableDeclar = (padding, dataStructure, result, options) => {
   return result.output;
 };
 
-export default memoize(transformVariableDeclar);
+export default transformVariableDeclar;

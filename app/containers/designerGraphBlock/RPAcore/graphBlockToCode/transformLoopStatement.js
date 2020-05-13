@@ -1,4 +1,3 @@
-import memoize from './reselect';
 const transformLoopStatement = (padding, dataStructure, result, options) => {
   const ignore = options.ignore || dataStructure.ignore ? '# ' : '';
   const select = dataStructure['properties']['required'][0].value;

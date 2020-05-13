@@ -80,7 +80,6 @@ const transformBasicStatement = (
   const ignore = options.ignore || dataStructure.ignore ? '# ' : '';
   handleModuleImport(dataStructure, result, moduleMap);
   handleNote(dataStructure.cmdDesc, result, padding, dataStructure);
-  console.log('哈哈哈哈哈基本语句执行了', options, ignore);
   result.output += `${padding}${ignore}`;
   let params = ''; // 生成参数类型
   // if (dataStructure.properties.required) {
@@ -164,7 +163,7 @@ const transformBasicStatement = (
       }
     });
   handleMainFnGeneration(dataStructure, params, result, padding);
-  return [result.output, moduleMap];
+  return [result.output, new Map(moduleMap)];
 };
 
 export default memoize(transformBasicStatement);
