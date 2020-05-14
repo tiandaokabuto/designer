@@ -54,7 +54,7 @@ const layout = {
 };
 
 export default memo(
-  withRouter(({ history, type }) => {
+  withRouter(({ history }) => {
     const [visible, setVisible] = useState(undefined);
     const [isExport, setIsExport] = useState(false);
     const resetVisible = () => {
@@ -96,8 +96,6 @@ export default memo(
     const [originVersion, setOriginVersion] = useState('1.0.0'); // 默认值
     const [isRunCode, setIsRunCode] = useState(false); // 默认值
     const [tools, setTools] = useState([]);
-
-    const [_, forceUpdate] = useForceUpdate();
 
     const uuidRef = useRef(null);
 
@@ -199,7 +197,6 @@ export default memo(
           setIsRunCode(false);
         });
         message.loading({ content: '程序运行中', duration: 0, key });
-        forceUpdate();
       } catch (e) {
         setIsRunCode(false);
         message.error('代码转换出错，请检查流程图');
@@ -432,12 +429,12 @@ export default memo(
           onClick: verifyCompatibility,
         },
       ];
-      if (type !== 'process') {
+      if (history.location.pathname.includes('block')) {
         setTools(toolsDescriptionForBlock);
       } else {
         setTools(toolsDescriptionForProcess);
       }
-    }, [isRunCode]);
+    }, [isRunCode, history.location.pathname]);
 
     return (
       <div className="drageditor-header">
