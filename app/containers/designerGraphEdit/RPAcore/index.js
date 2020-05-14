@@ -254,7 +254,6 @@ export const transformEditorProcess = (
 };
 
 export default (graphData, graphDataMap, clickId, fromOrTo) => {
-  console.log(clickId);
   console.log(fromOrTo);
   const result = {
     output: '',
@@ -267,11 +266,20 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
       const copyGraphData = cloneDeep(graphData);
       const copyEdges = copyGraphData.edges;
       const newArr = copyEdges.filter(item => {
-        return item.target !== clickId;
+        if (item.source === beginId) {
+          // 如果点的是开始节点的下一个节点不做处理
+          return item;
+        } else {
+          // 判断线的目标是否是目标节点，过滤掉
+          if (item.target !== clickId) {
+            return item;
+          }
+        }
       });
       const startNode = copyEdges.find(item => item.source === beginId);
       startNode.target = clickId;
       copyGraphData.edges = newArr;
+      console.log(copyGraphData);
       transformEditorProcess(
         copyGraphData,
         graphDataMap,

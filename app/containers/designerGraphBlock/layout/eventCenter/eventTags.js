@@ -15,3 +15,11 @@ export const CANVAS_ZOOM_OUT = /** 缩小画布                              */ 
 export const CANVAS_ZOOM_IN = /** 放大画布                              */ Symbol(
   'canvas_zoom_in'
 );
+
+export const START_POINT = /** 定点执行                                */ Symbol(
+  'start_point'
+);
+
+export const STOP_RUNNING = /** 暂停                                   */ Symbol(
+  'stop_running'
+);

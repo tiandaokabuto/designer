@@ -14,7 +14,10 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
-import event from '../../designerGraphBlock/layout/eventCenter';
+import event, {
+  STOP_RUNNING,
+  START_POINT,
+} from '../../designerGraphBlock/layout/eventCenter';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
 import IconFont from '../IconFont/index';
@@ -29,6 +32,7 @@ import {
   changeModifyState,
   downProcessZipToLocal,
   getChooseFilePath,
+  transformPythonWithPoint,
 } from '../utils';
 import {
   updateCurrentPagePosition,
@@ -188,11 +192,16 @@ export default memo(
       }
     };
 
-    const handleOperation = () => {
+    const handleOperation = (fromOrTo = undefined) => {
       try {
         const uuid = new Date().getTime().toString(16);
         uuidRef.current = uuid;
-        transformProcessToPython();
+        if (fromOrTo === undefined) {
+          transformProcessToPython();
+        } else {
+          console.log();
+          transformPythonWithPoint(fromOrTo);
+        }
         executePython(uuid, () => {
           setIsRunCode(false);
         });
@@ -227,6 +236,18 @@ export default memo(
       );
       zip.writeZip(`${filePath}.zip`);
     };
+
+    const handleRunPoint = fromOrTo => {
+      setIsRunCode(true);
+      handleOperation(fromOrTo);
+    };
+
+    useEffect(() => {
+      event.addListener(START_POINT, handleRunPoint);
+      return () => {
+        event.removeListener(START_POINT, handleRunPoint);
+      };
+    }, []);
 
     useEffect(() => {
       const toolsDescriptionForBlock = [

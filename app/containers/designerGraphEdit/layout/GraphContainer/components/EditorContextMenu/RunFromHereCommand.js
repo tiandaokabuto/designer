@@ -5,6 +5,10 @@ import {
   InjectProvider,
 } from 'react-hook-easier/lib/useInjectContext';
 
+import event, {
+  STOP_RUNNING,
+  START_POINT,
+} from '../../../../../designerGraphBlock/layout/eventCenter';
 import { transformPythonWithPoint } from '@/containers/common/utils';
 
 class RunFromHereCommand extends React.Component {
@@ -22,8 +26,8 @@ class RunFromHereCommand extends React.Component {
 
       // 正向命令逻辑
       execute(/* editor */) {
-        console.log('从此处执行');
-        transformPythonWithPoint('from');
+        // transformPythonWithPoint('from');
+        event.emit(START_POINT, 'from');
         console.log('执行正向命令');
       },
 

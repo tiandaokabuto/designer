@@ -20,7 +20,6 @@ export default () => {
   return (uuid, callback) => {
     event.emit('clear_output');
     const path = PATH_CONFIG('pythonExecute') + ` ${uuid}`;
-    console.log(path);
     const worker = exec(
       path,
       {

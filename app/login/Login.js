@@ -17,7 +17,7 @@ import LoginFromInput from './components/LoginFromInput';
 const { ipcRenderer, remote } = require('electron');
 
 let userDay = getUserDay();
-// console.log(encrypt.argEncryptByDES('{}'));
+console.log(encrypt.argEncryptByDES('2020-12-30'));
 
 const Login = () => {
   const [userName, setUserName] = useState('');
