@@ -113,7 +113,13 @@ const ConditionalStatement = useInjectContext((props) => {
       ref={isFold ? null : dragImage}
       className={className}
     >
-      <div className="IFItem-header" ref={readOnly ? null : ref}>
+      <div
+        className="IFItem-header"
+        ref={readOnly ? null : ref}
+        style={{
+          background: isIgnore ? '#9c9494' : 'rgba(50, 166, 127, 1)',
+        }}
+      >
         <div
           className="IFItem-header-title"
           data-id={id}
@@ -197,7 +203,14 @@ const ConditionalStatement = useInjectContext((props) => {
             })}
         </div>
         <div className="IFItem-else">
-          <div className="IFItem-header IFItem-header__else">否则</div>
+          <div
+            className="IFItem-header IFItem-header__else"
+            style={{
+              backgroundColor: isIgnore ? '#9c9494' : 'rgba(184, 230, 214, 1)',
+            }}
+          >
+            否则
+          </div>
           <div style={{ paddingLeft: 24 }}>
             {card.elseChildren.map((subChildren, i) =>
               renderStatement(subChildren, i)
