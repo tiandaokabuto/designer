@@ -50,8 +50,35 @@ appexpress.post('/upload', function(req, res) {
     }
 
     mainWindow.restore();
-    console.log(finallyResult.value);
     mainWindow.webContents.send('updateXpath', {
+      ...finallyResult.value,
+      targetId,
+    });
+    targetId = undefined;
+  } catch (e) {
+    // 处理错误
+    res.sendStatus(200);
+  }
+
+  res.sendStatus(200);
+});
+
+appexpress.post('/position', function(req, res) {
+  try {
+    const finallyResult = req.body;
+
+    //将结果通知给渲染进程
+    if (targetId === undefined) {
+      res.sendStatus(500);
+      return;
+    }
+
+    if (!finallyResult.value) {
+      return;
+    }
+
+    mainWindow.restore();
+    mainWindow.webContents.send('updateMousePosition', {
       ...finallyResult.value,
       targetId,
     });
@@ -261,7 +288,6 @@ const createWindow = async () => {
 
   ipcMain.on('start_server', (event, id) => {
     targetId = id;
-    console.log('再次触发选取操作', id);
     if (isNetStart) return;
 
     appexpress.listen(8888, function() {

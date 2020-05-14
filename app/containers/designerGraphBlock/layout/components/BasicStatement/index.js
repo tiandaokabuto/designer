@@ -26,6 +26,7 @@ import {
   useChangeCheckedBlockColor,
   useChangeCompatable,
 } from '../../useHooks';
+import { isGetMousePosition } from '../../shared/utils';
 
 import { BasicStatementTag } from '../../statementTags';
 import Interactive from './components/Interactive';
@@ -51,7 +52,7 @@ const process = require('process');
 
 const { exec } = require('child_process');
 
-const BasicStatement = useInjectContext((props) => {
+const BasicStatement = useInjectContext(props => {
   const {
     id,
     card,
@@ -72,9 +73,11 @@ const BasicStatement = useInjectContext((props) => {
 
   const dispatch = useDispatch();
 
-  const cards = useSelector((state) => state.blockcode.cards);
+  const cards = useSelector(state => state.blockcode.cards);
 
   const hasLookTarget = useHasLookTarget(card);
+
+  const hasGetMousePosition = isGetMousePosition(card);
 
   const cmdDesc = useWatchCmdDesc(card);
 
@@ -137,7 +140,7 @@ const BasicStatement = useInjectContext((props) => {
   // 展示图片遮罩层
   const [showImgContain, setShowImgContain] = useState(false);
 
-  const generateEditOperation = (card) => {
+  const generateEditOperation = card => {
     switch (card.cmdName) {
       case '人机交互':
         return (
@@ -167,13 +170,13 @@ const BasicStatement = useInjectContext((props) => {
     }
   };
 
-  const saveLayoutChange = (layout) => {
+  const saveLayoutChange = layout => {
     if (!layout) return;
     Object.assign(card.layout, layout);
     handleEmitCodeTransform(cards);
   };
 
-  const handleEnlageImg = (e) => {
+  const handleEnlageImg = e => {
     setShowImgContain(true);
     e.stopPropagation();
   };
@@ -209,17 +212,17 @@ const BasicStatement = useInjectContext((props) => {
             <div
               className="card-content-visible"
               key={uniqueId('visible_')}
-              onClick={(e) => {
+              onClick={e => {
                 if (readOnly) return;
                 const anchor = e.target.dataset.anchor;
                 if (anchor) changeToEditableTemplate(anchor);
                 // 触发变量的修改
               }}
-              onDragStart={(e) => {
+              onDragStart={e => {
                 e.preventDefault();
               }}
               onBlur={save}
-              onKeyDown={(e) => {
+              onKeyDown={e => {
                 if (e.keyCode === 13) {
                   save(e);
                 }
@@ -260,7 +263,7 @@ const BasicStatement = useInjectContext((props) => {
               <div
                 className="card-content-searchtarget"
                 style={{
-                  display: hasLookTarget ? '' : 'none',
+                  display: hasLookTarget || hasGetMousePosition ? '' : 'none',
                 }}
                 onClick={() => {
                   dispatch({
@@ -269,7 +272,7 @@ const BasicStatement = useInjectContext((props) => {
                   });
                   ipcRenderer.send('min');
                   ipcRenderer.send('start_server', id);
-                  const cmdNameArr = [
+                  const xpathCmdNameArr = [
                     '鼠标-点击目标',
                     '鼠标-移动',
                     '键盘-目标中按键',
@@ -278,14 +281,23 @@ const BasicStatement = useInjectContext((props) => {
                     '判断元素是否存在',
                     '上传文件',
                   ];
-                  if (cmdNameArr.includes(card.cmdName)) {
+                  const mouseCmdName = '鼠标-获取光标位置';
+
+                  if (xpathCmdNameArr.includes(card.cmdName)) {
                     try {
                       const worker = exec(PATH_CONFIG('windowHook'));
                     } catch (e) {
                       console.log(e);
                     }
+                  } else if (mouseCmdName === card.cmdName) {
+                    try {
+                      const mouseWorker = exec(`${PATH_CONFIG('WinRun')} -p`);
+                    } catch (err) {
+                      console.log(err);
+                    }
                   }
                   ipcRenderer.removeAllListeners('updateXpath');
+                  ipcRenderer.removeAllListeners('updateMousePosition');
                   ipcRenderer.on(
                     'updateXpath',
                     (e, { xpath, imageData, targetId }) => {
@@ -297,15 +309,31 @@ const BasicStatement = useInjectContext((props) => {
                       updateXpath(id, xpath);
                     }
                   );
+                  ipcRenderer.on(
+                    'updateMousePosition',
+                    (e, { x, y, targetId }) => {
+                      if (x === undefined || y === undefined) return;
+                      const position = `[${x}, ${y}]`;
+                      // 接收到xpath并作出更新
+                      if (targetId !== id) return;
+                      // card.xpathImage = value;
+                      /* setXpathImage(imageData);
+                      updateXpath(id, xpath); */
+                      card.properties.required[1].value = position;
+                      card.properties.required[1].updateId = true;
+                      card.hasModified = true;
+                      handleEmitCodeTransform(cards);
+                    }
+                  );
                 }}
               >
-                {xpathImage === undefined ? (
+                {xpathImage === undefined || hasGetMousePosition ? (
                   <>
                     <Icon
                       type="home"
                       className="card-content-searchtarget-anchor"
                     />
-                    查找目标
+                    <span>{hasGetMousePosition ? '定位坐标' : '查找目标'}</span>
                   </>
                 ) : (
                   <div className="card-content-searchtarget-content">
