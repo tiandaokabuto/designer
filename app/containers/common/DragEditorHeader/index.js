@@ -54,7 +54,7 @@ const layout = {
 };
 
 export default memo(
-  withRouter(({ history, type }) => {
+  withRouter(({ history }) => {
     const [visible, setVisible] = useState(undefined);
     const [isExport, setIsExport] = useState(false);
     const resetVisible = () => {
@@ -92,12 +92,10 @@ export default memo(
     const [versionTipVisible2, setVersionTipVisible2] = useState(false);
     const [descText, setDescText] = useState('');
     const [exportType, setExportType] = useState('json');
-    const [versionText, setVersionText] = useState('1.0.0'); // 默认值
-    const [originVersion, setOriginVersion] = useState('1.0.0'); // 默认值
+    const [versionText, setVersionText] = useState('0.0.1'); // 默认值
+    const [originVersion, setOriginVersion] = useState('0.0.1'); // 默认值
     const [isRunCode, setIsRunCode] = useState(false); // 默认值
     const [tools, setTools] = useState([]);
-
-    const [_, forceUpdate] = useForceUpdate();
 
     const uuidRef = useRef(null);
 
@@ -133,8 +131,8 @@ export default memo(
             setVersionText(nextVersion);
             return nextVersion;
           }
-          setVersionText('1.0.0');
-          setOriginVersion('1.0.0');
+          setVersionText('0.0.1');
+          setOriginVersion('0.0.1');
           return false;
         })
         .catch(err => console.log(err));
@@ -199,7 +197,6 @@ export default memo(
           setIsRunCode(false);
         });
         message.loading({ content: '程序运行中', duration: 0, key });
-        forceUpdate();
       } catch (e) {
         setIsRunCode(false);
         message.error('代码转换出错，请检查流程图');
@@ -432,12 +429,12 @@ export default memo(
           onClick: verifyCompatibility,
         },
       ];
-      if (type !== 'process') {
+      if (history.location.pathname.includes('block')) {
         setTools(toolsDescriptionForBlock);
       } else {
         setTools(toolsDescriptionForProcess);
       }
-    }, [isRunCode]);
+    }, [isRunCode, history.location.pathname]);
 
     return (
       <div className="drageditor-header">
