@@ -6,7 +6,7 @@ const { ipcRenderer } = require('electron');
 
 let listener = null;
 
-const stopDeleteKeyDown = e => {
+const stopDeleteKeyDown = (e) => {
   if (e.keyCode === 46) {
     e.nativeEvent.stopImmediatePropagation();
   }
@@ -27,7 +27,7 @@ export default ({
         setTimeout(() => {
           setFlag(false);
         }, 50);
-        param.value = `"${filePath[0].replace(/\//g, '\\\\')}"`;
+        param.value = `r'${filePath[0].replace(/\//g, '\\\\')}'`;
         handleEmitCodeTransform();
       }
     },
@@ -39,11 +39,11 @@ export default ({
       <Input
         key={keyFlag ? uniqueId('key_') : ''}
         defaultValue={param.value || param.default}
-        onChange={e => {
+        onChange={(e) => {
           param.value = e.target.value;
           handleEmitCodeTransform();
         }}
-        onKeyDown={e => stopDeleteKeyDown(e)}
+        onKeyDown={(e) => stopDeleteKeyDown(e)}
       />
       <Button
         onClick={() => {
