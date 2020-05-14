@@ -2,13 +2,11 @@
   &-header {
     display: flex;
     justify-content: space-between;
-    background: rgba(50, 166, 127, 1);
     height: 28px;
     line-height: 28px;
     color: rgba(255, 255, 255, 1);
     &__else {
       padding-left: 8px;
-      background-color: rgba(184, 230, 214, 1);
     }
     &-operation {
       > * {
