@@ -18,7 +18,7 @@ export default (id, card) => {
       }
     }
     if (isIgnore) {
-      setBackgroundColor('#aaa');
+      setBackgroundColor('#eee');
     } else {
       setBackgroundColor(prevBackgroundColor.current);
     }
