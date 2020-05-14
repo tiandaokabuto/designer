@@ -264,38 +264,37 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
   if (beginId) {
     result.output += "if __name__ == '__main__':\n";
     if (fromOrTo === 'from') {
-      // const copyGraphData = cloneDeep(graphData);
-      // const copyEdges = copyGraphData.edges;
-      // const newArr = copyEdges.filter(item => {
-      //   return item.target !== clickId;
-      // });
-      // const startNode = copyEdges.find(item => item.source === beginId);
-      // startNode.target = clickId;
-      // console.log(newArr);
-      // copyGraphData.edges = newArr;
-      // transformEditorProcess(
-      //   copyGraphData,
-      //   graphDataMap,
-      //   findTargetIdBySourceId(copyGraphData.edges, beginId),
-      //   result,
-      //   1,
-      //   null
-      // );
+      const copyGraphData = cloneDeep(graphData);
+      const copyEdges = copyGraphData.edges;
+      const newArr = copyEdges.filter(item => {
+        return item.target !== clickId;
+      });
+      const startNode = copyEdges.find(item => item.source === beginId);
+      startNode.target = clickId;
+      copyGraphData.edges = newArr;
+      transformEditorProcess(
+        copyGraphData,
+        graphDataMap,
+        findTargetIdBySourceId(copyGraphData.edges, beginId),
+        result,
+        1,
+        null
+      );
     } else if (fromOrTo === 'to') {
-      // const copyGraphData = cloneDeep(graphData);
-      // const copyEdges = copyGraphData.edges;
-      // const newArr = copyEdges.filter(item => {
-      //   return item.source !== clickId;
-      // });
-      // copyGraphData.edges = newArr;
-      // transformEditorProcess(
-      //   copyGraphData,
-      //   graphDataMap,
-      //   findTargetIdBySourceId(copyGraphData.edges, beginId),
-      //   result,
-      //   1,
-      //   null
-      // );
+      const copyGraphData = cloneDeep(graphData);
+      const copyEdges = copyGraphData.edges;
+      const newArr = copyEdges.filter(item => {
+        return item.source !== clickId;
+      });
+      copyGraphData.edges = newArr;
+      transformEditorProcess(
+        copyGraphData,
+        graphDataMap,
+        findTargetIdBySourceId(copyGraphData.edges, beginId),
+        result,
+        1,
+        null
+      );
     } else {
       transformEditorProcess(
         graphData,
