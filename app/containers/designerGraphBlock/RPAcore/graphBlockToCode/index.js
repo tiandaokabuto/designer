@@ -235,8 +235,9 @@ const transformBlockToCodeImpl = (
         break;
       case 4:
         transformConditionalStatement(padding, statement, result);
+        const ignore = statement.ignore ? '# ' : '';
         if (!statement.ifChildren.length) {
-          result.output += `${paddingStart(depth + 1)}pass\n`;
+          result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
         } else {
           transformBlockToCodeImpl(
             statement.ifChildren,
@@ -245,10 +246,10 @@ const transformBlockToCodeImpl = (
             options
           );
         }
-        const ignore = statement.ignore ? '# ' : '';
+
         result.output += `${padding}${ignore}else:\n`;
         if (!statement.elseChildren.length) {
-          result.output += `${paddingStart(depth + 1)}pass\n`;
+          result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
         } else {
           transformBlockToCodeImpl(
             statement.elseChildren,

@@ -121,7 +121,13 @@ const LoopStatement = useInjectContext((props) => {
       >
         <Icon type={isFold ? 'up' : 'down'} />
       </div>
-      <div className="loopstatement-header" ref={readOnly ? null : ref}>
+      <div
+        className="loopstatement-header"
+        ref={readOnly ? null : ref}
+        style={{
+          backgroundColor: isIgnore ? '#9c9494' : 'rgba(50, 166, 127, 1)',
+        }}
+      >
         <div
           className="loopstatement-header-title"
           data-id={id}

@@ -67,7 +67,6 @@ export default useInjectContext(({ history }) => {
       render: (text, record) => {
         const time = FormatDateTime(text);
         const handleDeletProject = e => {
-          console.log('!!!!!!!!!');
           e.stopPropagation();
           deleteFolderRecursive(PATH_CONFIG('project', record.name));
           setFlag(flag => !flag);
@@ -169,7 +168,10 @@ export default useInjectContext(({ history }) => {
             <Input
               placeholder="请输入新建项目名称"
               onChange={e => {
-                setName(e.target.value);
+                setName(e.target.value.trim());
+              }}
+              onBlur={e => {
+                e.target.value = e.target.value.trim();
               }}
             />
             <Button
