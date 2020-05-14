@@ -166,31 +166,31 @@ describe('test utils', () => {
     result = fs.existsSync(__dirname + '/a/b');
     expect(result).toBeFalsy();
   });
-  it('test newProject', done => {
-    newProject('testNewProject', () => {
-      expect(
-        fs.existsSync(PATH_CONFIG('project', 'testNewProject'))
-      ).toBeTruthy();
-      expect(
-        fs.existsSync(PATH_CONFIG('project', 'testNewProject/manifest.json'))
-      ).toBeTruthy();
-      expect(
-        fs.existsSync(
-          PATH_CONFIG('project', 'testNewProject/testNewProject_module')
-        )
-      ).toBeTruthy();
-      expect(
-        fs.existsSync(
-          PATH_CONFIG(
-            'project',
-            'testNewProject/testNewProject_module/manifest.json'
-          )
-        )
-      ).toBeTruthy();
+  // it('test newProject', done => {
+  //   newProject('testNewProject', () => {
+  //     expect(
+  //       fs.existsSync(PATH_CONFIG('project', 'testNewProject'))
+  //     ).toBeTruthy();
+  //     expect(
+  //       fs.existsSync(PATH_CONFIG('project', 'testNewProject/manifest.json'))
+  //     ).toBeTruthy();
+  //     expect(
+  //       fs.existsSync(
+  //         PATH_CONFIG('project', 'testNewProject/testNewProject_module')
+  //       )
+  //     ).toBeTruthy();
+  //     expect(
+  //       fs.existsSync(
+  //         PATH_CONFIG(
+  //           'project',
+  //           'testNewProject/testNewProject_module/manifest.json'
+  //         )
+  //       )
+  //     ).toBeTruthy();
 
-      done();
-    });
-  });
+  //     done();
+  //   });
+  // });
   it('test persistentManifest', done => {
     newProject('testPersistent', () => {
       const beforeStat = fs.statSync(
@@ -223,6 +223,6 @@ describe('test utils', () => {
 });
 
 afterEach(() => {
-  deleteFolderRecursive(PATH_CONFIG('project', 'testPersistent'));
-  deleteFolderRecursive(PATH_CONFIG('project', 'testNewProject'));
+  // deleteFolderRecursive(PATH_CONFIG('project', 'testPersistent'));
+  // deleteFolderRecursive(PATH_CONFIG('project', 'testNewProject'));
 });
