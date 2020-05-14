@@ -32,12 +32,13 @@ const canDisplay = (match, filter) => {
   const newMatch = match.toLocaleLowerCase();
   const newFilter = filter.toLocaleLowerCase();
   let toMatch = '';
-  if (newMatch.includes(newFilter)) return true;
+  if (newMatch.includes(newFilter)) return [newFilter];
   for (const char of newMatch) {
     toMatch += char;
     const queryList = query(toMatch);
+
     if (queryList.includes(newFilter)) {
-      return true;
+      return queryList;
     }
   }
   return false;
@@ -45,17 +46,17 @@ const canDisplay = (match, filter) => {
 
 export default useInjectContext(
   ({ updateAutomicList, updateCheckedBlockId }) => {
-    const atomicCList = useSelector(state => state.blockcode.automicList);
+    const atomicCList = useSelector((state) => state.blockcode.automicList);
 
-    const blockTreeTab = useSelector(state => state.blockcode.blockTreeTab);
+    const blockTreeTab = useSelector((state) => state.blockcode.blockTreeTab);
 
     const favoriteList = useMemo(() => {
-      const find = atomicCList.find(item => item.key === 'favorite');
+      const find = atomicCList.find((item) => item.key === 'favorite');
       return find ? find.children : [];
     }, [atomicCList]);
 
     const recentList = useMemo(() => {
-      const find = atomicCList.find(item => item.key === 'recent');
+      const find = atomicCList.find((item) => item.key === 'recent');
       return find ? find.children : [];
     }, [atomicCList]);
 
@@ -77,12 +78,14 @@ export default useInjectContext(
       treeData.forEach((child, index) => {
         if (!child.children) {
           // 原子能力结点
-          if (!canDisplay(child.item && child.item.text, filter)) {
+          let find = false;
+          if (!(find = canDisplay(child.item && child.item.text, filter))) {
             // no match
             child.isFilter = true;
           } else {
             // match and add to expandedKeys
-            parent.forEach(item => {
+            child.filterList = find;
+            parent.forEach((item) => {
               if (!expandedKeysTemp.includes(item)) {
                 expandedKeysTemp.push(item);
               }
@@ -98,7 +101,7 @@ export default useInjectContext(
           );
         }
       });
-      return treeData.filter(child => {
+      return treeData.filter((child) => {
         if (child.children) {
           return child.children.length;
         } else {
@@ -107,8 +110,8 @@ export default useInjectContext(
       });
     };
 
-    const addToRecentList = item => {
-      const index = recentList.findIndex(el => el.key === item.key);
+    const addToRecentList = (item) => {
+      const index = recentList.findIndex((el) => el.key === item.key);
 
       if (index !== -1) {
         const node = recentList.splice(index, 1);
@@ -131,25 +134,26 @@ export default useInjectContext(
         const originTreeData = treeData;
         // 搜索只对可用进行搜索
         treeData = filterTree(
-          treeData.filter(item => item.title === '可用'),
+          treeData.filter((item) => item.title === '可用'),
           filter,
           [],
           expandedKeysTemp
         );
         // 拼接原来的可用和收藏列表
         treeData = originTreeData
-          .filter(item => item.title !== '可用')
+          .filter((item) => item.title !== '可用')
           .concat(treeData);
-        setExpandedKeys(expandedKeys => {
+        setExpandedKeys((expandedKeys) => {
           return Array.from(new Set([...expandedKeys, ...expandedKeysTemp]));
         });
       }
-      traverseTree(treeData, node => {
+      traverseTree(treeData, (node) => {
         if (node.item) {
           node.title = (
             <DragCard
               item={node.item}
               node={node}
+              filter={filter}
               addToRecentList={addToRecentList}
               updateCheckedBlockId={updateCheckedBlockId}
             />
@@ -159,9 +163,9 @@ export default useInjectContext(
       return treeData;
     };
 
-    const addToLovedList = key => {
+    const addToLovedList = (key) => {
       const node = findNodeByKey(atomicCList, key);
-      if (favoriteList.some(item => item.key === key)) {
+      if (favoriteList.some((item) => item.key === key)) {
         message.info('已经在收藏列表');
         return;
       }
@@ -171,10 +175,10 @@ export default useInjectContext(
       saveAutomicList(cloneDeep(atomicCList));
     };
 
-    const removeFromLovedList = key => {
+    const removeFromLovedList = (key) => {
       const node = findNodeByKey(atomicCList, key);
       node.loved = false;
-      const index = favoriteList.findIndex(item => item.key === key);
+      const index = favoriteList.findIndex((item) => item.key === key);
       favoriteList.splice(index, 1);
       updateAutomicList([...atomicCList]);
       saveAutomicList(cloneDeep(atomicCList));
@@ -194,7 +198,7 @@ export default useInjectContext(
               style={{ marginRight: '10px' }}
               onClick={() => {
                 const data = [];
-                traverseTree(treeData, item => {
+                traverseTree(treeData, (item) => {
                   if (item.children) {
                     data.push(item.key);
                   }
@@ -227,7 +231,7 @@ export default useInjectContext(
             defaultActiveKey={blockTreeTab}
             className="dragger-editor-container-tabs"
             tabPosition="bottom"
-            onChange={key => {
+            onChange={(key) => {
               changeBlockTreeTab(key);
             }}
           >
@@ -241,7 +245,7 @@ export default useInjectContext(
                   <Input
                     placeholder="请输入"
                     allowClear
-                    onChange={e => {
+                    onChange={(e) => {
                       setFilter(e.target.value);
                     }}
                   />
@@ -249,7 +253,7 @@ export default useInjectContext(
                 <Tree
                   className="atomicCList-tree"
                   expandedKeys={expandedKeys}
-                  onExpand={expandedKeys => {
+                  onExpand={(expandedKeys) => {
                     setExpandedKeys(expandedKeys);
                   }}
                   onRightClick={({ event, node }) => {
@@ -262,9 +266,9 @@ export default useInjectContext(
                   onSelect={(_, e) => {
                     const props = e.node.props;
                     if (props.children) {
-                      setExpandedKeys(keys => {
+                      setExpandedKeys((keys) => {
                         if (keys.includes(props.eventKey)) {
-                          return keys.filter(item => item !== props.eventKey);
+                          return keys.filter((item) => item !== props.eventKey);
                         } else {
                           return keys.concat(props.eventKey);
                         }

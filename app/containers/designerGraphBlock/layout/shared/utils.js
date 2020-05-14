@@ -12,7 +12,7 @@ import cloneDeep from 'lodash/cloneDeep';
  * @param {*} isTail
  */
 export const findNodeLevelById = (cards, id, isTail) => {
-  const find = cards.find((item) => item.id === id);
+  const find = cards.find(item => item.id === id);
   if (find) {
     if (isTail) {
       return find.children;
@@ -44,7 +44,7 @@ export const findNodeLevelById = (cards, id, isTail) => {
  * @param {*} layer
  */
 export const findIFNodeLevelById = (cards, id, layer) => {
-  const find = cards.find((item) => item.id === id);
+  const find = cards.find(item => item.id === id);
   if (find) {
     return layer ? find[layer] : find;
   }
@@ -74,7 +74,7 @@ export const findIFNodeLevelById = (cards, id, layer) => {
 export const findNodeById = (cards, id) => {
   const find = findNodeLevelById(cards, id, false);
   if (find) {
-    return find.find((node) => node.id === id);
+    return find.find(node => node.id === id);
   }
   return undefined;
 };
@@ -92,7 +92,7 @@ export const insertAfter = (cards, id, append) => {
   }
   const find = findNodeLevelById(cards, id, false);
   if (find) {
-    const index = find.findIndex((node) => node.id === id);
+    const index = find.findIndex(node => node.id === id);
     find.splice(index + 1, 0, ...append);
     return true;
   } else {
@@ -141,7 +141,7 @@ export const useNode = (node, id) => {
  *
  * @param {*} id 主流程占位符代码块id
  */
-export const isMainProcessPlaceholder = (id) => {
+export const isMainProcessPlaceholder = id => {
   return id && PLACEHOLDER_MAINPROCESS.includes(id);
 };
 
@@ -149,7 +149,7 @@ export const isMainProcessPlaceholder = (id) => {
  *
  * @param {*} id 条件语句占位符代码块id
  */
-export const isConditionalStatementPlaceholder = (id) => {
+export const isConditionalStatementPlaceholder = id => {
   return id && id.includes(PLACEHOLDER_CONDITIONALSTATEMENT);
 };
 
@@ -157,20 +157,25 @@ export const isConditionalStatementPlaceholder = (id) => {
  * 提取条件语句分支
  * @param {*} id
  */
-export const extractLayer = (id) => {
+export const extractLayer = id => {
   return id && /-(.*)/.exec(id)[1];
 };
 
 /**
  * 判断是否为占位符代码块
  */
-export const isTailStatement = (id) => {
+export const isTailStatement = id => {
   return id && id.includes('tail');
 };
 
 /**
  * 剔除代码块的id为纯id的格式
  */
-export const trimId = (id) => {
+export const trimId = id => {
   return id && id.replace(/-.*/, '');
+};
+
+export const isGetMousePosition = card => {
+  if (!card || !card.properties) return false;
+  return card.main === 'mousePosition';
 };

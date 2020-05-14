@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AutoComplete, Input } from 'antd';
 import PropTypes from 'prop-types';
 import uniqueId from 'lodash/uniqueId';
+import { useMemo } from 'react';
 
 const { TextArea } = Input;
 
@@ -46,6 +47,7 @@ const AutoCompleteInputParam = ({
   handleValidate,
   onChange,
 }) => {
+  const [positionId, setPositionId] = useState('positon');
   const { paramType } = param;
   const hasParamType = paramType && Array.isArray(paramType);
   // 待匹配的下拉列表
@@ -95,9 +97,29 @@ const AutoCompleteInputParam = ({
     if (onChange) onChange(newValue);
   };
 
+  const id = useMemo(() => {
+    if (keyFlag || param.enName === 'xpath') {
+      return uniqueId('key_');
+    } else if (param.enName === 'position') {
+      if (param.updateId) {
+        if (positionId === 'position') {
+          setPositionId('triggleposition');
+          param.updateId = false;
+          return 'triggleposition';
+        } else {
+          setPositionId('position');
+          param.updateId = false;
+          return 'position';
+        }
+      }
+      return positionId;
+    }
+    return '';
+  }, [keyFlag, param.enName, param.updateId]);
+
   return (
     <AutoComplete
-      key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
+      key={id}
       defaultValue={String(param.value || param.default)}
       dataSource={(dataSource || []).concat(appendDataSource)}
       onSelect={value => {
