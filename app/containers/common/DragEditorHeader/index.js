@@ -92,8 +92,8 @@ export default memo(
     const [versionTipVisible2, setVersionTipVisible2] = useState(false);
     const [descText, setDescText] = useState('');
     const [exportType, setExportType] = useState('json');
-    const [versionText, setVersionText] = useState('1.0.0'); // 默认值
-    const [originVersion, setOriginVersion] = useState('1.0.0'); // 默认值
+    const [versionText, setVersionText] = useState('0.0.1'); // 默认值
+    const [originVersion, setOriginVersion] = useState('0.0.1'); // 默认值
     const [isRunCode, setIsRunCode] = useState(false); // 默认值
     const [tools, setTools] = useState([]);
 
@@ -131,8 +131,8 @@ export default memo(
             setVersionText(nextVersion);
             return nextVersion;
           }
-          setVersionText('1.0.0');
-          setOriginVersion('1.0.0');
+          setVersionText('0.0.1');
+          setOriginVersion('0.0.1');
           return false;
         })
         .catch(err => console.log(err));
