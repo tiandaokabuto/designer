@@ -341,6 +341,10 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
     };
   }, []);
 
+  useEffect(() => {
+    window.getSelection().removeAllRanges();
+  });
+
   const isDescUseOriginDate = main === 'loop' || main === 'condition';
 
   return (

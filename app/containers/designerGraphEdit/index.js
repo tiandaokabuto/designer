@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import GGEditor from 'gg-editor';
 import { Button } from 'antd';
 
@@ -21,6 +21,10 @@ import { history } from '../../store/configureStore';
 import './index.scss';
 
 export default () => {
+  useEffect(() => {
+    window.getSelection().removeAllRanges();
+  });
+
   return (
     <>
       {/* <GraphBlockHeader history={history} />
