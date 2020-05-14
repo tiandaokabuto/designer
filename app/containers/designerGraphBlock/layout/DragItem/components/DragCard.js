@@ -10,17 +10,30 @@ import { getDecryptOrNormal } from '../../../../common/utils';
 
 const fs = require('fs');
 
+const transformText = (item, filter, node) => {
+  let filterList = Array.isArray(node.filterList) ? node.filterList : [];
+  return filterList.reduce(
+    (prev, next) =>
+      prev.replace(
+        new RegExp(next, 'i'),
+        (match) => `<span style="color: red;">${match}</span>`
+      ),
+    item.text
+  );
+};
+
 export default ({
   item,
   node,
   title,
   tabType = 'atomic',
   currentProject = '',
+  filter = '',
   addToRecentList = () => {},
   updateCheckedBlockId = () => {},
 }) => {
   const dispatch = useDispatch();
-  const cards = useSelector(state => state.blockcode.cards);
+  const cards = useSelector((state) => state.blockcode.cards);
   const cardsRef = useRef(null);
   cardsRef.current = cards;
 
@@ -63,7 +76,7 @@ export default ({
   }
   const [{ isDragging }, drag] = useDrag({
     item: newItem,
-    collect: monitor => ({
+    collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
     end: (item, monitor) => {
@@ -84,8 +97,15 @@ export default ({
   return (
     <Tooltip placement="right" title={item.cmdDesc}>
       <div ref={ref} className="dragger-editor-item-statement">
-        {/* {item.text} */}
-        {tabType === 'atomic' ? item.text : item.title.props.title}
+        {tabType === 'atomic' ? (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: filter ? transformText(item, filter, node) : item.text,
+            }}
+          ></span>
+        ) : (
+          item.title.props.title
+        )}
       </div>
     </Tooltip>
   );
