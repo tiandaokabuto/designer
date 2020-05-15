@@ -17,7 +17,7 @@ import './index.scss';
 export default useInjectContext(({ history }) => {
   useEffect(() => {
     window.getSelection().removeAllRanges();
-  });
+  }, []);
   return (
     <DndProvider backend={Backend}>
       {/* <GraphBlockHeader history={history} />

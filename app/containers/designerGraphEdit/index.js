@@ -23,7 +23,7 @@ import './index.scss';
 export default () => {
   useEffect(() => {
     window.getSelection().removeAllRanges();
-  });
+  }, []);
 
   return (
     <>
