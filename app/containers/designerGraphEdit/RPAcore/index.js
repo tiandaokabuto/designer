@@ -18,7 +18,7 @@ import { transformBlockToCode } from '../../designerGraphBlock/RPAcore';
 import { updateEditorBlockPythonCode } from '../../reduxActions';
 import transformVariable from './transformVariable';
 
-const padding = length => '    '.repeat(length);
+const padding = (length) => '    '.repeat(length);
 
 export const transformEditorProcess = (
   graphData,
@@ -42,13 +42,12 @@ export const transformEditorProcess = (
       const funcName = `RPA_${currentId}`; //uniqueId('RPA_');
       result.output =
         `def ${funcName}(${params
-          .filter(item => item.name)
-          .map(item => item.name)
-          .join(',')}):\n${transformBlockToCode(
-          blockData.cards || [],
-          1,
-          blockData
-        ).output || '\n'}` + result.output;
+          .filter((item) => item.name)
+          .map((item) => item.name)
+          .join(',')}):\n${
+          transformBlockToCode(blockData.cards || [], 1, blockData).output ||
+          '\n'
+        }` + result.output;
 
       if (
         !notWhile &&
@@ -61,13 +60,13 @@ export const transformEditorProcess = (
       // 如果跟循环没有关系的话就直接执行当前的代码块
       // 解析当前模块传入的参数和返回的参数
       const return_string = blockData['properties'][2].value
-        .map(item => item.name)
+        .map((item) => item.name)
         .join(',');
       result.output += `${padding(depth)}${
         return_string ? return_string + ' = ' : ''
       }${funcName}(${params
-        .filter(item => item.name)
-        .map(item => item.name + ' = ' + item.value)
+        .filter((item) => item.name)
+        .map((item) => item.name + ' = ' + item.value)
         .join(',')})\n`;
       const next = findTargetIdBySourceId(graphData.edges, currentId);
       next &&
@@ -265,7 +264,7 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
     if (fromOrTo === 'from') {
       const copyGraphData = cloneDeep(graphData);
       const copyEdges = copyGraphData.edges;
-      const newArr = copyEdges.filter(item => {
+      const newArr = copyEdges.filter((item) => {
         if (item.source === beginId) {
           // 如果点的是开始节点的下一个节点不做处理
           return item;
@@ -276,7 +275,7 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
           }
         }
       });
-      const startNode = copyEdges.find(item => item.source === beginId);
+      const startNode = copyEdges.find((item) => item.source === beginId);
       startNode.target = clickId;
       copyGraphData.edges = newArr;
       console.log(copyGraphData);
@@ -291,7 +290,7 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
     } else if (fromOrTo === 'to') {
       const copyGraphData = cloneDeep(graphData);
       const copyEdges = copyGraphData.edges;
-      const newArr = copyEdges.filter(item => {
+      const newArr = copyEdges.filter((item) => {
         return item.source !== clickId;
       });
       copyGraphData.edges = newArr;
@@ -320,7 +319,7 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
     writeFileRecursive(
       `${process.cwd()}/python/temp.py`,
       result.output,
-      function() {
+      function () {
         // console.log('保存成功');
       }
     );
