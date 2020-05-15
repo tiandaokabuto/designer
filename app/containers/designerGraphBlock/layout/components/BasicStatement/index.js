@@ -305,8 +305,10 @@ const BasicStatement = useInjectContext(props => {
                       // 接收到xpath并作出更新
                       if (targetId !== id) return;
                       card.xpathImage = imageData;
+                      card.hasModified = true;
                       setXpathImage(imageData);
                       updateXpath(id, xpath);
+                      handleEmitCodeTransform(cards);
                     }
                   );
                   ipcRenderer.on(
@@ -314,11 +316,7 @@ const BasicStatement = useInjectContext(props => {
                     (e, { x, y, targetId }) => {
                       if (x === undefined || y === undefined) return;
                       const position = `[${x}, ${y}]`;
-                      // 接收到xpath并作出更新
                       if (targetId !== id) return;
-                      // card.xpathImage = value;
-                      /* setXpathImage(imageData);
-                      updateXpath(id, xpath); */
                       card.properties.required[1].value = position;
                       card.properties.required[1].updateId = true;
                       card.hasModified = true;

@@ -12,6 +12,7 @@ export default () => {
     );
     if (!find) return;
     find.value = `"${xpath}"`;
+    find.updateId = true;
     dispatch({
       type: CHANGE_CARDDATA,
       payload: [...cards],
