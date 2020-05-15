@@ -43,13 +43,14 @@ export default param => {
   }
 
   const handleValidate = data => {
-    validator.validate(data, errors => {
+    // 2020.05.15 暂时屏蔽类型检查,tb任务id: lcyb-896
+    /*  validator.validate(data, errors => {
       if (errors) {
         setErr(true);
       } else {
         err && setErr(false);
       }
-    });
+    }); */
   };
   return [err, message, handleValidate];
 };
