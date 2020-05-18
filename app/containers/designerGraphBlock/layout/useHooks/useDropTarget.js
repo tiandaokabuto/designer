@@ -104,7 +104,7 @@ const useDropTarget = ({
         return;
       }
 
-      moveCard(item, props.card);
+      moveCard(item, props.card, hoverClientY < hoverMiddleY);
 
       item.index = hoverIndex;
 

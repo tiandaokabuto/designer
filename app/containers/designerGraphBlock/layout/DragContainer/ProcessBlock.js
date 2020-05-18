@@ -91,7 +91,7 @@ export default memo(({ readOnly = false }) => {
 
   // const [cards, setCards] = useState([]);
   const moveCard = useCallback(
-    (dragItem, hoverItem) => {
+    (dragItem, hoverItem, insertBefore = false) => {
       if (isChildrenNode(dragItem, hoverItem)) {
         // 处理当拖拽的是父子结点的特殊情况
         return;
@@ -198,7 +198,7 @@ export default memo(({ readOnly = false }) => {
         (item) => item.id === dragItem.id
       );
 
-      const insertIndex = hoverNodes.findIndex(
+      let insertIndex = hoverNodes.findIndex(
         (item) => item.id === hoverItem.id
       );
 
@@ -209,7 +209,12 @@ export default memo(({ readOnly = false }) => {
       // 删除和插入操作 先克隆一个副本
       const cloneCards = cloneDeep(cards);
       dragNodes.splice(deleteIndex, 1);
-      hoverNodes.splice(insertIndex, 0, deleteNode);
+      insertIndex = hoverNodes.findIndex((item) => item.id === hoverItem.id);
+      hoverNodes.splice(
+        insertBefore ? insertIndex : insertIndex + 1,
+        0,
+        deleteNode
+      );
       changeCardData(cards);
       // dispatch({
       //   type: CHANGE_CARDDATA,
