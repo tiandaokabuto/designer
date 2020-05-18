@@ -25,7 +25,7 @@ import { isArray } from './utils';
 
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
 
-const paddingStart = length => '    '.repeat(length);
+const paddingStart = (length) => '    '.repeat(length);
 
 const result = {
   output: '',
@@ -199,7 +199,6 @@ const transformBlockToCodeImpl = (
         ) {
           transformCustomCodeStatement(padding, statement, result, moduleMap);
         } else {
-          console.log(moduleMap);
           if (!statement.transformBasicStatement) {
             statement.transformBasicStatement = memoize(
               transformBasicStatement
@@ -277,8 +276,8 @@ const transformModuleImport = (result, moduleMap, depth) => {
 const transformModuleVariable = (result, depth, variable) => {
   if (Array.isArray(variable)) {
     result.output += `${variable
-      .filter(item => item.name && item.value)
-      .map(item => paddingStart(depth) + item.name + ' = ' + item.value)
+      .filter((item) => item.name && item.value)
+      .map((item) => paddingStart(depth) + item.name + ' = ' + item.value)
       .join('\n')}\n`;
   }
 };

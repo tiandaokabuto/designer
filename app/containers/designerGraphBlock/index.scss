@@ -149,24 +149,22 @@
     &::before {
       content: '';
       position: absolute;
-      border: 10px solid transparent;
-      border-left: 10px solid #bd1a1a;
-      height: 0;
-      width: 0;
-      margin-left: -14px;
-      bottom: -14px;
+      height: 2px;
+      z-index: 1;
+      bottom: -5px;
+      width: 100%;
+      background: red;
     }
   }
   .cursor__before {
     &::before {
       content: '';
       position: absolute;
-      border: 10px solid transparent;
-      border-left: 10px solid #bd1a1a;
-      height: 0;
-      width: 0;
-      margin-left: -14px;
-      top: -14px;
+      height: 2px;
+      z-index: 1;
+      top: -5px;
+      width: 100%;
+      background: red;
     }
   }
   .card-mask {

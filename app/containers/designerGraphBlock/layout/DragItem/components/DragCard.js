@@ -95,18 +95,18 @@ export default ({
   });
   drag(ref);
   return (
-    <Tooltip placement="right" title={item.cmdDesc}>
-      <div ref={ref} className="dragger-editor-item-statement">
-        {tabType === 'atomic' ? (
+    <div ref={ref} className="dragger-editor-item-statement">
+      {tabType === 'atomic' ? (
+        <Tooltip placement="right" title={item.cmdDesc}>
           <span
             dangerouslySetInnerHTML={{
               __html: filter ? transformText(item, filter, node) : item.text,
             }}
           ></span>
-        ) : (
-          item.title.props.title
-        )}
-      </div>
-    </Tooltip>
+        </Tooltip>
+      ) : (
+        item.title.props.title
+      )}
+    </div>
   );
 };
