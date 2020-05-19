@@ -7,7 +7,7 @@ import React, {
   Fragment,
   useCallback,
 } from 'react';
-import { Input, Select, Tooltip } from 'antd';
+import { Input, Select, Tooltip, Button, Modal } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
 import event from '../../eventCenter';
@@ -22,7 +22,8 @@ import OutputPanel from './OutputParam';
 import FileParam from './FileParam';
 import DirectoryParam from './DirectoryParam';
 import TaskDataParam from './TaskDataParam';
-import AutoCompleteInputParam from './components/AutoCompleteInputParam';
+import AutoCompletePlusParam from './components/AutoCompletePlusParam';
+import RenderWithPlusInput from './components/RenderWithPlusInput';
 
 const { Option } = Select;
 
@@ -49,7 +50,7 @@ const getComponentType = (
   handleValidate,
   markBlockIsUpdated
 ) => {
-  const xpathKeyRef = useRef('');
+  const [inputValue, setInputValue] = useState(param.value || param.default);
 
   useEffect(() => {
     handleValidate({
@@ -178,7 +179,7 @@ const getComponentType = (
     case COMPONENT_TYPE.INPUT:
       if (param.enName !== 'outPut') {
         return (
-          <AutoCompleteInputParam
+          <AutoCompletePlusParam
             param={param}
             aiHintList={aiHintList}
             appendDataSource={appendDataSource}
@@ -187,24 +188,37 @@ const getComponentType = (
               markBlockIsUpdated();
               handleEmitCodeTransform(cards);
             }}
-            markBlockIsUpdated={markBlockIsUpdated}
             handleValidate={handleValidate}
           />
         );
       }
+
       return (
-        <Input
-          defaultValue={param.value || param.default} // 可以加上 param.default 在参数面板显示默认值
+        <RenderWithPlusInput
+          render={({ onChange, ...props }) => {
+            return (
+              <Input
+                {...props}
+                onChange={e => {
+                  onChange(e.target.value);
+                  setInputValue(e.target.value);
+                }}
+              />
+            );
+          }}
+          modelValue={param.value}
+          value={inputValue}
           key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
-          onChange={e => {
-            param.value = e.target.value;
+          onChange={value => {
+            param.value = value;
+            setInputValue(value);
             markBlockIsUpdated();
             handleEmitCodeTransform(cards);
 
             if (param.listeners) {
               param.listeners.forEach(callback => {
                 if (typeof callback === 'function') {
-                  callback(e.target.value);
+                  callback(value);
                 }
               });
             }
@@ -315,7 +329,11 @@ const LoopSelectContext = React.createContext({
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const { main } = checkedBlock;
+  const isDescUseOriginDate = main === 'loop' || main === 'condition';
   const [flag, setFlag] = useState(false);
+  const [desc, setDesc] = useState(
+    isDescUseOriginDate ? checkedBlock.userDesc : checkedBlock._userDesc
+  );
   // loopSelect：循环类型，循环类型更改的时候需要改变循环条件
   const [loopSelect, setLoopSelect] = useState(
     main === 'loop' && checkedBlock.properties.required[0].value
@@ -345,21 +363,28 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
     window.getSelection().removeAllRanges();
   }, []);
 
-  const isDescUseOriginDate = main === 'loop' || main === 'condition';
-
   return (
     <div className="parampanel">
       {checkedBlock && (
         <div className="parampanel-desc">
           <span>命令描述符</span>
-          <Input
-            defaultValue={
-              isDescUseOriginDate
-                ? checkedBlock.userDesc
-                : checkedBlock._userDesc
-            }
-            onChange={e => {
-              checkedBlock.userDesc = e.target.value;
+          <RenderWithPlusInput
+            render={({ onChange, ...props }) => {
+              return (
+                <Input
+                  {...props}
+                  onChange={e => {
+                    onChange(e.target.value);
+                    setDesc(e.target.value);
+                  }}
+                />
+              );
+            }}
+            modelValue={desc}
+            value={desc}
+            onChange={value => {
+              checkedBlock.userDesc = value;
+              setDesc(value);
               handleEmitCodeTransform(cards);
             }}
             onKeyDown={e => stopDeleteKeyDown(e)}

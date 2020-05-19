@@ -1,6 +1,6 @@
 import React from 'react';
 
-import AutoCompleteInputParam from './AutoCompleteInputParam';
+import AutoCompletePlusParam from './AutoCompletePlusParam';
 
 export default ({
   param,
@@ -17,7 +17,7 @@ export default ({
         {param.cnName}
       </span>
       <div style={{ flex: 1, overflow: 'hidden' }}>
-        <AutoCompleteInputParam
+        <AutoCompletePlusParam
           param={param}
           aiHintList={aiHintList}
           appendDataSource={appendDataSource}
