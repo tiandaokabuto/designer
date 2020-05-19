@@ -8,6 +8,7 @@ import BasicInputComponent from './components/BasicInputComponent';
 import ImageComponent from './components/ImageComponent';
 import BasicButton from './components/BasicButton';
 import FileUpload from './components/FileUpload';
+import DropDown from './components/DropDown';
 
 import { isLocked } from '../WidgetPanel';
 
@@ -35,6 +36,8 @@ export default ({
         return <BasicButton desc={desc} i={gridItem.i} />;
       case 'file-upload':
         return <FileUpload desc={desc} i={gridItem.i} />;
+      case 'drop-down':
+        return <DropDown desc={desc} i={gridItem.i} />;
       default:
         return 'other';
     }

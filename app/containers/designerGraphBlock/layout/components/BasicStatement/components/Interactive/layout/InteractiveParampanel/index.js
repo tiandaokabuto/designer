@@ -10,6 +10,7 @@ const NAME_MAP = {
   value: '显示值',
   password: '密码类型',
   validRule: '校验规则',
+  dataSource: '数据源',
 };
 
 export default memo(
@@ -52,6 +53,22 @@ export default memo(
             >
               <Option value="true">是</Option>
               <Option value="false">否</Option>
+            </Select>
+          );
+        case 'dataSource':
+          return (
+            <Select
+              value={desc[item]}
+              onChange={value => {
+                // desc[item] = value;
+                handleLabelChange();
+              }}
+              style={{
+                flex: 1,
+                marginLeft: 12,
+              }}
+            >
+              <Option value="">暂无相关数据</Option>
             </Select>
           );
         default:
