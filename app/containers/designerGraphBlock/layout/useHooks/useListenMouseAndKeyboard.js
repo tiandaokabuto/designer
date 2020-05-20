@@ -262,7 +262,7 @@ export default () => {
 
     // 支持删除
     const handleKeyDown = (e) => {
-      if (e.keyCode === 8 || e.keyCode === 46) {
+      if (e.keyCode === 46) {
         const selected = window.getSelection().toString();
         if (selected) {
           updateClipBoardData({
