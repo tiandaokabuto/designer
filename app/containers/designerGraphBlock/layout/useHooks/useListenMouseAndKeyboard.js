@@ -264,7 +264,6 @@ export default () => {
     const handleKeyDown = (e) => {
       if (e.keyCode === 8 || e.keyCode === 46) {
         const selected = window.getSelection().toString();
-        console.log(selected, typeof selected, '---');
         if (selected) {
           updateClipBoardData({
             dep: [],
@@ -273,7 +272,7 @@ export default () => {
           return;
         }
         if (checkedId.length) {
-          // deleteCheckedNode(cards, checkedId);
+          deleteCheckedNode(cards, checkedId);
           message.success('删除成功');
         }
       }
