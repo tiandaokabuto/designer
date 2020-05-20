@@ -12,7 +12,7 @@ const getMutiplyValue = (item, type) => {
   if (tempOutput) {
     const variableList = tempOutput.split(',');
     item.paramType.forEach((group, index) => {
-      if (group.find(el => el === type)) {
+      if (group.find((el) => el === type)) {
         result.push(variableList[index]);
       }
     });
@@ -21,7 +21,7 @@ const getMutiplyValue = (item, type) => {
   return [];
 };
 
-const getVariableList = item => {
+const getVariableList = (item) => {
   const tempOutput =
     typeof item === 'string'
       ? item.replace(/\(|\)/g, '')
@@ -32,9 +32,10 @@ const getVariableList = item => {
   return [];
 };
 
-const stopDeleteKeyDown = e => {
+const stopDeleteKeyDown = (e) => {
   if (e.keyCode === 46) {
     e.nativeEvent.stopImmediatePropagation();
+    e.stopPropagation();
   }
 };
 
@@ -64,7 +65,7 @@ const AutoCompleteInputParam = React.forwardRef(
             ? [
                 ...new Set(
                   aiHintList[next]
-                    .map(item =>
+                    .map((item) =>
                       item.isVariable
                         ? item.name
                         : item.isMutiply
@@ -92,11 +93,11 @@ const AutoCompleteInputParam = React.forwardRef(
         paramType.length === 1 &&
         paramType[0] === 'Number');
 
-    const handleWatchChange = value => {
+    const handleWatchChange = (value) => {
       param.value = value;
       if (onChange) onChange(value);
     };
-    const handleMutiply = value => {
+    const handleMutiply = (value) => {
       const newValue = getVariableList(value)[param.mutiplyIndex];
       param.value = newValue;
       if (onChange) onChange(newValue);
@@ -131,8 +132,8 @@ const AutoCompleteInputParam = React.forwardRef(
         ref={ref}
         defaultValue={String(param.value || param.default)}
         dataSource={(dataSource || []).concat(appendDataSource)}
-        onSelect={value => {
-          const dep = depList.find(item => {
+        onSelect={(value) => {
+          const dep = depList.find((item) => {
             if (item.isVariable) {
               return item.name === value;
             }
@@ -140,7 +141,7 @@ const AutoCompleteInputParam = React.forwardRef(
               return item.value
                 .replace(/\)|\(/g, '')
                 .split(',')
-                .find(child => child === value);
+                .find((child) => child === value);
             }
             return item.value === value;
           });
@@ -156,15 +157,15 @@ const AutoCompleteInputParam = React.forwardRef(
             }
             const variableList = getVariableList(dep);
             param.watchDep = dep;
-            param.mutiplyIndex = variableList.findIndex(el => el === value);
+            param.mutiplyIndex = variableList.findIndex((el) => el === value);
             param.handleWatchChange = handleChange;
           }
         }}
-        onChange={value => {
+        onChange={(value) => {
           if (param.watchDep) {
             if (param.watchDep.listeners) {
               param.watchDep.listeners = param.watchDep.listeners.filter(
-                item => item !== param.handleWatchChange
+                (item) => item !== param.handleWatchChange
               );
             }
           }
@@ -183,7 +184,7 @@ const AutoCompleteInputParam = React.forwardRef(
           <TextArea
             className="custom"
             style={{ height: 32 }}
-            onKeyDown={e => stopDeleteKeyDown(e)}
+            onKeyDown={(e) => stopDeleteKeyDown(e)}
           />
         ) : null}
       </AutoComplete>

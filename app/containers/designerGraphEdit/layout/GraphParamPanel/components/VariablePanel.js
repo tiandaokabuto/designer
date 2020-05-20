@@ -37,6 +37,7 @@ export default ({
   const stopDeleteKeyDown = (e) => {
     if (e.keyCode === 46) {
       e.nativeEvent.stopImmediatePropagation();
+      e.stopPropagation();
     }
   };
 
