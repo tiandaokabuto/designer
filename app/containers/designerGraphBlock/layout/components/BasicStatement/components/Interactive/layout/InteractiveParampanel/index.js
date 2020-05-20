@@ -55,22 +55,6 @@ export default memo(
               <Option value="false">否</Option>
             </Select>
           );
-        case 'dataSource':
-          return (
-            <Select
-              value={desc[item]}
-              onChange={value => {
-                // desc[item] = value;
-                handleLabelChange();
-              }}
-              style={{
-                flex: 1,
-                marginLeft: 12,
-              }}
-            >
-              <Option value="">暂无相关数据</Option>
-            </Select>
-          );
         default:
           return (
             <Input
