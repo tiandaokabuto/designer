@@ -96,6 +96,17 @@ export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
               key: '赋值的变量名',
             }}
           />
+          <InteractiveControl
+            onAddControl={onAddControl}
+            item={{
+              label: '下拉单选框',
+              type: 'drop-down',
+              desc: '提示信息，说明',
+              value: '显示值',
+              key: '赋值的变量名',
+              dataSource: '数据源',
+            }}
+          />
         </Panel>
       </Collapse>
     </div>

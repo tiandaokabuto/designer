@@ -52,7 +52,7 @@ const process = require('process');
 
 const { exec } = require('child_process');
 
-const BasicStatement = useInjectContext((props) => {
+const BasicStatement = useInjectContext(props => {
   const {
     id,
     card,
@@ -73,7 +73,7 @@ const BasicStatement = useInjectContext((props) => {
 
   const dispatch = useDispatch();
 
-  const cards = useSelector((state) => state.blockcode.cards);
+  const cards = useSelector(state => state.blockcode.cards);
 
   const hasLookTarget = useHasLookTarget(card);
 
@@ -140,7 +140,7 @@ const BasicStatement = useInjectContext((props) => {
   // 展示图片遮罩层
   const [showImgContain, setShowImgContain] = useState(false);
 
-  const generateEditOperation = (card) => {
+  const generateEditOperation = card => {
     switch (card.cmdName) {
       case '人机交互':
         return (
@@ -170,13 +170,17 @@ const BasicStatement = useInjectContext((props) => {
     }
   };
 
-  const saveLayoutChange = (layout) => {
+  const saveLayoutChange = layout => {
     if (!layout) return;
+    // console.log(card);
     Object.assign(card.layout, layout);
+    console.log(layout);
+    console.log(cards);
+    // card.properties.required[1].updateId = true;
     handleEmitCodeTransform(cards);
   };
 
-  const handleEnlageImg = (e) => {
+  const handleEnlageImg = e => {
     setShowImgContain(true);
     e.stopPropagation();
   };
@@ -211,17 +215,17 @@ const BasicStatement = useInjectContext((props) => {
             <div
               className="card-content-visible"
               key={uniqueId('visible_')}
-              onClick={(e) => {
+              onClick={e => {
                 if (readOnly) return;
                 const anchor = e.target.dataset.anchor;
                 if (anchor) changeToEditableTemplate(anchor);
                 // 触发变量的修改
               }}
-              onDragStart={(e) => {
+              onDragStart={e => {
                 e.preventDefault();
               }}
               onBlur={save}
-              onKeyDown={(e) => {
+              onKeyDown={e => {
                 if (e.keyCode === 13) {
                   save(e);
                 }

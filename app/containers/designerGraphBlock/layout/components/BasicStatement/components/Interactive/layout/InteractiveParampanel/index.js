@@ -10,6 +10,7 @@ const NAME_MAP = {
   value: '显示值',
   password: '密码类型',
   validRule: '校验规则',
+  dataSource: '数据源',
 };
 
 export default memo(
