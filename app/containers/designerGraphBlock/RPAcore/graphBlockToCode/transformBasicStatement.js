@@ -127,6 +127,7 @@ const transformBasicStatement = (
         case 'layout':
           if (params) params += ', ';
           params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
+          console.log();
           break;
         default:
           if (params) params += ', ';

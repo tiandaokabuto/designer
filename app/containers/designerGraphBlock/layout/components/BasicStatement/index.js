@@ -174,6 +174,8 @@ const BasicStatement = useInjectContext(props => {
     if (!layout) return;
     // console.log(card);
     Object.assign(card.layout, layout);
+    console.log(layout);
+    console.log(cards);
     // card.properties.required[1].updateId = true;
     handleEmitCodeTransform(cards);
   };
