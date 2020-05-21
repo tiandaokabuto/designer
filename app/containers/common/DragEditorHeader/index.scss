@@ -11,7 +11,8 @@
     user-select: none;
     cursor: pointer;
 
-    .anticon {
+    .anticon,
+    img {
       margin-right: 7px;
     }
   }
@@ -30,11 +31,10 @@
 }
 
 .versionInput {
-
   .errorFomat,
   .errorFomat:focus {
     border-color: red;
-    box-shadow: none
+    box-shadow: none;
   }
 
   .versionTip {

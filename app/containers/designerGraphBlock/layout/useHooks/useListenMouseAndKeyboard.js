@@ -48,17 +48,18 @@ const traverseAllCards = (cards, callback) => {
   }
 };
 
-const extractTraverse = async (cards, callback) => {
+const extractTraverse = async (cards, callback, parent = cards) => {
   for (const child of cards) {
     if (child.children) {
-      const isExact = await callback(child);
-      !isExact && extractTraverse(child.children, callback);
+      const isExact = await callback(child, parent);
+      !isExact && extractTraverse(child.children, callback, child.children);
     } else if (child.ifChildren) {
-      const isExact = await callback(child);
-      !isExact && extractTraverse(child.ifChildren, callback);
-      !isExact && extractTraverse(child.elseChildren, callback);
+      const isExact = await callback(child, parent);
+      !isExact && extractTraverse(child.ifChildren, callback, child.ifChildren);
+      !isExact &&
+        extractTraverse(child.elseChildren, callback, child.elseChildren);
     } else {
-      callback && callback(child);
+      callback && callback(child, parent);
     }
   }
 };
@@ -73,6 +74,24 @@ const extractCheckedData = (cards, checkedId) => {
     return false;
   });
   return result;
+};
+
+const deleteCheckedNode = (cards, checkedId) => {
+  // 标记 清除
+  const markList = [];
+  extractTraverse(cards, (node, parent) => {
+    if (checkedId.includes(node.id)) {
+      markList.push({
+        parent,
+        id: node.id,
+      });
+    }
+  });
+  markList.forEach(({ parent, id }) => {
+    const index = parent.findIndex((item) => item.id === id);
+    parent.splice(index, 1);
+  });
+  updateCardData([...cards]);
 };
 
 const getOrderedNodeList = (cards) => {
@@ -216,8 +235,52 @@ export default () => {
         message.info('当前不能执行粘贴操作');
       }
     });
+    // 支持批量剪切的操作
+    electronLocalshortcut.register(win, 'Ctrl+X', () => {
+      setTimeout(() => {
+        const selected = window.getSelection().toString();
+        if (selected) {
+          updateClipBoardData({
+            dep: [],
+            content: undefined,
+          });
+          return;
+        }
+        if (checkedId.length) {
+          // 生成待保存的数据结构
+          updateClipBoardData({
+            dep: checkedId,
+            content: extractCheckedData(cards, checkedId),
+          });
+          clipboard.writeText('copy-cardData', 'selection');
+          // 删除选中的元素
+          deleteCheckedNode(cards, checkedId);
+          message.success('剪切成功');
+        }
+      }, 0);
+    });
+
+    // 支持删除
+    const handleKeyDown = (e) => {
+      if (e.keyCode === 46) {
+        const selected = window.getSelection().toString();
+        if (selected) {
+          updateClipBoardData({
+            dep: [],
+            content: undefined,
+          });
+          return;
+        }
+        if (checkedId.length) {
+          deleteCheckedNode(cards, checkedId);
+          message.success('删除成功');
+        }
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      document.removeEventListener('keydown', handleKeyDown);
       electronLocalshortcut.unregisterAll(win);
     };
   }, [checkedId, cards, clipboardData]);

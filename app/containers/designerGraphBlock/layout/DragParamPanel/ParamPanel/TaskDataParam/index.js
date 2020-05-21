@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Table, Form, Input, Icon, message } from 'antd';
 import axios from 'axios';
 
-import AutoCompleteInputParam from '../components/AutoCompleteInputParam';
+import AutoCompletePlusParam from '../components/AutoCompletePlusParam';
 import api from '../../../../../../api';
 
 import './index.scss';
@@ -314,7 +314,7 @@ export default function TaskDataName({
           {param.cnName}
         </span>
         <div style={{ flex: 1, overflow: 'hidden' }}>
-          <AutoCompleteInputParam
+          <AutoCompletePlusParam
             param={param}
             aiHintList={aiHintList}
             appendDataSource={appendDataSource}

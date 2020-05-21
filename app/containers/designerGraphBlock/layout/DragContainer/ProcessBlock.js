@@ -327,6 +327,7 @@ export default memo(({ readOnly = false }) => {
 
     // 生成智能匹配的变量Map
     changeAIHintList(cards);
+    //
   }, [cards]);
   return (
     <InjectProvider

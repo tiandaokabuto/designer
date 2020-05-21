@@ -40,6 +40,8 @@ import {
 } from '../../reduxActions';
 import api from '../../../api';
 import PATH_CONFIG from '@/constants/localFilePath.js';
+import RedoPNG from '@/containers/images/redo.png';
+import UndoPNG from '@/containers/images/undo.png';
 
 import NewProcess from './NewProcess';
 
@@ -263,14 +265,16 @@ export default memo(
           },
         },
         {
-          description: '上一步',
-          type: 'undo',
+          description: '撤销',
+          iconImg: true,
+          type: UndoPNG,
           disabled: true,
           onClick: () => {},
         },
         {
-          description: '下一步',
-          type: 'sync',
+          description: '恢复',
+          iconImg: true,
+          type: RedoPNG,
           disabled: true,
           onClick: () => {},
         },
@@ -350,15 +354,17 @@ export default memo(
           },
         },
         {
-          description: '上一步',
-          type: 'undo',
+          description: '撤销',
+          iconImg: true,
+          type: UndoPNG,
           onClick: () => {
             event.emit('undo');
           },
         },
         {
-          description: '下一步',
-          type: 'sync',
+          description: '恢复',
+          iconImg: true,
+          type: RedoPNG,
           onClick: () => {
             event.emit('redo');
           },
@@ -457,6 +463,16 @@ export default memo(
       }
     }, [isRunCode, history.location.pathname]);
 
+    const renderIcon = tool => {
+      if (tool.IconFont) {
+        return <IconFont type={tool.type} />;
+      } else if (tool.iconImg) {
+        return <img src={tool.type} alt={tool.description} />;
+      } else {
+        return <Icon type={tool.type} rotate={tool.rotate ? tool.rotate : 0} />;
+      }
+    };
+
     return (
       <div className="drageditor-header">
         {tools.map((tool, index) =>
@@ -470,11 +486,7 @@ export default memo(
                 tool.disabled ? 'drageditor-header-operation__disabled' : ''
               }`}
             >
-              {tool.IconFont ? (
-                <IconFont type={tool.type} />
-              ) : (
-                <Icon type={tool.type} rotate={tool.rotate ? tool.rotate : 0} />
-              )}
+              {renderIcon(tool)}
               {tool.description}
             </span>
           )
