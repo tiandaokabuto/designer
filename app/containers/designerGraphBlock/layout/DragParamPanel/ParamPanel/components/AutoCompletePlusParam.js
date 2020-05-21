@@ -42,14 +42,16 @@ const AutoCompletePlusParam = ({
           handleEmitCodeTransform={handleEmitCodeTransform}
           onChange={value => {
             if (onChange) onChange(value);
-            setValue(value);
           }}
           handleValidate={handleValidate}
           isSelectEncty={isSelectEncty}
         />
       </div>
       <Button
-        onClick={() => setVisible(true)}
+        onClick={() => {
+          setValue(String(param.value || param.default));
+          setVisible(true);
+        }}
         disabled={isSelectEncty === 'True'}
       >
         ...
@@ -59,6 +61,7 @@ const AutoCompletePlusParam = ({
         visible={visible}
         onOk={() => handleOk(param)}
         onCancel={handleCancel}
+        width="650px"
       >
         <TextArea
           rows={17}

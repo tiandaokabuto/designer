@@ -5,19 +5,19 @@ import PropTypes from 'prop-types';
 import AutoCompleteInputParam from './AutoCompleteInputParam';
 import { useEffect } from 'react';
 
-const RenderWithPlusInput = ({ render, modelValue, onChange, ...props }) => {
+const RenderWithPlusInput = ({ render, value, onChange, ...props }) => {
   const inputEl = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [value, setValue] = useState(modelValue);
+  const [textAreaValue, setTextAreaValue] = useState(value);
   const { TextArea } = Input;
 
   useEffect(() => {
-    setValue(modelValue);
-  }, [modelValue]);
+    setTextAreaValue(value);
+  }, [value]);
 
   const handleOk = () => {
     setVisible(false);
-    onChange(value);
+    onChange(textAreaValue);
     // param.updateId = true;
   };
 
@@ -28,7 +28,7 @@ const RenderWithPlusInput = ({ render, modelValue, onChange, ...props }) => {
   return (
     <div className="parampanel-item">
       <div className="parampanel-item-adapt">
-        {render({ onChange, ...props })}
+        {render({ onChange, value, ...props })}
       </div>
       <Button onClick={() => setVisible(true)}>...</Button>
       <Modal
@@ -36,12 +36,13 @@ const RenderWithPlusInput = ({ render, modelValue, onChange, ...props }) => {
         visible={visible}
         onOk={() => handleOk()}
         onCancel={handleCancel}
+        width="650px"
       >
         <TextArea
-          rows={4}
-          value={value}
+          rows={17}
+          value={textAreaValue}
           onChange={e => {
-            setValue(e.target.value);
+            setTextAreaValue(e.target.value);
           }}
         />
       </Modal>
