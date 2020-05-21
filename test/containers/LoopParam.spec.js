@@ -3,28 +3,9 @@ import Enzyme, { mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
 import LoopPanelParam from '../../app/containers/designerGraphBlock/layout/DragParamPanel/ParamPanel/LoopPanelParam';
-import MockedParam from '../../app/containers/designerGraphBlock/layout/DragParamPanel/ParamPanel/components/AutoCompleteInputParam';
 
 Enzyme.configure({ adapter: new Adapter() });
 const setFlag = jest.fn(() => {});
-
-jest.mock(
-  '../../app/containers/designerGraphBlock/layout/DragParamPanel/ParamPanel/components/AutoCompleteInputParam',
-  () => {
-    return function DummyParam({ param, aiHintList }) {
-      const { paramType } = param;
-      return (
-        <ul data-testid="param">
-          {aiHintList && aiHintList[paramType]
-            ? aiHintList[paramType].map(item => {
-                return <li>{item.value}</li>;
-              })
-            : null}
-        </ul>
-      );
-    };
-  }
-);
 
 const for_list = [
   {
@@ -125,26 +106,6 @@ describe('循环组件', () => {
       param: { for_times },
     });
     expect(wrapper.find('div.param-item')).toHaveLength(4);
-    wrapper.unmount();
-  });
-
-  it('循环input框中的String推荐变量数是否正确', () => {
-    const wrapper = mount(
-      <LoopPanelParam param={{ for_list }} aiHintList={aiHintList} />
-    );
-    expect(wrapper.find("[data-testid='param']").children()).toHaveLength(3);
-    wrapper.setProps({
-      loopSelect: 'for_dict',
-      param: { for_dict },
-      aiHintList,
-    });
-    expect(wrapper.find("[data-testid='param']").children()).toHaveLength(5);
-    wrapper.setProps({
-      loopSelect: 'for_times',
-      param: { for_times },
-      aiHintList,
-    });
-    expect(wrapper.find("[data-testid='param']").children()).toHaveLength(8);
     wrapper.unmount();
   });
 });
