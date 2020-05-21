@@ -12,7 +12,7 @@ export default ({
   handleValidate,
 }) => {
   return (
-    <div className="parampanel-item">
+    <div className="parampanel-item param-item">
       <span className="param-title" title={param.desc}>
         {param.cnName}
       </span>
