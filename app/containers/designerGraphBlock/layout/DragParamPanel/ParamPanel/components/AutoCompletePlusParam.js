@@ -3,6 +3,7 @@ import { Input, Button, Modal } from 'antd';
 import PropTypes from 'prop-types';
 
 import AutoCompleteInputParam from './AutoCompleteInputParam';
+import { encrypt } from '../../../../../../login/utils';
 
 const AutoCompletePlusParam = ({
   param,
@@ -12,10 +13,11 @@ const AutoCompletePlusParam = ({
   handleEmitCodeTransform,
   handleValidate,
   onChange,
+  isSelectEncty,
 }) => {
   const inputEl = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [value, setValue] = useState(param.value || param.default);
+  const [value, setValue] = useState(String(param.value || param.default));
   const { TextArea } = Input;
 
   const handleOk = param => {
@@ -43,9 +45,15 @@ const AutoCompletePlusParam = ({
             setValue(value);
           }}
           handleValidate={handleValidate}
+          isSelectEncty={isSelectEncty}
         />
       </div>
-      <Button onClick={() => setVisible(true)}>...</Button>
+      <Button
+        onClick={() => setVisible(true)}
+        disabled={isSelectEncty === 'True'}
+      >
+        ...
+      </Button>
       <Modal
         title="请输入内容"
         visible={visible}
@@ -53,7 +61,7 @@ const AutoCompletePlusParam = ({
         onCancel={handleCancel}
       >
         <TextArea
-          rows={4}
+          rows={17}
           value={value}
           onChange={e => {
             setValue(e.target.value);
@@ -72,11 +80,14 @@ AutoCompletePlusParam.propTypes = {
   handleEmitCodeTransform: PropTypes.func.isRequired,
   handleValidate: PropTypes.func.isRequired,
   onChange: PropTypes.func,
+  isSelectEncty: PropTypes.string,
 };
 
 AutoCompletePlusParam.defaultProps = {
   aiHintList: {},
+  appendDataSource: [],
   onChange: () => {},
+  isSelectEncty: 'False',
 };
 
 export default AutoCompletePlusParam;
