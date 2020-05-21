@@ -114,17 +114,17 @@ describe('循环组件', () => {
     const wrapper = mount(
       <LoopPanelParam param={{ for_list }} keyFlag={false} setFlag={setFlag} />
     );
-    expect(wrapper.find('div.parampanel-item')).toHaveLength(2);
+    expect(wrapper.find('div.param-item')).toHaveLength(2);
     wrapper.setProps({
       loopSelect: 'for_dict',
       param: { for_dict },
     });
-    expect(wrapper.find('div.parampanel-item')).toHaveLength(3);
+    expect(wrapper.find('div.param-item')).toHaveLength(3);
     wrapper.setProps({
       loopSelect: 'for_times',
       param: { for_times },
     });
-    expect(wrapper.find('div.parampanel-item')).toHaveLength(4);
+    expect(wrapper.find('div.param-item')).toHaveLength(4);
     wrapper.unmount();
   });
 
