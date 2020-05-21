@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import uniqueId from 'lodash/uniqueId';
 import { useMemo } from 'react';
 
+import { encrypt } from '../../../../../../login/utils';
+
 const { TextArea } = Input;
 
 const getMutiplyValue = (item, type) => {
@@ -49,6 +51,7 @@ const AutoCompleteInputParam = React.forwardRef(
       handleEmitCodeTransform,
       handleValidate,
       onChange,
+      isSelectEncty,
     },
     ref
   ) => {
@@ -93,13 +96,25 @@ const AutoCompleteInputParam = React.forwardRef(
         paramType.length === 1 &&
         paramType[0] === 'Number');
 
-    const handleWatchChange = (value) => {
-      param.value = value;
-      if (onChange) onChange(value);
-    };
-    const handleMutiply = (value) => {
-      const newValue = getVariableList(value)[param.mutiplyIndex];
+    const handleWatchChange = value => {
+      // 如果需要加密，在进行变量更新时，对内容进行加密
+      let newValue = value;
+      if (isSelectEncty) {
+        newValue = encrypt.argEncryptByDES(value);
+      }
       param.value = newValue;
+      // 更改后，编译py代码
+      handleEmitCodeTransform();
+      if (onChange) onChange(newValue);
+    };
+    const handleMutiply = value => {
+      let newValue = getVariableList(value)[param.mutiplyIndex];
+      // 如果需要加密，在进行变量更新时，对内容进行加密
+      if (isSelectEncty) {
+        newValue = encrypt.argEncryptByDES(newValue);
+      }
+      // 更改后，编译py代码
+      handleEmitCodeTransform();
       if (onChange) onChange(newValue);
     };
 
@@ -126,11 +141,35 @@ const AutoCompleteInputParam = React.forwardRef(
       return '';
     }, [keyFlag, param.enName, param.updateId]);
 
+    const renderChild = () => {
+      if (param.enName === '_text' && isSelectEncty === 'True') {
+        return <Input.Password visibilityToggle={false} />;
+      } else if (!needTextArea) {
+        return (
+          <TextArea
+            className="custom"
+            style={{ height: 32 }}
+            onKeyDown={e => stopDeleteKeyDown(e)}
+          />
+        );
+      }
+      return null;
+    };
+
+    // 对密文进行解密
+    const defaultValue = () => {
+      const value = String(param.value || param.default);
+      if (param.enName === '_text' && isSelectEncty === 'True') {
+        return encrypt.argDecryptByDES(value);
+      }
+      return value;
+    };
+
     return (
       <AutoComplete
         key={id}
         ref={ref}
-        defaultValue={String(param.value || param.default)}
+        defaultValue={defaultValue()}
         dataSource={(dataSource || []).concat(appendDataSource)}
         onSelect={(value) => {
           const dep = depList.find((item) => {
@@ -169,17 +208,22 @@ const AutoCompleteInputParam = React.forwardRef(
               );
             }
           }
-          param.value = value;
+          let newValue = value;
+          if (param.enName === '_text' && isSelectEncty === 'True' && value) {
+            newValue = encrypt.argEncryptByDES(value);
+          }
+          param.value = newValue;
           handleEmitCodeTransform();
           // 验证
           handleValidate({
             value,
           });
-          if (onChange) onChange(value);
+          if (onChange) onChange(newValue);
         }}
         // 不对DataSource进行查询，详情咨询吴炯
         filterOption={() => true}
       >
+<<<<<<< HEAD
         {!needTextArea ? (
           <TextArea
             className="custom"
@@ -187,6 +231,9 @@ const AutoCompleteInputParam = React.forwardRef(
             onKeyDown={(e) => stopDeleteKeyDown(e)}
           />
         ) : null}
+=======
+        {renderChild()}
+>>>>>>> liyuting
       </AutoComplete>
     );
   }
@@ -200,10 +247,13 @@ AutoCompleteInputParam.propTypes = {
   handleEmitCodeTransform: PropTypes.func.isRequired,
   handleValidate: PropTypes.func.isRequired,
   onChange: PropTypes.func,
+  isSelectEncty: PropTypes.string,
 };
 
-AutoComplete.defaultProps = {
+AutoCompleteInputParam.defaultProps = {
   aiHintList: {},
+  onChange: () => {},
+  isSelectEncty: 'Flase',
 };
 
 export default AutoCompleteInputParam;
