@@ -1,8 +1,12 @@
 import { useCallback, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import cloneDeep from 'lodash/cloneDeep';
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 import { transformBlockToCode } from '../../RPAcore';
-import { CHANGE_PYTHONCODE } from '../../../../actions/codeblock';
+import {
+  CHANGE_PYTHONCODE,
+  CHANGE_PENDING_QUEUE,
+} from '../../../../actions/codeblock';
 import { changeModifyState } from '../../../common/utils';
 
 let transformCount = 0;
@@ -38,6 +42,10 @@ export default () => {
   const handleEmitCodeTransform = useCallback(
     useDebounce((cards) => {
       console.log('变化了 cards');
+      dispatch({
+        type: CHANGE_PENDING_QUEUE,
+        payload: [cloneDeep(cards)],
+      });
       const result = transformBlockToCode(cards, 0, blockNodeRef.current);
       if (transformCount && currentPagePositionRef.current === 'block') {
         changeModifyState(processTreeRef.current, currentCheckedTreeNode, true);
