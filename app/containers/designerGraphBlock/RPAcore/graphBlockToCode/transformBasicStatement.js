@@ -93,6 +93,10 @@ const transformBasicStatement = (
           : `${item.valueList[0].value} + ${item.valueList[1].value}`
       }`;
     } else {
+      let isEncypt = false;
+      if (item.enName === '_text') {
+        isEncypt = dataStructure.properties.required[4].value === 'True';
+      }
       switch (item.enName) {
         case 'outPut':
           item.value && handleStatementOutput(item.value, '', result);
@@ -128,6 +132,17 @@ const transformBasicStatement = (
           if (params) params += ', ';
           params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
           console.log();
+          break;
+        case '_text':
+          if (params) params += ', ';
+          params += `${item.enName} = `;
+          if (item.default === undefined && item.value === undefined) {
+            params += 'None';
+          } else if (!item.value) {
+            params += item.default;
+          } else {
+            params += isEncypt ? `'${item.value}'` : item.value;
+          }
           break;
         default:
           if (params) params += ', ';
