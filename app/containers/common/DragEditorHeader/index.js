@@ -18,7 +18,11 @@ import event, {
   STOP_RUNNING,
   START_POINT,
 } from '../../designerGraphBlock/layout/eventCenter';
-import { UNDO_CARDSDATA, REDO_CARDSDATA } from '../../../actions/codeblock';
+import {
+  UNDO_CARDSDATA,
+  REDO_CARDSDATA,
+  RESET_PENDING_QUEUE,
+} from '../../../actions/codeblock';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
 import IconFont from '../IconFont/index';
@@ -269,6 +273,9 @@ export default memo(
             event.emit('toggle');
             updateCurrentPagePosition('editor');
             changeBlockTreeTab('atomic');
+            dispatch({
+              type: RESET_PENDING_QUEUE,
+            });
             history.goBack();
           },
         },

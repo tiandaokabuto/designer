@@ -14,6 +14,7 @@ import {
   CHANGE_CLIPBOARDDATA,
   CHANGE_PENDING_QUEUE,
   UNDO_CARDSDATA,
+  RESET_PENDING_QUEUE,
   REDO_CARDSDATA,
 } from '../actions/codeblock';
 
@@ -38,6 +39,12 @@ let locked = false;
 export default (state = defaultState, action) => {
   let { pendingCursor, cardsPendingQueue } = state;
   switch (action.type) {
+    case RESET_PENDING_QUEUE:
+      return {
+        ...state,
+        pendingCursor: -1,
+        cardsPendingQueue: [],
+      };
     case CHANGE_PENDING_QUEUE:
       if (locked) {
         locked = false;

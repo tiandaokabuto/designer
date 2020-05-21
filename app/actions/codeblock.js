@@ -9,3 +9,4 @@ export const CHANGE_CLIPBOARDDATA = 'change_clipboard';
 export const CHANGE_PENDING_QUEUE = 'change_pending_queue';
 export const UNDO_CARDSDATA = 'undo_cardsData';
 export const REDO_CARDSDATA = 'redo_cardsData';
+export const RESET_PENDING_QUEUE = 'reset_pending_queue';
