@@ -1,6 +1,7 @@
 /**
  * 代码块流程数据
  */
+import cloneDeep from 'lodash/cloneDeep';
 
 import {
   CHANGE_CARDDATA,
@@ -11,9 +12,15 @@ import {
   CHANGE_AIHINTLIST,
   CHANGE_BLOCK_TREE_TAB,
   CHANGE_CLIPBOARDDATA,
+  CHANGE_PENDING_QUEUE,
+  UNDO_CARDSDATA,
+  RESET_PENDING_QUEUE,
+  REDO_CARDSDATA,
 } from '../actions/codeblock';
 
 import { synchroGraphDataMap } from '../containers/reduxActions';
+
+const MAX_QUEUE_LENGTH = 20;
 
 const defaultState = {
   cards: [],
@@ -23,10 +30,60 @@ const defaultState = {
   aiHintList: {},
   blockTreeTab: 'atomic', // actomic module
   clipboardData: {},
+  cardsPendingQueue: [],
+  pendingCursor: -1,
 };
 
+let locked = false;
+
 export default (state = defaultState, action) => {
+  let { pendingCursor, cardsPendingQueue } = state;
   switch (action.type) {
+    case RESET_PENDING_QUEUE:
+      return {
+        ...state,
+        pendingCursor: -1,
+        cardsPendingQueue: [],
+      };
+    case CHANGE_PENDING_QUEUE:
+      if (locked) {
+        locked = false;
+        return state;
+      }
+
+      const diff = cardsPendingQueue.length - MAX_QUEUE_LENGTH;
+      if (diff >= 0) {
+        cardsPendingQueue.shift();
+        pendingCursor--;
+      }
+      if (pendingCursor < cardsPendingQueue.length - 1) {
+        cardsPendingQueue = cardsPendingQueue.slice(0, pendingCursor + 1);
+      }
+      return {
+        ...state,
+        pendingCursor: pendingCursor + 1,
+        cardsPendingQueue: cardsPendingQueue.concat(action.payload),
+      };
+    case UNDO_CARDSDATA:
+      if (pendingCursor > 0) {
+        locked = true;
+        return {
+          ...state,
+          cards: cloneDeep(cardsPendingQueue[pendingCursor - 1]),
+          pendingCursor: pendingCursor - 1,
+        };
+      }
+      return state;
+    case REDO_CARDSDATA:
+      if (pendingCursor < cardsPendingQueue.length - 1) {
+        locked = true;
+        return {
+          ...state,
+          cards: cloneDeep(cardsPendingQueue[pendingCursor + 1]),
+          pendingCursor: pendingCursor + 1,
+        };
+      }
+      return state;
     case CHANGE_BLOCK_TREE_TAB:
       return {
         ...state,

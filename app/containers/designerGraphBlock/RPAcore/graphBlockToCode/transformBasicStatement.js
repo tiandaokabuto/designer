@@ -94,12 +94,11 @@ const transformBasicStatement = (
           ? 'None'
           : `${item.valueList[0].value} + ${item.valueList[1].value}`
       }`;
-    }
-    // (dataStructure.cmdName === '键盘-目标中按键' && item.cnName === '键盘') ||
-    // (dataStructure.cmdName === '键盘-按键' && item.cnName === '键盘')
-    // ) {
-    // if (params) params += ', ';
-    else {
+    } else {
+      let isEncypt = false;
+      if (item.enName === '_text') {
+        isEncypt = dataStructure.properties.required[4].value === 'True';
+      }
       switch (item.enName) {
         case 'outPut':
           item.value && handleStatementOutput(item.value, '', result);
@@ -139,6 +138,17 @@ const transformBasicStatement = (
           console.log(dataStructure.layout);
           if (params) params += ', ';
           params += `${item.enName} = ${JSON.stringify(dataStructure.layout)}`;
+          break;
+        case '_text':
+          if (params) params += ', ';
+          params += `${item.enName} = `;
+          if (item.default === undefined && item.value === undefined) {
+            params += 'None';
+          } else if (!item.value) {
+            params += item.default;
+          } else {
+            params += isEncypt ? `'${item.value}'` : item.value;
+          }
           break;
         default:
           if (params) params += ', ';

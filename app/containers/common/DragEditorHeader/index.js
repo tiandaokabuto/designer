@@ -10,7 +10,7 @@ import {
   Radio,
 } from 'antd';
 import { withRouter } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
@@ -18,6 +18,11 @@ import event, {
   STOP_RUNNING,
   START_POINT,
 } from '../../designerGraphBlock/layout/eventCenter';
+import {
+  UNDO_CARDSDATA,
+  REDO_CARDSDATA,
+  RESET_PENDING_QUEUE,
+} from '../../../actions/codeblock';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
 import IconFont from '../IconFont/index';
@@ -61,6 +66,8 @@ const layout = {
 
 export default memo(
   withRouter(({ history }) => {
+    const dispatch = useDispatch();
+
     const [visible, setVisible] = useState(undefined);
     const [isExport, setIsExport] = useState(false);
     const resetVisible = () => {
@@ -68,28 +75,30 @@ export default memo(
     };
 
     const currentCheckedTreeNode = useSelector(
-      state => state.grapheditor.currentCheckedTreeNode
+      (state) => state.grapheditor.currentCheckedTreeNode
     );
     const currentCheckedTreeNodeRef = useRef(null);
     currentCheckedTreeNodeRef.current = currentCheckedTreeNode;
 
     const currentCheckedModuleTreeNode = useSelector(
-      state => state.grapheditor.currentCheckedModuleTreeNode
+      (state) => state.grapheditor.currentCheckedModuleTreeNode
     );
     const currentCheckedModuleTreeNodeRef = useRef(null);
     currentCheckedModuleTreeNodeRef.current = currentCheckedModuleTreeNode;
 
-    const treeTab = useSelector(state => state.grapheditor.treeTab);
+    const treeTab = useSelector((state) => state.grapheditor.treeTab);
     const treeTabRef = useRef(null);
     treeTabRef.current = treeTab;
 
-    const projectName = useSelector(state => state.grapheditor.currentProject);
+    const projectName = useSelector(
+      (state) => state.grapheditor.currentProject
+    );
 
-    const processTree = useSelector(state => state.grapheditor.processTree);
+    const processTree = useSelector((state) => state.grapheditor.processTree);
     const processTreeRef = useRef(null);
     processTreeRef.current = processTree;
 
-    const moduleTree = useSelector(state => state.grapheditor.moduleTree);
+    const moduleTree = useSelector((state) => state.grapheditor.moduleTree);
     const moduleTreeRef = useRef(null);
     moduleTreeRef.current = moduleTree;
 
@@ -121,19 +130,22 @@ export default memo(
 
     const key = 'runCode';
 
-    const getProcessVersion = processName => {
+    const getProcessVersion = (processName) => {
       axios
         .get(api('getProcessVersion'), {
           params: {
             processName,
           },
         })
-        .then(res => res.data)
-        .then(res => {
+        .then((res) => res.data)
+        .then((res) => {
           const version = res.data;
           if (res.code !== -1 && version) {
             setOriginVersion(version);
-            const nextVersion = version.replace(/[\d]+$/, match => +match + 1);
+            const nextVersion = version.replace(
+              /[\d]+$/,
+              (match) => +match + 1
+            );
             setVersionText(nextVersion);
             return nextVersion;
           }
@@ -141,7 +153,7 @@ export default memo(
           setOriginVersion('0.0.1');
           return false;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     };
 
     const hanldePublishModalOk = () => {
@@ -164,7 +176,7 @@ export default memo(
       }
     };
 
-    const handleVersionTextChange = version => {
+    const handleVersionTextChange = (version) => {
       const reg = /^([0]|[1-9][0-9]*)(\.([0]|[1-9][0-9]*)){1,2}$/;
       setVersionText(version);
       // 格式匹配
@@ -220,7 +232,7 @@ export default memo(
         uuidRef.current
       }`;
       message.warn({ content: '流程停止中', duration: 0, key });
-      exec(stopFilePath, err => {
+      exec(stopFilePath, (err) => {
         if (!err) {
           message.success({ content: '停止成功', key });
         } else {
@@ -231,7 +243,7 @@ export default memo(
       setIsRunCode(false);
     };
 
-    const exportProcess = filePath => {
+    const exportProcess = (filePath) => {
       const zip = new adm_zip();
       zip.addLocalFolder(
         `${process.cwd()}/project/${projectName}/${getProcessName()}`
@@ -239,7 +251,7 @@ export default memo(
       zip.writeZip(`${filePath}.zip`);
     };
 
-    const handleRunPoint = fromOrTo => {
+    const handleRunPoint = (fromOrTo) => {
       setIsRunCode(true);
       handleOperation(fromOrTo);
     };
@@ -261,6 +273,9 @@ export default memo(
             event.emit('toggle');
             updateCurrentPagePosition('editor');
             changeBlockTreeTab('atomic');
+            dispatch({
+              type: RESET_PENDING_QUEUE,
+            });
             history.goBack();
           },
         },
@@ -268,15 +283,23 @@ export default memo(
           description: '撤销',
           iconImg: true,
           type: UndoPNG,
-          disabled: true,
-          onClick: () => {},
+          // disabled: true,
+          onClick: () => {
+            dispatch({
+              type: UNDO_CARDSDATA,
+            });
+          },
         },
         {
           description: '恢复',
           iconImg: true,
           type: RedoPNG,
-          disabled: true,
-          onClick: () => {},
+          // disabled: true,
+          onClick: () => {
+            dispatch({
+              type: REDO_CARDSDATA,
+            });
+          },
         },
         {
           description: '运行',
@@ -463,7 +486,7 @@ export default memo(
       }
     }, [isRunCode, history.location.pathname]);
 
-    const renderIcon = tool => {
+    const renderIcon = (tool) => {
       if (tool.IconFont) {
         return <IconFont type={tool.type} />;
       } else if (tool.iconImg) {
@@ -589,7 +612,7 @@ export default memo(
               <FormItem label="类型">
                 <Radio.Group
                   defaultValue={exportType}
-                  onChange={e => setExportType(e.target.value)}
+                  onChange={(e) => setExportType(e.target.value)}
                 >
                   <Tooltip title="json文件，可以给其他电脑使用">
                     <Radio value={'json'}>共享文件</Radio>
@@ -604,7 +627,7 @@ export default memo(
               <TextArea
                 placeholder="请输入流程描述"
                 autoSize={{ minRows: 6, maxRows: 8 }}
-                onChange={e => {
+                onChange={(e) => {
                   setDescText(e.target.value);
                 }}
               />
@@ -619,7 +642,7 @@ export default memo(
                 }
                 placeholder="请输入版本号"
                 value={versionText}
-                onChange={e => {
+                onChange={(e) => {
                   handleVersionTextChange(e.target.value);
                 }}
               />

@@ -24,6 +24,7 @@ import DirectoryParam from './DirectoryParam';
 import TaskDataParam from './TaskDataParam';
 import AutoCompletePlusParam from './components/AutoCompletePlusParam';
 import RenderWithPlusInput from './components/RenderWithPlusInput';
+import { encrypt } from '../../../../../login/utils';
 
 const { Option } = Select;
 
@@ -52,7 +53,11 @@ const getComponentType = (
   markBlockIsUpdated,
   cmdName
 ) => {
-  const [inputValue, setInputValue] = useState(param.value || param.default);
+  const [inputValue, setInputValue] = useState(
+    param.enName === 'sqlStr'
+      ? param.value.replace(/\s%\s.*/g, '')
+      : param.value || param.default
+  );
 
   useEffect(() => {
     handleValidate({
@@ -72,11 +77,23 @@ const getComponentType = (
   if (param.enName === 'sqlStr') {
     return (
       <div className="sqlstr">
-        <Input
-          defaultValue={param.value.replace(/\s%\s.*/g, '')}
-          onChange={e => {
-            param.value = e.target.value;
-            const numOfPlace = (e.target.value.match(/\%s/g) || []).length;
+        <RenderWithPlusInput
+          render={({ onChange, ...props }) => {
+            return (
+              <Input
+                {...props}
+                onChange={e => {
+                  onChange(e.target.value);
+                  setInputValue(e.target.value);
+                }}
+              />
+            );
+          }}
+          value={inputValue}
+          onChange={value => {
+            param.value = value;
+            setInputValue(value);
+            const numOfPlace = (value.match(/\%s/g) || []).length;
             if (param.placeholder.length < numOfPlace) {
               param.placeholder = param.placeholder.concat(
                 new Array(numOfPlace - param.placeholder.length).fill(undefined)
@@ -88,7 +105,7 @@ const getComponentType = (
           }}
           onKeyDown={e => stopDeleteKeyDown(e)}
         />
-        请填写替换变量
+        <span>请填写替换变量</span>
         {param.placeholder.map((place, index) => {
           return (
             <Input
@@ -127,7 +144,7 @@ const getComponentType = (
     );
   } else if (param.enName === 'looptype') {
     return (
-      <LoopSelectContext.Consumer>
+      <SelectContext.Consumer>
         {({ setLoopSelect }) => (
           <Select
             style={{ width: '100%' }}
@@ -147,11 +164,11 @@ const getComponentType = (
               ))}
           </Select>
         )}
-      </LoopSelectContext.Consumer>
+      </SelectContext.Consumer>
     );
   } else if (param.enName === 'loopcondition') {
     return (
-      <LoopSelectContext.Consumer>
+      <SelectContext.Consumer>
         {({ loopSelect }) => (
           <LoopPanelParam
             param={param}
@@ -166,7 +183,7 @@ const getComponentType = (
             setFlag={setFlag}
           />
         )}
-      </LoopSelectContext.Consumer>
+      </SelectContext.Consumer>
     );
   } else if (param.enName === 'taskDataName') {
     return (
@@ -178,6 +195,56 @@ const getComponentType = (
         handleEmitCodeTransform={emitCode}
         handleValidate={handleValidate}
       />
+    );
+  } else if (param.enName === '_text') {
+    return (
+      <SelectContext.Consumer>
+        {({ isSelectEncty }) => (
+          <AutoCompletePlusParam
+            param={param}
+            isSelectEncty={isSelectEncty}
+            aiHintList={aiHintList}
+            appendDataSource={appendDataSource}
+            keyFlag={keyFlag}
+            handleEmitCodeTransform={() => {
+              markBlockIsUpdated();
+              handleEmitCodeTransform(cards);
+            }}
+            handleValidate={handleValidate}
+          />
+        )}
+      </SelectContext.Consumer>
+    );
+  } else if (param.enName === 'is_encrypt') {
+    return (
+      <SelectContext.Consumer>
+        {({ handleCleanTextValue, handleEnctyTextValue }) => (
+          <Select
+            style={{ width: '100%' }}
+            defaultValue={param.value || param.default}
+            dropdownMatchSelectWidth={false}
+            onChange={value => {
+              param.value = value;
+              markBlockIsUpdated();
+              if (value === 'False') {
+                // 清空密文内容
+                handleCleanTextValue();
+              } else {
+                // 进行内容加密
+                handleEnctyTextValue();
+              }
+              handleEmitCodeTransform(cards);
+            }}
+          >
+            {param.valueMapping &&
+              param.valueMapping.map(item => (
+                <Option key={item.value} value={item.value}>
+                  {item.name}
+                </Option>
+              ))}
+          </Select>
+        )}
+      </SelectContext.Consumer>
     );
   }
   switch (param.componentType) {
@@ -211,7 +278,6 @@ const getComponentType = (
               />
             );
           }}
-          modelValue={param.value}
           value={inputValue}
           key={keyFlag || param.enName === 'xpath' ? uniqueId('key_') : ''}
           onChange={value => {
@@ -244,7 +310,6 @@ const getComponentType = (
           defaultValue={param.value || param.default}
           dropdownMatchSelectWidth={false}
           onChange={value => {
-            console.log(value);
             param.value = value;
             markBlockIsUpdated();
             handleEmitCodeTransform(cards);
@@ -337,9 +402,12 @@ const ParamItem = ({
   );
 };
 
-const LoopSelectContext = React.createContext({
+const SelectContext = React.createContext({
   loopSelect: 'for_list',
-  toggleLoopSelect: () => {},
+  setLoopSelect: () => {},
+  isSelectEncty: false,
+  handleCleanTextValue: () => {},
+  handleEnctyTextValue: () => {},
 });
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
@@ -355,6 +423,44 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
       ? checkedBlock.properties.required[0].value
       : 'for_list'
   );
+  // 输入文本，根据是否加密改变文本内容控件
+  const [isSelectEncty, setIsSelectEncty] = useState(
+    main === 'setText' && checkedBlock.properties.required[4].value
+      ? checkedBlock.properties.required[4].value
+      : 'False'
+  );
+
+  const handleCleanTextValue = () => {
+    setIsSelectEncty('False');
+    if (main === 'setText') {
+      // 从加密切换到明文，清空内容
+      checkedBlock.properties.required[3].value = '';
+      // 改变id，刷新文本内容中的值
+      checkedBlock.properties.required[3].updateId = true;
+      // 断开变量推荐的联系
+      const { watchDep } = checkedBlock.properties.required[3];
+      if (watchDep) {
+        if (watchDep.listeners) {
+          watchDep.listeners = watchDep.listeners.filter(
+            item =>
+              item !== checkedBlock.properties.required[3].handleWatchChange
+          );
+        }
+      }
+    }
+  };
+
+  const handleEnctyTextValue = () => {
+    setIsSelectEncty('True');
+    // 从明文切换到加密，进行内容加密
+    const { value } = checkedBlock.properties.required[3];
+    if (value) {
+      checkedBlock.properties.required[3].value = encrypt.argEncryptByDES(
+        value
+      );
+    }
+  };
+
   const [aiHintList] = useAIHintWatch();
 
   const markBlockIsUpdated = useCallback(() => {
@@ -395,7 +501,6 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                 />
               );
             }}
-            modelValue={desc}
             value={desc}
             onChange={value => {
               checkedBlock.userDesc = value;
@@ -496,8 +601,14 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                 );
               }
               return (
-                <LoopSelectContext.Provider
-                  value={{ loopSelect, setLoopSelect }}
+                <SelectContext.Provider
+                  value={{
+                    loopSelect,
+                    setLoopSelect,
+                    isSelectEncty,
+                    handleCleanTextValue,
+                    handleEnctyTextValue,
+                  }}
                   key={checkedBlock.id + index}
                 >
                   <ParamItem
@@ -510,7 +621,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                     setFlag={setFlag}
                     cmdName={checkedBlock.cmdName}
                   />
-                </LoopSelectContext.Provider>
+                </SelectContext.Provider>
               );
             })}
           </div>
