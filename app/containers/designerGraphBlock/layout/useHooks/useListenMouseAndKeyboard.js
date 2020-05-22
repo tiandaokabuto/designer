@@ -64,6 +64,21 @@ const extractTraverse = async (cards, callback, parent = cards) => {
   }
 };
 
+const deleteTraverse = (cards, callback, parent = cards) => {
+  for (const child of cards) {
+    if (child.children) {
+      callback(child, parent);
+      deleteTraverse(child.children, callback, child.children);
+    } else if (child.ifChildren) {
+      callback(child, parent);
+      deleteTraverse(child.ifChildren, callback, child.ifChildren);
+      deleteTraverse(child.elseChildren, callback, child.elseChildren);
+    } else {
+      callback(child, parent);
+    }
+  }
+};
+
 const extractCheckedData = (cards, checkedId) => {
   const result = [];
   extractTraverse(cards, (node) => {
@@ -76,10 +91,22 @@ const extractCheckedData = (cards, checkedId) => {
   return result;
 };
 
+const extractDelCheckedData = (cards, checkedId) => {
+  const result = [];
+  deleteTraverse(cards, (node) => {
+    if (checkedId.includes(node.id)) {
+      result.push(cloneDeep(node));
+      return true;
+    }
+    return false;
+  });
+  return result;
+};
+
 const deleteCheckedNode = (cards, checkedId) => {
   // 标记 清除
   const markList = [];
-  extractTraverse(cards, (node, parent) => {
+  deleteTraverse(cards, (node, parent) => {
     if (checkedId.includes(node.id)) {
       markList.push({
         parent,
@@ -250,9 +277,10 @@ export default () => {
           // 生成待保存的数据结构
           updateClipBoardData({
             dep: checkedId,
-            content: extractCheckedData(cards, checkedId),
+            content: extractDelCheckedData(cards, checkedId),
           });
           clipboard.writeText('copy-cardData', 'selection');
+          console.log(checkedId, cards);
           // 删除选中的元素
           deleteCheckedNode(cards, checkedId);
           message.success('剪切成功');
