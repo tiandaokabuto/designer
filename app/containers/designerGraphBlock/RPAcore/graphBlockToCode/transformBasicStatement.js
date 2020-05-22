@@ -1,8 +1,9 @@
+import moment from 'moment';
 import { isArray } from './utils';
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
 import { uuid } from '../../../common/utils';
 import memoize from './reselect';
-import moment from 'moment';
+
 const fs = require('fs');
 
 const paddingStart = length => '    '.repeat(length);
@@ -32,7 +33,7 @@ const handleStatementOutput = (output, value, result) => {
 
 const handleMainFnGeneration = (dataStructure, params, result, padding) => {
   const isSubtype = dataStructure.subtype;
-  result.output += `${isSubtype ? '' : dataStructure.pkg + '.'}${
+  result.output += `${isSubtype ? '' : `${dataStructure.pkg}.`}${
     dataStructure.main
   }(${params})\n`;
   // 如果是消费任务数据原子能力，批量生成变量名
@@ -40,7 +41,7 @@ const handleMainFnGeneration = (dataStructure, params, result, padding) => {
     dataStructure.main === 'consumeData' &&
     dataStructure.properties.required[1].selectedRows
   ) {
-    const selectedRows = dataStructure.properties.required[1].selectedRows;
+    const { selectedRows } = dataStructure.properties.required[1];
     selectedRows.map(item => {
       if (item.variableName !== '') {
         result.output += `${padding}${item.variableName} = ${dataStructure.properties.required[0].value}['${item.headerName}']\n`;
@@ -63,8 +64,8 @@ const handleFormJsonGenerate = dataStructure => {
     dataStructure.layout.data &&
     dataStructure.layout.data.length
   ) {
-    const data = dataStructure.layout.data;
-    const dataMap = dataStructure.layout.dataMap;
+    const { data } = dataStructure.layout;
+    const { dataMap } = dataStructure.layout;
     return JSON.stringify(data.map(item => dataMap[item.i]));
   }
   return 'None';
@@ -84,6 +85,7 @@ const transformBasicStatement = (
   let params = ''; // 生成参数类型
   // if (dataStructure.properties.required) {
   dataStructure.properties.required.forEach((item, index) => {
+    console.log(item);
     // 文件类型选择拼接模式，将item.valueList[0]目录名和item.valueList[1]文件名拼接起来
     if (item.componentType === 2 && item.tag === 2) {
       if (params) params += ', ';
@@ -107,9 +109,9 @@ const transformBasicStatement = (
 
           if (formJson !== 'None') {
             const temp = JSON.parse(formJson);
+            console.log(temp);
             result.output +=
-              '[' +
-              temp
+              `[${temp
                 .filter(
                   item =>
                     !['submit-btn', 'cancel-btn', 'image'].includes(
@@ -117,21 +119,25 @@ const transformBasicStatement = (
                     ) || item.key
                 )
                 .map(item => item.key)
-                .join(',') +
-              ',' +
-              '] = ';
-            params +=
-              'variables = [' +
-              temp.map(item => item.value || '').join(',') +
-              '], ';
+                .join(',')},` + `] = `;
+            params += `variables = [${temp
+              .map(item => {
+                if (item.type === 'drop-down') {
+                  return item.dataSource;
+                } else {
+                  return item.value || '';
+                }
+              })
+              .join(',')}], `;
           }
 
-          params += item.enName + ' = ' + formJson;
+          params += `${item.enName} = ${formJson}`;
           break;
         case 'layout':
+          console.log('翻译layout');
+          console.log(dataStructure.layout);
           if (params) params += ', ';
-          params += item.enName + ' = ' + JSON.stringify(dataStructure.layout);
-          console.log();
+          params += `${item.enName} = ${JSON.stringify(dataStructure.layout)}`;
           break;
         case '_text':
           if (params) params += ', ';
@@ -146,14 +152,13 @@ const transformBasicStatement = (
           break;
         default:
           if (params) params += ', ';
-          params +=
-            item.enName +
-            ' = ' +
-            (item.default === undefined && item.value === undefined
+          params += `${item.enName} = ${
+            item.default === undefined && item.value === undefined
               ? 'None'
               : !item.value
               ? item.default
-              : item.value);
+              : item.value
+          }`;
       }
     }
   });
@@ -174,10 +179,11 @@ const transformBasicStatement = (
             break;
           default:
             if (params) params += ', ';
-            params += item.enName + ' = ' + item.value;
+            params += `${item.enName} = ${item.value}`;
         }
       }
     });
+  console.log(params);
   handleMainFnGeneration(dataStructure, params, result, padding);
   return [result.output, new Map(moduleMap)];
 };

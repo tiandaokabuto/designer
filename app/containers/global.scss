@@ -34,7 +34,7 @@ $btn_backgroundColor: rgba(42, 140, 108, 1);
 }
 
 .CodeMirror-sizer {
-  position: absolute;
+  position: absolute !important;
 }
 
 :root {

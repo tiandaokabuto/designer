@@ -44,7 +44,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
         const lastItem = layout.data.pop();
         const newData = layout.data.concat([
           {
-            i: i,
+            i,
             w: INITIAL_WIDTH[item.type],
             h: INITIAL_HEIGHT[item.type],
             ...generateLastPosition(layout.data),
@@ -65,10 +65,10 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
         ...layout,
         dataMap: {
           ...layout.dataMap,
-          [i + 'preset']: cloneDeep(item),
+          [`${i}preset`]: cloneDeep(item),
         },
         data: layout.data.concat({
-          i: i + 'preset',
+          i: `${i}preset`,
           w: INITIAL_WIDTH[item.type],
           h: INITIAL_HEIGHT[item.type],
           ...generateLastPosition(layout.data),
@@ -81,7 +81,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     setLayout(layout => {
       const lastItem = layout.data.pop();
       const newData = [...layout.data];
-      const i = lastItem.i;
+      const { i } = lastItem;
       return {
         ...layout,
         data: newData,
@@ -111,7 +111,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     noticyChange();
     setLayout(layout => ({
       ...layout,
-      data: data,
+      data,
     }));
   };
 
@@ -163,6 +163,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
               if (layout) {
                 saveLayoutChange(layout);
               }
+              interactiveCard.hasModified = true;
               setVisible(false);
             }}
           >

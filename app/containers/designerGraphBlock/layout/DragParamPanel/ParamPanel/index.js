@@ -50,7 +50,8 @@ const getComponentType = (
   aiHintList = {},
   setFlag,
   handleValidate,
-  markBlockIsUpdated
+  markBlockIsUpdated,
+  cmdName
 ) => {
   const [inputValue, setInputValue] = useState(
     param.enName === 'sqlStr'
@@ -67,6 +68,8 @@ const getComponentType = (
   const emitCode = () => {
     handleEmitCodeTransform(cards);
   };
+
+  const isMultiple = () => {};
 
   // 任务数据下拉列表
   const [appendDataSource] = useAppendDataSource(param);
@@ -114,11 +117,12 @@ const getComponentType = (
               onChange={e => {
                 param.placeholder[index] = e.target.value;
                 // 重新调整sql拼接形式
-                param.value =
-                  param.value.replace(/\s%\s.*/g, '') +
-                  ` % (${param.placeholder
-                    .filter(item => item !== undefined)
-                    .join(', ')})`;
+                param.value = `${param.value.replace(
+                  /\s%\s.*/g,
+                  ''
+                )} % (${param.placeholder
+                  .filter(item => item !== undefined)
+                  .join(', ')})`;
                 handleEmitCodeTransform(cards);
               }}
               onKeyDown={e => stopDeleteKeyDown(e)}
@@ -296,6 +300,12 @@ const getComponentType = (
     case COMPONENT_TYPE.SELECT:
       return (
         <Select
+          // mode={
+          // (cmdName === '键盘-按键' && param.cnName === '按键') ||
+          // (cmdName === '键盘-目标中按键' && param.cnName === '按键')
+          // ? 'multiple'
+          // : ''
+          // }
           style={{ width: '100%' }}
           defaultValue={param.value || param.default}
           dropdownMatchSelectWidth={false}
@@ -355,7 +365,9 @@ const ParamItem = ({
   flag,
   aiHintList,
   setFlag,
+  cmdName,
 }) => {
+  console.log(cmdName);
   const [err, message, handleValidate] = useVerifyInput(param);
   const specialParam = ['条件', '循环条件', '任务数据名称'];
   // const specialParam = ['条件', '循环条件'];
@@ -380,7 +392,8 @@ const ParamItem = ({
             aiHintList,
             setFlag,
             handleValidate,
-            markBlockIsUpdated
+            markBlockIsUpdated,
+            cmdName
           )}
         </div>
       </div>
@@ -425,7 +438,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
       // 改变id，刷新文本内容中的值
       checkedBlock.properties.required[3].updateId = true;
       // 断开变量推荐的联系
-      const watchDep = checkedBlock.properties.required[3].watchDep;
+      const { watchDep } = checkedBlock.properties.required[3];
       if (watchDep) {
         if (watchDep.listeners) {
           watchDep.listeners = watchDep.listeners.filter(
@@ -606,6 +619,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                     flag={flag}
                     aiHintList={aiHintList}
                     setFlag={setFlag}
+                    cmdName={checkedBlock.cmdName}
                   />
                 </SelectContext.Provider>
               );
@@ -624,6 +638,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                   flag={flag}
                   aiHintList={aiHintList}
                   setFlag={setFlag}
+                  cmdName={checkedBlock.cmdName}
                 />
               );
             })}
