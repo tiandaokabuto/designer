@@ -122,7 +122,7 @@ const transformBasicStatement = (
             params += `variables = [${temp
               .map((item) => {
                 if (item.type === 'drop-down') {
-                  return item.dataSource;
+                  return `${item.value || ''},${item.dataSource || ''}`;
                 } else {
                   return item.value || '';
                 }
