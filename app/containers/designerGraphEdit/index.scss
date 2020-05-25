@@ -196,7 +196,7 @@
   }
 }
 
-#loadingLayer {
+.loadingLayer {
   height: 100%;
   width: 100%;
   position: absolute;
@@ -231,6 +231,6 @@
   }
 }
 .showLoadingLayer {
-  visibility: visible !important;
-  opacity: 1 !important;
+  visibility: visible;
+  opacity: 1;
 }

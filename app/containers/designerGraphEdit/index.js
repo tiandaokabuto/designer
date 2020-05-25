@@ -29,12 +29,13 @@ export default () => {
       {/* <GraphBlockHeader history={history} />
       <DragEditorHeader type="process" /> */}
       <div
-        id="loadingLayer"
-        className={showLoadingLayer ? 'showLoadingLayer' : ''}
+        className={
+          showLoadingLayer ? 'loadingLayer showLoadingLayer' : 'loadingLayer'
+        }
       >
         <div className="loadingContent">
           <img src={Loading} alt="loading" />
-          <p>正在加载...</p>
+          <p>正在加载流程...</p>
         </div>
       </div>
       <GGEditor className="designergraph editor">
