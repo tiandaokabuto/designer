@@ -22,7 +22,9 @@ import {
   hasNodeModified,
   traverseTree,
   getChooseFilePath,
-  // persistentModuleStorage,
+  getProjectTreeData,
+  findNodeByKey,
+  getDecryptOrNormal,
 } from '../../../../common/utils';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
@@ -187,7 +189,7 @@ const menu = (
   </Menu>
 );
 
-export default ({ type }) => {
+export default ({ type, setShowLoadingLayer }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedKey, setSelectedKey] = useState('');
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -423,6 +425,23 @@ export default ({ type }) => {
     changeCheckedTreeNode(key);
   };
 
+  const showTreeData = selectedKey => {
+    const node = findNodeByKey(processTree, selectedKey[0]);
+    if (Object.keys(node.data).length === 0) {
+      let data = getProjectTreeData(currentProject, processTree, node);
+      const maxLength = 470000;
+      const isOverMaxLength = data[maxLength] !== undefined;
+      if (isOverMaxLength) setShowLoadingLayer(true);
+      setTimeout(() => {
+        data = getDecryptOrNormal(data);
+        node.getData = true;
+        node.data = { ...data };
+        changeCheckedTreeNode(selectedKey[0]);
+        if (isOverMaxLength) setShowLoadingLayer(false);
+      }, 0);
+    } else changeCheckedTreeNode(selectedKey[0]);
+  };
+
   useEffect(() => {
     const handleAddExpanedKeys = keys => {
       setExpandedKeys(expandedKeys => {
@@ -494,7 +513,7 @@ export default ({ type }) => {
               if (currentCheckedTreeNode === undefined) {
                 // 首次打开时currentCheckedTreeNode为undefined
                 setSelectedKey(selectedKey[0]);
-                changeCheckedTreeNode(selectedKey[0]);
+                showTreeData(selectedKey);
               } else if (selectedKey.length !== 0) {
                 // 选择自身以外的其他节点
                 const isModified = hasNodeModified(
@@ -507,7 +526,7 @@ export default ({ type }) => {
                   setModalVisible(true); // 提示保存
                 } else {
                   setSelectedKey(selectedKey[0]);
-                  changeCheckedTreeNode(selectedKey[0]);
+                  showTreeData(selectedKey);
                 }
               }
             } else if (currentCheckedModuleTreeNode === undefined) {

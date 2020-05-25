@@ -1,6 +1,5 @@
 //import moment from moment
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { Input, message, Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import cloneDeep from 'lodash/cloneDeep';
@@ -526,6 +525,14 @@ export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
   return files.find(item => item === title);
 };
 
+export const getProjectTreeData = (currentProject, processTree, node) => {
+  const filePath = PATH_CONFIG(
+    'project',
+    `${currentProject}/${node.title}/manifest.json`
+  );
+  return fs.readFileSync(filePath);
+};
+
 /**
  * 打开项目
  * @param {*} name 项目名
@@ -538,12 +545,12 @@ export const openProject = name => {
     if (!err) {
       const dirs = fs.readdirSync(PATH_CONFIG('project', name));
       const { processTree } = getDecryptOrNormal(data);
-      console.log(processTree);
       // data.toString().indexOf('{') === -1
       //   ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
       //   : JSON.parse(data.toString());
       // 遍历项目文件夹下面的流程文件夹，读取manifest.json里流程的数据，写入processTree
-      dirs.forEach(dirItem => {
+      changeProcessTree(processTree);
+      /* dirs.forEach(dirItem => {
         if (dirItem !== 'manifest.json' && dirItem !== `${name}_module`) {
           try {
             const dirItemData = fs.readFileSync(
@@ -562,7 +569,7 @@ export const openProject = name => {
           }
         }
       });
-      changeProcessTree(processTree);
+      changeProcessTree(processTree); */
       checkAndMakeDir(PATH_CONFIG('project', `${name}/${name}_module`));
       fs.readFile(
         PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),

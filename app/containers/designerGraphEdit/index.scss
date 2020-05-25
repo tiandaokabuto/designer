@@ -15,7 +15,7 @@
 
 .designergraph {
   background: rgba(255, 255, 255, 1);
-  height: calc(100vh);
+  height: calc(100vh - 76px);
   // border-left: 2px solid #32a67f;
   // border-right: 2px solid #32a67f;
   overflow-x: hidden;
@@ -184,7 +184,7 @@
     }
     &-flow {
       //flex: 1;
-      height: calc(100% - 140px);
+      height: calc(100% - 40px);
     }
   }
   &-parampanel {
@@ -212,4 +212,43 @@
       }
     }
   }
+}
+
+.loadingLayer {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 2;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity ease 0.2s;
+  .loadingContent {
+    width: 500px;
+    height: 500px;
+    display: inline-block;
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    p {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      bottom: 100px;
+      z-index: 4;
+      color: black;
+      text-align: center;
+    }
+  }
+}
+.showLoadingLayer {
+  visibility: visible;
+  opacity: 1;
 }
