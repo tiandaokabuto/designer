@@ -9,7 +9,7 @@ import { changeTreeTab } from '../../../reduxActions';
 import './GraphContainer.scss';
 
 const { TabPane } = Tabs;
-export default () => {
+export default ({ setShowLoadingLayer }) => {
   const currentProject = useSelector(state => state.grapheditor.currentProject);
   const treeTab = useSelector(state => state.grapheditor.treeTab);
   const changeProjectName = useChangeProjectName();
@@ -58,10 +58,16 @@ export default () => {
           }}
         >
           <TabPane tab="流程" key="process">
-            <ProcessTree type={'process'} />
+            <ProcessTree
+              type="process"
+              setShowLoadingLayer={setShowLoadingLayer}
+            />
           </TabPane>
           <TabPane tab="流程块" key="processModule">
-            <ProcessTree type={'processModule'} />
+            <ProcessTree
+              type="processModule"
+              setShowLoadingLayer={setShowLoadingLayer}
+            />
           </TabPane>
         </Tabs>
       </div>

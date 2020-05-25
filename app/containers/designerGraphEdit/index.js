@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import GGEditor from 'gg-editor';
 import { Button } from 'antd';
 
@@ -10,9 +10,7 @@ import ReuseCommand from './layout/GraphContainer/components/EditorContextMenu/R
 import GraphContainer from './layout/GraphContainer';
 import GraphItem from './layout/GraphItem';
 import GraphParamPanel from './layout/GraphParamPanel';
-import Image from '../images/icon.jpg';
-import ExecuteImage from '../images/execute.jpg';
-import EditImage from '../images/edit.jpg';
+import Loading from '../../containers/images/loading.gif';
 
 import DesignerBody from './components/DesignerBody';
 
@@ -21,6 +19,7 @@ import { history } from '../../store/configureStore';
 import './index.scss';
 
 export default () => {
+  const [showLoadingLayer, setShowLoadingLayer] = useState(false);
   useEffect(() => {
     window.getSelection().removeAllRanges();
   }, []);
@@ -29,9 +28,17 @@ export default () => {
     <>
       {/* <GraphBlockHeader history={history} />
       <DragEditorHeader type="process" /> */}
-
+      <div
+        id="loadingLayer"
+        className={showLoadingLayer ? 'showLoadingLayer' : ''}
+      >
+        <div className="loadingContent">
+          <img src={Loading} alt="loading" />
+          <p>正在加载...</p>
+        </div>
+      </div>
       <GGEditor className="designergraph editor">
-        <GraphItem />
+        <GraphItem setShowLoadingLayer={setShowLoadingLayer} />
         <GraphContainer history={history} />
         <GraphParamPanel />
         <FlowContextMenu />

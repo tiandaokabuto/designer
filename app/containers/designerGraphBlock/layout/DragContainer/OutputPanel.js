@@ -105,6 +105,7 @@ export default memo(
         : {
             width: '100%',
             position: 'relative',
+            overflow: 'hidden',
           };
 
     const transformOutput = useMemo(() => {

@@ -1,7 +1,7 @@
 @import '../common//style/common.scss';
 .dragger-editor {
   background: rgba(255, 255, 255, 1);
-  height: calc(100vh);
+  height: calc(100vh - 76px);
   display: flex;
   color: #000;
   // border-left: 2px solid #32a67f;
@@ -100,7 +100,7 @@
     // }
   }
   &-container {
-    height: calc(100% - 72px);
+    height: calc(100%);
     flex: 1;
     max-width: calc(100vw - 239px * 2);
     background-color: #f9fafb;
