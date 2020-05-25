@@ -14,6 +14,7 @@ import {
   CHANGE_CLIPBOARDDATA,
   CHANGE_PENDING_QUEUE,
   UNDO_CARDSDATA,
+  CHANGE_FORCEUPDATE_TAG,
   RESET_PENDING_QUEUE,
   REDO_CARDSDATA,
 } from '../actions/codeblock';
@@ -32,6 +33,7 @@ const defaultState = {
   clipboardData: {},
   cardsPendingQueue: [],
   pendingCursor: -1,
+  forceUpdateTag: false,
 };
 
 let locked = false;
@@ -39,6 +41,11 @@ let locked = false;
 export default (state = defaultState, action) => {
   let { pendingCursor, cardsPendingQueue } = state;
   switch (action.type) {
+    case CHANGE_FORCEUPDATE_TAG:
+      return {
+        ...state,
+        forceUpdateTag: action.payload,
+      };
     case RESET_PENDING_QUEUE:
       return {
         ...state,

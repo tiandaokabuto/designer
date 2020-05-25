@@ -22,6 +22,7 @@ import {
   UNDO_CARDSDATA,
   REDO_CARDSDATA,
   RESET_PENDING_QUEUE,
+  CHANGE_FORCEUPDATE_TAG,
 } from '../../../actions/codeblock';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
@@ -286,8 +287,18 @@ export default memo(
           // disabled: true,
           onClick: () => {
             dispatch({
+              type: CHANGE_FORCEUPDATE_TAG,
+              payload: true,
+            });
+            dispatch({
               type: UNDO_CARDSDATA,
             });
+            setTimeout(() => {
+              dispatch({
+                type: CHANGE_FORCEUPDATE_TAG,
+                payload: false,
+              });
+            }, 0);
           },
         },
         {
@@ -297,8 +308,18 @@ export default memo(
           // disabled: true,
           onClick: () => {
             dispatch({
+              type: CHANGE_FORCEUPDATE_TAG,
+              payload: true,
+            });
+            dispatch({
               type: REDO_CARDSDATA,
             });
+            setTimeout(() => {
+              dispatch({
+                type: CHANGE_FORCEUPDATE_TAG,
+                payload: false,
+              });
+            }, 0);
           },
         },
         {
