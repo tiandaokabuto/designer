@@ -485,32 +485,38 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
     window.getSelection().removeAllRanges();
   }, []);
 
+  useEffect(() => {
+    setDesc(checkedBlock.userDesc);
+  }, [checkedBlock.userDesc]);
+
   return (
     <div className="parampanel">
       {checkedBlock && (
-        <div className="parampanel-desc">
-          <span>命令描述符</span>
-          <RenderWithPlusInput
-            render={({ onChange, ...props }) => {
-              return (
-                <Input
-                  {...props}
-                  onChange={(e) => {
-                    onChange(e.target.value);
-                    setDesc(e.target.value);
-                  }}
-                />
-              );
-            }}
-            value={desc}
-            onChange={(value) => {
-              checkedBlock.userDesc = value;
-              setDesc(value);
-              handleEmitCodeTransform(cards);
-            }}
-            onKeyDown={(e) => stopDeleteKeyDown(e)}
-          />
-        </div>
+        <Fragment>
+          <div className="parampanel-desc" key={forceUpdateTag ? '0' : '1'}>
+            <span>命令描述符</span>
+            <RenderWithPlusInput
+              render={({ onChange, ...props }) => {
+                return (
+                  <Input
+                    {...props}
+                    onChange={(e) => {
+                      onChange(e.target.value);
+                      setDesc(e.target.value);
+                    }}
+                  />
+                );
+              }}
+              value={desc}
+              onChange={(value) => {
+                checkedBlock.userDesc = value;
+                setDesc(value);
+                handleEmitCodeTransform(cards);
+              }}
+              onKeyDown={(e) => stopDeleteKeyDown(e)}
+            />
+          </div>
+        </Fragment>
       )}
       {checkedBlock.key && checkedBlock.key.indexOf('module') !== -1 ? (
         <Fragment>
@@ -585,9 +591,9 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
           })}
         </Fragment>
       ) : (
-        <Fragment>
+        <Fragment key={forceUpdateTag ? '0' : '1'}>
           <div className="parampanel-required">必选项</div>
-          <div className="parampanel-content" key={forceUpdateTag ? '0' : '1'}>
+          <div className="parampanel-content">
             {(checkedBlock.properties.required || []).map((param, index) => {
               if (param.enName === 'return_string') {
                 return (

@@ -6,7 +6,7 @@ import memoize from './reselect';
 
 const fs = require('fs');
 
-const paddingStart = length => '    '.repeat(length);
+const paddingStart = (length) => '    '.repeat(length);
 
 const handleModuleImport = (dataStructure, result, moduleMap) => {
   if (dataStructure.module) {
@@ -42,7 +42,7 @@ const handleMainFnGeneration = (dataStructure, params, result, padding) => {
     dataStructure.properties.required[1].selectedRows
   ) {
     const { selectedRows } = dataStructure.properties.required[1];
-    selectedRows.map(item => {
+    selectedRows.map((item) => {
       if (item.variableName !== '') {
         result.output += `${padding}${item.variableName} = ${dataStructure.properties.required[0].value}['${item.headerName}']\n`;
       }
@@ -58,7 +58,7 @@ const handleNote = (cmdDesc, result, padding, dataStructure) => {
   }
 };
 
-const handleFormJsonGenerate = dataStructure => {
+const handleFormJsonGenerate = (dataStructure) => {
   if (
     dataStructure.layout &&
     dataStructure.layout.data &&
@@ -66,7 +66,7 @@ const handleFormJsonGenerate = dataStructure => {
   ) {
     const { data } = dataStructure.layout;
     const { dataMap } = dataStructure.layout;
-    return JSON.stringify(data.map(item => dataMap[item.i]));
+    return JSON.stringify(data.map((item) => dataMap[item.i]));
   }
   return 'None';
 };
@@ -85,7 +85,6 @@ const transformBasicStatement = (
   let params = ''; // 生成参数类型
   // if (dataStructure.properties.required) {
   dataStructure.properties.required.forEach((item, index) => {
-    console.log(item);
     // 文件类型选择拼接模式，将item.valueList[0]目录名和item.valueList[1]文件名拼接起来
     if (item.componentType === 2 && item.tag === 2) {
       if (params) params += ', ';
@@ -113,15 +112,15 @@ const transformBasicStatement = (
             result.output +=
               `[${temp
                 .filter(
-                  item =>
+                  (item) =>
                     !['submit-btn', 'cancel-btn', 'image'].includes(
                       item.type
                     ) || item.key
                 )
-                .map(item => item.key)
+                .map((item) => item.key)
                 .join(',')},` + `] = `;
             params += `variables = [${temp
-              .map(item => {
+              .map((item) => {
                 if (item.type === 'drop-down') {
                   return item.dataSource;
                 } else {
@@ -183,7 +182,6 @@ const transformBasicStatement = (
         }
       }
     });
-  console.log(params);
   handleMainFnGeneration(dataStructure, params, result, padding);
   return [result.output, new Map(moduleMap)];
 };
