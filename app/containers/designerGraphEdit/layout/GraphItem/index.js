@@ -19,6 +19,10 @@ export default () => {
       <div className="designergraph-item-title">
         {editVisible ? (
           <Input
+            style={{
+              marginTop: 3,
+              width: 180,
+            }}
             defaultValue={currentProject}
             autoFocus
             onChange={e => {
@@ -29,13 +33,15 @@ export default () => {
             }}
           />
         ) : (
-          currentProject || '当前无项目'
+          <span className="current-project-name">{currentProject}</span> || (
+            <span className="current-project-name">当前无项目</span>
+          )
         )}
         <Icon
           type="edit"
           style={{
             visibility: currentProject && !editVisible ? 'visible' : 'hidden',
-            marginLeft: 12,
+            // marginLeft: 12,
           }}
           onClick={() => {
             setEditVisible(true);
@@ -58,10 +64,10 @@ export default () => {
           }}
         >
           <TabPane tab="流程" key="process">
-            <ProcessTree type={'process'} />
+            <ProcessTree type="process" />
           </TabPane>
           <TabPane tab="流程块" key="processModule">
-            <ProcessTree type={'processModule'} />
+            <ProcessTree type="processModule" />
           </TabPane>
         </Tabs>
       </div>

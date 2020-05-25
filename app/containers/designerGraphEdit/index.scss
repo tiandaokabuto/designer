@@ -28,13 +28,31 @@
     box-shadow: 1px 0 0 0 rgba(238, 238, 238, 1);
     border-right: 1px solid rgba(238, 238, 238, 1);
     &-title {
+      width: 239px;
       height: 40px;
       line-height: 40px;
       padding-left: 20px;
-      padding-right: 20px;
+      // padding-right: 20px;
       font-weight: 400;
       color: rgba(102, 102, 102, 1);
       box-shadow: 0 1px 0 0 rgba(238, 238, 238, 1);
+      display: flex;
+      .current-project-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 180px;
+      }
+      i {
+        width: 16px;
+        position: relative;
+      }
+      svg {
+        position: absolute;
+        top: 50%;
+        transform: translate(0, -50%);
+      }
+
       .anticon-edit {
         display: none;
       }
