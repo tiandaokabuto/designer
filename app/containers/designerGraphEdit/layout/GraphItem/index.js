@@ -64,12 +64,6 @@ export default ({ setShowLoadingLayer }) => {
           }}
         >
           <TabPane tab="流程" key="process">
-<<<<<<< HEAD
-            <ProcessTree type="process" />
-          </TabPane>
-          <TabPane tab="流程块" key="processModule">
-            <ProcessTree type="processModule" />
-=======
             <ProcessTree
               type="process"
               setShowLoadingLayer={setShowLoadingLayer}
@@ -80,7 +74,6 @@ export default ({ setShowLoadingLayer }) => {
               type="processModule"
               setShowLoadingLayer={setShowLoadingLayer}
             />
->>>>>>> b135bb6d0982d4011c11045eb18c1677e0c5bf71
           </TabPane>
         </Tabs>
       </div>
