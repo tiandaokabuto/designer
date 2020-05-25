@@ -94,8 +94,10 @@ const transformBasicStatement = (
       }`;
     } else {
       let isEncypt = false;
-      if (item.enName === '_text') {
-        isEncypt = dataStructure.properties.required[4].value === 'True';
+      if (dataStructure.main === 'setText' && item.enName === '_text') {
+        if (dataStructure.properties.required[4]) {
+          isEncypt = dataStructure.properties.required[4].value === 'True';
+        }
       }
       switch (item.enName) {
         case 'outPut':
@@ -134,16 +136,18 @@ const transformBasicStatement = (
           console.log();
           break;
         case '_text':
-          if (params) params += ', ';
-          params += `${item.enName} = `;
-          if (item.default === undefined && item.value === undefined) {
-            params += 'None';
-          } else if (!item.value) {
-            params += item.default;
-          } else {
-            params += isEncypt ? `'${item.value}'` : item.value;
+          if (dataStructure.main === 'setText') {
+            if (params) params += ', ';
+            params += `${item.enName} = `;
+            if (item.default === undefined && item.value === undefined) {
+              params += 'None';
+            } else if (!item.value) {
+              params += item.default;
+            } else {
+              params += isEncypt ? `'${item.value}'` : item.value;
+            }
+            break;
           }
-          break;
         default:
           if (params) params += ', ';
           params +=
