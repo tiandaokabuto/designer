@@ -25,7 +25,7 @@ export const keyDownMap = {
   isShiftDown: false,
 };
 
-const getUniqueId = (arr) => {
+const getUniqueId = arr => {
   let newId = uniqueId(PREFIX_ID);
   while (arr.includes(newId)) {
     newId = uniqueId(PREFIX_ID);
@@ -81,7 +81,7 @@ const deleteTraverse = (cards, callback, parent = cards) => {
 
 const extractCheckedData = (cards, checkedId) => {
   const result = [];
-  extractTraverse(cards, (node) => {
+  extractTraverse(cards, node => {
     if (checkedId.includes(node.id)) {
       result.push(cloneDeep(node));
       return true;
@@ -93,7 +93,7 @@ const extractCheckedData = (cards, checkedId) => {
 
 const extractDelCheckedData = (cards, checkedId) => {
   const result = [];
-  deleteTraverse(cards, (node) => {
+  deleteTraverse(cards, node => {
     if (checkedId.includes(node.id)) {
       result.push(cloneDeep(node));
       return true;
@@ -115,15 +115,15 @@ const deleteCheckedNode = (cards, checkedId) => {
     }
   });
   markList.forEach(({ parent, id }) => {
-    const index = parent.findIndex((item) => item.id === id);
+    const index = parent.findIndex(item => item.id === id);
     parent.splice(index, 1);
   });
   updateCardData([...cards]);
 };
 
-const getOrderedNodeList = (cards) => {
+const getOrderedNodeList = cards => {
   const currentIdList = [];
-  traverseAllCards(cards, (node) => {
+  traverseAllCards(cards, node => {
     currentIdList.push(node.id);
   });
   return currentIdList;
@@ -132,16 +132,16 @@ const getOrderedNodeList = (cards) => {
 const attachedNodeId = (cards, append) => {
   const currentIdList = getOrderedNodeList(cards);
 
-  traverseAllCards(append, (node) => {
+  traverseAllCards(append, node => {
     node.id = getUniqueId(currentIdList);
     currentIdList.push(node.id);
   });
 };
 
 export default () => {
-  const checkedId = useSelector((state) => state.blockcode.checkedId);
-  const cards = useSelector((state) => state.blockcode.cards);
-  const clipboardData = useSelector((state) => state.blockcode.clipboardData);
+  const checkedId = useSelector(state => state.blockcode.checkedId);
+  const cards = useSelector(state => state.blockcode.cards);
+  const clipboardData = useSelector(state => state.blockcode.clipboardData);
 
   const setKeyState = useCallback((key, bool) => {
     if (key === 'ctrl') {
@@ -157,21 +157,21 @@ export default () => {
     return keyDownMap.isShiftDown;
   };
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = e => {
       setKeyState('ctrl', e.ctrlKey);
       setKeyState('shift', e.shiftKey);
     };
-    const handleKeyUp = (e) => {
+    const handleKeyUp = e => {
       setKeyState('ctrl', e.ctrlKey);
       setKeyState('shift', e.shiftKey);
     };
-    const handleMouseDown = (e) => {
+    const handleMouseDown = e => {
       const id = e.target.dataset.id;
       let newCheckedId = checkedId.concat();
       if (!id) return;
       if (isCtrlKeyDown()) {
         if (newCheckedId.includes(id)) {
-          newCheckedId = newCheckedId.filter((g) => g !== id);
+          newCheckedId = newCheckedId.filter(g => g !== id);
           updateCheckedBlockId(newCheckedId);
         } else {
           newCheckedId.unshift(id);
@@ -188,10 +188,8 @@ export default () => {
           // firstIndex -> current
           const startNode = newCheckedId.shift();
           const orderedIdList = getOrderedNodeList(cards);
-          let startIndex = orderedIdList.findIndex(
-            (item) => item === startNode
-          );
-          let lastIndex = orderedIdList.findIndex((item) => item === id);
+          let startIndex = orderedIdList.findIndex(item => item === startNode);
+          let lastIndex = orderedIdList.findIndex(item => item === id);
           let isReverse = false;
           if (startIndex > lastIndex) {
             isReverse = true;
@@ -263,7 +261,8 @@ export default () => {
       }
     });
     // 支持批量剪切的操作
-    electronLocalshortcut.register(win, 'Ctrl+X', () => {
+    // 注释原因：在普通的input框内剪切后selected为空字符串，不会被return，触发原子能力的剪切
+    /* electronLocalshortcut.register(win, 'Ctrl+X', () => {
       setTimeout(() => {
         const selected = window.getSelection().toString();
         if (selected) {
@@ -280,16 +279,15 @@ export default () => {
             content: extractDelCheckedData(cards, checkedId),
           });
           clipboard.writeText('copy-cardData', 'selection');
-          console.log(checkedId, cards);
           // 删除选中的元素
           deleteCheckedNode(cards, checkedId);
           message.success('剪切成功');
         }
       }, 0);
-    });
+    }); */
 
-    // 支持删除
-    const handleKeyDown = (e) => {
+    // 支持删除,批量剪切
+    const handleKeyDown = e => {
       if (e.keyCode === 46) {
         const selected = window.getSelection().toString();
         if (selected) {
@@ -302,6 +300,26 @@ export default () => {
         if (checkedId.length) {
           deleteCheckedNode(cards, checkedId);
           message.success('删除成功');
+        }
+      } else if (e.ctrlKey && e.keyCode === 88) {
+        const selected = window.getSelection().toString();
+        if (selected) {
+          updateClipBoardData({
+            dep: [],
+            content: undefined,
+          });
+          return;
+        }
+        if (checkedId.length) {
+          // 生成待保存的数据结构
+          updateClipBoardData({
+            dep: checkedId,
+            content: extractDelCheckedData(cards, checkedId),
+          });
+          clipboard.writeText('copy-cardData', 'selection');
+          // 删除选中的元素
+          deleteCheckedNode(cards, checkedId);
+          message.success('剪切成功');
         }
       }
     };

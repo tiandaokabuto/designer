@@ -8,7 +8,6 @@ const LoopParam = ({
   param,
   handleEmitCodeTransform,
   cards,
-  stopDeleteKeyDown,
   keyFlag,
   setFlag,
   loopSelect,
@@ -110,7 +109,6 @@ const LoopParam = ({
         param={param}
         cards={cards}
         handleEmitCodeTransform={handleEmitCodeTransform}
-        stopDeleteKeyDown={stopDeleteKeyDown}
         keyFlag={keyFlag}
         setFlag={setFlag}
       />
@@ -144,7 +142,6 @@ LoopParam.propTypes = {
   setFlag: PropTypes.func.isRequired,
   cards: PropTypes.array,
   handleEmitCodeTransform: PropTypes.func,
-  stopDeleteKeyDown: PropTypes.func,
   loopSelect: PropTypes.string,
   aiHintList: PropTypes.object,
   appendDataSource: PropTypes.array,
@@ -152,7 +149,6 @@ LoopParam.propTypes = {
 };
 LoopParam.defaultProps = {
   handleEmitCodeTransform: () => {},
-  stopDeleteKeyDown: () => {},
   loopSelect: 'for_list',
   aiHintList: {},
   appendDataSource: [],
