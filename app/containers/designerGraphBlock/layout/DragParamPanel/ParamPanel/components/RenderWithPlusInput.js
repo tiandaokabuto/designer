@@ -51,7 +51,7 @@ const RenderWithPlusInput = ({ render, value, onChange, ...props }) => {
 };
 
 RenderWithPlusInput.propTypes = {
-  modelValue: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
   render: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
 };
