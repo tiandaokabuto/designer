@@ -108,14 +108,18 @@ export default useInjectContext(
 
       useEffect(() => {
         const arr = document.getElementsByClassName('command');
-        arr[0].addEventListener('click', handlCopyClick);
+        if (arr.length > 0) {
+          arr[0].addEventListener('click', handlCopyClick);
+        }
         // for (let i = 0; i < arr.length; i++) {
         //   if (arr[i].innerText === '复制') {
 
         //   }
         // }
         return () => {
-          arr[0].removeEventListener('click', handlCopyClick);
+          if (arr.length > 0) {
+            arr[0].removeEventListener('click', handlCopyClick);
+          }
         };
       }, []);
 
