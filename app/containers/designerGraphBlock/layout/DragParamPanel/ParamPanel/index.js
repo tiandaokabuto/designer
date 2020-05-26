@@ -37,7 +37,8 @@ const COMPONENT_TYPE = {
 };
 
 const stopDeleteKeyDown = e => {
-  if (e.keyCode === 46) {
+  const matchKeyCode = [88];
+  if (e.keyCode === 46 || (e.ctrlKey && matchKeyCode.includes(e.keyCode))) {
     e.nativeEvent.stopImmediatePropagation();
     e.stopPropagation();
   }
@@ -104,7 +105,6 @@ const getComponentType = (
             }
             handleEmitCodeTransform(cards);
           }}
-          onKeyDown={e => stopDeleteKeyDown(e)}
         />
         <span>请填写替换变量</span>
         {param.placeholder.map((place, index) => {
@@ -126,7 +126,6 @@ const getComponentType = (
                   .join(', ')})`;
                 handleEmitCodeTransform(cards);
               }}
-              onKeyDown={e => stopDeleteKeyDown(e)}
             />
           );
         })}
@@ -138,7 +137,6 @@ const getComponentType = (
         param={param}
         cards={cards}
         handleEmitCodeTransform={handleEmitCodeTransform}
-        stopDeleteKeyDown={stopDeleteKeyDown}
         keyFlag={keyFlag}
         setFlag={setFlag}
       />
@@ -178,7 +176,6 @@ const getComponentType = (
             appendDataSource={appendDataSource}
             handleValidate={handleValidate}
             loopSelect={loopSelect}
-            stopDeleteKeyDown={stopDeleteKeyDown}
             handleEmitCodeTransform={handleEmitCodeTransform}
             keyFlag={keyFlag}
             setFlag={setFlag}
@@ -295,7 +292,6 @@ const getComponentType = (
               });
             }
           }}
-          onKeyDown={e => stopDeleteKeyDown(e)}
         />
       );
     case COMPONENT_TYPE.SELECT:
@@ -490,7 +486,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   }, [checkedBlock.userDesc]);
 
   return (
-    <div className="parampanel">
+    <div className="parampanel" onKeyDown={e => stopDeleteKeyDown(e)}>
       {checkedBlock && (
         <Fragment>
           <div className="parampanel-desc" key={forceUpdateTag ? '0' : '1'}>
@@ -513,7 +509,6 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                 setDesc(value);
                 handleEmitCodeTransform(cards);
               }}
-              onKeyDown={e => stopDeleteKeyDown(e)}
             />
           </div>
         </Fragment>
@@ -543,7 +538,6 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                                   valueItem.value = e.target.value;
                                   handleEmitCodeTransform(cards);
                                 }}
-                                onKeyDown={e => stopDeleteKeyDown(e)}
                               />
                             </div>
                           </div>
@@ -577,7 +571,6 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                                   valueItem.name = e.target.value;
                                   handleEmitCodeTransform(cards);
                                 }}
-                                onKeyDown={e => stopDeleteKeyDown(e)}
                               />
                             </div>
                           </div>

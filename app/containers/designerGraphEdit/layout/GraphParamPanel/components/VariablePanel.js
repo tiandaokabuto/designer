@@ -27,19 +27,12 @@ export default ({
     noticyChange();
     forceUpdate();
   };
-  const handleVariableDelete = (index) => {
+  const handleVariableDelete = index => {
     variableList.splice(index, 1);
     noticyChange();
     forceUpdate();
   };
   if (variableList === null || !Array.isArray(variableList)) return null;
-
-  const stopDeleteKeyDown = (e) => {
-    if (e.keyCode === 46) {
-      e.nativeEvent.stopImmediatePropagation();
-      e.stopPropagation();
-    }
-  };
 
   return (
     <div className="variablePanel">
@@ -67,10 +60,10 @@ export default ({
               <Input
                 placeholder="变量"
                 value={varibale.name}
-                onChange={(e) => {
+                onChange={e => {
                   varibale.name = e.target.value;
                   if (varibale.listeners) {
-                    varibale.listeners.forEach((callback) => {
+                    varibale.listeners.forEach(callback => {
                       if (typeof callback === 'function') {
                         callback(e.target.value);
                       }
@@ -80,7 +73,6 @@ export default ({
                   synchroGraphDataToProcessTree();
                   handleEmitCodeTransform && handleEmitCodeTransform();
                 }}
-                onKeyDown={(e) => stopDeleteKeyDown(e)}
               />
               {disabled ? (
                 <span style={{ marginLeft: 6 }}>{varibale.value}</span>
@@ -88,13 +80,12 @@ export default ({
                 <Input
                   placeholder="值"
                   value={varibale.value}
-                  onChange={(e) => {
+                  onChange={e => {
                     varibale.value = e.target.value;
                     noticyChange();
                     synchroGraphDataToProcessTree();
                     handleEmitCodeTransform && handleEmitCodeTransform();
                   }}
-                  onKeyDown={(e) => stopDeleteKeyDown(e)}
                 />
               )}
               {disabled ? (

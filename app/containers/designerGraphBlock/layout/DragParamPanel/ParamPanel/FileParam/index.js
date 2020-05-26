@@ -6,13 +6,6 @@ const { ipcRenderer } = require('electron');
 
 let listener = null;
 
-const stopDeleteKeyDown = (e) => {
-  if (e.keyCode === 46) {
-    e.nativeEvent.stopImmediatePropagation();
-    e.stopPropagation();
-  }
-};
-
 export default ({
   keyFlag,
   param,
@@ -40,11 +33,10 @@ export default ({
       <Input
         key={keyFlag ? uniqueId('key_') : ''}
         defaultValue={param.value || param.default}
-        onChange={(e) => {
+        onChange={e => {
           param.value = e.target.value;
           handleEmitCodeTransform();
         }}
-        onKeyDown={(e) => stopDeleteKeyDown(e)}
       />
       <Button
         onClick={() => {

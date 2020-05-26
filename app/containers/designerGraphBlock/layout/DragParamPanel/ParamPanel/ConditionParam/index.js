@@ -7,12 +7,7 @@ import './index.scss';
 
 const { Option } = Select;
 
-export default ({
-  cards,
-  param,
-  handleEmitCodeTransform,
-  stopDeleteKeyDown,
-}) => {
+export default ({ cards, param, handleEmitCodeTransform }) => {
   const [flag, forceUpdate] = useForceUpdate();
   const [tag, setTag] = useState(param.tag);
 
@@ -168,7 +163,6 @@ export default ({
             handleEmitCodeTransform(cards);
             param.forceUpdate = param.forceUpdate + 1;
           }}
-          onKeyDown={e => stopDeleteKeyDown(e)}
         />
       )}
     </div>
