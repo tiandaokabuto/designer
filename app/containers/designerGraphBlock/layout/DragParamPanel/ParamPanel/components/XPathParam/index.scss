@@ -1,0 +1,19 @@
+.xpathParam {
+  display: flex;
+  align-items: center;
+  &-title {
+    border-left: 2px solid #32a67f;
+    height: 12px;
+    line-height: 12px;
+    font-size: 12px;
+    padding-left: 8px;
+    margin-bottom: 12px;
+  }
+  &-choice {
+    display: flex;
+    margin: 24px 0;
+    &-title {
+      margin-right: 16px;
+    }
+  }
+}

@@ -32,6 +32,22 @@ $btn_backgroundColor: rgba(42, 140, 108, 1);
 .ant-table-pagination.ant-pagination {
   float: left;
 }
+.ant-modal-close {
+  color: white !important;
+  top: -3px;
+}
+.ant-modal-header {
+  height: 48px;
+  background: linear-gradient(
+    135deg,
+    rgba(50, 166, 128, 1) 0%,
+    rgba(50, 166, 146, 1) 100%
+  ) !important;
+  .ant-modal-title {
+    color: white;
+    line-height: 16px;
+  }
+}
 
 .CodeMirror-sizer {
   position: absolute !important;
