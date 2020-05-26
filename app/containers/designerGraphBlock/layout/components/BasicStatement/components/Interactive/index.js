@@ -17,8 +17,6 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
 
   const [isPreview, setIsPreview] = useState(false);
 
-  console.log(interactiveCard.layout);
-
   const INITIAL_WIDTH = {
     input: layout && (layout.cols || 4),
     image: 1,
