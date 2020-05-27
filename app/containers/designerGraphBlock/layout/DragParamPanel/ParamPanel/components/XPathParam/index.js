@@ -75,7 +75,8 @@ export default memo(
         },
       },
       {
-        title: 'xpath列表(单选)',
+        title:
+          selectedOption === 'xpath' ? 'xpath列表(单选)' : 'JSpath列表(单选)',
         dataIndex: 'xpath',
       },
     ];
