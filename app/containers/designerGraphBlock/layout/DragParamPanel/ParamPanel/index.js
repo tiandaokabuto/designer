@@ -249,7 +249,15 @@ const getComponentType = (
       </SelectContext.Consumer>
     );
   } else if (param.enName === 'xpath') {
-    return <XPathParam param={param} />;
+    return (
+      <XPathParam
+        param={param}
+        markBlockIsUpdated={markBlockIsUpdated}
+        handleEmitCodeTransform={() => {
+          handleEmitCodeTransform(cards);
+        }}
+      />
+    );
   }
   switch (param.componentType) {
     case COMPONENT_TYPE.INPUT:
