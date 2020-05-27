@@ -20,6 +20,16 @@ import transformVariable from './transformVariable';
 
 const padding = (length) => '    '.repeat(length);
 
+/**
+ *
+ * @param {*} graphData
+ * @param {*} graphDataMap
+ * @param {*} currentId  当前要解析的结点ID
+ * @param {*} result
+ * @param {*} depth
+ * @param {*} breakPoint
+ * @param {*} notWhile
+ */
 export const transformEditorProcess = (
   graphData,
   graphDataMap,
