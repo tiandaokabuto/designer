@@ -32,6 +32,7 @@ export default () => {
         className={
           showLoadingLayer ? 'loadingLayer showLoadingLayer' : 'loadingLayer'
         }
+        // className="loadingLayer showLoadingLayer"
       >
         <div className="loadingContent">
           <img src={Loading} alt="loading" />
