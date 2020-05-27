@@ -147,15 +147,16 @@ class NodeHandler {
           properties: [],
         });
       } else if (description.model.shape === 'group') {
-        this.apiAction('undo');
+        this.apiAction('undo'); // 重置当前的操作, 转为自己手动添加结点
         const model = description.model;
+        // 针对每个结点生成全局唯一的id
         const processBlockIdOne = generateUniqueId(graphData.nodes);
         const processBlockIdTwo = generateUniqueId(graphData.nodes);
         const processBlockIdThree = generateUniqueId(graphData.nodes);
         const processBlockIdFour = generateUniqueId(graphData.nodes);
         const rhombusNodeId = generateUniqueId(graphData.nodes);
 
-        // group
+        // 生成每种循环需要新增的结点和边
         const LOOP_GRAPHDATA = {
           while: {
             nodes: [
@@ -363,7 +364,7 @@ class NodeHandler {
         };
 
         event.removeAllListeners('loopChooseEnd');
-
+        // 触发用户做循环类型的选择
         event.emit('loopChoose');
         event.addListener('loopChooseEnd', (type) => {
           const processblockDesc = {
@@ -407,6 +408,7 @@ class NodeHandler {
               },
             ],
           };
+          // 对每个新增的结点添加一些基础的参数设置
           if (type === 'while' || type === 'doWhile') {
             setGraphDataMap(processBlockIdOne, processblockDesc);
             setGraphDataMap(processBlockIdTwo, processblockDesc);
@@ -418,6 +420,7 @@ class NodeHandler {
             setGraphDataMap(processBlockIdFour, processblockDesc);
             setGraphDataMap(rhombusNodeId, rhombusDesc);
           }
+          // 更新流程图的 边和结点的集合
           updateGraphData({
             ...graphData,
             nodes: (graphData.nodes || []).concat(LOOP_GRAPHDATA[type].nodes),
