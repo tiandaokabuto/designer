@@ -1,5 +1,6 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Modal, Button, Input, Table, Radio } from 'antd';
+import cloneDeep from 'lodash/cloneDeep';
 
 import './index.scss';
 
@@ -18,6 +19,8 @@ const iframeTitle = [
   },
 ];
 
+let prevConfig = null;
+
 // {
 //   "XPath": ["//a[text()='工单管理']", "/html/body/div[1]/ul[1]/li[2]/a[1]"],
 //   "JSpath": "body > div:nth-child(1) > ul:nth-child(4) > li:nth-child(2) > a:nth-child(1)",
@@ -27,6 +30,7 @@ const iframeTitle = [
 const { TextArea } = Input;
 export default memo(
   ({ param, markBlockIsUpdated, handleEmitCodeTransform }) => {
+    const [_, forceUpdate] = useState(0);
     const [visible, setVisible] = useState(false);
     const [iframeData, setIframeData] = useState([]);
     const [data, setData] = useState({ xpathData: [], JSpathData: [] });
@@ -58,6 +62,7 @@ export default memo(
       {
         title: '选择',
         dataIndex: 'checked',
+        width: 68,
         render: (checked, obj, index) => {
           return (
             <Radio
@@ -86,16 +91,8 @@ export default memo(
         }))
       );
       setData({
-        xpathData: XPath.map((xpath, index) => ({
-          key: index + '$',
-          checked: false,
-          xpath,
-        })),
-        JSpathData: JSpath.map((xpath, index) => ({
-          key: index + '$',
-          checked: false,
-          xpath,
-        })),
+        xpathData: XPath,
+        JSpathData: JSpath,
       });
 
       setSelectedOption(selectedOption);
@@ -116,7 +113,14 @@ export default memo(
     return (
       <div className="xpathParam">
         <TextArea style={{ height: 32 }} value={xpath} disabled />
-        <Button onClick={() => setVisible(true)}>...</Button>
+        <Button
+          onClick={() => {
+            prevConfig = cloneDeep(param.config);
+            setVisible(true);
+          }}
+        >
+          ...
+        </Button>
         <Modal
           title="xpath"
           visible={visible}
@@ -125,7 +129,13 @@ export default memo(
             height: '60vh',
             overflow: 'auto',
           }}
-          onCancel={() => setVisible(false)}
+          onCancel={() => {
+            if (prevConfig) {
+              param.config = prevConfig;
+            }
+            forceUpdate((_) => ++_);
+            setVisible(false);
+          }}
           onOk={() => {
             setVisible(false);
             param.value = `"${xpath}"`;
