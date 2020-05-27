@@ -28,7 +28,9 @@ exports[`test RPA test transformContinueStatement 1`] = `
 exports[`test RPA test transformCustomCodeStatement 1`] = `
 <div>
   <div>
-            这是一段测试的代码
+    
+        这是一段测试的代码
+
   </div>
 </div>
 `;

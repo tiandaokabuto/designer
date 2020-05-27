@@ -14,34 +14,33 @@ let transformCount = 0;
 export default () => {
   const dispatch = useDispatch();
   const currentPagePosition = useSelector(
-    (state) => state.temporaryvariable.currentPagePosition
+    state => state.temporaryvariable.currentPagePosition
   );
   const currentPagePositionRef = useRef(null);
   currentPagePositionRef.current = currentPagePosition;
 
   const currentCheckedTreeNode = useSelector(
-    (state) => state.grapheditor.currentCheckedTreeNode
+    state => state.grapheditor.currentCheckedTreeNode
   );
   const currentCheckedTreeNodeRef = useRef(null);
   currentCheckedTreeNodeRef.current = currentCheckedTreeNode;
 
-  const processTree = useSelector((state) => state.grapheditor.processTree);
+  const processTree = useSelector(state => state.grapheditor.processTree);
 
   const processTreeRef = useRef(null);
   processTreeRef.current = processTree;
 
   const checkedGraphBlockId = useSelector(
-    (state) => state.grapheditor.checkedGraphBlockId
+    state => state.grapheditor.checkedGraphBlockId
   );
-  const graphDataMap = useSelector((state) => state.grapheditor.graphDataMap);
+  const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
 
   const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
   const blockNodeRef = useRef(null);
   blockNodeRef.current = blockNode;
 
   const handleEmitCodeTransform = useCallback(
-    useDebounce((cards) => {
-      console.log('变化了 cards');
+    useDebounce(cards => {
       dispatch({
         type: CHANGE_PENDING_QUEUE,
         payload: [cloneDeep(cards)],

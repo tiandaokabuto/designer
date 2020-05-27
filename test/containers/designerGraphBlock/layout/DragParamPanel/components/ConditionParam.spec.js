@@ -7,7 +7,6 @@ Enzyme.configure({ adapter: new Adapter() });
 
 function setup() {
   const handleEmitCodeTransform = jest.fn(() => {});
-  const stopDeleteKeyDown = jest.fn(() => {});
   const cards = [];
   const param = { tag: 1, valueList: [], value: '', forceUpdate: 0 };
 
@@ -16,7 +15,6 @@ function setup() {
       param={param}
       cards={cards}
       handleEmitCodeTransform={handleEmitCodeTransform}
-      stopDeleteKeyDown={stopDeleteKeyDown}
     />
   );
 

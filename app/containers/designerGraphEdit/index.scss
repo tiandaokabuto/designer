@@ -15,7 +15,7 @@
 
 .designergraph {
   background: rgba(255, 255, 255, 1);
-  height: calc(100vh);
+  height: calc(100vh - 76px);
   // border-left: 2px solid #32a67f;
   // border-right: 2px solid #32a67f;
   overflow-x: hidden;
@@ -28,13 +28,31 @@
     box-shadow: 1px 0 0 0 rgba(238, 238, 238, 1);
     border-right: 1px solid rgba(238, 238, 238, 1);
     &-title {
+      width: 239px;
       height: 40px;
       line-height: 40px;
       padding-left: 20px;
-      padding-right: 20px;
+      // padding-right: 20px;
       font-weight: 400;
       color: rgba(102, 102, 102, 1);
       box-shadow: 0 1px 0 0 rgba(238, 238, 238, 1);
+      display: flex;
+      .current-project-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 180px;
+      }
+      i {
+        width: 16px;
+        position: relative;
+      }
+      svg {
+        position: absolute;
+        top: 50%;
+        transform: translate(0, -50%);
+      }
+
       .anticon-edit {
         display: none;
       }
@@ -166,7 +184,7 @@
     }
     &-flow {
       //flex: 1;
-      height: calc(100% - 140px);
+      height: calc(100% - 40px);
     }
   }
   &-parampanel {
@@ -194,4 +212,43 @@
       }
     }
   }
+}
+
+.loadingLayer {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 2;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity ease 0.2s;
+  .loadingContent {
+    width: 500px;
+    height: 500px;
+    display: inline-block;
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    p {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      bottom: 100px;
+      z-index: 4;
+      color: black;
+      text-align: center;
+    }
+  }
+}
+.showLoadingLayer {
+  visibility: visible;
+  opacity: 1;
 }

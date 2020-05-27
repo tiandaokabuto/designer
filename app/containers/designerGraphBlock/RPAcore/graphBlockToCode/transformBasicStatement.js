@@ -6,7 +6,7 @@ import memoize from './reselect';
 
 const fs = require('fs');
 
-const paddingStart = (length) => '    '.repeat(length);
+const paddingStart = length => '    '.repeat(length);
 
 const handleModuleImport = (dataStructure, result, moduleMap) => {
   if (dataStructure.module) {
@@ -42,7 +42,7 @@ const handleMainFnGeneration = (dataStructure, params, result, padding) => {
     dataStructure.properties.required[1].selectedRows
   ) {
     const { selectedRows } = dataStructure.properties.required[1];
-    selectedRows.map((item) => {
+    selectedRows.map(item => {
       if (item.variableName !== '') {
         result.output += `${padding}${item.variableName} = ${dataStructure.properties.required[0].value}['${item.headerName}']\n`;
       }
@@ -58,7 +58,7 @@ const handleNote = (cmdDesc, result, padding, dataStructure) => {
   }
 };
 
-const handleFormJsonGenerate = (dataStructure) => {
+const handleFormJsonGenerate = dataStructure => {
   if (
     dataStructure.layout &&
     dataStructure.layout.data &&
@@ -66,7 +66,7 @@ const handleFormJsonGenerate = (dataStructure) => {
   ) {
     const { data } = dataStructure.layout;
     const { dataMap } = dataStructure.layout;
-    return JSON.stringify(data.map((item) => dataMap[item.i]));
+    return JSON.stringify(data.map(item => dataMap[item.i]));
   }
   return 'None';
 };
@@ -78,6 +78,7 @@ const transformBasicStatement = (
   moduleMap,
   options = {}
 ) => {
+  console.log(dataStructure);
   const ignore = dataStructure.ignore ? '# ' : '';
   handleModuleImport(dataStructure, result, moduleMap);
   handleNote(dataStructure.cmdDesc, result, padding, dataStructure);
@@ -93,10 +94,31 @@ const transformBasicStatement = (
           ? 'None'
           : `${item.valueList[0].value} + ${item.valueList[1].value}`
       }`;
+    } else if (
+      (dataStructure.cmdName === '键盘-按键' && item.cnName === '按键') ||
+      (dataStructure.cmdName === '键盘-目标中按键' && item.cnName === '按键')
+    ) {
+      if (params) params += ', ';
+      console.log(item.value);
+      if (Array.isArray(item.value)) {
+        params += `${item.enName} = [${item.value
+          .map(valueItem => valueItem)
+          .join(',')}]`;
+      } else {
+        params += `${item.enName} = ${
+          item.default === undefined && item.value === undefined
+            ? 'None'
+            : !item.value
+            ? item.default
+            : item.value
+        }`;
+      }
     } else {
       let isEncypt = false;
-      if (item.enName === '_text') {
-        isEncypt = dataStructure.properties.required[4].value === 'True';
+      if (dataStructure.main === 'setText' && item.enName === '_text') {
+        if (dataStructure.properties.required[4]) {
+          isEncypt = dataStructure.properties.required[4].value === 'True';
+        }
       }
       switch (item.enName) {
         case 'outPut':
@@ -112,15 +134,15 @@ const transformBasicStatement = (
             result.output +=
               `[${temp
                 .filter(
-                  (item) =>
+                  item =>
                     !['submit-btn', 'cancel-btn', 'image'].includes(
                       item.type
                     ) || item.key
                 )
-                .map((item) => item.key)
+                .map(item => item.key)
                 .join(',')},` + `] = `;
             params += `variables = [${temp
-              .map((item) => {
+              .map(item => {
                 if (item.type === 'drop-down') {
                   return `${item.value || ''},${item.dataSource || ''}`;
                 } else {
@@ -133,22 +155,22 @@ const transformBasicStatement = (
           params += `${item.enName} = ${formJson}`;
           break;
         case 'layout':
-          console.log('翻译layout');
-          console.log(dataStructure.layout);
           if (params) params += ', ';
           params += `${item.enName} = ${JSON.stringify(dataStructure.layout)}`;
           break;
         case '_text':
-          if (params) params += ', ';
-          params += `${item.enName} = `;
-          if (item.default === undefined && item.value === undefined) {
-            params += 'None';
-          } else if (!item.value) {
-            params += item.default;
-          } else {
-            params += isEncypt ? `'${item.value}'` : item.value;
+          if (dataStructure.main === 'setText') {
+            if (params) params += ', ';
+            params += `${item.enName} = `;
+            if (item.default === undefined && item.value === undefined) {
+              params += 'None';
+            } else if (!item.value) {
+              params += item.default;
+            } else {
+              params += isEncypt ? `'${item.value}'` : item.value;
+            }
+            break;
           }
-          break;
         default:
           if (params) params += ', ';
           params += `${item.enName} = ${

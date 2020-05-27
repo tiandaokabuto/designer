@@ -40,17 +40,17 @@ export default React.forwardRef(({ value, id }, ref) => {
   });
 
   useEffect(() => {
-    var el = document.getElementById('editor' + (id ? id : ''));
-    var version = '# version: Python3\n\n';
-    var codeAreaTip = '# please edit your code here:\n';
-    var codeStart = '# code start\n\n';
-    var codeEnd = '# code end\n\n';
-    var codeTip =
+    const el = document.getElementById(`editor${id || ''}`);
+    const version = '# version: Python3\n\n';
+    const codeAreaTip = '# please edit your code here:\n';
+    const codeStart = '# code start\n\n';
+    const codeEnd = '# code end\n\n';
+    const codeTip =
       "'''\nThis function is the entry of this program and\nit must be return your answer of current question.\n'''\n";
-    var code = 'def solution():\n\tprint("hhhh")\nsolution()';
-    var initValue =
+    const code = 'def solution():\n\tprint("hhhh")\nsolution()';
+    const initValue =
       version + codeAreaTip + codeStart + codeEnd + codeTip + code;
-    var myCodeMirror = CodeMirror.fromTextArea(el, {
+    const myCodeMirror = CodeMirror.fromTextArea(el, {
       mode: 'python', // 语言模式
       // theme: 'leetcode', // 主题
       keyMap: 'sublime', // 快键键风格
@@ -58,6 +58,7 @@ export default React.forwardRef(({ value, id }, ref) => {
       smartIndent: true, // 智能缩进
       indentUnit: 4, // 智能缩进单位为4个空格长度
       indentWithTabs: true, // 使用制表符进行智能缩进
+      readOnly: true, // 只读
       lineWrapping: false, //
       // 在行槽中添加行号显示器、折叠器、语法检测器
       gutters: [
@@ -87,10 +88,7 @@ export default React.forwardRef(({ value, id }, ref) => {
 
   return (
     <div style={{ height: '100%' }}>
-      <textarea
-        id={`editor${id ? id : ''}`}
-        className={`editor${id ? id : ''}`}
-      ></textarea>
+      <textarea id={`editor${id || ''}`} className={`editor${id || ''}`} />
     </div>
   );
 });

@@ -130,10 +130,18 @@ export default useInjectContext(({ history }) => {
       message.info('请填写项目名称');
       return;
     }
+
+    const reg = /[?:<>|*"{}\[\]\/\\]/g;
+    if (reg.test(name)) {
+      message.error('不能包含特殊字符');
+      return;
+    }
+
     if (checkProjectExist(name)) {
       message.info('项目已存在，请重新填写');
       return false;
     }
+
     history.push({
       pathname: '/designGraph/edit',
       state: {
@@ -198,7 +206,7 @@ export default useInjectContext(({ history }) => {
             scroll={{
               y: 'calc(100vh - 400px)',
             }}
-            ellipsis={true}
+            ellipsis
             onRow={record => {
               return {
                 onClick: event => {

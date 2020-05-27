@@ -34,13 +34,6 @@ const getVariableList = item => {
   return [];
 };
 
-const stopDeleteKeyDown = e => {
-  if (e.keyCode === 46) {
-    e.nativeEvent.stopImmediatePropagation();
-    e.stopPropagation();
-  }
-};
-
 const AutoCompleteInputParam = React.forwardRef(
   (
     {
@@ -145,13 +138,7 @@ const AutoCompleteInputParam = React.forwardRef(
       if (param.enName === '_text' && isSelectEncty === 'True') {
         return <Input.Password visibilityToggle={false} />;
       } else if (!needTextArea) {
-        return (
-          <TextArea
-            className="custom"
-            style={{ height: 32 }}
-            onKeyDown={e => stopDeleteKeyDown(e)}
-          />
-        );
+        return <TextArea className="custom" style={{ height: 32 }} />;
       }
       return null;
     };

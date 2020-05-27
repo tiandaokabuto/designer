@@ -1,6 +1,5 @@
-//import moment from moment
+// import moment from moment
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { Input, message, Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import cloneDeep from 'lodash/cloneDeep';
@@ -18,8 +17,8 @@ import {
 import store from '../../store';
 import { readDir } from '../../nodejs';
 import event from '../designerGraphBlock/layout/eventCenter';
-import PATH_CONFIG from '../../constants/localFilePath'; //'@/constants/localFilePath';
-import { encrypt } from '../../login/utils'; //'@/login/utils';
+import PATH_CONFIG from '../../constants/localFilePath'; // '@/constants/localFilePath';
+import { encrypt } from '../../login/utils'; // '@/login/utils';
 import RenameInput from './components/RenameInput';
 import transformEditorGraphData from '../designerGraphEdit/RPAcore';
 
@@ -27,8 +26,10 @@ const fs = require('fs');
 const process = require('process');
 const path = require('path');
 const JSZIP = require('jszip');
+
 const zip = new JSZIP();
 const adm_zip = require('adm-zip');
+
 const defaultGraphData = {
   nodes: [
     {
@@ -76,7 +77,7 @@ export const newProject = (name, callback) => {
       };
       // 创建初始的描述文件
       fs.writeFileSync(
-        PATH_CONFIG('project', name + '/manifest.json'),
+        PATH_CONFIG('project', `${name}/manifest.json`),
         encrypt.argEncryptByDES(JSON.stringify(initialProcessTreeJson))
       );
       fs.mkdir(
@@ -152,7 +153,7 @@ export const findNodeByKey = (tree, key) => {
       return child;
     }
     if (child.children) {
-      let bool = findNodeByKey(child.children, key);
+      const bool = findNodeByKey(child.children, key);
       if (bool) return bool;
     }
   }
@@ -174,14 +175,12 @@ const deleteFileByKey = (target, name, type) => {
         }
       }
     });
+  } else if (type === 'process') {
+    deleteFolderRecursive(PATH_CONFIG('project', `${name}/${target.title}`));
   } else {
-    if (type === 'process') {
-      deleteFolderRecursive(PATH_CONFIG('project', `${name}/${target.title}`));
-    } else {
-      fs.unlinkSync(
-        PATH_CONFIG('project', `${name}/${name}_module/${target.title}.json`)
-      );
-    }
+    fs.unlinkSync(
+      PATH_CONFIG('project', `${name}/${name}_module/${target.title}.json`)
+    );
   }
 };
 
@@ -227,7 +226,7 @@ export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
 export const deleteFolderRecursive = (path) => {
   if (fs.existsSync(path)) {
     fs.readdirSync(path).forEach(function (file) {
-      var curPath = path + '/' + file;
+      const curPath = `${path}/${file}`;
       if (fs.statSync(curPath).isDirectory()) {
         // recurse
         deleteFolderRecursive(curPath);
@@ -305,7 +304,7 @@ export const persistentStorage = (
   name,
   node
 ) => {
-  let tree = cloneDeep(processTree);
+  const tree = cloneDeep(processTree);
   if (modifiedNodesArr) {
     traverseTree(tree, (treeItem) => {
       if (treeItem.type === 'process') {
@@ -341,7 +340,7 @@ export const persistentManifest = (tree, name, type, callback) => {
   }
   fs.readFile(PATH_CONFIG('project', path), function (err, data) {
     if (!err) {
-      let description = getDecryptOrNormal(data);
+      const description = getDecryptOrNormal(data);
       fs.writeFileSync(
         PATH_CONFIG('project', path),
         encrypt.argEncryptByDES(
@@ -377,7 +376,7 @@ export const hasDuplicateKey = (tree, new_key) => {
       return true;
     }
     if (child.children) {
-      let bool = hasDuplicateKey(child.children, new_key);
+      const bool = hasDuplicateKey(child.children, new_key);
       if (bool) return bool;
     }
   }
@@ -402,7 +401,7 @@ export const getUniqueId = (tree, keyType = 'key_') => {
 };
 
 export const uuid = () => {
-  let s = [];
+  const s = [];
   const hexDigits = '0123456789abcdef';
   for (let i = 0; i < 36; i++) {
     s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
@@ -429,10 +428,10 @@ export const newProcessOrDir = (
   currentProject,
   treeType
 ) => {
-  let newTree = undefined;
-  let isDirNodeBool = undefined;
-  let isLeafNodeOrUndefined = undefined;
-  let uniqueid = undefined;
+  let newTree;
+  let isDirNodeBool;
+  let isLeafNodeOrUndefined;
+  let uniqueid;
   if (treeType === 'process') {
     isDirNodeBool = isDirNode(tree, checkedTreeNode);
     isLeafNodeOrUndefined = checkedTreeNode === undefined || !isDirNodeBool;
@@ -451,7 +450,7 @@ export const newProcessOrDir = (
           },
         });
       } else {
-        //在这个项目目录下新增
+        // 在这个项目目录下新增
         isDirNodeBool.children.push({
           title: name,
           key: uniqueid,
@@ -526,6 +525,14 @@ export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
   return files.find((item) => item === title);
 };
 
+export const getProjectTreeData = (currentProject, processTree, node) => {
+  const filePath = PATH_CONFIG(
+    'project',
+    `${currentProject}/${node.title}/manifest.json`
+  );
+  return fs.readFileSync(filePath);
+};
+
 /**
  * 打开项目
  * @param {*} name 项目名
@@ -542,7 +549,8 @@ export const openProject = (name) => {
       //   ? JSON.parse(encrypt.argDecryptByDES(data.toString()))
       //   : JSON.parse(data.toString());
       // 遍历项目文件夹下面的流程文件夹，读取manifest.json里流程的数据，写入processTree
-      dirs.forEach((dirItem) => {
+      changeProcessTree(processTree);
+      /* dirs.forEach(dirItem => {
         if (dirItem !== 'manifest.json' && dirItem !== `${name}_module`) {
           try {
             const dirItemData = fs.readFileSync(
@@ -561,7 +569,7 @@ export const openProject = (name) => {
           }
         }
       });
-      changeProcessTree(processTree);
+      changeProcessTree(processTree); */
       checkAndMakeDir(PATH_CONFIG('project', `${name}/${name}_module`));
       fs.readFile(
         PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
@@ -653,9 +661,9 @@ export const downProcessZipToLocal = (
     deleteFolderRecursive(filePath);
     fs.mkdirSync(filePath);
   }
-  fs.writeFileSync(filePath + '/test.py', editorBlockPythonCode);
+  fs.writeFileSync(`${filePath}/test.py`, editorBlockPythonCode);
   fs.writeFileSync(
-    filePath + '/manifest.json',
+    `${filePath}/manifest.json`,
     JSON.stringify({
       processName,
       descText,
@@ -678,7 +686,7 @@ export const downProcessZipToLocal = (
     })
     .then(function (content) {
       deleteFolderRecursive(filePath);
-      fs.writeFileSync(filePath + '.zip', content);
+      fs.writeFileSync(`${filePath}.zip`, content);
     });
 };
 
@@ -725,7 +733,7 @@ export const addToReuse = () => {
     );
     const newModuleTree = [...moduleTree];
     newModuleTree.push({
-      title: title,
+      title,
       type: 'process',
       key: getUniqueId(moduleTree, 'key_module_'),
       graphDataMap: {},
@@ -756,7 +764,7 @@ export const exportCustomProcessBlock = () => {
     const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
 
     fs.writeFileSync(
-      filePath + '/manifest.json',
+      `${filePath}/manifest.json`,
       encrypt.argEncryptByDES(JSON.stringify(data)),
       function (err) {
         console.log(err);
@@ -775,7 +783,7 @@ export const exportCustomProcessBlock = () => {
       })
       .then(function (content) {
         deleteFolderRecursive(filePath);
-        fs.writeFileSync(filePath + '.zip', content);
+        fs.writeFileSync(`${filePath}.zip`, content);
         message.success('导出成功');
       });
   });
@@ -803,7 +811,8 @@ export const getChooseFilePath = (filePath, importType) => {
   const text = unzip.readAsText(entry, 'utf8');
   const data = getDecryptOrNormal(text);
 
-  const re = /([^\.\/\\]+)\.(?:[a-z]+)$/i;
+  // /([^\.\/\\]+)\.(?:[a-z]+)$/i
+  const re = /([^?:<>|*"{}\[\]\/\\]+)\.(?:[a-z]+)$/i;
   const fileName = re.exec(filePath[0])[1];
   const {
     grapheditor: {
@@ -874,41 +883,39 @@ export const getChooseFilePath = (filePath, importType) => {
       persistentManifest(newModuleTree, currentProject, 'moduleTree');
       // persistentModuleStorage(newModuleTree, currentProject);
     }
+  } else if (
+    fs.existsSync(PATH_CONFIG('project', `${currentProject}/${fileName}`))
+  ) {
+    message.info('流程已存在');
   } else {
-    if (
-      fs.existsSync(PATH_CONFIG('project', `${currentProject}/${fileName}`))
-    ) {
-      message.info('流程已存在');
+    let newProcessTree;
+    const isDirNodeBool = isDirNode(processTree, currentCheckedTreeNode);
+    const isLeafNodeOrUndefined =
+      currentCheckedTreeNode === undefined || !isDirNodeBool;
+    const uniqueid = getUniqueId(processTree);
+    checkAndMakeDir(PATH_CONFIG('project', `${currentProject}/${fileName}`));
+    if (isLeafNodeOrUndefined) {
+      newProcessTree = processTree.concat({
+        title: fileName,
+        key: uniqueid,
+        type: 'process',
+        isLeaf: true,
+        data,
+      });
     } else {
-      let newProcessTree = undefined;
-      const isDirNodeBool = isDirNode(processTree, currentCheckedTreeNode);
-      const isLeafNodeOrUndefined =
-        currentCheckedTreeNode === undefined || !isDirNodeBool;
-      const uniqueid = getUniqueId(processTree);
-      checkAndMakeDir(PATH_CONFIG('project', `${currentProject}/${fileName}`));
-      if (isLeafNodeOrUndefined) {
-        newProcessTree = processTree.concat({
-          title: fileName,
-          key: uniqueid,
-          type: 'process',
-          isLeaf: true,
-          data,
-        });
-      } else {
-        isDirNodeBool.children.push({
-          title: fileName,
-          key: uniqueid,
-          type: 'process',
-          isLeaf: true,
-          data,
-        });
-        newProcessTree = [...processTree];
-        event.emit('expandKeys', isDirNodeBool.key);
-      }
-      changeProcessTree(newProcessTree);
-      changeCheckedTreeNode(uniqueid);
-      persistentStorage([uniqueid], newProcessTree, currentProject, uniqueid);
+      isDirNodeBool.children.push({
+        title: fileName,
+        key: uniqueid,
+        type: 'process',
+        isLeaf: true,
+        data,
+      });
+      newProcessTree = [...processTree];
+      event.emit('expandKeys', isDirNodeBool.key);
     }
+    changeProcessTree(newProcessTree);
+    changeCheckedTreeNode(uniqueid);
+    persistentStorage([uniqueid], newProcessTree, currentProject, uniqueid);
   }
 };
 
