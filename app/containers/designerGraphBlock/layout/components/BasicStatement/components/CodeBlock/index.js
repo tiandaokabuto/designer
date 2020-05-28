@@ -21,13 +21,14 @@ export default ({ visible, setVisible, interactiveCard }) => {
         height: '75vh',
       }}
       centered
-      destroyOnClose={true}
+      destroyOnClose
       visible={visible}
       onOk={() => {
         const temp = codeMirrorRef.current.codeMirrorRef;
         if (temp) {
           const codeRef = temp.current;
           interactiveCard.codeValue = codeRef.getValue();
+          interactiveCard.hasModified = true;
           noticyChange();
           handleEmitCodeTransform(cards);
           setVisible(false);
@@ -39,6 +40,7 @@ export default ({ visible, setVisible, interactiveCard }) => {
       closable={false}
     >
       <CodeMirrorEditor
+        readOnly={false}
         value={interactiveCard.codeValue || ''}
         id={interactiveCard.id}
         ref={codeMirrorRef}

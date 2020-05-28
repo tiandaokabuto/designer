@@ -6,5 +6,5 @@ import CodeMirrorEditor from './components/CodeMirrorEditor';
 
 export default memo(() => {
   const pythonCode = useSelector(state => state.blockcode.pythonCode);
-  return <CodeMirrorEditor value={pythonCode} />;
+  return <CodeMirrorEditor value={pythonCode} readOnly />;
 });

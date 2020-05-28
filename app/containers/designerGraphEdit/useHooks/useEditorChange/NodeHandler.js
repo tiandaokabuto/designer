@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
+import cloneDeep from 'lodash/cloneDeep';
 import { findNodeById, generateUniqueId } from './utils';
 import { encrypt } from '@/login/utils';
 import {
@@ -12,7 +13,6 @@ import {
 } from '../../../reduxActions';
 import PATH_CONFIG from '@/constants/localFilePath.js';
 import event from '../../../designerGraphBlock/layout/eventCenter';
-import cloneDeep from 'lodash/cloneDeep';
 
 import { changeModifyState, getDecryptOrNormal } from '../../../common/utils';
 
@@ -26,7 +26,7 @@ class NodeHandler {
     this.propsAPI = propsAPI;
   }
 
-  handleNodeChange = (description) => {
+  handleNodeChange = description => {
     console.log(description.action);
     if (description.action === 'add') {
       const {
@@ -120,8 +120,7 @@ class NodeHandler {
       } else if (description.model.shape === 'start-node') {
         const graphData = this.propsAPI.save();
         if (
-          graphData.nodes.filter((node) => node.shape === 'start-node').length >
-          1
+          graphData.nodes.filter(node => node.shape === 'start-node').length > 1
         ) {
           message.info('只允许拖入一个开始结点');
           this.apiAction('undo');
@@ -135,7 +134,7 @@ class NodeHandler {
       } else if (description.model.shape === 'end-node') {
         const graphData = this.propsAPI.save();
         if (
-          graphData.nodes.filter((node) => node.shape === 'end-node').length > 1
+          graphData.nodes.filter(node => node.shape === 'end-node').length > 1
         ) {
           message.info('只允许拖入一个结束结点');
           this.apiAction('undo');
@@ -147,9 +146,14 @@ class NodeHandler {
           properties: [],
         });
       } else if (description.model.shape === 'group') {
+<<<<<<< HEAD
         this.apiAction('undo'); // 重置当前的操作, 转为自己手动添加结点
         const model = description.model;
         // 针对每个结点生成全局唯一的id
+=======
+        this.apiAction('undo');
+        const { model } = description;
+>>>>>>> 5302b641be2110f85412398637f78d65c9cdbf3e
         const processBlockIdOne = generateUniqueId(graphData.nodes);
         const processBlockIdTwo = generateUniqueId(graphData.nodes);
         const processBlockIdThree = generateUniqueId(graphData.nodes);
@@ -166,7 +170,7 @@ class NodeHandler {
                 x: model.x,
                 y: model.y,
                 label: '判断',
-                id: rhombusNodeId, //'c67929f1',
+                id: rhombusNodeId, // 'c67929f1',
                 shape: 'rhombus-node',
                 size: '184*56',
                 type: 'node',
@@ -224,7 +228,7 @@ class NodeHandler {
                 x: model.x,
                 y: model.y + 120,
                 label: '判断',
-                id: rhombusNodeId, //'c67929f1',
+                id: rhombusNodeId, // 'c67929f1',
                 shape: 'rhombus-node',
                 size: '184*56',
                 type: 'node',
@@ -280,7 +284,7 @@ class NodeHandler {
                 x: model.x,
                 y: model.y + 120,
                 label: '判断',
-                id: rhombusNodeId, //'c67929f1',
+                id: rhombusNodeId, // 'c67929f1',
                 shape: 'rhombus-node',
                 size: '184*56',
                 type: 'node',
@@ -366,7 +370,7 @@ class NodeHandler {
         event.removeAllListeners('loopChooseEnd');
         // 触发用户做循环类型的选择
         event.emit('loopChoose');
-        event.addListener('loopChooseEnd', (type) => {
+        event.addListener('loopChooseEnd', type => {
           const processblockDesc = {
             shape: 'processblock',
             properties: [
@@ -440,7 +444,7 @@ class NodeHandler {
     changeModifyState(processTree, currentCheckedTreeNode, true);
   };
 
-  apiAction = (command) => {
+  apiAction = command => {
     setTimeout(() => {
       this.propsAPI.executeCommand(command);
     }, 0);

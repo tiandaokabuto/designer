@@ -21,8 +21,9 @@ const MenuBuilder = require('./menu');
 const path = require('path');
 const net = require('net');
 const appexpress = require('express')();
-const bodyParser = require('body-parser'); //解析,用req.body获取post参数
-appexpress.use(bodyParser.json());
+const bodyParser = require('body-parser');
+// 解析,用req.body获取post参数
+appexpress.use(bodyParser.json({ limit: '5mb' }));
 appexpress.use(bodyParser.urlencoded({ extended: false }));
 
 // 本地监听8888端口 获取动态的xpath元素回填
@@ -39,7 +40,7 @@ appexpress.post('/upload', function(req, res) {
   try {
     const finallyResult = req.body;
 
-    //将结果通知给渲染进程
+    // 将结果通知给渲染进程
     if (targetId === undefined) {
       res.sendStatus(500);
       return;
@@ -67,7 +68,7 @@ appexpress.post('/position', function(req, res) {
   try {
     const finallyResult = req.body;
 
-    //将结果通知给渲染进程
+    // 将结果通知给渲染进程
     if (targetId === undefined) {
       res.sendStatus(500);
       return;
@@ -103,7 +104,7 @@ let mainWindow = null;
 let loginWindow = null;
 
 let isNetStart = false;
-let targetId = undefined;
+let targetId;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -132,7 +133,7 @@ const createLoginWindow = () => {
     show: false,
     width: 800,
     height: 500,
-    //useContentSize: true,
+    // useContentSize: true,
     frame: false,
     hasShadow: true,
     resizable: false,

@@ -23,6 +23,11 @@ export default (
       defaultValue={node.title}
       onBlur={e => {
         const newTitle = e.target.value;
+        const reg = /[?:<>|*"{}\[\]\/\\]/g;
+        if (reg.test(newTitle)) {
+          message.error('不能包含特殊字符');
+          return;
+        }
         // 流程树
         if (type === 'process') {
           if (node.type === 'process') {
@@ -48,7 +53,6 @@ export default (
               changeProcessTree([...tree]);
               persistentStorage();
               restoreCheckedTreeNode();
-              return;
             }
           } else {
             node.title = newTitle;
@@ -109,7 +113,6 @@ export default (
               changeModuleTree([...tree]);
               persistentStorage();
               restoreCheckedTreeNode();
-              return;
             }
           } else {
             node.title = newTitle;

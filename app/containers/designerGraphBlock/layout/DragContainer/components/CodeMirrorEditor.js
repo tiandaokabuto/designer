@@ -29,7 +29,8 @@ import 'codemirror/addon/fold/comment-fold.js';
 import 'codemirror/addon/edit/closebrackets.js';
 import 'codemirror/addon/edit/matchbrackets.js';
 
-export default React.forwardRef(({ value, id }, ref) => {
+export default React.forwardRef(({ value, id, readOnly }, ref) => {
+  console.log(readOnly);
   const codeMirrorRef = useRef(null);
   const dispatch = useDispatch();
 
@@ -58,7 +59,7 @@ export default React.forwardRef(({ value, id }, ref) => {
       smartIndent: true, // 智能缩进
       indentUnit: 4, // 智能缩进单位为4个空格长度
       indentWithTabs: true, // 使用制表符进行智能缩进
-      readOnly: true, // 只读
+      readOnly, // 只读
       lineWrapping: false, //
       // 在行槽中添加行号显示器、折叠器、语法检测器
       gutters: [
