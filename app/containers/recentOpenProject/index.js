@@ -2,7 +2,7 @@
  * 最近打开项目列表
  */
 import React, { useState, useMemo } from 'react';
-import { Table, Button, Input, Icon, message, Popconfirm } from 'antd';
+import { Table, Button, Input, Popconfirm, message, Modal } from 'antd';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
 import GraphBlockHeader from '../common/GraphBlockHeader';
@@ -41,7 +41,6 @@ export default useInjectContext(({ history }) => {
   }, [flag]);
 
   const [modalVisible, setModalVisible] = useState(false);
-  const processs = require('process');
   const columns = [
     {
       title: '项目名称',
@@ -66,8 +65,7 @@ export default useInjectContext(({ history }) => {
       width: '200px',
       render: (text, record) => {
         const time = FormatDateTime(text);
-        const handleDeletProject = e => {
-          e.stopPropagation();
+        const handleDeletProject = () => {
           deleteFolderRecursive(PATH_CONFIG('project', record.name));
           setFlag(flag => !flag);
           const historyState = history.location.state;
@@ -81,28 +79,32 @@ export default useInjectContext(({ history }) => {
               setIsJump(false);
             }
           }
+          setModalVisible(false);
         };
 
         return (
           <div>
             {time}
-            <Popconfirm
-              title="确定要删除该项目吗?"
-              onConfirm={handleDeletProject}
-              onCancel={e => {
-                e.stopPropagation();
-              }}
-              okText="确定"
-              cancelText="取消"
+            <div
+              className="deletIconContent"
+              onClick={e => e.stopPropagation()}
             >
               <SDIcon
                 style={{ marginLeft: '10px' }}
                 url={CloseImg}
-                onClick={e => {
-                  e.stopPropagation();
+                onClick={() => {
+                  setModalVisible(true);
                 }}
               />
-            </Popconfirm>
+              <Modal
+                visible={modalVisible}
+                centered
+                onOk={handleDeletProject}
+                onCancel={() => setModalVisible(false)}
+              >
+                <p>确定要删除吗？</p>
+              </Modal>
+            </div>
           </div>
         );
       },
@@ -142,17 +144,17 @@ export default useInjectContext(({ history }) => {
       return false;
     }
 
-    // history.push({
-    //   pathname: '/designGraph/edit',
-    //   state: {
-    //     projectName: name,
-    //   },
-    // });
-    // setTimeout(() => {
-    //   newProject(name, () => {
-    //     changeCurrentProject(name);
-    //   });
-    // }, 0);
+    history.push({
+      pathname: '/designGraph/edit',
+      state: {
+        projectName: name,
+      },
+    });
+    setTimeout(() => {
+      newProject(name, () => {
+        changeCurrentProject(name);
+      });
+    }, 0);
   };
 
   return (
@@ -178,9 +180,9 @@ export default useInjectContext(({ history }) => {
               onChange={e => {
                 setName(e.target.value.trim());
               }}
-              // onBlur={e => {
-              //   e.target.value = e.target.value.trim();
-              // }}
+              onBlur={e => {
+                e.target.value = e.target.value.trim();
+              }}
             />
             <Button
               type="primary"
