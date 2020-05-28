@@ -142,17 +142,17 @@ export default useInjectContext(({ history }) => {
       return false;
     }
 
-    // history.push({
-    //   pathname: '/designGraph/edit',
-    //   state: {
-    //     projectName: name,
-    //   },
-    // });
-    // setTimeout(() => {
-    //   newProject(name, () => {
-    //     changeCurrentProject(name);
-    //   });
-    // }, 0);
+    history.push({
+      pathname: '/designGraph/edit',
+      state: {
+        projectName: name,
+      },
+    });
+    setTimeout(() => {
+      newProject(name, () => {
+        changeCurrentProject(name);
+      });
+    }, 0);
   };
 
   return (
@@ -178,9 +178,9 @@ export default useInjectContext(({ history }) => {
               onChange={e => {
                 setName(e.target.value.trim());
               }}
-              // onBlur={e => {
-              //   e.target.value = e.target.value.trim();
-              // }}
+              onBlur={e => {
+                e.target.value = e.target.value.trim();
+              }}
             />
             <Button
               type="primary"
