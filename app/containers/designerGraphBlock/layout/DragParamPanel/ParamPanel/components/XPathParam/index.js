@@ -23,13 +23,14 @@ let prevConfig = null;
 
 // {
 //   "XPath": ["//a[text()='工单管理']", "/html/body/div[1]/ul[1]/li[2]/a[1]"],
-//   "JSpath": "body > div:nth-child(1) > ul:nth-child(4) > li:nth-child(2) > a:nth-child(1)",
+//   "JSpath": ["body > div:nth-child(1) > ul:nth-child(4) > li:nth-child(2) > a:nth-child(1)"],
 //   "iframe": ["//iframe[@id='myIframe']", "//frame[@name='topFrame']"]
 // }
 
 const { TextArea } = Input;
 export default memo(
   ({ param, markBlockIsUpdated, handleEmitCodeTransform }) => {
+    param.config = param.config || {};
     const [_, forceUpdate] = useState(0);
     const [visible, setVisible] = useState(false);
     const [iframeData, setIframeData] = useState([]);
@@ -54,8 +55,30 @@ export default memo(
           return { ...data };
         });
       }).then((xpathTemp) => {
-        setXpath(xpathTemp);
+        setXpath(
+          JSON.stringify({
+            [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: xpathTemp,
+            iframe: param.config.iframe || [],
+          })
+        );
       });
+    };
+
+    const handleGenerateXpath = () => {
+      const { xpathData, JSpathData } = data;
+      const find = (selectedOption === 'xpath' ? xpathData : JSpathData).find(
+        (item) => item.checked
+      );
+      if (find) {
+        setXpath(
+          JSON.stringify({
+            [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: find.xpath,
+            iframe: param.config.iframe || [],
+          })
+        );
+      } else {
+        setXpath('');
+      }
     };
 
     const xpathTitle = [
@@ -78,6 +101,18 @@ export default memo(
         title:
           selectedOption === 'xpath' ? 'xpath列表(单选)' : 'JSpath列表(单选)',
         dataIndex: 'xpath',
+        render: (text, obj) => {
+          return (
+            <Input
+              defaultValue={text}
+              key={visible ? '0' : '1'}
+              onChange={(e) => {
+                obj.xpath = e.target.value;
+                handleGenerateXpath();
+              }}
+            />
+          );
+        },
       },
     ];
 
@@ -100,20 +135,28 @@ export default memo(
     }, [param.config]);
 
     useEffect(() => {
-      const { xpathData, JSpathData } = data;
-      const find = (selectedOption === 'xpath' ? xpathData : JSpathData).find(
+      handleGenerateXpath();
+    }, [selectedOption, param.config, data]);
+
+    useEffect(() => {
+      const { iframe = [], XPath = [], JSpath = [], selectedOption } =
+        param.config || {};
+      const find = (selectedOption === 'xpath' ? XPath : JSpath).find(
         (item) => item.checked
       );
-      if (find) {
-        setXpath(find.xpath);
-      } else {
-        setXpath('');
-      }
-    }, [selectedOption, param.config, data]);
+      param.value = find
+        ? JSON.stringify(
+            JSON.stringify({
+              [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: find.xpath,
+              iframe: param.config.iframe || [],
+            })
+          )
+        : '';
+    }, [param.config]);
 
     return (
       <div className="xpathParam">
-        <TextArea style={{ height: 32 }} value={xpath} disabled />
+        <TextArea style={{ height: 32 }} value={xpath} />
         <Button
           onClick={() => {
             prevConfig = cloneDeep(param.config);
@@ -139,7 +182,7 @@ export default memo(
           }}
           onOk={() => {
             setVisible(false);
-            param.value = `"${xpath}"`;
+            param.value = JSON.stringify(xpath);
             markBlockIsUpdated();
             handleEmitCodeTransform();
           }}

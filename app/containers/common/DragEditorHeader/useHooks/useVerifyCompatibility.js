@@ -14,6 +14,7 @@ import { setGraphDataMap } from '../../../reduxActions';
 
 const fs = require('fs');
 
+// 获取所有的标准的原子能力数据结构描述。通过pkg + main + module字段的拼接来唯一确定
 const getAutoMicListMap = automicList => {
   let result = {};
   for (const child of automicList) {
@@ -31,7 +32,7 @@ const getAutoMicListMap = automicList => {
   }
   return result;
 };
-
+// 遍历所有的原子能力结点
 const traverseAllCards = (cards, callback) => {
   for (const child of cards) {
     if (child.children) {
@@ -119,18 +120,31 @@ const typeOf = obj => {
   return Object.prototype.toString.call(obj);
 };
 
+/**
+ *
+ * @param {*} standard
+ * @param {*} current
+ * @param {*} isParam  // 判断当前对比的对象是否是属性下边的字段 properties
+ * // 跟参数面板无关的那些字段直接用新的去替换掉老的值
+ */
 const isEqualType = (standard, current, isParam = false) => {
+  // 标记当前是否存在类型不兼容的情况
   let flag = true;
   for (const key in standard) {
+    // 过滤掉原型上的属性
     if (!hasOwnPropertyKey(standard, key)) {
+      // 判断两者是否为同一类型， 🌰: 原来判断结点的条件为string类型 后来为数组类型
+      // 策略就是直接用新的数据结构去替换掉老的数据结构。
       if (typeOf(standard[key]) !== typeOf(current[key])) {
         flag = false;
 
         current[key] = standard[key];
       } else if (isPlainObject(standard[key])) {
         if (key === 'properties') {
+          // 已经进入了属性参数的类型校验
           isParam = true;
         }
+        // 一旦 flag 从true修改成false, 那么就不对其再进行赋值。
         if (flag) {
           flag = isEqualType(standard[key], current[key], isParam);
         } else {
@@ -145,8 +159,6 @@ const isEqualType = (standard, current, isParam = false) => {
       } else {
         // 基本类型数据
         if (standard[key] !== current[key]) {
-          // console.log(current, key, standard, isParam, '---类型相同, 值不同');
-
           if (!isParam) {
             // 满足以下条件的 new -> old
             flag = false;
@@ -167,6 +179,7 @@ const verifyCards = (current, standard) => {
       node
     );
     if (!isEqual) {
+      // 标记当前存在类型不兼容的情况。
       flag = true;
       node.isCompatable = true;
     }
@@ -187,6 +200,7 @@ const verifyBlockProperties = (current, standard) => {
 };
 
 export default () => {
+  // 校验逻辑入口函数
   return () => {
     const {
       grapheditor: { currentCheckedTreeNode, processTree },
@@ -195,10 +209,11 @@ export default () => {
       message.info('请选择流程进行校验');
       return;
     }
+    // 获取待校验的流程数据
     const verifyNode = findNodeByKey(processTree, currentCheckedTreeNode);
     if (!verifyNode) return;
     try {
-      console.log('开始');
+      // 获取用户保存在本地的标准的原子能力数据结构描述。
       message.loading('正在校验', 0);
       const graphDataMap = JSON.parse(verifyNode.data.graphDataMap);
 
@@ -213,6 +228,7 @@ export default () => {
       const automicListMap = getAutoMicListMap(temp);
       let isCompatable = false;
       let hasModified = false;
+      // item对应的是流程图的结点
       for (const [key, item] of Object.entries(graphDataMap)) {
         if (item.shape === 'processblock') {
           if (!Array.isArray(item.cards)) {
@@ -254,6 +270,7 @@ export default () => {
           });
         }
       }
+      // 判断是否存在类型不兼容，部分原子能力的描述被修改的情况，标记当前的流程处于修改的状态。
       if (hasModified) {
         changeModifyState(processTree, currentCheckedTreeNode, true);
       }

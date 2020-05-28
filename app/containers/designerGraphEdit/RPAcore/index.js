@@ -20,6 +20,16 @@ import transformVariable from './transformVariable';
 
 const padding = (length) => '    '.repeat(length);
 
+/**
+ *
+ * @param {*} graphData
+ * @param {*} graphDataMap
+ * @param {*} currentId  当前要解析的结点ID
+ * @param {*} result
+ * @param {*} depth
+ * @param {*} breakPoint
+ * @param {*} notWhile
+ */
 export const transformEditorProcess = (
   graphData,
   graphDataMap,
@@ -253,7 +263,6 @@ export const transformEditorProcess = (
 };
 
 export default (graphData, graphDataMap, clickId, fromOrTo) => {
-  console.log(fromOrTo);
   const result = {
     output: '',
   };
@@ -278,7 +287,6 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
       const startNode = copyEdges.find((item) => item.source === beginId);
       startNode.target = clickId;
       copyGraphData.edges = newArr;
-      console.log(copyGraphData);
       transformEditorProcess(
         copyGraphData,
         graphDataMap,

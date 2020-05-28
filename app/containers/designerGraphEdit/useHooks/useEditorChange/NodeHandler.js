@@ -154,7 +154,7 @@ class NodeHandler {
         const processBlockIdFour = generateUniqueId(graphData.nodes);
         const rhombusNodeId = generateUniqueId(graphData.nodes);
 
-        // group
+        // 生成每种循环需要新增的结点和边
         const LOOP_GRAPHDATA = {
           while: {
             nodes: [
@@ -362,7 +362,7 @@ class NodeHandler {
         };
 
         event.removeAllListeners('loopChooseEnd');
-
+        // 触发用户做循环类型的选择
         event.emit('loopChoose');
         event.addListener('loopChooseEnd', type => {
           const processblockDesc = {
@@ -406,6 +406,7 @@ class NodeHandler {
               },
             ],
           };
+          // 对每个新增的结点添加一些基础的参数设置
           if (type === 'while' || type === 'doWhile') {
             setGraphDataMap(processBlockIdOne, processblockDesc);
             setGraphDataMap(processBlockIdTwo, processblockDesc);
@@ -417,6 +418,7 @@ class NodeHandler {
             setGraphDataMap(processBlockIdFour, processblockDesc);
             setGraphDataMap(rhombusNodeId, rhombusDesc);
           }
+          // 更新流程图的 边和结点的集合
           updateGraphData({
             ...graphData,
             nodes: (graphData.nodes || []).concat(LOOP_GRAPHDATA[type].nodes),

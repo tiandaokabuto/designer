@@ -54,7 +54,8 @@ const getComponentType = (
   setFlag,
   handleValidate,
   markBlockIsUpdated,
-  cmdName
+  cmdName,
+  isWindowsAuto
 ) => {
   const [inputValue, setInputValue] = useState(
     param.enName === 'sqlStr'
@@ -245,7 +246,7 @@ const getComponentType = (
         )}
       </SelectContext.Consumer>
     );
-  } else if (param.enName === 'xpath') {
+  } else if (param.enName === 'xpath' && !isWindowsAuto) {
     return (
       <XPathParam
         param={param}
@@ -374,6 +375,7 @@ const ParamItem = ({
   aiHintList,
   setFlag,
   cmdName,
+  isWindowsAuto,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
   const specialParam = ['条件', '循环条件', '任务数据名称'];
@@ -400,7 +402,8 @@ const ParamItem = ({
             setFlag,
             handleValidate,
             markBlockIsUpdated,
-            cmdName
+            cmdName,
+            isWindowsAuto
           )}
         </div>
       </div>
@@ -495,7 +498,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   useEffect(() => {
     setDesc(checkedBlock.userDesc);
   }, [checkedBlock.userDesc]);
-
+  console.log(checkedBlock, 'checkedBlock');
   return (
     <div className="parampanel" onKeyDown={e => stopDeleteKeyDown(e)}>
       {checkedBlock && (
@@ -631,6 +634,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                     aiHintList={aiHintList}
                     setFlag={setFlag}
                     cmdName={checkedBlock.cmdName}
+                    isWindowsAuto={checkedBlock.pkg === 'WindowsAuto'}
                   />
                 </SelectContext.Provider>
               );
