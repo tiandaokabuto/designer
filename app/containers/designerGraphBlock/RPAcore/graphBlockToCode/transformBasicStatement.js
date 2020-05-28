@@ -83,7 +83,6 @@ const transformBasicStatement = (
   handleNote(dataStructure.cmdDesc, result, padding, dataStructure);
   result.output += `${padding}${ignore}`;
   let params = ''; // 生成参数类型
-  // if (dataStructure.properties.required) {
   dataStructure.properties.required.forEach((item, index) => {
     // 文件类型选择拼接模式，将item.valueList[0]目录名和item.valueList[1]文件名拼接起来
     if (item.componentType === 2 && item.tag === 2) {
