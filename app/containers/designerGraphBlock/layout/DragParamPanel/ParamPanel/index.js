@@ -19,6 +19,7 @@ import {
 } from '../../useHooks';
 import ConditionParam from './ConditionParam';
 import LoopPanelParam from './LoopPanelParam';
+import XPathParam from './components/XPathParam';
 import OutputPanel from './OutputParam';
 import FileParam from './FileParam';
 import DirectoryParam from './DirectoryParam';
@@ -243,6 +244,16 @@ const getComponentType = (
           </Select>
         )}
       </SelectContext.Consumer>
+    );
+  } else if (param.enName === 'xpath') {
+    return (
+      <XPathParam
+        param={param}
+        markBlockIsUpdated={markBlockIsUpdated}
+        handleEmitCodeTransform={() => {
+          handleEmitCodeTransform(cards);
+        }}
+      />
     );
   }
   switch (param.componentType) {
