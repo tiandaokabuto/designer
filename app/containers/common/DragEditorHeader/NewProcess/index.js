@@ -10,7 +10,7 @@ import {
 } from '../../utils';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
+const { Option } = Select;
 const layout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 16 },
@@ -35,6 +35,11 @@ export default ({ resetVisible, tag }) => {
 
   /* ---------- 流程/目录新增逻辑 ----------- */
   const handleAddProcessOrProject = () => {
+    const reg = /[?:<>|*"{}\[\]\/\\]/g;
+    if (reg.test(name)) {
+      message.error('不能包含特殊字符');
+      return;
+    }
     if (treeTab !== 'processModule') {
       // 做流程名校验避免重复
       if (isNameExist(processTree, name, checkedTreeNode, currentProject)) {
@@ -53,26 +58,24 @@ export default ({ resetVisible, tag }) => {
       setVisible(false);
       resetVisible(undefined);
       persistentStorage([uniqueid], newProcessTree, currentProject, uniqueid);
+    } else if (tag !== 'newprocess') {
+      const [newModuleTree, uniqueid] = newProcessOrDir(
+        '',
+        name,
+        moduleTree,
+        checkedModuleTreeNode,
+        currentProject,
+        'processModule'
+      );
+      setVisible(false);
+      resetVisible(undefined);
+      persistentManifest(newModuleTree, currentProject, 'moduleTree');
+      // persistentModuleStorage(newModuleTree, currentProject, uniqueid);
+      console.log('选择了流程块');
     } else {
-      if (tag !== 'newprocess') {
-        const [newModuleTree, uniqueid] = newProcessOrDir(
-          '',
-          name,
-          moduleTree,
-          checkedModuleTreeNode,
-          currentProject,
-          'processModule'
-        );
-        setVisible(false);
-        resetVisible(undefined);
-        persistentManifest(newModuleTree, currentProject, 'moduleTree');
-        // persistentModuleStorage(newModuleTree, currentProject, uniqueid);
-        console.log('选择了流程块');
-      } else {
-        message.info('流程块页面不能新增流程');
-        setVisible(false);
-        resetVisible(undefined);
-      }
+      message.info('流程块页面不能新增流程');
+      setVisible(false);
+      resetVisible(undefined);
     }
   };
   return (
