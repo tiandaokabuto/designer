@@ -14,6 +14,7 @@ import { setGraphDataMap } from '../../../reduxActions';
 
 const fs = require('fs');
 
+// 获取所有的标准的原子能力数据结构描述。通过pkg + main + module字段的拼接来唯一确定
 const getAutoMicListMap = (automicList) => {
   let result = {};
   for (const child of automicList) {
@@ -138,32 +139,30 @@ const isEqualType = (standard, current, isParam = false) => {
         flag = false;
 
         current[key] = standard[key];
-      } else {
-        if (isPlainObject(standard[key])) {
-          if (key === 'properties') {
-            // 已经进入了属性参数的类型校验
-            isParam = true;
-          }
-          // 一旦 flag 从true修改成false, 那么就不对其再进行赋值。
-          if (flag) {
-            flag = isEqualType(standard[key], current[key], isParam);
-          } else {
-            isEqualType(standard[key], current[key], isParam);
-          }
-        } else if (Array.isArray(standard[key])) {
-          if (flag) {
-            flag = isEqualType(standard[key], current[key], isParam);
-          } else {
-            isEqualType(standard[key], current[key], isParam);
-          }
+      } else if (isPlainObject(standard[key])) {
+        if (key === 'properties') {
+          // 已经进入了属性参数的类型校验
+          isParam = true;
+        }
+        // 一旦 flag 从true修改成false, 那么就不对其再进行赋值。
+        if (flag) {
+          flag = isEqualType(standard[key], current[key], isParam);
         } else {
-          // 基本类型数据
-          if (standard[key] !== current[key]) {
-            if (!isParam) {
-              // 满足以下条件的 new -> old
-              flag = false;
-              current[key] = standard[key];
-            }
+          isEqualType(standard[key], current[key], isParam);
+        }
+      } else if (Array.isArray(standard[key])) {
+        if (flag) {
+          flag = isEqualType(standard[key], current[key], isParam);
+        } else {
+          isEqualType(standard[key], current[key], isParam);
+        }
+      } else {
+        // 基本类型数据
+        if (standard[key] !== current[key]) {
+          if (!isParam) {
+            // 满足以下条件的 new -> old
+            flag = false;
+            current[key] = standard[key];
           }
         }
       }
