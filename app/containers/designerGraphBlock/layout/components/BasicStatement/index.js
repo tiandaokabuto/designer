@@ -303,15 +303,18 @@ const BasicStatement = useInjectContext((props) => {
                   ipcRenderer.removeAllListeners('updateMousePosition');
                   ipcRenderer.on(
                     'updateXpath',
-                    (e, { targetId, imageData, xpath: xpathBuffer }) => {
-                      const xpath = xpathBuffer && JSON.parse(xpathBuffer);
+                    (e, { targetId, imageData, xpath: xpathBuffer, type }) => {
+                      const xpath =
+                        type !== 'win' && xpathBuffer
+                          ? JSON.parse(xpathBuffer)
+                          : xpathBuffer;
                       if (xpath === undefined) return;
                       // 接收到xpath并作出更新
                       if (targetId !== id) return;
                       card.xpathImage = imageData;
                       card.hasModified = true;
                       setXpathImage(imageData);
-                      updateXpath(id, xpath);
+                      updateXpath(id, xpath, type);
                       handleEmitCodeTransform(cards);
                     }
                   );
