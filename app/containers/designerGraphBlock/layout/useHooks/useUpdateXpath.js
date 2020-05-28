@@ -3,26 +3,24 @@ import { findNodeLevelById, findNodeById } from '../shared/utils';
 import { CHANGE_CARDDATA } from '../../../../actions/codeblock';
 
 export default () => {
-  const cards = useSelector((state) => state.blockcode.cards);
+  const cards = useSelector(state => state.blockcode.cards);
   const dispatch = useDispatch();
-  return (id, data, type) => {
+  return (id, xpath, type) => {
     const node = findNodeById(cards, id);
-    const find = node['properties']['required'].find(
-      (item) => item.enName === 'xpath'
-    );
+    const find = node.properties.required.find(item => item.enName === 'xpath');
     if (!find) return;
     if (type !== 'win') {
-      const { XPath, JSpath, iframe } = data;
+      const { XPath, JSpath, iframe } = xpath;
       find.config = {
         XPath: XPath.map((xpath, key) => ({
           xpath,
           key,
-          checked: key === 0 ? true : false,
+          checked: key === 0,
         })),
         JSpath: JSpath.map((xpath, key) => ({
           xpath,
           key,
-          checked: key === 0 ? true : false,
+          checked: key === 0,
         })),
         selectedOption: 'xpath',
         iframe,
@@ -32,6 +30,7 @@ export default () => {
       find.updateId = true;
     } else {
       find.value = `"${xpath}"`;
+      find.updateId = true;
     }
 
     dispatch({
