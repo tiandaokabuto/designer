@@ -14,12 +14,7 @@ import { setGraphDataMap } from '../../../reduxActions';
 
 const fs = require('fs');
 
-<<<<<<< HEAD
-// 获取所有的标准的原子能力数据结构描述。通过pkg + main + module字段的拼接来唯一确定
 const getAutoMicListMap = (automicList) => {
-=======
-const getAutoMicListMap = automicList => {
->>>>>>> 5302b641be2110f85412398637f78d65c9cdbf3e
   let result = {};
   for (const child of automicList) {
     if (child.children) {
@@ -52,7 +47,7 @@ const traverseAllCards = (cards, callback) => {
   }
 };
 
-const getStandardProperties = shape => {
+const getStandardProperties = (shape) => {
   switch (shape) {
     case 'processblock':
       return [
@@ -107,7 +102,7 @@ const getStandardProperties = shape => {
   }
 };
 
-const isPlainObject = obj => {
+const isPlainObject = (obj) => {
   if (typeof obj !== 'object' || obj === null) return false;
   let proto = obj;
   while (Object.getPrototypeOf(proto) !== null) {
@@ -120,7 +115,7 @@ const hasOwnPropertyKey = (obj, key) => {
   return Object.hasOwnProperty(obj, key);
 };
 
-const typeOf = obj => {
+const typeOf = (obj) => {
   return Object.prototype.toString.call(obj);
 };
 
@@ -143,7 +138,6 @@ const isEqualType = (standard, current, isParam = false) => {
         flag = false;
 
         current[key] = standard[key];
-<<<<<<< HEAD
       } else {
         if (isPlainObject(standard[key])) {
           if (key === 'properties') {
@@ -170,32 +164,6 @@ const isEqualType = (standard, current, isParam = false) => {
               flag = false;
               current[key] = standard[key];
             }
-=======
-      } else if (isPlainObject(standard[key])) {
-        if (key === 'properties') {
-          isParam = true;
-        }
-        if (flag) {
-          flag = isEqualType(standard[key], current[key], isParam);
-        } else {
-          isEqualType(standard[key], current[key], isParam);
-        }
-      } else if (Array.isArray(standard[key])) {
-        if (flag) {
-          flag = isEqualType(standard[key], current[key], isParam);
-        } else {
-          isEqualType(standard[key], current[key], isParam);
-        }
-      } else {
-        // 基本类型数据
-        if (standard[key] !== current[key]) {
-          // console.log(current, key, standard, isParam, '---类型相同, 值不同');
-
-          if (!isParam) {
-            // 满足以下条件的 new -> old
-            flag = false;
-            current[key] = standard[key];
->>>>>>> 5302b641be2110f85412398637f78d65c9cdbf3e
           }
         }
       }
@@ -206,12 +174,7 @@ const isEqualType = (standard, current, isParam = false) => {
 
 const verifyCards = (current, standard) => {
   let flag = false;
-<<<<<<< HEAD
-  // 遍历所有的原子能力，并针对每个结点做类型校验。
   traverseAllCards(current, (node) => {
-=======
-  traverseAllCards(current, node => {
->>>>>>> 5302b641be2110f85412398637f78d65c9cdbf3e
     const isEqual = isEqualType(
       standard[node.pkg + node.main + node.module],
       node
@@ -262,7 +225,7 @@ export default () => {
         }
       );
       const { automicList = [] } = getDecryptOrNormal(data);
-      const temp = automicList.find(item => item.key === 'aviable').children;
+      const temp = automicList.find((item) => item.key === 'aviable').children;
       const automicListMap = getAutoMicListMap(temp);
       let isCompatable = false;
       let hasModified = false;
@@ -286,7 +249,7 @@ export default () => {
             setGraphDataMap(key, item);
           }
         } else if (item.shape === 'rhombus-node') {
-          item.properties.forEach(proItem => {
+          item.properties.forEach((proItem) => {
             if (proItem.enName === 'condition') {
               const flag = proItem.hasOwnProperty('valueMapping');
               if (!flag) {
