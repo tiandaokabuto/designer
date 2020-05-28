@@ -146,14 +146,8 @@ class NodeHandler {
           properties: [],
         });
       } else if (description.model.shape === 'group') {
-<<<<<<< HEAD
-        this.apiAction('undo'); // 重置当前的操作, 转为自己手动添加结点
-        const model = description.model;
-        // 针对每个结点生成全局唯一的id
-=======
         this.apiAction('undo');
         const { model } = description;
->>>>>>> 5302b641be2110f85412398637f78d65c9cdbf3e
         const processBlockIdOne = generateUniqueId(graphData.nodes);
         const processBlockIdTwo = generateUniqueId(graphData.nodes);
         const processBlockIdThree = generateUniqueId(graphData.nodes);

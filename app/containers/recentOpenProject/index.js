@@ -129,7 +129,7 @@ export default useInjectContext(({ history }) => {
 
   const handleCreatNewProject = () => {
     if (!name) {
-      message.info('请填写项目名称');
+      message.info('请填写项目名称(前后不能有空格)');
       return;
     }
 
