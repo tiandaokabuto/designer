@@ -29,6 +29,11 @@ const generateIcon = (type, style = DEFAULT_STYLE) => (
   <Icon type={type} style={style} />
 );
 
+/**
+ *
+ * @param {*} list
+ * @param {*} map
+ */
 const automicListToTree = (list = [], map) => {
   const result = [];
   list.forEach((node) => {
@@ -50,14 +55,19 @@ const automicListToTree = (list = [], map) => {
   return result;
 };
 
+/**
+ *
+ * @param {*} callback // 把数据写入到redux
+ * @param {*} flag // false - 直接读本地文件 true - 从服务器获取数据
+ */
 const readGlobalConfig = (callback, flag = false) => {
   const path = `${currPath}/globalconfig/config.json`;
   fs.readFile(path, async function (err, data) {
     if (!err) {
       const { automicList, ip } = getDecryptOrNormal(data);
       if (flag || !automicList) {
-        // 调起接口 返回数据 TODO...
-        const getAbialityStructure = () => {
+        // 调起接口 返回数据
+        const getAbialityStructure = (() => {
           return axios
             .get(api('selectCodeJson'))
             .then((res) => {
@@ -71,9 +81,9 @@ const readGlobalConfig = (callback, flag = false) => {
             .catch((error) => {
               throw error;
             });
-        };
+        })();
 
-        const getAbilityTree = () => {
+        const getAbilityTree = (() => {
           return axios
             .get(api('selectMenuJson'))
             .then((res) => {
@@ -87,7 +97,7 @@ const readGlobalConfig = (callback, flag = false) => {
             .catch((error) => {
               throw error;
             });
-        };
+        })();
 
         try {
           const abilityStructure = await getAbialityStructure();

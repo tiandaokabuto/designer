@@ -5,6 +5,6 @@ import { useSelector } from 'react-redux';
 import CodeMirrorEditor from './components/CodeMirrorEditor';
 
 export default memo(() => {
-  const pythonCode = useSelector(state => state.blockcode.pythonCode);
+  const pythonCode = useSelector((state) => state.blockcode.pythonCode);
   return <CodeMirrorEditor value={pythonCode} readOnly />;
 });

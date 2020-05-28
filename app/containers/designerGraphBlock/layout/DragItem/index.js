@@ -27,6 +27,11 @@ const { TreeNode } = Tree;
 const { Search } = Input;
 const MAX_RENCENT_DEQUEUE_LENGTH = 10;
 
+/**
+ *
+ * @param {*} match  待匹配文本
+ * @param {*} filter
+ */
 const canDisplay = (match, filter) => {
   if (!match) return false;
   const newMatch = match.toLocaleLowerCase();

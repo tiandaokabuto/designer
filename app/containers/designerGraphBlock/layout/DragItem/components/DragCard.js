@@ -42,7 +42,6 @@ export default ({
   let newItem = null;
 
   if (tabType !== 'atomic') {
-    console.log(typeof title);
     if (typeof title === 'string') {
       titleRef.current = title;
     }
@@ -88,7 +87,6 @@ export default ({
         if (tabType === 'atomic') {
           addToRecentList(node);
         }
-        // updateCheckedBlockId(monitor.getDropResult().newId);
         updateCheckedBlockId([monitor.getDropResult().newId]);
       }
     },

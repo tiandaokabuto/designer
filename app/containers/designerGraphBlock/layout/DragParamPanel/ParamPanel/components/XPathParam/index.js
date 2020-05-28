@@ -105,7 +105,7 @@ export default memo(
           return (
             <Input
               defaultValue={text}
-              key={visible ? '0' : '1'}
+              key={visible && selectedOption === 'xpath' ? '0' : '1'}
               onChange={(e) => {
                 obj.xpath = e.target.value;
                 handleGenerateXpath();
