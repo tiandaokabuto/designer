@@ -55,3 +55,4 @@ tokenTime.txt
 
 .idea
 npm-debug.log.*
+/app/containers/images/loading.gif
