@@ -263,7 +263,6 @@ export const transformEditorProcess = (
 };
 
 export default (graphData, graphDataMap, clickId, fromOrTo) => {
-  console.log(fromOrTo);
   const result = {
     output: '',
   };
@@ -288,7 +287,6 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
       const startNode = copyEdges.find((item) => item.source === beginId);
       startNode.target = clickId;
       copyGraphData.edges = newArr;
-      console.log(copyGraphData);
       transformEditorProcess(
         copyGraphData,
         graphDataMap,

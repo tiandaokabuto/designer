@@ -13,8 +13,16 @@ export default () => {
     if (!find) return;
     const { XPath, JSpath, iframe } = data;
     find.config = {
-      XPath: XPath.map((xpath, key) => ({ xpath, key, checked: false })),
-      JSpath: JSpath.map((xpath, key) => ({ xpath, key, checked: false })),
+      XPath: XPath.map((xpath, key) => ({
+        xpath,
+        key,
+        checked: key === 0 ? true : false,
+      })),
+      JSpath: JSpath.map((xpath, key) => ({
+        xpath,
+        key,
+        checked: key === 0 ? true : false,
+      })),
       selectedOption: 'xpath',
       iframe,
     };
