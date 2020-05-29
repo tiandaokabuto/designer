@@ -1,24 +1,24 @@
 export const findNodeIdByShape = (nodes, shape) => {
-  const find = nodes.find(node => node.shape === shape);
+  const find = nodes.find((node) => node.shape === shape);
   return find ? find.id : null;
 };
 
-export const findStartNode = nodes => {
+export const findStartNode = (nodes) => {
   return findNodeIdByShape(nodes, 'start-node');
 };
 
 export const findTargetIdBySourceId = (edges, sourceId) => {
-  const find = edges.find(edge => edge.source === sourceId);
+  const find = edges.find((edge) => edge.source === sourceId);
   return find ? find.target : null;
 };
 
 export const findNodeById = (nodes, id) => {
-  return nodes.find(node => node.id === id);
+  return nodes.find((node) => node.id === id);
 };
 
 export const findNodeByLabelAndId = (edges, sourceId, label) => {
   const find = edges.find(
-    edge => edge.source === sourceId && edge.label === label
+    (edge) => edge.source === sourceId && edge.label === label
   );
   return find ? find.target : null;
 };
@@ -45,7 +45,7 @@ export const findCommonTarget = (edges, labelTrue, labelFalse) => {
   const labelTruePath = [labelTrue];
   const labelFalsePath = [labelFalse];
 
-  const hasDumplate = (a1, a2) => a1.filter(item => a2.includes(item)).length;
+  const hasDumplate = (a1, a2) => a1.filter((item) => a2.includes(item)).length;
   while (
     labelTrue !== labelFalse &&
     labelTrue !== null &&
@@ -68,7 +68,7 @@ export const findCommonTarget = (edges, labelTrue, labelFalse) => {
 };
 
 export const hasTwoEntryPoint = (edges, id) => {
-  const find = edges.filter(edge => edge.target === id);
+  const find = edges.filter((edge) => edge.target === id);
   return find.length === 2;
 };
 
@@ -76,10 +76,10 @@ export const hasTwoEntryPoint = (edges, id) => {
  * 判断流程块结点存在两个输入结点
  */
 export const hasTwoEntryPortInProcessBlock = (edges, id) => {
-  const find = edges.filter(edge => edge.target === id);
+  const find = edges.filter((edge) => edge.target === id);
   return (
     find.length === 2 &&
-    find.filter(edge => ['是', '否'].includes(edge.label)).length === 1
+    find.filter((edge) => ['是', '否'].includes(edge.label)).length === 1
   );
 };
 

@@ -22,13 +22,13 @@ const padding = (length) => '    '.repeat(length);
 
 /**
  *
- * @param {*} graphData
- * @param {*} graphDataMap
- * @param {*} currentId  当前要解析的结点ID
- * @param {*} result
- * @param {*} depth
- * @param {*} breakPoint
- * @param {*} notWhile
+ * @param {*} graphData ggeditor下的包含结点和边的集合的对象
+ * @param {*} graphDataMap 存储每个结点附加信息的对象
+ * @param {*} currentId  当前待解析的结点ID
+ * @param {*} result 最终翻译出来的python代码
+ * @param {*} depth 当前解析的深度，主要是实现转译过程中的缩进效果.
+ * @param {*} breakPoint 解析到此处时停止解析的过程
+ * @param {*} notWhile 手动标记当前的判断结点为非循环的类型
  */
 export const transformEditorProcess = (
   graphData,
@@ -39,26 +39,31 @@ export const transformEditorProcess = (
   breakPoint,
   notWhile = false
 ) => {
-  // 判断当前的结点类型  流程块结点  或者是  判断结点
+  // 根据id获取当前待解析的流程结点
   const currentNode = findNodeById(graphData.nodes, currentId);
+  // 在breakPoint处停止解析
   if (currentId === breakPoint) return;
+  // 获取结点保存的数据信息
   const blockData = graphDataMap.get(currentId) || {};
   switch (currentNode.shape) {
     case 'processblock':
-      // 停止解析
-      // 找到对应的流程块结点的数据结构
+      // 获取流程块的输入参数列表
       const params = blockData['properties'][1].value;
+      // 获取流程块声明的全局变量
       const variable = blockData.variable || [];
+      // 在文件顶部添加该流程的函数模块, 并调用该函数。
       const funcName = `RPA_${currentId}`; //uniqueId('RPA_');
       result.output =
         `def ${funcName}(${params
           .filter((item) => item.name)
           .map((item) => item.name)
           .join(',')}):\n${
+          // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
           '\n'
         }` + result.output;
-
+      // 判断一下当前的流程块结点是否有两个入点，那么就是循环相关 就需要包括在 while True: 的循环结构下边。
+      // 同时解析的深度要 +1
       if (
         !notWhile &&
         hasTwoEntryPortInProcessBlock(graphData.edges, currentId)
@@ -68,17 +73,20 @@ export const transformEditorProcess = (
       }
 
       // 如果跟循环没有关系的话就直接执行当前的代码块
-      // 解析当前模块传入的参数和返回的参数
+      // 获取当前模块返回的参数列表
       const return_string = blockData['properties'][2].value
         .map((item) => item.name)
         .join(',');
+      // 拼接当前流程块的函数
       result.output += `${padding(depth)}${
         return_string ? return_string + ' = ' : ''
       }${funcName}(${params
         .filter((item) => item.name)
         .map((item) => item.name + ' = ' + item.value)
         .join(',')})\n`;
+      // 寻找下一个要解析的结点
       const next = findTargetIdBySourceId(graphData.edges, currentId);
+      // 解析下一个结点，这里要把breakPoint结点透传
       next &&
         transformEditorProcess(
           graphData,

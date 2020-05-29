@@ -100,8 +100,8 @@ const readGlobalConfig = (callback, flag = false) => {
         })();
 
         try {
-          const abilityStructure = await getAbialityStructure();
-          const abilityTree = await getAbilityTree();
+          const abilityStructure = await getAbialityStructure;
+          const abilityTree = await getAbilityTree;
           message.info('刷新成功');
           const resultTree = automicListToTree(abilityTree, abilityStructure); // 转换后的tree
           const prevPending = automicList
