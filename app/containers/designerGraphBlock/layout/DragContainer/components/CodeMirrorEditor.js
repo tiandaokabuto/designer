@@ -30,7 +30,6 @@ import 'codemirror/addon/edit/closebrackets.js';
 import 'codemirror/addon/edit/matchbrackets.js';
 
 export default React.forwardRef(({ value, id, readOnly }, ref) => {
-  console.log(readOnly);
   const codeMirrorRef = useRef(null);
   const dispatch = useDispatch();
 

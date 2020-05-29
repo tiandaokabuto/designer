@@ -11,9 +11,14 @@ const fs = require('fs');
 export default () => {
   return useDebounce((current, change) => {
     const existFileList = readAllFileName() || [];
-    const reg = /[?:<>|*"{}\[\]\/\\]/g;
+
+    const reg = /(^\s+)|(\s+$)|[?:<>|*"{}\[\]\/\\]/g;
     if (reg.test(change)) {
-      message.error('不能包含特殊字符');
+      message.error('不能包含特殊字符，前后不能包含空格');
+      return;
+    }
+    if (change.length > 100) {
+      message.info('输入的内容长度不能大于100');
       return;
     }
 

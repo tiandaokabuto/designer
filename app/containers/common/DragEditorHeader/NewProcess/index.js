@@ -35,9 +35,13 @@ export default ({ resetVisible, tag }) => {
 
   /* ---------- 流程/目录新增逻辑 ----------- */
   const handleAddProcessOrProject = () => {
-    const reg = /[?:<>|*"{}\[\]\/\\]/g;
+    const reg = /(^\s+)|(\s+$)|[?:<>|*"{}\[\]\/\\]/g;
     if (reg.test(name)) {
-      message.error('不能包含特殊字符');
+      message.error('不能包含特殊字符，前后不能包含空格');
+      return;
+    }
+    if (name.length > 100) {
+      message.info('输入的内容长度不能大于100');
       return;
     }
     if (treeTab !== 'processModule') {

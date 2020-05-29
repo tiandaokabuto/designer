@@ -23,9 +23,21 @@ export default (
       defaultValue={node.title}
       onBlur={e => {
         const newTitle = e.target.value;
-        const reg = /[?:<>|*"{}\[\]\/\\]/g;
+        const reg = /(^\s+)|(\s+$)|[?:<>|*"{}\[\]\/\\]/g;
         if (reg.test(newTitle)) {
-          message.error('不能包含特殊字符');
+          message.error('不能包含特殊字符，前后不能包含空格');
+          node.title = oldTitle;
+          changeModuleTree([...tree]);
+          persistentStorage();
+          restoreCheckedTreeNode();
+          return;
+        }
+        if (newTitle.length > 100) {
+          message.info('输入的内容长度不能大于100');
+          node.title = oldTitle;
+          changeModuleTree([...tree]);
+          persistentStorage();
+          restoreCheckedTreeNode();
           return;
         }
         // 流程树

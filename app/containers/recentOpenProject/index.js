@@ -124,13 +124,19 @@ export default useInjectContext(({ history }) => {
 
   const handleCreatNewProject = () => {
     if (!name) {
-      message.info('请填写项目名称(前后不能有空格)');
+      message.info('请填写项目名称');
       return;
     }
 
-    const reg = /[?:<>|*"{}\[\]\/\\]/g;
+    // const reg = /[?:<>|*"{}\[\]\/\\]/g;
+    const reg = /(^\s+)|(\s+$)|[?:<>|*"{}\[\]\/\\]/g;
     if (reg.test(name)) {
-      message.error('不能包含特殊字符');
+      message.error('不能包含特殊字符，前后不能包含空格');
+      return;
+    }
+
+    if (name.length > 100) {
+      message.info('输入的内容长度不能大于100');
       return;
     }
 
@@ -173,7 +179,7 @@ export default useInjectContext(({ history }) => {
             <Input
               placeholder="请输入新建项目名称"
               onChange={e => {
-                setName(e.target.value.trim());
+                setName(e.target.value);
               }}
               onBlur={e => {
                 e.target.value = e.target.value.trim();
