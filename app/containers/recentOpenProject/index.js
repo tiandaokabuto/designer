@@ -32,6 +32,8 @@ import './index.scss';
 export default useInjectContext(({ history }) => {
   const [name, setName] = useState('');
   const [flag, setFlag] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [recordName, setRecordName] = useState('');
   const [isJump, setIsJump] = useState(
     history.location.state && history.location.state.jump
   );
@@ -40,7 +42,23 @@ export default useInjectContext(({ history }) => {
     return readAllFileName();
   }, [flag]);
 
-  const [modalVisible, setModalVisible] = useState(false);
+  const handleDeletProject = () => {
+    deleteFolderRecursive(PATH_CONFIG('project', recordName));
+    setFlag(flag => !flag);
+    const historyState = history.location.state;
+    if (
+      historyState &&
+      historyState.projectName &&
+      historyState.projectName === recordName
+    ) {
+      if (historyState.jump) {
+        historyState.jump = false;
+        setIsJump(false);
+      }
+    }
+    setModalVisible(false);
+  };
+
   const columns = [
     {
       title: '项目名称',
@@ -65,22 +83,6 @@ export default useInjectContext(({ history }) => {
       width: '200px',
       render: (text, record) => {
         const time = FormatDateTime(text);
-        const handleDeletProject = () => {
-          deleteFolderRecursive(PATH_CONFIG('project', record.name));
-          setFlag(flag => !flag);
-          const historyState = history.location.state;
-          if (
-            historyState &&
-            historyState.projectName &&
-            historyState.projectName === record.name
-          ) {
-            if (historyState.jump) {
-              historyState.jump = false;
-              setIsJump(false);
-            }
-          }
-          setModalVisible(false);
-        };
 
         return (
           <div>
@@ -93,17 +95,10 @@ export default useInjectContext(({ history }) => {
                 style={{ marginLeft: '10px' }}
                 url={CloseImg}
                 onClick={() => {
+                  setRecordName(record.name);
                   setModalVisible(true);
                 }}
               />
-              <Modal
-                visible={modalVisible}
-                centered
-                onOk={handleDeletProject}
-                onCancel={() => setModalVisible(false)}
-              >
-                <p>确定要删除吗？</p>
-              </Modal>
             </div>
           </div>
         );
@@ -233,6 +228,14 @@ export default useInjectContext(({ history }) => {
               };
             }}
           />
+          <Modal
+            visible={modalVisible}
+            centered
+            onOk={handleDeletProject}
+            onCancel={() => setModalVisible(false)}
+          >
+            <p>确定要删除吗？</p>
+          </Modal>
         </div>
         <div className="recentproject-rightcontent">
           {/* <div className="recentproject-rightcontent-close"></div> */}

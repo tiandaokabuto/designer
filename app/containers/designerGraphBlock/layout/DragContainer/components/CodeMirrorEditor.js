@@ -87,7 +87,19 @@ export default React.forwardRef(({ value, id, readOnly }, ref) => {
   }, [value]);
 
   return (
-    <div style={{ height: '100%' }}>
+    <div
+      style={{ height: '100%' }}
+      onKeyDown={e => {
+        const matchKeyCode = [88];
+        if (
+          e.keyCode === 46 ||
+          (e.ctrlKey && matchKeyCode.includes(e.keyCode))
+        ) {
+          e.nativeEvent.stopImmediatePropagation();
+          e.stopPropagation();
+        }
+      }}
+    >
       <textarea id={`editor${id || ''}`} className={`editor${id || ''}`} />
     </div>
   );
