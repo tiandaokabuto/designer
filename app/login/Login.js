@@ -39,6 +39,9 @@ const Login = () => {
   // 是否登录成功
   const [showTip, setShowTip] = useState(false);
 
+  // 文件数据
+  const [originFileData, setOriginFileData] = useState({});
+
   // 登录按钮是否可用
   const memoizedDisable = useMemo(() => {
     if (offLine) return serialNumber === '';
@@ -140,13 +143,27 @@ const Login = () => {
     setIsClickOfffLine(true);
   };
 
+  const checkNeedWriteConfig = newConfig => {
+    let writeFlag = false;
+    for (const key in newConfig) {
+      if (
+        Object.prototype.hasOwnProperty.call(newConfig, key) &&
+        newConfig[key] !== originFileData[key]
+      ) {
+        writeFlag = true;
+        break;
+      }
+    }
+    return writeFlag;
+  };
+
   const handleClickSignIn = () => {
     if (offLine && !checkSerialNumberValid(serialNumber)) {
       message.error('序列号错误');
       return false;
     }
     config.context = `http://${ip}:${port}`;
-    writeGlobalConfig({
+    const writeConfig = {
       ip,
       port,
       userName,
@@ -154,7 +171,10 @@ const Login = () => {
       serialNumber,
       offLine,
       userDay,
-    });
+    };
+    if (checkNeedWriteConfig(writeConfig)) {
+      writeGlobalConfig(writeConfig);
+    }
     handleSignIn();
   };
 
@@ -188,6 +208,15 @@ const Login = () => {
       setPort(port);
       setUserName(userName);
       setPassword(password);
+      setOriginFileData({
+        ip,
+        port,
+        userName,
+        password,
+        offLine,
+        serialNumber,
+        userDay,
+      });
       if (serialNumberFromFile) setSerialNumber(serialNumberFromFile);
       const globalUserName = remote.getGlobal('sharedObject').userName;
       if (globalUserName === '') setOffLine(OffLineFromFile);
@@ -203,7 +232,7 @@ const Login = () => {
     document.onkeydown = function(e) {
       if (e.keyCode === 13) {
         config.context = `http://${ip}:${port}`;
-        writeGlobalConfig({
+        const writeConfig = {
           ip,
           port,
           userName,
@@ -211,7 +240,10 @@ const Login = () => {
           serialNumber,
           offLine,
           userDay,
-        });
+        };
+        if (checkNeedWriteConfig(writeConfig)) {
+          writeGlobalConfig(writeConfig);
+        }
         handleSignIn();
       }
     };
