@@ -9,6 +9,7 @@ import event, {
   CANVAS_ZOOM_IN,
 } from '../../../designerGraphBlock/layout/eventCenter';
 import FlowItemPanel from './components/FlowItemPanel';
+import AreaNode from '../RegisterNode/AreaNode';
 import ProcessBlockNode from '../RegisterNode/ProcessBlockNode';
 import StartNode from '../RegisterNode/StartNode';
 import EndNode from '../RegisterNode/EndNode';
@@ -98,6 +99,7 @@ export default useInjectContext(
         };
       }, []);
 
+      const [areaSizeModalVisible, setAreaSizeModalVisible] = useState(false);
       const [modalVisible, setModalVisible] = useState(false);
       const [loopType, setLoopType] = useState('while');
 
@@ -127,9 +129,14 @@ export default useInjectContext(
         const handleModalChange = () => {
           setModalVisible(true);
         };
+        const handleAreaSizeModalChange = () => {
+          setAreaSizeModalVisible(true);
+        };
         event.addListener('loopChoose', handleModalChange);
+        event.addListener('setAreaSize', handleAreaSizeModalChange);
         return () => {
           event.removeListener('loopChoose', handleModalChange);
+          event.removeListener('setAreaSize', handleAreaSizeModalChange);
         };
       }, []);
 
@@ -172,6 +179,8 @@ export default useInjectContext(
                 : {}),
             }}
             onNodeClick={node => {
+              console.log(node);
+              const dataId = node.shape._attrs.dataId;
               if (
                 node.item &&
                 ['processblock', 'rhombus-node'].includes(node.item.model.shape)
@@ -266,6 +275,7 @@ export default useInjectContext(
             }}
             noEndEdge={false}
           />
+          <AreaNode />
           <ProcessBlockNode />
           <StartNode />
           <EndNode />
@@ -323,6 +333,14 @@ export default useInjectContext(
               </Radio>
             </Radio.Group>
           </Modal>
+
+          {/* <Modal 
+            visible={areaSizeModalVisible}
+            closable={false}
+            bodyStyle={{
+              overflow: 'auto',
+            }}
+          ></Modal> */}
         </div>
       );
     }

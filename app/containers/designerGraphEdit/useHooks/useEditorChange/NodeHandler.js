@@ -425,6 +425,7 @@ class NodeHandler {
             edges: (graphData.edges || []).concat(LOOP_GRAPHDATA[type].edges),
           });
         });
+      } else if (description.model.shape === 'area-block') {
       }
     }
     // 保存当前流程图的任意更新不加区分
