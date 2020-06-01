@@ -5,8 +5,14 @@ const { ipcRenderer } = require('electron');
  */
 
 export default () => {
-  return (callback, processName, descText, versionText) => {
-    ipcRenderer.send('open-directory-dialog', 'showSaveDialog', '存储');
+  return (callback, processName, descText = '', versionText = '') => {
+    console.log(processName);
+    ipcRenderer.send(
+      'open-directory-dialog',
+      'showSaveDialog',
+      '存储',
+      processName
+    );
     const handleFilePath = (e, filePath) => {
       const {
         grapheditor: { editorBlockPythonCode },
