@@ -115,12 +115,13 @@ export default memo(
         selectedOutputList = outputList;
       } else {
         selectedOutputList = outputList.filter(item => {
-          return selectedTags.some(tag => item.includes(`[${tag}]`));
-          // for (let i = 0; i < selectedTags.length; i += 1) {
-          //   const selectedTag = selectedTags[i];
-          //   if (item.indexOf(`[${selectedTag}]`) > -1) return true;
-          // }
-          // return false;
+          return selectedTags.some(tag => {
+            let newTag = tag;
+            if (newTag === 'WARN') {
+              newTag = 'WARNING';
+            }
+            return item.includes(`[${newTag}]`);
+          });
         });
       }
       let matchNum = 0;
