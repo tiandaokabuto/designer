@@ -8,8 +8,8 @@ import api, { config } from '../api';
 import {
   encrypt,
   hex_sha1,
-  readGlobalConfig,
-  writeGlobalConfig,
+  readLoginConfig,
+  writeLoginConfig,
   getUserDay,
 } from './utils';
 import LoginFromInput from './components/LoginFromInput';
@@ -173,9 +173,12 @@ const Login = () => {
       userDay,
     };
     if (checkNeedWriteConfig(writeConfig)) {
-      writeGlobalConfig(writeConfig);
+      writeLoginConfig(writeConfig)
+        .then(handleSignIn)
+        .catch(err => console.log(err));
+    } else {
+      handleSignIn();
     }
-    handleSignIn();
   };
 
   useEffect(() => {
@@ -225,26 +228,13 @@ const Login = () => {
         userDay = dateFromFile;
       }
     };
-    readGlobalConfig(callback);
+    readLoginConfig(callback);
   }, []);
 
   useEffect(() => {
     document.onkeydown = function(e) {
       if (e.keyCode === 13) {
-        config.context = `http://${ip}:${port}`;
-        const writeConfig = {
-          ip,
-          port,
-          userName,
-          password,
-          serialNumber,
-          offLine,
-          userDay,
-        };
-        if (checkNeedWriteConfig(writeConfig)) {
-          writeGlobalConfig(writeConfig);
-        }
-        handleSignIn();
+        handleClickSignIn();
       }
     };
     return () => {

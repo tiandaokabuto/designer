@@ -45,7 +45,8 @@ app/style.css
 app/style.css.map
 dist
 project
-globalconfig
+globalconfig/config.json
+globalconfig/login.json
 python
 dll
 main.js

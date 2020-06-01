@@ -6,7 +6,7 @@ import moment from 'moment';
 import { withRouter } from 'react-router';
 
 import api, { config } from '../api';
-import { hex_sha1, readGlobalConfig } from '../login/utils';
+import { hex_sha1, readLoginConfig } from '../login/utils';
 
 const { ipcRenderer, remote } = require('electron');
 const fs = require('fs');
@@ -67,7 +67,7 @@ export default class App extends React.Component<Props> {
 
   componentDidMount() {
     ipcRenderer.on('updateIpAndPort', () => {
-      readGlobalConfig(this.resetConfig);
+      readLoginConfig(this.resetConfig);
     });
     this.showReconnentTip = false;
     this.loginData = {};
@@ -91,7 +91,7 @@ export default class App extends React.Component<Props> {
         this.loginData.password = password;
       }
     };
-    readGlobalConfig(callback);
+    readLoginConfig(callback);
 
     axios.interceptors.request.use(
       config => {
