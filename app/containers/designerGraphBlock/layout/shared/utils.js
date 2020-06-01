@@ -174,8 +174,3 @@ export const isTailStatement = id => {
 export const trimId = id => {
   return id && id.replace(/-.*/, '');
 };
-
-export const isGetMousePosition = card => {
-  if (!card || !card.properties) return false;
-  return card.main === 'mousePosition';
-};

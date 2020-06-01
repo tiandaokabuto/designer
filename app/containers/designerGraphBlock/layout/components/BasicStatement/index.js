@@ -26,7 +26,6 @@ import {
   useChangeCheckedBlockColor,
   useChangeCompatable,
 } from '../../useHooks';
-import { isGetMousePosition } from '../../shared/utils';
 
 import { BasicStatementTag } from '../../statementTags';
 import Interactive from './components/Interactive';
@@ -52,7 +51,7 @@ const process = require('process');
 
 const { exec } = require('child_process');
 
-const BasicStatement = useInjectContext((props) => {
+const BasicStatement = useInjectContext(props => {
   const {
     id,
     card,
@@ -73,11 +72,9 @@ const BasicStatement = useInjectContext((props) => {
 
   const dispatch = useDispatch();
 
-  const cards = useSelector((state) => state.blockcode.cards);
+  const cards = useSelector(state => state.blockcode.cards);
 
   const hasLookTarget = useHasLookTarget(card);
-
-  const hasGetMousePosition = isGetMousePosition(card);
 
   const cmdDesc = useWatchCmdDesc(card);
 
@@ -127,8 +124,10 @@ const BasicStatement = useInjectContext((props) => {
 
   const updateXpath = useUpdateXpath();
 
-  /** 保存xpath截图 */
-  const [xpathImage, setXpathImage] = useState(card.xpathImage);
+  /** 保存截图 */
+  const [targetImage, setTargetImage] = useState(
+    card.xpathImage || card.targetImage
+  );
 
   drag(drop(ref));
 
@@ -140,7 +139,7 @@ const BasicStatement = useInjectContext((props) => {
   // 展示图片遮罩层
   const [showImgContain, setShowImgContain] = useState(false);
 
-  const generateEditOperation = (card) => {
+  const generateEditOperation = card => {
     switch (card.cmdName) {
       case '人机交互':
         return (
@@ -170,7 +169,7 @@ const BasicStatement = useInjectContext((props) => {
     }
   };
 
-  const saveLayoutChange = (layout) => {
+  const saveLayoutChange = layout => {
     if (!layout) return;
     // console.log(card);
     Object.assign(card.layout, layout);
@@ -180,9 +179,75 @@ const BasicStatement = useInjectContext((props) => {
     handleEmitCodeTransform(cards);
   };
 
-  const handleEnlageImg = (e) => {
+  const handleEnlageImg = e => {
     setShowImgContain(true);
     e.stopPropagation();
+  };
+
+  const handleClickSearchTarget = () => {
+    dispatch({
+      type: CHANGE_CHECKEDID,
+      payload: id,
+    });
+    ipcRenderer.send('min');
+    ipcRenderer.send('start_server', id);
+    const xpathCmdNameArr = [
+      '鼠标-点击目标',
+      '鼠标-移动',
+      '键盘-目标中按键',
+      '键盘-目标中输入文本',
+      '截取Windows控件图片',
+      '判断元素是否存在',
+      '上传文件',
+    ];
+    const mouseCmdName = '鼠标-获取光标位置';
+
+    if (xpathCmdNameArr.includes(card.cmdName)) {
+      try {
+        const worker = exec(PATH_CONFIG('windowHook'));
+      } catch (e) {
+        console.log(e);
+      }
+    } else if (mouseCmdName === card.cmdName) {
+      try {
+        const mouseWorker = exec(`${PATH_CONFIG('WinRun')} -p`);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    ipcRenderer.removeAllListeners('updateXpath');
+    ipcRenderer.removeAllListeners('updateMousePosition');
+    ipcRenderer.on(
+      'updateXpath',
+      (e, { targetId, imageData, xpath: xpathBuffer, type }) => {
+        const xpath =
+          type !== 'win' && xpathBuffer ? JSON.parse(xpathBuffer) : xpathBuffer;
+        if (xpath === undefined) return;
+        // 接收到xpath并作出更新
+        if (targetId !== id) return;
+        card.xpathImage = imageData;
+        card.hasModified = true;
+        setTargetImage(imageData);
+        updateXpath(id, xpath, type);
+        handleEmitCodeTransform(cards);
+      }
+    );
+    ipcRenderer.on(
+      'updateMousePosition',
+      (e, { x, y, imageData, targetId }) => {
+        if (x === undefined || y === undefined) return;
+        const position = `[${x}, ${y}]`;
+        if (targetId !== id) return;
+        card.properties.required[1].value = position;
+        card.properties.required[1].updateId = true;
+        if (imageData) {
+          card.targetImage = imageData;
+          setTargetImage(imageData);
+        }
+        card.hasModified = true;
+        handleEmitCodeTransform(cards);
+      }
+    );
   };
 
   return (
@@ -202,168 +267,108 @@ const BasicStatement = useInjectContext((props) => {
         {isTail ? (
           <div>{text}</div>
         ) : (
-          <div className="card-content-description">
-            <Icon type="home" className="card-content-icon" />
-            {text}
-            {cmdDesc && (
-              <span style={{ color: '#b1aeb2', marginLeft: 8 }}>
-                ({cmdDesc || ''})
-              </span>
-            )}
+          <Fragment>
+            <div className="card-content-description">
+              <Icon type="home" className="card-content-icon" />
+              {text}
+              {cmdDesc && (
+                <span style={{ color: '#b1aeb2', marginLeft: 8 }}>
+                  ({cmdDesc || ''})
+                </span>
+              )}
 
-            <br />
-            <div
-              className="card-content-visible"
-              key={uniqueId('visible_')}
-              onClick={(e) => {
-                if (readOnly) return;
-                const { anchor } = e.target.dataset;
-                if (anchor) changeToEditableTemplate(anchor);
-                // 触发变量的修改
-              }}
-              onDragStart={(e) => {
-                e.preventDefault();
-              }}
-              onBlur={save}
-              onKeyDown={(e) => {
-                if (e.keyCode === 13) {
-                  save(e);
-                }
-              }}
-              dangerouslySetInnerHTML={{ __html: templateVisible }}
-            />
-          </div>
-        )}
-        {isTail ? (
-          <div />
-        ) : (
-          !readOnly && (
-            <>
-              <div className="card-content-operation">
-                <Icon
-                  type="play-circle"
-                  onClick={() => {
-                    console.log('kkk');
-                  }}
-                />
-                <Icon
-                  type={isIgnore ? 'eye-invisible' : 'eye'}
-                  onClick={() => {
-                    setIsIgnore();
-                    card.ignore = !card.ignore;
-                    card.hasModified = true;
-                    handleEmitCodeTransform(cards);
-                  }}
-                />
-                <Icon
-                  type="delete"
-                  onClick={() => {
-                    deleteNodeById(id);
-                  }}
-                />
-              </div>
-              {generateEditOperation(card)}
+              <br />
               <div
-                className="card-content-searchtarget"
-                style={{
-                  display: hasLookTarget || hasGetMousePosition ? '' : 'none',
+                className="card-content-visible"
+                key={uniqueId('visible_')}
+                onClick={e => {
+                  if (readOnly) return;
+                  const { anchor } = e.target.dataset;
+                  if (anchor) changeToEditableTemplate(anchor);
+                  // 触发变量的修改
                 }}
-                onClick={() => {
-                  dispatch({
-                    type: CHANGE_CHECKEDID,
-                    payload: id,
-                  });
-                  ipcRenderer.send('min');
-                  ipcRenderer.send('start_server', id);
-                  const xpathCmdNameArr = [
-                    '鼠标-点击目标',
-                    '鼠标-移动',
-                    '键盘-目标中按键',
-                    '键盘-目标中输入文本',
-                    '截取Windows控件图片',
-                    '判断元素是否存在',
-                    '上传文件',
-                  ];
-                  const mouseCmdName = '鼠标-获取光标位置';
-
-                  if (xpathCmdNameArr.includes(card.cmdName)) {
-                    try {
-                      const worker = exec(PATH_CONFIG('windowHook'));
-                    } catch (e) {
-                      console.log(e);
-                    }
-                  } else if (mouseCmdName === card.cmdName) {
-                    try {
-                      const mouseWorker = exec(`${PATH_CONFIG('WinRun')} -p`);
-                    } catch (err) {
-                      console.log(err);
-                    }
+                onDragStart={e => {
+                  e.preventDefault();
+                }}
+                onBlur={save}
+                onKeyDown={e => {
+                  if (e.keyCode === 13) {
+                    save(e);
                   }
-                  ipcRenderer.removeAllListeners('updateXpath');
-                  ipcRenderer.removeAllListeners('updateMousePosition');
-                  ipcRenderer.on(
-                    'updateXpath',
-                    (e, { targetId, imageData, xpath: xpathBuffer, type }) => {
-                      const xpath =
-                        type !== 'win' && xpathBuffer
-                          ? JSON.parse(xpathBuffer)
-                          : xpathBuffer;
-                      if (xpath === undefined) return;
-                      // 接收到xpath并作出更新
-                      if (targetId !== id) return;
-                      card.xpathImage = imageData;
-                      card.hasModified = true;
-                      setXpathImage(imageData);
-                      updateXpath(id, xpath, type);
-                      handleEmitCodeTransform(cards);
-                    }
-                  );
-                  ipcRenderer.on(
-                    'updateMousePosition',
-                    (e, { x, y, targetId }) => {
-                      if (x === undefined || y === undefined) return;
-                      const position = `[${x}, ${y}]`;
-                      if (targetId !== id) return;
-                      card.properties.required[1].value = position;
-                      card.properties.required[1].updateId = true;
-                      card.hasModified = true;
-                      handleEmitCodeTransform(cards);
-                    }
-                  );
                 }}
-              >
-                {xpathImage === undefined || hasGetMousePosition ? (
-                  <>
-                    <Icon
-                      type="home"
-                      className="card-content-searchtarget-anchor"
-                    />
-                    <span>{hasGetMousePosition ? '定位坐标' : '查找目标'}</span>
-                  </>
-                ) : (
-                  <div className="card-content-searchtarget-content">
-                    <img
-                      src={xpathImage}
-                      alt="xpath"
-                      className="card-content-searchtarget-img"
-                      style={{ maxWidth: 48, maxHeight: 32 }}
-                    />
-                    <Icon
-                      type="fullscreen"
-                      className="card-content-searchtarget-fullscreen"
-                      onClick={handleEnlageImg}
-                    />
-                    <MaskLayer
-                      isShow={showImgContain}
-                      handleCilckFrangment={() => setShowImgContain(false)}
-                    >
-                      <img src={xpathImage} alt="xpath" />
-                    </MaskLayer>
-                  </div>
-                )}
-              </div>
-            </>
-          )
+                dangerouslySetInnerHTML={{ __html: templateVisible }}
+              />
+            </div>
+            {!readOnly ? (
+              <Fragment>
+                <div className="card-content-operation">
+                  <Icon
+                    type="play-circle"
+                    onClick={() => {
+                      console.log('kkk');
+                    }}
+                  />
+                  <Icon
+                    type={isIgnore ? 'eye-invisible' : 'eye'}
+                    onClick={() => {
+                      setIsIgnore();
+                      card.ignore = !card.ignore;
+                      card.hasModified = true;
+                      handleEmitCodeTransform(cards);
+                    }}
+                  />
+                  <Icon
+                    type="delete"
+                    onClick={() => {
+                      deleteNodeById(id);
+                    }}
+                  />
+                </div>
+                {generateEditOperation(card)}
+                <div
+                  className="card-content-searchtarget"
+                  style={{
+                    display: hasLookTarget ? '' : 'none',
+                  }}
+                  onClick={handleClickSearchTarget}
+                >
+                  {targetImage === undefined ? (
+                    <Fragment>
+                      <Icon
+                        type="home"
+                        className="card-content-searchtarget-anchor"
+                      />
+                      <span>
+                        {card.main === 'mousePosition'
+                          ? '定位坐标'
+                          : '查找目标'}
+                      </span>
+                    </Fragment>
+                  ) : (
+                    <div className="card-content-searchtarget-content">
+                      <img
+                        src={targetImage}
+                        alt="xpath"
+                        className="card-content-searchtarget-img"
+                        style={{ maxWidth: 48, maxHeight: 32 }}
+                      />
+                      <Icon
+                        type="fullscreen"
+                        className="card-content-searchtarget-fullscreen"
+                        onClick={handleEnlageImg}
+                      />
+                      <MaskLayer
+                        isShow={showImgContain}
+                        handleCilckFrangment={() => setShowImgContain(false)}
+                      >
+                        <img src={targetImage} alt="xpath" />
+                      </MaskLayer>
+                    </div>
+                  )}
+                </div>
+              </Fragment>
+            ) : null}
+          </Fragment>
         )}
       </div>
       <div

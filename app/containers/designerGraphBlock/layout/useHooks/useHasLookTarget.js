@@ -8,6 +8,7 @@ export default card => {
   const optional = card.properties.optional || [];
   return (
     required.some(item => item.enName === 'xpath') ||
-    optional.some(item => item.enName === 'xpath')
+    optional.some(item => item.enName === 'xpath') ||
+    card.main === 'mousePosition'
   );
 };
