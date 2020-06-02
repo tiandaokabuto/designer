@@ -77,9 +77,17 @@ export default memo(
 
     useEffect(() => {
       const handlePythonOutput = stdout => {
+        console.log(stdout);
         const originHeight = getOutputDomHeight();
         if (originHeight <= 40 && !newOutputTip) setNewOutputTip(true);
-        setOutput(output => output + '\n' + stdout);
+        setOutput(output => {
+          const result = output + '\n' + stdout;
+          const arr = result.split('\n');
+          if (arr.length > 200) {
+            arr.splice(0, arr.length - 200);
+          }
+          return arr.join('\n');
+        });
       };
       const handleClearOutput = () => {
         setOutput('');

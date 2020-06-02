@@ -236,12 +236,15 @@ const createWindow = async () => {
     event,
     func,
     label = '存储',
+    defaultName,
     properties = []
   ) {
+    console.log(func, label, defaultName);
     dialog[func](mainWindow, {
       title: '流程另存为',
       buttonLabel: label,
       properties,
+      defaultPath: defaultName,
     }).then(({ filePath, filePaths, canceled }) => {
       if (!canceled) {
         console.log(filePath, 'filePath');

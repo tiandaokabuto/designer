@@ -18,7 +18,7 @@ const getCheckedBlock = (cards, checkedId) => {
   return findNodeById(cards, checkedId);
 };
 
-const getCheckedId = (checkedId) => {
+const getCheckedId = checkedId => {
   if (Array.isArray) {
     if (checkedId.length === 1) {
       return checkedId[0];
@@ -28,33 +28,33 @@ const getCheckedId = (checkedId) => {
 };
 
 export default ({ current }) => {
-  const data = useSelector((state) => state.blockcode);
+  const data = useSelector(state => state.blockcode);
   const checkedBlock = getCheckedBlock(
     data.cards,
     getCheckedId(data.checkedId)
   );
-  const cards = useSelector((state) => state.blockcode.cards);
+  const cards = useSelector(state => state.blockcode.cards);
 
   const handleEmitCodeTransform = useTransformToPython();
 
   const checkedGraphBlockId = useSelector(
-    (state) => state.grapheditor.checkedGraphBlockId
+    state => state.grapheditor.checkedGraphBlockId
   );
-  const graphDataMap = useSelector((state) => state.grapheditor.graphDataMap);
+  const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
 
   const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
   const inputParams = useMemo(
     () =>
       blockNode.properties &&
       Array.isArray(blockNode.properties) &&
-      blockNode.properties.find((item) => item.enName === 'param').value,
+      blockNode.properties.find(item => item.enName === 'param').value,
     [blockNode]
   );
   const outputParams = useMemo(
     () =>
       blockNode.properties &&
       Array.isArray(blockNode.properties) &&
-      blockNode.properties.find((item) => item.enName === 'output').value,
+      blockNode.properties.find(item => item.enName === 'output').value,
     [blockNode]
   );
 
@@ -64,7 +64,7 @@ export default ({ current }) => {
   };
 
   useEffect(() => {
-    const handleAnchorMouseMove = useThrottle((e) => {
+    const handleAnchorMouseMove = useThrottle(e => {
       if (isMouseDown) {
         let offset = startOffset - e.pageX; // 偏移量
         startOffset = e.pageX;
@@ -90,13 +90,13 @@ export default ({ current }) => {
   return (
     <div
       className="dragger-editor-parampanel"
-      onMouseDown={(e) => {
+      onMouseDown={e => {
         isMouseDown = true;
         startOffset = e.pageX;
       }}
     >
       <div
-        onMouseDown={(e) => {
+        onMouseDown={e => {
           e.stopPropagation();
         }}
       >
@@ -104,7 +104,7 @@ export default ({ current }) => {
           <TabPane tab="属性" key="1">
             {checkedBlock && (
               <ParamPanel
-                onMouseDown={(e) => {
+                onMouseDown={e => {
                   console.log('aaaa');
                 }}
                 checkedBlock={checkedBlock}

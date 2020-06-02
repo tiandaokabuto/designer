@@ -6,12 +6,10 @@
  */
 const transformConditionalStatement = (padding, dataStructure, result) => {
   const ignore = dataStructure.ignore ? '# ' : '';
-  const { tag, value, valueList = [] } = dataStructure['properties'][
-    'required'
-  ][0];
+  const { tag, value, valueList = [] } = dataStructure.properties.required[0];
   if (tag === 2) {
     // 自定义
-    const loopcondition = dataStructure['properties']['required'][0].value;
+    const loopcondition = dataStructure.properties.required[0].value;
     result.output += `${padding}${ignore}if ${loopcondition}:\n`;
   } else {
     // 向导
@@ -24,12 +22,10 @@ const transformConditionalStatement = (padding, dataStructure, result) => {
         } else {
           result.output += `(${item.v1} ${item.rule} ${item.v2}) `;
         }
+      } else if (item.rule === 'is None' || item.rule === 'not None') {
+        result.output += `(${item.v1} ${item.rule}) ${item.connect} `;
       } else {
-        if (item.rule === 'is None' || item.rule === 'not None') {
-          result.output += `(${item.v1} ${item.rule}) ${item.connect} `;
-        } else {
-          result.output += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;
-        }
+        result.output += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;
       }
     });
     result.output += `:\n`;
