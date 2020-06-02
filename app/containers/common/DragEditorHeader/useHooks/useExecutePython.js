@@ -4,7 +4,7 @@ import event, {
   PYTHON_OUTPUT,
 } from '../../../designerGraphBlock/layout/eventCenter';
 import PATH_CONFIG from '@/constants/localFilePath.js';
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 const iconv = require('iconv-lite');
 const process = require('process');
 
@@ -20,40 +20,69 @@ export default () => {
   return (uuid, callback) => {
     event.emit('clear_output');
     const path = PATH_CONFIG('pythonExecute') + ` ${uuid}`;
-    const worker = exec(
-      path,
-      {
-        encoding: 'binary',
-      },
-      (err, stdout, stderr) => {
-        if (err) {
-          // const result = iconv.decode(
-          //   iconv.encode(err.stack, 'cp936'),
-          //   'cp936'
-          // );
-          const log = getUTF8(err.stack);
-          event.emit(PYTHON_OUTPUT, log);
-        }
-      }
-    );
-    worker.stdout.on('data', function(data) {
+
+    const ls = spawn(`${process.cwd()}/../Python/python3_lib/python.exe`, [
+      `${process.cwd()}/python/temp.py`,
+      `${uuid}`,
+    ]);
+
+    ls.stdout.on('data', data => {
       const log = getUTF8(data);
       event.emit(PYTHON_OUTPUT, log);
     });
-    worker.stderr.on('data', function(data) {
+
+    ls.stderr.on('data', data => {
       const log = getUTF8(data);
       event.emit(PYTHON_OUTPUT, log);
     });
-    worker.on('error', error => {
+
+    ls.on('exit', () => {
+      message.destroy();
+      callback && callback();
+    });
+
+    ls.on('error', error => {
       const log = getUTF8(error);
       event.emit(PYTHON_OUTPUT, log);
       message.destroy();
       callback && callback();
     });
-    worker.on('exit', () => {
-      console.log('结束了');
-      message.destroy();
-      callback && callback();
-    });
+
+    // const worker = exec(
+    //   path,
+    //   {
+    //     encoding: 'binary',
+    //     maxBuffer: 1024 * 1024 * 10,
+    //   },
+    //   (err, stdout, stderr) => {
+    //     if (err) {
+    //       // const result = iconv.decode(
+    //       //   iconv.encode(err.stack, 'cp936'),
+    //       //   'cp936'
+    //       // );
+    //       const log = getUTF8(err.stack);
+    //       event.emit(PYTHON_OUTPUT, log);
+    //     }
+    //   }
+    // );
+    // worker.stdout.on('data', function(data) {
+    //   const log = getUTF8(data);
+    //   event.emit(PYTHON_OUTPUT, log);
+    // });
+    // worker.stderr.on('data', function(data) {
+    //   const log = getUTF8(data);
+    //   event.emit(PYTHON_OUTPUT, log);
+    // });
+    // worker.on('error', error => {
+    //   const log = getUTF8(error);
+    //   event.emit(PYTHON_OUTPUT, log);
+    //   message.destroy();
+    //   callback && callback();
+    // });
+    // worker.on('exit', () => {
+    //   console.log('结束了');
+    //   message.destroy();
+    //   callback && callback();
+    // });
   };
 };
