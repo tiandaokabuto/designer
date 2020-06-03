@@ -14,16 +14,16 @@ const transformModuleBlockStatement = (
   const ignore = statement.ignore ? '# ' : '';
   const tail = uuid();
   const inputParamKV = statement.properties
-    .find((item) => item.cnName === '输入参数')
-    .value.map((item) => `${item.name} = ${item.value}`)
+    .find(item => item.cnName === '输入参数')
+    .value.map(item => `${item.name} = ${item.value}`)
     .join(',');
   const inputParamK = statement.properties
-    .find((item) => item.cnName === '输入参数')
-    .value.map((item) => `${item.name}`)
+    .find(item => item.cnName === '输入参数')
+    .value.map(item => `${item.name}`)
     .join(',');
   const outputParam = statement.properties
-    .find((item) => item.cnName === '流程块返回')
-    .value.map((item) => item.name)
+    .find(item => item.cnName === '流程块返回')
+    .value.map(item => item.name)
     .join(',');
   const variables = transformVariable(
     statement.graphDataMap.variable,
@@ -35,7 +35,12 @@ const transformModuleBlockStatement = (
     result.output += `${padding}def RPA_Atomic_${tail}():\n\n`;
   }
   result.output += `${variables}`;
-  transformBlockToCodeImpl(statement.graphDataMap.cards, depth + 1, blockNode);
+  // 使用复用流程块的cards以及复用流程块的graphDataMap
+  transformBlockToCodeImpl(
+    statement.graphDataMap.cards,
+    depth + 1,
+    statement.graphDataMap
+  );
   if (outputParam) {
     result.output += `\n${padding}${ignore}${outputParam} = RPA_Atomic_${tail}(${inputParamKV})\n`;
   } else {
