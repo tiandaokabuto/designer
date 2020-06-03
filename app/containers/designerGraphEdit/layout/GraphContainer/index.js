@@ -148,6 +148,28 @@ export default useInjectContext(
 
       return (
         <div className="designergraph-container">
+          {/* <div
+            style={{
+              background: 'red',
+              width: '20px',
+              height: '40px',
+              position: 'absolute',
+              top: '50%',
+              margin: '-50px 0 0 0',
+              right: 0,
+            }}
+          ></div>
+          <div
+            style={{
+              background: 'red',
+              width: '20px',
+              height: '40px',
+              position: 'absolute',
+              top: '50%',
+              margin: '-50px 0 0 0',
+              left: 0,
+            }}
+          ></div> */}
           {!showHead && (
             <div className="designergraph-container-header">
               <FlowItemPanel />
@@ -179,7 +201,6 @@ export default useInjectContext(
                 : {}),
             }}
             onNodeClick={node => {
-              console.log(node);
               const dataId = node.shape._attrs.dataId;
               if (
                 node.item &&

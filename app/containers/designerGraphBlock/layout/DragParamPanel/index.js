@@ -68,11 +68,16 @@ export default ({ current }) => {
       if (isMouseDown) {
         let offset = startOffset - e.pageX; // 偏移量
         startOffset = e.pageX;
-        if (e.clientX <= 239) return;
+        // if (e.clientX <= 239) return;
         const outputDom = document.querySelector('.dragger-editor-parampanel');
         const originWidth = getParamPanelWidth();
         const currentWidth = originWidth + offset;
         outputDom.style.flexBasis = currentWidth + 'px';
+        if (currentWidth < 130) {
+          outputDom.style.display = 'none';
+          console.log(document.querySelector('.container-right').style.display);
+          document.querySelector('.container-right').style.display = '';
+        }
       }
     }, 0);
 

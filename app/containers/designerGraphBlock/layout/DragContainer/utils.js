@@ -28,16 +28,14 @@ export const traverseAllCards = (cards, callback) => {
   }
 };
 
-export const changeAIHintList = (cards) => {
+export const changeAIHintList = cards => {
   const aiHintList = {};
-  traverseCards(cards, (node) => {
+  traverseCards(cards, node => {
     let output;
     if (
       node.properties &&
       node.properties.required &&
-      (output = node.properties.required.find(
-        (item) => item.enName === 'outPut'
-      ))
+      (output = node.properties.required.find(item => item.enName === 'outPut'))
     ) {
       const paramType = output.paramType;
       if (paramType && Array.isArray(paramType)) {
@@ -48,12 +46,12 @@ export const changeAIHintList = (cards) => {
             if (tempOutput && variableList.length) {
               output.isMutiply = true;
               paramType.forEach((item, index) => {
-                item.forEach((type) => {
+                item.forEach(type => {
                   if (!aiHintList[type]) {
                     aiHintList[type] = [output];
                   } else {
                     if (
-                      !aiHintList[type].filter((item) => item === output).length
+                      !aiHintList[type].filter(item => item === output).length
                     ) {
                       aiHintList[type].push(output);
                     }
@@ -63,11 +61,11 @@ export const changeAIHintList = (cards) => {
             }
           }
         } else {
-          paramType.forEach((type) => {
+          paramType.forEach(type => {
             if (!aiHintList[type]) {
               aiHintList[type] = [output];
             } else {
-              if (!aiHintList[type].filter((item) => item === output).length) {
+              if (!aiHintList[type].filter(item => item === output).length) {
                 aiHintList[type].push(output);
               }
             }
@@ -81,10 +79,39 @@ export const changeAIHintList = (cards) => {
 };
 
 export const propagateIgnoreChange = (pendingList, ignore) => {
-  traverseAllCards(pendingList, (node) => {
+  traverseAllCards(pendingList, node => {
     if (node.ignore !== ignore) {
       node.hasModified = true;
     }
     node.ignore = ignore;
   });
+};
+
+export const setNodeIgnore = (cards, id) => {
+  for (const child of cards) {
+    if (child.children) {
+      child.children.forEach(item => {
+        if (item.id === id) {
+          item.ignore = child.ignore;
+        } else {
+          setNodeIgnore(child.children, id);
+        }
+      });
+    } else if (child.ifChildren) {
+      child.ifChildren.forEach(item => {
+        if (item.id === id) {
+          item.ignore = child.ignore;
+        } else {
+          setNodeIgnore(child.ifChildren, id);
+        }
+      });
+      child.elseChildren.forEach(item => {
+        if (item.id === id) {
+          item.ignore = child.ignore;
+        } else {
+          setNodeIgnore(child.elseChildren, id);
+        }
+      });
+    }
+  }
 };

@@ -78,7 +78,6 @@ const transformBasicStatement = (
   moduleMap,
   options = {}
 ) => {
-  console.log(dataStructure);
   const ignore = dataStructure.ignore ? '# ' : '';
   handleModuleImport(dataStructure, result, moduleMap);
   handleNote(dataStructure.cmdDesc, result, padding, dataStructure);

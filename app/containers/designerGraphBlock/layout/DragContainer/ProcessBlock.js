@@ -21,6 +21,7 @@ import {
 import {
   trimId,
   useNode,
+  findNodeById,
   findNodeLevelById,
   findIFNodeLevelById,
   isChildrenNode,
@@ -29,7 +30,7 @@ import {
   isMainProcessPlaceholder,
   isConditionalStatementPlaceholder,
 } from '../shared/utils';
-import { changeAIHintList } from './utils';
+import { changeAIHintList, setNodeIgnore } from './utils';
 
 import {
   useToggleOpacity,
@@ -67,9 +68,9 @@ export default memo(({ readOnly = false }) => {
     : null;
   useListenMouseAndKeyboard();
 
-  const cards = useSelector((state) => state.blockcode.cards);
+  const cards = useSelector(state => state.blockcode.cards);
   const currentPagePosition = useSelector(
-    (state) => state.temporaryvariable.currentPagePosition
+    state => state.temporaryvariable.currentPagePosition
   );
   const currentPagePositionRef = useRef(null);
   currentPagePositionRef.current = currentPagePosition;
@@ -78,7 +79,7 @@ export default memo(({ readOnly = false }) => {
   const [isDraggingNode, setIsDraggingNode] = useState({});
 
   const changeCardData = useCallback(
-    useDebounce((data) => {
+    useDebounce(data => {
       if (isEqual(data, cards)) return;
       console.log('阻断通知cards的变化');
       // dispatch({
@@ -114,9 +115,9 @@ export default memo(({ readOnly = false }) => {
 
           const currentLevel = findIFNodeLevelById(cards, bufId, layer);
 
-          const deleteNode = dragNodes.find((item) => item.id === dragItem.id);
+          const deleteNode = dragNodes.find(item => item.id === dragItem.id);
           const deleteIndex = dragNodes.findIndex(
-            (item) => item.id === dragItem.id
+            item => item.id === dragItem.id
           );
           // 删除和插入操作 先克隆一个副本
           const cloneCards = cloneDeep(cards);
@@ -142,12 +143,12 @@ export default memo(({ readOnly = false }) => {
           }
           if (hoverNodes === undefined) return;
           if (!isMainProcessPlaceholder(hoverItem.id)) {
-            hoverNodes = hoverNodes.find((item) => item.id === bufId).children;
+            hoverNodes = hoverNodes.find(item => item.id === bufId).children;
           }
-          const deleteNode = dragNodes.find((item) => item.id === dragItem.id);
+          const deleteNode = dragNodes.find(item => item.id === dragItem.id);
 
           const deleteIndex = dragNodes.findIndex(
-            (item) => item.id === dragItem.id
+            item => item.id === dragItem.id
           );
 
           // 删除和插入操作 先克隆一个副本
@@ -171,10 +172,10 @@ export default memo(({ readOnly = false }) => {
           const bufId = hoverItem.id.replace(/-tail/, '');
           hoverNodes = findNodeLevelById(cards, bufId);
           if (hoverNodes === undefined) return;
-          hoverNodes = hoverNodes.find((item) => item.id === bufId).children;
-          const deleteNode = dragNodes.find((item) => item.id === dragItem.id);
+          hoverNodes = hoverNodes.find(item => item.id === bufId).children;
+          const deleteNode = dragNodes.find(item => item.id === dragItem.id);
           const deleteIndex = dragNodes.findIndex(
-            (item) => item.id === dragItem.id
+            item => item.id === dragItem.id
           );
 
           // 删除和插入操作 先克隆一个副本
@@ -192,15 +193,11 @@ export default memo(({ readOnly = false }) => {
       }
 
       // 首先找到各自的id在当前node中的序号
-      const deleteNode = dragNodes.find((item) => item.id === dragItem.id);
+      const deleteNode = dragNodes.find(item => item.id === dragItem.id);
 
-      const deleteIndex = dragNodes.findIndex(
-        (item) => item.id === dragItem.id
-      );
+      const deleteIndex = dragNodes.findIndex(item => item.id === dragItem.id);
 
-      let insertIndex = hoverNodes.findIndex(
-        (item) => item.id === hoverItem.id
-      );
+      let insertIndex = hoverNodes.findIndex(item => item.id === hoverItem.id);
 
       if (deleteIndex === -1 || insertIndex === -1) {
         return cards;
@@ -209,7 +206,7 @@ export default memo(({ readOnly = false }) => {
       // 删除和插入操作 先克隆一个副本
       const cloneCards = cloneDeep(cards);
       dragNodes.splice(deleteIndex, 1);
-      insertIndex = hoverNodes.findIndex((item) => item.id === hoverItem.id);
+      insertIndex = hoverNodes.findIndex(item => item.id === hoverItem.id);
       hoverNodes.splice(
         insertBefore ? insertIndex : insertIndex + 1,
         0,
@@ -229,23 +226,28 @@ export default memo(({ readOnly = false }) => {
     (insertIndex, id, card, newId) => {
       const findId = id.replace(/-tail/, '');
       const isTail = isTailStatement(id);
-      //setCards(cards => {
+
       let currentLevel = undefined;
       if (isConditionalStatementPlaceholder(findId)) {
         // 条件语句
         const layer = extractLayer(findId);
         const bufId = trimId(findId);
+        // const parent = findNodeParent(cards, bufId, isTail);
         currentLevel = findIFNodeLevelById(cards, bufId, layer);
+        // card.ignore = parent.ignore;
       } else if (isMainProcessPlaceholder(findId)) {
         // 主流程的占位符
         currentLevel = cards;
       } else {
         // 包含循环语句的占位符和普通语句的情况
         currentLevel = findNodeLevelById(cards, findId, isTail);
+        // const parent = findNodeParent(cards, findId, isTail);
+        // card.ignore = parent.ignore;
       }
 
       /* eslint-disable */
       const newNode = useNode(card, newId);
+
       if (!currentLevel) {
         changeCardData(cards);
         // dispatch({
@@ -254,11 +256,15 @@ export default memo(({ readOnly = false }) => {
         // });
         return;
       }
+
       if (insertIndex === PLACEHOLDER_STATEMENT) {
         currentLevel.push(newNode);
       } else {
         currentLevel.splice(insertIndex, 0, newNode);
       }
+
+      setNodeIgnore(cards, newId);
+
       changeCardData(cards);
       // dispatch({
       //   type: CHANGE_CARDDATA,
@@ -311,7 +317,7 @@ export default memo(({ readOnly = false }) => {
     }
   };
 
-  const renderTailStatement = (props) => {
+  const renderTailStatement = props => {
     return <BasicStatement {...props} card={{ id: props.id }} isTail={true} />;
   };
 
