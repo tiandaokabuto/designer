@@ -56,15 +56,15 @@ export default () => {
   return (
     <div
       className="designergraph-parampanel"
-      onMouseDown={e => {
-        isMouseDown = true;
-        startOffset = e.pageX;
-      }}
+      // onMouseDown={e => {
+      //   isMouseDown = true;
+      //   startOffset = e.pageX;
+      // }}
     >
       <div
-        onMouseDown={e => {
-          e.stopPropagation();
-        }}
+      // onMouseDown={e => {
+      //   e.stopPropagation();
+      // }}
       >
         <Tabs className="designergraph-parampanel-tabs">
           <TabPane tab="属性" key="1">

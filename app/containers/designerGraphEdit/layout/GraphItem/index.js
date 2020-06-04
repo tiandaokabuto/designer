@@ -55,15 +55,15 @@ export default ({ setShowLoadingLayer }) => {
   return (
     <div
       className="designergraph-item"
-      onMouseDown={e => {
-        isMouseDown = true;
-        startOffset = e.pageX;
-      }}
+      // onMouseDown={e => {
+      //   isMouseDown = true;
+      //   startOffset = e.pageX;
+      // }}
     >
       <div
-        onMouseDown={e => {
-          e.stopPropagation();
-        }}
+      // onMouseDown={e => {
+      //   e.stopPropagation();
+      // }}
       >
         <div className="designergraph-item-title">
           {editVisible ? (
