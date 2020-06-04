@@ -5,19 +5,19 @@ const { ipcRenderer } = require('electron');
  */
 
 export default () => {
-  return (callback, processName, descText = '', versionText = '') => {
-    console.log(processName);
+  return (callback, processName, descText = '', versionText = '', title) => {
     ipcRenderer.send(
       'open-directory-dialog',
       'showSaveDialog',
       '存储',
-      processName
+      processName,
+      title
     );
     const handleFilePath = (e, filePath) => {
       const {
         grapheditor: { editorBlockPythonCode },
       } = store.getState();
-      callback &&
+      if (callback) {
         callback(
           filePath,
           editorBlockPythonCode,
@@ -25,6 +25,7 @@ export default () => {
           descText,
           versionText
         );
+      }
     };
     ipcRenderer.removeAllListeners('selectedItem');
     ipcRenderer.on('selectedItem', handleFilePath);

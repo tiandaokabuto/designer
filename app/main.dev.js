@@ -237,20 +237,22 @@ const createWindow = async () => {
     func,
     label = '存储',
     defaultName,
+    title = '流程另存为',
     properties = []
   ) {
-    console.log(func, label, defaultName);
     dialog[func](mainWindow, {
-      title: '流程另存为',
+      title,
       buttonLabel: label,
       properties,
       defaultPath: defaultName,
-    }).then(({ filePath, filePaths, canceled }) => {
-      if (!canceled) {
-        console.log(filePath, 'filePath');
-        event.sender.send('selectedItem', filePath || filePaths);
-      }
-    });
+    })
+      .then(({ filePath, filePaths, canceled }) => {
+        if (!canceled) {
+          event.sender.send('selectedItem', filePath || filePaths);
+        }
+        return filePath || filePaths;
+      })
+      .catch(err => console.log(err));
   });
 
   ipcMain.on('choose-directory-dialog', function(
