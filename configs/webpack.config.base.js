@@ -51,6 +51,7 @@ module.exports = exports = {
           aliasFields: ['main'],
         },
       },
+      { test: /\.txt$/, use: 'raw-loader' },
     ],
   },
 
