@@ -1,13 +1,14 @@
 import React, { useState, useCallback, useEffect, useRef, memo } from 'react';
 import { InjectProvider } from 'react-hook-easier/lib/useInjectContext';
 import isEqual from 'lodash/isEqual';
-
 import useDebounce from 'react-hook-easier/lib/useDebounce';
-import { useStore, useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import cloneDeep from 'lodash/cloneDeep';
 
 import BasicStatement from '../components/BasicStatement';
 import LoopStatement from '../components/LoopStatement';
 import ConditionalStatement from '../components/ConditionalStatement';
+import Interactive from '../components/BasicStatement/components/Interactive';
 import {
   BasicStatementTag,
   LoopStatementTag,
@@ -16,12 +17,10 @@ import {
 import {
   PLACEHOLDER_STATEMENT,
   PLACEHOLDER_MAINPROCESS,
-  PREFIX_ID,
 } from '../statementTypes';
 import {
   trimId,
   useNode,
-  findNodeById,
   findNodeLevelById,
   findIFNodeLevelById,
   isChildrenNode,
@@ -40,24 +39,13 @@ import {
   useTransformToPython,
   useListenMouseAndKeyboard,
 } from '../useHooks';
-import cloneDeep from 'lodash/cloneDeep';
-import update from 'immutability-helper';
-
-import {
-  CHANGE_CARDDATA,
-  CHANGE_PYTHONCODE,
-} from '../../../../actions/codeblock';
-import { transformBlockToCode } from '../../RPAcore';
-import eventEmit, { PYTHON_DISPLAY } from '../eventCenter';
 
 const style = {
-  //width: 900,
+  // width: 900,
   padding: '16px 8px 16px 16px',
   overflowY: 'auto',
   height: '100%',
 };
-
-const MENU_TYPE = 'MULTI';
 
 export default memo(({ readOnly = false }) => {
   // 注册点击事件
@@ -77,6 +65,9 @@ export default memo(({ readOnly = false }) => {
   const dispatch = useDispatch();
 
   const [isDraggingNode, setIsDraggingNode] = useState({});
+  const [interactiveCard, setInteractiveCard] = useState(undefined);
+  // 人机交互能力逻辑
+  const [visible, setVisible] = useState(false);
 
   const changeCardData = useCallback(
     useDebounce(data => {
@@ -289,6 +280,8 @@ export default memo(({ readOnly = false }) => {
             visible={card.visible || ''}
             visibleTemplate={card.visibleTemplate || ''}
             readOnly={readOnly}
+            setInteractiveCard={setInteractiveCard}
+            setVisible={setVisible}
           />
         );
       case LoopStatementTag:
@@ -335,6 +328,15 @@ export default memo(({ readOnly = false }) => {
     changeAIHintList(cards);
     //
   }, [cards]);
+
+  const saveLayoutChange = layout => {
+    if (!layout) return;
+    // console.log(card);
+    Object.assign(interactiveCard.layout, layout);
+    // card.properties.required[1].updateId = true;
+    handleEmitCodeTransform(cards);
+  };
+
   return (
     <InjectProvider
       value={{
@@ -355,6 +357,14 @@ export default memo(({ readOnly = false }) => {
         className="scroll-body"
       >
         {cards.map((card, i) => renderStatement(card, i))}
+        {interactiveCard && (
+          <Interactive
+            saveLayoutChange={saveLayoutChange}
+            interactiveCard={interactiveCard}
+            visible={visible}
+            setVisible={setVisible}
+          />
+        )}
         {!readOnly &&
           renderTailStatement({
             id: PLACEHOLDER_MAINPROCESS,

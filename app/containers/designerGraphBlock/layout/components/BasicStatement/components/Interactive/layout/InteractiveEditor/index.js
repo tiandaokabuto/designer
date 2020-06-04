@@ -56,7 +56,7 @@ export default ({
     return () => {
       container.removeEventListener('click', handleDridItemClick);
     };
-  }, [setCheckedGridItemId]);
+  }, []);
 
   useLayoutEffect(() => {
     if (data.length) {

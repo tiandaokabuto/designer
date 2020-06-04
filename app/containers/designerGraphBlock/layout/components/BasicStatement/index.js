@@ -67,7 +67,8 @@ const BasicStatement = useInjectContext(props => {
     useSetClassName,
     useDragSource,
     setIsDraggingNode,
-    PLACEHOLDER_STATEMENT,
+    setInteractiveCard,
+    setVisible,
   } = props;
 
   const dispatch = useDispatch();
@@ -131,9 +132,6 @@ const BasicStatement = useInjectContext(props => {
 
   drag(drop(ref));
 
-  // 人机交互能力逻辑
-  const [visible, setVisible] = useState(false);
-
   // 代码块编写逻辑
   const [codeVisible, setCodeVisible] = useState(false);
   // 展示图片遮罩层
@@ -147,6 +145,7 @@ const BasicStatement = useInjectContext(props => {
             className="cmd-operation"
             onClick={() => {
               !card.layout && (card.layout = {});
+              setInteractiveCard(card);
               setVisible(true);
             }}
           >
@@ -167,16 +166,6 @@ const BasicStatement = useInjectContext(props => {
       default:
         return null;
     }
-  };
-
-  const saveLayoutChange = layout => {
-    if (!layout) return;
-    // console.log(card);
-    Object.assign(card.layout, layout);
-    console.log(layout);
-    console.log(cards);
-    // card.properties.required[1].updateId = true;
-    handleEmitCodeTransform(cards);
   };
 
   const handleEnlageImg = e => {
@@ -379,12 +368,6 @@ const BasicStatement = useInjectContext(props => {
           borderColor,
         }}
         ref={dragImage}
-      />
-      <Interactive
-        saveLayoutChange={saveLayoutChange}
-        interactiveCard={card}
-        visible={visible}
-        setVisible={setVisible}
       />
       <CodeBlock
         visible={codeVisible}
