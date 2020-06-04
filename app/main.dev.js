@@ -14,6 +14,7 @@
 // import { autoUpdater } from 'electron-updater';
 // import log from 'electron-log';
 // import MenuBuilder from './menu';
+
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const log = require('electron-log');
 const MenuBuilder = require('./menu');
