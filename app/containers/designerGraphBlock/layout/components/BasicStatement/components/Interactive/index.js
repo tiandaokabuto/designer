@@ -14,8 +14,11 @@ import './index.scss';
 export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
   const [layout, setLayout] = useState(interactiveCard.layout);
   const [checkedGridItemId, setCheckedGridItemId] = useState({});
-
   const [isPreview, setIsPreview] = useState(false);
+
+  useEffect(() => {
+    setLayout(interactiveCard.layout);
+  }, [interactiveCard]);
 
   const INITIAL_WIDTH = {
     input: layout && (layout.cols || 4),
