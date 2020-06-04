@@ -4,7 +4,7 @@ import {
 } from '../actions/temporaryvariable';
 
 const defaultState = {
-  executeOutput: '', // 当前流程的日志输出
+  executeOutput: [], // 当前流程的日志输出
   currentPagePosition: 'editor', // 当前所处的页面位置 'editor -- 流程图' 'block --- '代码块'
 };
 
