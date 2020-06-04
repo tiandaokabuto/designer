@@ -9,10 +9,23 @@
   overflow-x: hidden;
 
   &-item {
-    min-width: 239px;
-    max-width: 239px;
+    min-width: 130px;
+    max-width: 500px;
     flex-basis: 239px;
     box-shadow: 1px 0 0 0 rgba(238, 238, 238, 1);
+    // pointer-events: none;
+    position: relative;
+    &::before {
+      pointer-events: auto;
+      content: '';
+      height: 100%;
+      width: 5px;
+      cursor: col-resize;
+      position: absolute;
+      // top: 112px;
+      z-index: 2;
+      right: 0;
+    }
     &-search {
       padding: 0 8px;
       margin-top: 8px;
@@ -102,7 +115,7 @@
   &-container {
     height: calc(100%);
     flex: 1;
-    max-width: calc(100vw - 239px * 2);
+    // max-width: calc(100vw - 239px * 2);
     background-color: #f9fafb;
     box-shadow: 1px 0 0 0 #eee;
     position: relative;
@@ -116,10 +129,39 @@
     &-tabs {
       @include tabs();
     }
+    .container-left {
+      background: white;
+      position: absolute;
+      width: 20px;
+      height: 40px;
+      top: 50%;
+      left: 0;
+      z-index: 3;
+      .anticon-double-right {
+        height: 40px;
+        svg {
+          height: 40px;
+        }
+      }
+    }
+    .container-right {
+      background: white;
+      position: absolute;
+      width: 20px;
+      height: 40px;
+      top: 50%;
+      right: 0;
+      z-index: 3;
+      .anticon-double-left {
+        height: 40px;
+        svg {
+          height: 40px;
+        }
+      }
+    }
   }
   &-parampanel {
-    // width: 239px;
-    min-width: 239px;
+    min-width: 130px;
     max-width: 500px;
     flex-basis: 239px;
     // flex-basis: 1;
@@ -209,6 +251,50 @@
       left: 50%;
       bottom: -5px;
       transform: rotateZ(90deg) translateX(0);
+    }
+  }
+
+  .ant-tabs-bar {
+    margin: 0;
+    border: 0;
+    .ant-tabs-nav {
+      // width: 240px;
+      div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .ant-tabs-tab {
+          flex: 1;
+          font-size: 14px;
+          font-family: PingFangSC-Regular, PingFang SC !important;
+          font-weight: 400;
+          // width: 110px;
+          color: rgba(102, 102, 102, 1);
+          line-height: 14px;
+          height: 40px;
+          margin: 0;
+        }
+        .ant-tabs-tab-active {
+          flex: 1;
+          font-size: 14px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: rgba(50, 166, 127, 1);
+        }
+      }
+      .ant-tabs-ink-bar {
+        // width: 100%;
+        height: 2px;
+        bottom: 2px;
+        background: rgba(50, 166, 127, 1);
+      }
+    }
+  }
+  .ant-tabs-content {
+    .treenode-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }

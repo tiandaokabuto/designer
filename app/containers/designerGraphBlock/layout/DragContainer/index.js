@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs } from 'antd';
+import { Tabs, Icon } from 'antd';
 import { useSelector } from 'react-redux';
 
 import ProcessBlock from './ProcessBlock';
@@ -11,16 +11,40 @@ import './index.scss';
 const { TabPane } = Tabs;
 
 const DragContainer = () => {
-  const graphData = useSelector((state) => state.grapheditor.graphData);
-  const { checkedGraphBlockId } = useSelector((state) => state.grapheditor);
+  const graphData = useSelector(state => state.grapheditor.graphData);
+  const { checkedGraphBlockId } = useSelector(state => state.grapheditor);
   let nodesLabel = {};
   if (graphData.nodes) {
-    nodesLabel = graphData.nodes.find(
-      (item) => item.id === checkedGraphBlockId
-    );
+    nodesLabel = graphData.nodes.find(item => item.id === checkedGraphBlockId);
   }
   return (
     <div className="dragger-editor-container">
+      <div
+        className="container-left"
+        style={{ display: 'none' }}
+        onClick={() => {
+          const outputDom = document.querySelector('.dragger-editor-item');
+          outputDom.style.display = '';
+          outputDom.style.flexBasis = '239px';
+          document.querySelector('.container-left').style.display = 'none';
+        }}
+      >
+        <Icon type="double-right" />
+      </div>
+      <div
+        className="container-right"
+        style={{ display: 'none' }}
+        onClick={() => {
+          const outputDom = document.querySelector(
+            '.dragger-editor-parampanel'
+          );
+          outputDom.style.display = '';
+          outputDom.style.flexBasis = '239px';
+          document.querySelector('.container-right').style.display = 'none';
+        }}
+      >
+        <Icon type="double-left" />
+      </div>
       <div className="dragger-editor-title">{nodesLabel.label}</div>
       <div className="dragger-editor-container-codeblock">
         <Tabs
