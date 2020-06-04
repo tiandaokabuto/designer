@@ -12,6 +12,7 @@ import api from '../../../../../api';
 import store from '../../../../../store';
 import event from '../../eventCenter';
 import { encrypt, writeFileRecursive } from '../../../../../login/utils';
+import defaultConfig from '@/constants/default.txt';
 
 const fs = require('fs');
 
@@ -62,41 +63,42 @@ const automicListToTree = (list = [], map) => {
  * @param {*} offLine 是否离线状态
  */
 const getAutomicList = async (automicList, callback, flag, offLine) => {
-  const defaultPath = `${currPath}/globalconfig/default.json`;
   if (offLine && !automicList) {
-    fs.readFile(defaultPath, (error, defaultData) => {
+    /* fs.readFile(defaultPath, (error, defaultData) => {
       if (!error) {
-        const config = getDecryptOrNormal(defaultData);
-        const defaultAutomicList = [
-          {
-            pKey: null,
-            key: 'favorite',
-            title: '收藏',
-            children: [],
-            returnTreeData: null,
-          },
-          {
-            pKey: null,
-            key: 'recent',
-            title: '最近',
-            children: [],
-            returnTreeData: null,
-          },
-          config,
-        ];
-        traverseTree(defaultAutomicList, node => {
-          if (node.pKey === -1) {
-            node.icon = generateIcon('hdd');
-          } else {
-            node.icon = generateIcon('branches');
-          }
-        });
-        writeGlobalConfig({
-          automicList: defaultAutomicList,
-        });
-        callback && callback(defaultAutomicList);
+
+      }
+    }); */
+    // console.log(defaultConfig);
+    const config = getDecryptOrNormal(defaultConfig);
+    const defaultAutomicList = [
+      {
+        pKey: null,
+        key: 'favorite',
+        title: '收藏',
+        children: [],
+        returnTreeData: null,
+      },
+      {
+        pKey: null,
+        key: 'recent',
+        title: '最近',
+        children: [],
+        returnTreeData: null,
+      },
+      config,
+    ];
+    traverseTree(defaultAutomicList, node => {
+      if (node.pKey === -1) {
+        node.icon = generateIcon('hdd');
+      } else {
+        node.icon = generateIcon('branches');
       }
     });
+    writeGlobalConfig({
+      automicList: defaultAutomicList,
+    });
+    callback && callback(defaultAutomicList);
   } else if (flag || !automicList) {
     const getAbialityStructure = (() => {
       return axios
