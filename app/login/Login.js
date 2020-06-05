@@ -161,6 +161,9 @@ const Login = () => {
     if (offLine && !checkSerialNumberValid(serialNumber)) {
       message.error('序列号错误');
       return false;
+    } else if (offLine && !liscense) {
+      message.error('未勾选许可协议');
+      return false;
     }
     config.context = `http://${ip}:${port}`;
     const writeConfig = {
@@ -183,7 +186,12 @@ const Login = () => {
 
   useEffect(() => {
     // 点击离线登录，使用已用的序列号进行自动登录
-    if (isClickOfffLine && offLine && checkSerialNumberValid(serialNumber)) {
+    if (
+      isClickOfffLine &&
+      offLine &&
+      checkSerialNumberValid(serialNumber) &&
+      liscense
+    ) {
       handleClickSignIn();
     }
   }, [isClickOfffLine, offLine]);
