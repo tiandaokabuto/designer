@@ -26,6 +26,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     'submit-btn': 1,
     'cancel-btn': 1,
     'file-upload': layout && (layout.cols || 4),
+    'file-download': layout && (layout.cols || 4),
     'drop-down': layout && (layout.cols || 4),
   };
 
@@ -35,6 +36,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     'submit-btn': 1,
     'cancel-btn': 1,
     'file-upload': 1,
+    'file-download': 1,
     'drop-down': 1,
   };
 

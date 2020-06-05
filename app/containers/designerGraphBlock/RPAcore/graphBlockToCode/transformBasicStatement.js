@@ -133,13 +133,38 @@ const transformBasicStatement = (
               `[${temp
                 .filter(
                   item =>
-                    !['submit-btn', 'cancel-btn', 'image'].includes(
-                      item.type
-                    ) || item.key
+                    ![
+                      'submit-btn',
+                      'cancel-btn',
+                      'image',
+                      'file-download',
+                      'file-upload',
+                    ].includes(item.type) || item.key
                 )
                 .map(item => item.key)
                 .join(',')},` + `] = `;
+            console.log(
+              temp.filter(
+                item =>
+                  ![
+                    'submit-btn',
+                    'cancel-btn',
+                    'image',
+                    'file-download',
+                    'file-upload',
+                  ].includes(item.type) || item.key
+              )
+            );
             params += `variables = [${temp
+              .filter(
+                item =>
+                  ![
+                    'submit-btn',
+                    'cancel-btn',
+                    'file-upload',
+                    'file-download',
+                  ].includes(item.type)
+              )
               .map(item => {
                 if (item.type === 'drop-down') {
                   return `${item.value || ''},${item.dataSource || ''}`;
