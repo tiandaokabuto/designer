@@ -147,7 +147,13 @@ export default useInjectContext(
       }, [checkedGraphBlockId]);
 
       return (
-        <div className="designergraph-container">
+        <div
+          className={
+            showHead
+              ? 'designergraph-container designergraph-container-readonly'
+              : 'designergraph-container'
+          }
+        >
           {/* <div
             style={{
               background: 'red',
@@ -182,7 +188,6 @@ export default useInjectContext(
           <Flow
             className="designergraph-container-flow"
             style={{
-              background: showHead ? 'rgba(252, 252, 252, 1)' : '',
               height: showHead ? '100%' : '',
             }}
             onAfterChange={value => {
@@ -190,7 +195,7 @@ export default useInjectContext(
               registerDataChange(value);
             }}
             data={graphData}
-            fitView={true}
+            fitView
             graph={{
               edgeDefaultShape: 'flow-polyline',
               ...(showHead
@@ -208,53 +213,7 @@ export default useInjectContext(
               )
                 changeCheckedGraphBlockId(node.item.model.id);
             }}
-            // onNodeClick={(node) => {
-            //   const dataId = node.shape._attrs.dataId;
-            //   isUnSelected = false;
-            //   /**
-            //    * 处理参数面板展示的逻辑
-            //    */
-            //   if (
-            //     node.item &&
-            //     ['processblock', 'rhombus-node'].includes(node.item.model.shape)
-            //   ) {
-            //     if (currentPagePosition === 'block') {
-            //       // 暂时性修改当前所处的页面位置
-            //       updateCurrentPagePosition('editor');
-            //       setTimeout(() => {
-            //         updateCurrentPagePosition('block');
-            //       }, 200);
-            //     }
-            //     // setTimeout(() => {
-            //     //   //changeCheckedGraphBlockId(node.item.model.id);
-            //     //   // synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
-            //     // }, 0);
-            //     synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
-            //   }
-            //   /**
-            //    * 跳转到代码块编辑页面
-            //    * 跳转的时候就需要将即将编辑的流程块关联到当前的这个流程块的id
-            //    * 同时需要同步当前的流程块的 保存在 graphDataMap 的数据结构, 否则置空
-            //    * 同时需要更新头部导航栏菜单
-            //    *
-            //    * */
-            //   switch (dataId) {
-            //     case 'edit':
-            //       updateCurrentPagePosition('block');
-            //       updateCurrentEditingProcessBlock(node.item.id);
-
-            //       synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
-            //       setTimeout(() => {
-            //         history.push('/designerGraphBlock');
-            //       }, 0);
-            //       return false;
-            //       break;
-            //     default:
-            //     // do nothing
-            //   }
-            // }}
             onContextMenu={node => {
-              // console.log($0.firstChild.textContent);
               const arr = document.getElementsByClassName('command');
               for (let i = 0; i < arr.length; i++) {
                 if (arr[i].innerText === '复制') {
@@ -265,7 +224,8 @@ export default useInjectContext(
             onDoubleClick={node => {
               if (
                 node.item &&
-                ['processblock'].includes(node.item.model.shape)
+                ['processblock'].includes(node.item.model.shape) &&
+                !showHead
               ) {
                 updateCurrentPagePosition('block');
                 synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
@@ -355,7 +315,7 @@ export default useInjectContext(
             </Radio.Group>
           </Modal>
 
-          {/* <Modal 
+          {/* <Modal
             visible={areaSizeModalVisible}
             closable={false}
             bodyStyle={{
