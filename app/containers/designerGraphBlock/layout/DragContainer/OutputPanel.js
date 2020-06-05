@@ -2,15 +2,20 @@ import React, { useEffect, useState, memo, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
-import { Icon, Input } from 'antd';
+import { Icon, Input, Dropdown, Menu } from 'antd';
 
 import event, { PYTHON_OUTPUT } from '../eventCenter';
 import FilterToolbar from './components/FilterToolbar';
 import Tags from './components/Tags';
 import ZoomToolBar from './components/ZoomToolBar';
+import useGetDownloadPath from '../../../common/DragEditorHeader/useHooks/useGetDownloadPath';
+
+const fs = require('fs');
 
 let isMouseDown = false;
 let startOffset = 0;
+let originKey = 0;
+const allLogMessage = { value: '' };
 
 const { Search } = Input;
 
@@ -38,6 +43,9 @@ export default memo(
       'WARN',
       'ERROR',
     ]);
+    const [stopScroll, setStopScroll] = useState(false);
+
+    const getDownLoadPath = useGetDownloadPath();
 
     const getOutputDomHeight = () => {
       const outputDom = document.querySelector(
@@ -77,20 +85,31 @@ export default memo(
 
     useEffect(() => {
       const handlePythonOutput = stdout => {
-        console.log(stdout);
+        allLogMessage.value += stdout;
+        // 显示日志红点，表明有新日志
         const originHeight = getOutputDomHeight();
         if (originHeight <= 40 && !newOutputTip) setNewOutputTip(true);
+        const newStdout = stdout.split('\n').filter(Boolean);
+        // 记录对应的key值，保证在多条日志的情况下只对变更的日志进行修改
+        const newStdoutArr = newStdout.map((item, index) => {
+          return { value: item, key: index + originKey };
+        });
+        // 更新初始index值，防止key值重复
+        originKey += newStdout.length;
+        // 更新日志
         setOutput(output => {
-          const result = output + '\n' + stdout;
-          const arr = result.split('\n');
-          if (arr.length > 200) {
-            arr.splice(0, arr.length - 200);
+          const result = [...output, ...newStdoutArr];
+          // 日志显示最新的500条
+          if (result.length > 500) {
+            result.splice(0, result.length - 500);
           }
-          return arr.join('\n');
+          return result;
         });
       };
       const handleClearOutput = () => {
-        setOutput('');
+        setOutput([]);
+        originKey = 0;
+        allLogMessage.value = '';
       };
       event.addListener(PYTHON_OUTPUT, handlePythonOutput);
       event.addListener('clear_output', handleClearOutput);
@@ -102,6 +121,16 @@ export default memo(
 
     useEffect(() => {
       updateExecuteOutput(output);
+      if (!stopScroll) {
+        const lastOutput = document.querySelector('p.lastOutput');
+        const content = document.querySelector(
+          'pre.dragger-editor-container-output-content'
+        );
+        if (content && lastOutput) {
+          // 顶部工具栏 40，可视区减去padding-bottom：155，最后一条输出的高度:42
+          content.scrollTo(0, lastOutput.offsetTop - 40 - 155 + 42);
+        }
+      }
     }, [output]);
 
     const style =
@@ -118,43 +147,53 @@ export default memo(
 
     const transformOutput = useMemo(() => {
       let selectedOutputList;
-      const outputList = output.split('\n').filter(Boolean);
       if (selectedTags.length === 4) {
-        selectedOutputList = outputList;
+        selectedOutputList = output;
       } else {
-        selectedOutputList = outputList.filter(item => {
+        selectedOutputList = output.filter(item => {
           return selectedTags.some(tag => {
             let newTag = tag;
             if (newTag === 'WARN') {
               newTag = 'WARNING';
             }
-            return item.includes(`[${newTag}]`);
+            return item.value.includes(`[${newTag}]`);
           });
         });
       }
-      let matchNum = 0;
 
       const result = selectedOutputList.map((item, index) => {
         // if (filter && item.indexOf(filter) > -1) {
-        if (filter && item.includes(filter)) {
+        let isLastOutput = false;
+        if (index === selectedOutputList.length - 1) {
+          isLastOutput = true;
+        }
+        if (filter && item.value.includes(filter)) {
           const className = `keyWordRow_${index}`;
           return (
             <p
-              key={index}
+              key={item.key}
+              className={isLastOutput ? 'lastOutput' : ''}
               dangerouslySetInnerHTML={{
-                __html: item.replace(RegExp(filter, 'g'), (match, index) => {
-                  const classNameT =
-                    matchNum === cursor
-                      ? className + ' keyWordRow_active'
-                      : className;
-                  matchNum++;
-                  return `<span class="${classNameT}" style="color:red">${match}</span>`;
-                }),
+                __html: item.value.replace(
+                  RegExp(filter, 'g'),
+                  (match, index) => {
+                    const classNameT =
+                      matchNum === cursor
+                        ? className + ' keyWordRow_active'
+                        : className;
+                    matchNum++;
+                    return `<span class="${classNameT}" style="color:red">${match}</span>`;
+                  }
+                ),
               }}
             />
           );
         }
-        return <p key={index}>{item}</p>;
+        return (
+          <p key={item.key} className={isLastOutput ? 'lastOutput' : ''}>
+            {item.value}
+          </p>
+        );
       });
       setMatchNum(matchNum);
       return result;
@@ -190,6 +229,36 @@ export default memo(
         content.scrollTo(0, activeDom.offsetTop - 40);
       }
     };
+
+    const handleStopScroll = ({ key }) => {
+      if (key === '2') setStopScroll(true);
+      else if (key === '3') setStopScroll(false);
+      else if (key === '1') {
+        getDownLoadPath(
+          filePath => {
+            fs.writeFileSync(`${filePath}.txt`, allLogMessage.value);
+          },
+          'log',
+          '',
+          '',
+          '导出日志'
+        );
+      }
+    };
+
+    const menu = (
+      <Menu onClick={handleStopScroll}>
+        <Menu.Item key="1" disabled={!allLogMessage.value}>
+          导出日志
+        </Menu.Item>
+        <Menu.Item key="2" disabled={stopScroll}>
+          停止滚动
+        </Menu.Item>
+        <Menu.Item key="3" disabled={!stopScroll}>
+          恢复滚动
+        </Menu.Item>
+      </Menu>
+    );
 
     return (
       <div
@@ -256,12 +325,14 @@ export default memo(
             }}
           />
         </div>
-        <pre
-          className="dragger-editor-container-output-content"
-          onMouseDown={e => e.stopPropagation()}
-        >
-          {transformOutput}
-        </pre>
+        <Dropdown overlay={menu} trigger={['contextMenu']}>
+          <pre
+            className="dragger-editor-container-output-content"
+            onMouseDown={e => e.stopPropagation()}
+          >
+            {transformOutput}
+          </pre>
+        </Dropdown>
         <FilterToolbar
           visible={filter !== ''}
           matchNum={matchNum}
