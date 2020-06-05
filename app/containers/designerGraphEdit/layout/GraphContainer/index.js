@@ -210,8 +210,10 @@ export default useInjectContext(
               if (
                 node.item &&
                 ['processblock', 'rhombus-node'].includes(node.item.model.shape)
-              )
+              ) {
                 changeCheckedGraphBlockId(node.item.model.id);
+                synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
+              }
             }}
             onContextMenu={node => {
               const arr = document.getElementsByClassName('command');
@@ -327,3 +329,48 @@ export default useInjectContext(
     }
   )
 );
+// onNodeClick={(node) => {
+//   const dataId = node.shape._attrs.dataId;
+//   isUnSelected = false;
+//   /**
+//    * 处理参数面板展示的逻辑
+//    */
+//   if (
+//     node.item &&
+//     ['processblock', 'rhombus-node'].includes(node.item.model.shape)
+//   ) {
+//     if (currentPagePosition === 'block') {
+//       // 暂时性修改当前所处的页面位置
+//       updateCurrentPagePosition('editor');
+//       setTimeout(() => {
+//         updateCurrentPagePosition('block');
+//       }, 200);
+//     }
+//     // setTimeout(() => {
+//     //   //changeCheckedGraphBlockId(node.item.model.id);
+//     //   // synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
+//     // }, 0);
+//     synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
+//   }
+//   /**
+//    * 跳转到代码块编辑页面
+//    * 跳转的时候就需要将即将编辑的流程块关联到当前的这个流程块的id
+//    * 同时需要同步当前的流程块的 保存在 graphDataMap 的数据结构, 否则置空
+//    * 同时需要更新头部导航栏菜单
+//    *
+//    * */
+//   switch (dataId) {
+//     case 'edit':
+//       updateCurrentPagePosition('block');
+//       updateCurrentEditingProcessBlock(node.item.id);
+
+//       synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
+//       setTimeout(() => {
+//         history.push('/designerGraphBlock');
+//       }, 0);
+//       return false;
+//       break;
+//     default:
+//     // do nothing
+//   }
+// }}
