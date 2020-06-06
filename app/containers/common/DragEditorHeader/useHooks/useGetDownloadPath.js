@@ -5,7 +5,13 @@ const { ipcRenderer } = require('electron');
  */
 
 export default () => {
-  return (callback, processName, descText = '', versionText = '', title) => {
+  return (
+    callback,
+    processName,
+    descText = '',
+    versionText = '',
+    title = '流程另存为'
+  ) => {
     ipcRenderer.send(
       'open-directory-dialog',
       'showSaveDialog',

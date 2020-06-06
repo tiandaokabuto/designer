@@ -58,7 +58,7 @@ export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
               label: '文本框',
               type: 'input',
               desc: '提示信息，说明',
-              value: '显示值',
+              value: "''",
               key: '赋值的变量名',
               password: 'false',
               validRule: '',
@@ -70,7 +70,7 @@ export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
               label: '图片控件',
               type: 'image',
               desc: '提示信息，说明',
-              value: '显示值',
+              value: "''",
             }}
           />
           <InteractiveControl
@@ -93,7 +93,16 @@ export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
               label: '文件上传',
               type: 'file-upload',
               desc: '提示信息，说明',
-              key: '赋值的变量名',
+              value: "''",
+            }}
+          />
+          <InteractiveControl
+            onAddControl={onAddControl}
+            item={{
+              label: '文件下载',
+              type: 'file-download',
+              desc: '提示信息，说明',
+              value: "''",
             }}
           />
           <InteractiveControl
@@ -102,7 +111,7 @@ export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
               label: '下拉单选框',
               type: 'drop-down',
               desc: '提示信息，说明',
-              value: '显示值',
+              value: "''",
               key: '赋值的变量名',
               dataSource: '数据源',
             }}
