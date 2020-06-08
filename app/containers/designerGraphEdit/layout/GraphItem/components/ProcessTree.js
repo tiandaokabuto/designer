@@ -461,6 +461,7 @@ export default ({ type, setShowLoadingLayer }) => {
         height: 'calc(100vh - 150px)',
         display: 'flex',
         flexDirection: 'column',
+        overflowY: 'auto',
       }}
     >
       <div className="tree-panel">
