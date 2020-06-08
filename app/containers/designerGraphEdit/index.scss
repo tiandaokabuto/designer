@@ -207,6 +207,9 @@
     // canvas {
     //   width: 100% !important;
     // }
+    &-readonly {
+      background-color: unset;
+    }
   }
   &-parampanel {
     min-width: 120px;

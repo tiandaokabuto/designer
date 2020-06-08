@@ -143,8 +143,8 @@ export default ({ current }) => {
           </TabPane>
           <TabPane tab="流程图" key="3">
             <GGEditor>
-              <div style={{ height: 'calc(100vh - 81px)' }}>
-                <GraphContainer showHead={true} />
+              <div style={{ height: 'calc(100vh - 116px)' }}>
+                <GraphContainer showHead />
               </div>
             </GGEditor>
           </TabPane>

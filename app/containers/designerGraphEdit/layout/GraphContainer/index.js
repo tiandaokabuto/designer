@@ -147,7 +147,13 @@ export default useInjectContext(
       }, [checkedGraphBlockId]);
 
       return (
-        <div className="designergraph-container">
+        <div
+          className={
+            showHead
+              ? 'designergraph-container designergraph-container-readonly'
+              : 'designergraph-container'
+          }
+        >
           {/* <div
             style={{
               background: 'red',
@@ -182,7 +188,6 @@ export default useInjectContext(
           <Flow
             className="designergraph-container-flow"
             style={{
-              background: showHead ? 'rgba(252, 252, 252, 1)' : '',
               height: showHead ? '100%' : '',
             }}
             onAfterChange={value => {
@@ -190,7 +195,7 @@ export default useInjectContext(
               registerDataChange(value);
             }}
             data={graphData}
-            fitView={true}
+            fitView
             graph={{
               edgeDefaultShape: 'flow-polyline',
               ...(showHead
@@ -211,7 +216,6 @@ export default useInjectContext(
               }
             }}
             onContextMenu={node => {
-              // console.log($0.firstChild.textContent);
               const arr = document.getElementsByClassName('command');
               for (let i = 0; i < arr.length; i++) {
                 if (arr[i].innerText === '复制') {
@@ -222,7 +226,8 @@ export default useInjectContext(
             onDoubleClick={node => {
               if (
                 node.item &&
-                ['processblock'].includes(node.item.model.shape)
+                ['processblock'].includes(node.item.model.shape) &&
+                !showHead
               ) {
                 updateCurrentPagePosition('block');
                 synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
@@ -312,7 +317,7 @@ export default useInjectContext(
             </Radio.Group>
           </Modal>
 
-          {/* <Modal 
+          {/* <Modal
             visible={areaSizeModalVisible}
             closable={false}
             bodyStyle={{
