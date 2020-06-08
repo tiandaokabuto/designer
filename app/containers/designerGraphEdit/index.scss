@@ -78,6 +78,9 @@
     .ant-tree-switcher-noop {
       visibility: hidden;
     }
+    .ant-tree li {
+      position: relative;
+    }
     .sd-tree {
       overflow: auto;
       height: calc(100vh - 180px);
