@@ -6,7 +6,7 @@ import './index.scss';
 
 /* const fs = require('fs'); */
 // 涉及git的同步问题，每次更改后不会同步下来，pull下来的时候还是原始版本，改为手动更改
-const version = '0.3.5.5';
+const version = '0.3.5.7';
 
 export default function HelpModel({ visible, handleCancel }) {
   /* const [version, setVersion] = useState('');

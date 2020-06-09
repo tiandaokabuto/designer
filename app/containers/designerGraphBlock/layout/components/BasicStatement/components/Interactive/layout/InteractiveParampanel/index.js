@@ -6,7 +6,7 @@ const { Option } = Select;
 const NAME_MAP = {
   label: '标签名称',
   key: '变量名',
-  desc: '描述',
+  desc: '备注',
   value: '显示值',
   password: '密码类型',
   validRule: '校验规则',
