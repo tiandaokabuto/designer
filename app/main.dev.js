@@ -315,6 +315,9 @@ const createWindow = async () => {
  * Add event listeners...
  */
 
+// 忽略与证书相关的错误.
+app.commandLine.appendSwitch('--ignore-certificate-errors', 'true');
+
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed

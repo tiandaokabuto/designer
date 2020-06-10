@@ -165,7 +165,7 @@ const Login = () => {
       message.error('未勾选许可协议');
       return false;
     }
-    config.context = `http://${ip}:${port}`;
+    config.context = `https://${ip}:${port}`;
     const writeConfig = {
       ip,
       port,
