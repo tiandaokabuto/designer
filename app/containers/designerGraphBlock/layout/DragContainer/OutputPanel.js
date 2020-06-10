@@ -29,7 +29,7 @@ const tagsFromServer = [
 export default memo(
   useInjectContext(({ tag, updateExecuteOutput }) => {
     const executeOutput = useSelector(
-      state => state.temporaryvariable.executeOutput
+      (state) => state.temporaryvariable.executeOutput
     );
 
     const [output, setOutput] = useState(executeOutput);
@@ -55,7 +55,7 @@ export default memo(
     };
 
     useEffect(() => {
-      const handleAnchorMouseMove = useThrottle(e => {
+      const handleAnchorMouseMove = useThrottle((e) => {
         if (isMouseDown) {
           let offset = startOffset - e.pageY;
           startOffset = e.pageY;
@@ -84,7 +84,7 @@ export default memo(
     }, []);
 
     useEffect(() => {
-      const handlePythonOutput = stdout => {
+      const handlePythonOutput = (stdout) => {
         allLogMessage.value += stdout;
         // 显示日志红点，表明有新日志
         const originHeight = getOutputDomHeight();
@@ -97,7 +97,7 @@ export default memo(
         // 更新初始index值，防止key值重复
         originKey += newStdout.length;
         // 更新日志
-        setOutput(output => {
+        setOutput((output) => {
           const result = [...output, ...newStdoutArr];
           // 日志显示最新的500条
           if (result.length > 500) {
@@ -150,8 +150,8 @@ export default memo(
       if (selectedTags.length === 4) {
         selectedOutputList = output;
       } else {
-        selectedOutputList = output.filter(item => {
-          return selectedTags.some(tag => {
+        selectedOutputList = output.filter((item) => {
+          return selectedTags.some((tag) => {
             let newTag = tag;
             if (newTag === 'WARN') {
               newTag = 'WARNING';
@@ -235,7 +235,7 @@ export default memo(
       else if (key === '3') setStopScroll(false);
       else if (key === '1') {
         getDownLoadPath(
-          filePath => {
+          (filePath) => {
             fs.writeFileSync(`${filePath}.txt`, allLogMessage.value);
           },
           'log',
@@ -264,14 +264,14 @@ export default memo(
       <div
         className="dragger-editor-container-output"
         style={{ ...style }}
-        onMouseDown={e => {
+        onMouseDown={(e) => {
           isMouseDown = true;
           startOffset = e.pageY;
         }}
       >
         <div
           className="dragger-editor-container-output-title"
-          onMouseDown={e => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
         >
           {tag === 'graph' && <ZoomToolBar />}
           <span
@@ -298,7 +298,7 @@ export default memo(
                 setSelectedTags([...selectedTags, selectedTagLabel]);
               } else {
                 setSelectedTags(
-                  selectedTags.filter(item => selectedTagLabel !== item)
+                  selectedTags.filter((item) => selectedTagLabel !== item)
                 );
               }
             }}
@@ -307,17 +307,17 @@ export default memo(
         <div className="dragger-editor-container-output-search">
           <Search
             allowClear
-            onChange={e => {
+            onChange={(e) => {
               if (e.target.value === '') {
                 setCursor(0);
                 setFilter('');
               }
             }}
-            onSearch={value => {
+            onSearch={(value) => {
               setCursor(0);
               setFilter(value);
             }}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.keyCode === 13) {
                 setCursor(0);
                 setFilter(e.target.value);
@@ -328,7 +328,7 @@ export default memo(
         <Dropdown overlay={menu} trigger={['contextMenu']}>
           <pre
             className="dragger-editor-container-output-content"
-            onMouseDown={e => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
           >
             {transformOutput}
           </pre>
@@ -338,13 +338,15 @@ export default memo(
           matchNum={matchNum}
           filter={filter}
           handleNext={() => {
-            setCursor(cursor => (cursor + 1 < matchNum ? cursor + 1 : cursor));
+            setCursor((cursor) =>
+              cursor + 1 < matchNum ? cursor + 1 : cursor
+            );
             setTimeout(() => {
               handleScrollIntoView();
             });
           }}
           handlePrev={() => {
-            setCursor(cursor => (cursor - 1 >= 0 ? cursor - 1 : cursor));
+            setCursor((cursor) => (cursor - 1 >= 0 ? cursor - 1 : cursor));
             setTimeout(() => {
               handleScrollIntoView();
             });

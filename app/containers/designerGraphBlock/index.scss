@@ -116,6 +116,7 @@
   &-container {
     height: calc(100%);
     flex: 1;
+    overflow: hidden;
     // max-width: calc(100vw - 239px * 2);
     background-color: #f9fafb;
     box-shadow: 1px 0 0 0 #eee;
