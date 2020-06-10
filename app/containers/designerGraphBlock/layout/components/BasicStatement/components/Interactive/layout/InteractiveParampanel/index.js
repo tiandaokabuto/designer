@@ -11,6 +11,7 @@ const NAME_MAP = {
   password: '密码类型',
   validRule: '校验规则',
   dataSource: '数据源',
+  selectedType: '选择框类型',
 };
 
 export default memo(
@@ -26,7 +27,7 @@ export default memo(
           <span>列数设置</span>
           <Input
             value={cols}
-            onChange={e => {
+            onChange={(e) => {
               handleLayoutColChange(e.target.value);
             }}
           />
@@ -42,7 +43,7 @@ export default memo(
           return (
             <Select
               value={desc[item]}
-              onChange={value => {
+              onChange={(value) => {
                 desc[item] = value;
                 handleLabelChange();
               }}
@@ -55,11 +56,28 @@ export default memo(
               <Option value="false">否</Option>
             </Select>
           );
+        case 'selectedType':
+          return (
+            <Select
+              value={desc[item]}
+              onChange={(value) => {
+                desc[item] = value;
+                handleLabelChange();
+              }}
+              style={{
+                flex: 1,
+                marginLeft: 12,
+              }}
+            >
+              <Option value="radio">单选</Option>
+              <Option value="multiple">多选</Option>
+            </Select>
+          );
         default:
           return (
             <Input
               value={desc[item]}
-              onChange={e => {
+              onChange={(e) => {
                 desc[item] = e.target.value;
                 handleLabelChange();
               }}
