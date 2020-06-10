@@ -58,19 +58,19 @@ export const readLoginConfig = callback => {
         encrypt.argEncryptByDES(
           JSON.stringify({
             ip: '172.168.201.90',
-            port: '9999',
+            port: '44388',
           })
         ),
         function(err) {
           if (!err) {
-            callback && callback('172.168.201.90', '9999');
+            callback && callback('172.168.201.90', '44388');
           }
         }
       );
     } else if (data.length > 0) {
       const {
         ip = '172.168.201.90',
-        port = '9999',
+        port = '44388',
         userName,
         password,
         serialNumber,
@@ -82,7 +82,7 @@ export const readLoginConfig = callback => {
           : JSON.parse(data.toString());
       callback(ip, port, userName, password, serialNumber, offLine, userDay);
     } else {
-      callback && callback('172.168.201.90', '9999');
+      callback && callback('172.168.201.90', '44388');
     }
   });
 };

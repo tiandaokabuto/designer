@@ -198,7 +198,7 @@ export default class App extends React.Component<Props> {
   };
 
   resetConfig = (ip, port) => {
-    config.context = `http://${ip}:${port}`;
+    config.context = `https://${ip}:${port}`;
   };
 
   render() {
