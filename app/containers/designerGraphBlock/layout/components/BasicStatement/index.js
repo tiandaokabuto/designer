@@ -190,6 +190,7 @@ const BasicStatement = useInjectContext(props => {
       '上传文件',
     ];
     const mouseCmdName = '鼠标-获取光标位置';
+    const windowsCmdNameArr = ['设置窗口状态', '关闭软件窗口'];
 
     if (xpathCmdNameArr.includes(card.cmdName)) {
       try {
@@ -203,9 +204,16 @@ const BasicStatement = useInjectContext(props => {
       } catch (err) {
         console.log(err);
       }
+    } else if (windowsCmdNameArr.includes(card.cmdName)) {
+      try {
+        const windowsWorker = exec(`${PATH_CONFIG('WinRun')} -w`);
+      } catch (e) {
+        console.log(e);
+      }
     }
     ipcRenderer.removeAllListeners('updateXpath');
     ipcRenderer.removeAllListeners('updateMousePosition');
+    ipcRenderer.removeAllListeners('getWindowArray');
     ipcRenderer.on(
       'updateXpath',
       (e, { targetId, imageData, xpath: xpathBuffer, type }) => {
@@ -237,6 +245,24 @@ const BasicStatement = useInjectContext(props => {
         handleEmitCodeTransform(cards);
       }
     );
+    ipcRenderer.on('getWindowArray', (e, obj) => {
+      if (obj.targetId !== id) return;
+      card.properties.required[1].valueMapping = obj.resultArr;
+      card.properties.required[1].updateId = true;
+      card.hasModified = true;
+      handleEmitCodeTransform(cards);
+    });
+  };
+
+  const searchTargetDesc = card => {
+    console.log(card);
+    if (card.main === 'mousePosition') {
+      return '定位坐标';
+    } else if (['changeWinStatus', 'closeWin'].includes(card.main)) {
+      return '获取窗口';
+    } else {
+      return '查找目标';
+    }
   };
 
   return (
@@ -327,11 +353,7 @@ const BasicStatement = useInjectContext(props => {
                         type="home"
                         className="card-content-searchtarget-anchor"
                       />
-                      <span>
-                        {card.main === 'mousePosition'
-                          ? '定位坐标'
-                          : '查找目标'}
-                      </span>
+                      <span>{searchTargetDesc(card)}</span>
                     </Fragment>
                   ) : (
                     <div className="card-content-searchtarget-content">
