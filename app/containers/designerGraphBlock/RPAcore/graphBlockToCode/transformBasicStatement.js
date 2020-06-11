@@ -163,17 +163,14 @@ const transformBasicStatement = (
               .join(',')}], `;
           }
 
-          const newTemp = temp
-            .filter(
-              item =>
-                !['submit-btn', 'cancel-btn', 'file-upload'].includes(item.type)
-            )
-            .map(item => {
+          const newTemp = temp.map(item => {
+            if (item.value === undefined) {
+              return item;
+            } else {
               item.value = '';
               return item;
-            });
-
-          console.log(newTemp);
+            }
+          });
 
           params += `${item.enName} = ${JSON.stringify(newTemp)}`;
           break;
