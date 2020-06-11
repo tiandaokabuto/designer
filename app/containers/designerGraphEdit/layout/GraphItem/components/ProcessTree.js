@@ -174,7 +174,7 @@ const menu = (
   <Menu>
     <Menu.Item
       key="1"
-      onClick={(e) => {
+      onClick={e => {
         ipcRenderer.removeAllListeners('chooseItem');
         ipcRenderer.send('choose-directory-dialog', 'showOpenDialog', '选择', [
           'openFile',
@@ -193,25 +193,23 @@ export default ({ type, setShowLoadingLayer }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedKey, setSelectedKey] = useState('');
   const [expandedKeys, setExpandedKeys] = useState([]);
-  const processTree = useSelector((state) => state.grapheditor.processTree);
-  const moduleTree = useSelector((state) => state.grapheditor.moduleTree);
+  const processTree = useSelector(state => state.grapheditor.processTree);
+  const moduleTree = useSelector(state => state.grapheditor.moduleTree);
   const currentCheckedTreeNode = useSelector(
-    (state) => state.grapheditor.currentCheckedTreeNode
+    state => state.grapheditor.currentCheckedTreeNode
   );
   const currentCheckedModuleTreeNode = useSelector(
-    (state) => state.grapheditor.currentCheckedModuleTreeNode
+    state => state.grapheditor.currentCheckedModuleTreeNode
   );
-  const blockTreeTab = useSelector((state) => state.blockcode.blockTreeTab);
-  const currentProject = useSelector(
-    (state) => state.grapheditor.currentProject
-  );
+  const blockTreeTab = useSelector(state => state.blockcode.blockTreeTab);
+  const currentProject = useSelector(state => state.grapheditor.currentProject);
 
   const persistentStorage = usePersistentStorage();
   const persistentModuleStorage = usePersistentModuleStorage();
 
   // 右键菜单位置设定
   const [position, setPosition] = useState({});
-  const onDragEnter = (info) => {
+  const onDragEnter = info => {
     console.log(info);
     // expandedKeys 需要受控时设置
     // this.setState({
@@ -219,16 +217,16 @@ export default ({ type, setShowLoadingLayer }) => {
     // });
   };
 
-  const onDragStart = (info) => {
+  const onDragStart = info => {
     const dragKey = info.node.props.eventKey;
-    traverseTree(moduleTree, (item) => {
+    traverseTree(moduleTree, item => {
       if (item.key === dragKey) {
         changeMovingModuleNode(item);
       }
     });
   };
 
-  const onDrop = (info) => {
+  const onDrop = info => {
     console.log(info);
     const dropKey = info.node.props.eventKey; // 释放的元素
     const dragKey = info.dragNode.props.eventKey; // 拖动的元素
@@ -247,7 +245,7 @@ export default ({ type, setShowLoadingLayer }) => {
     };
     if (type === 'process') {
       const data = [...processTree];
-      traverseTree(data, (item) => {
+      traverseTree(data, item => {
         if (item.key === dropKey && item.type === 'dir') {
           // Find dragObject
           let dragObj;
@@ -258,7 +256,7 @@ export default ({ type, setShowLoadingLayer }) => {
 
           if (!info.dropToGap) {
             // Drop on the content
-            loop(data, dropKey, (item) => {
+            loop(data, dropKey, item => {
               item.children = item.children || [];
               // where to insert 示例添加到尾部，可以是随意位置
               item.children.push(dragObj);
@@ -268,7 +266,7 @@ export default ({ type, setShowLoadingLayer }) => {
             info.node.props.expanded && // Is expanded
             dropPosition === 1 // On the bottom gap
           ) {
-            loop(data, dropKey, (item) => {
+            loop(data, dropKey, item => {
               item.children = item.children || [];
               // where to insert 示例添加到头部，可以是随意位置
               item.children.unshift(dragObj);
@@ -292,7 +290,7 @@ export default ({ type, setShowLoadingLayer }) => {
       persistentStorage();
     } else {
       const data = [...moduleTree];
-      traverseTree(data, (item) => {
+      traverseTree(data, item => {
         if (item.key === dropKey && item.type === 'dir') {
           // Find dragObject
           let dragObj;
@@ -303,7 +301,7 @@ export default ({ type, setShowLoadingLayer }) => {
 
           if (!info.dropToGap) {
             // Drop on the content
-            loop(data, dropKey, (item) => {
+            loop(data, dropKey, item => {
               item.children = item.children || [];
               // where to insert 示例添加到尾部，可以是随意位置
               item.children.push(dragObj);
@@ -313,7 +311,7 @@ export default ({ type, setShowLoadingLayer }) => {
             info.node.props.expanded && // Is expanded
             dropPosition === 1 // On the bottom gap
           ) {
-            loop(data, dropKey, (item) => {
+            loop(data, dropKey, item => {
               item.children = item.children || [];
               // where to insert 示例添加到头部，可以是随意位置
               item.children.unshift(dragObj);
@@ -422,13 +420,14 @@ export default ({ type, setShowLoadingLayer }) => {
     }
   };
 
-  const refreshGraph = (key) => {
+  const refreshGraph = key => {
     resetGraphEditData();
     changeCheckedTreeNode(key);
   };
 
-  const showTreeData = (selectedKey) => {
+  const showTreeData = selectedKey => {
     const node = findNodeByKey(processTree, selectedKey[0]);
+    console.log(node);
     if (Object.keys(node.data).length === 0) {
       let data = getProjectTreeData(currentProject, processTree, node);
       const maxLength = 470000;
@@ -445,8 +444,8 @@ export default ({ type, setShowLoadingLayer }) => {
   };
 
   useEffect(() => {
-    const handleAddExpanedKeys = (keys) => {
-      setExpandedKeys((expandedKeys) => {
+    const handleAddExpanedKeys = keys => {
+      setExpandedKeys(expandedKeys => {
         if (expandedKeys.includes(keys)) return expandedKeys;
         return expandedKeys.concat(keys);
       });
@@ -478,7 +477,7 @@ export default ({ type, setShowLoadingLayer }) => {
           showIcon={type === 'secondModule' ? false : true}
           draggable={type === 'secondModule' ? false : true}
           blockNode
-          onExpand={(expandKeys) => {
+          onExpand={expandKeys => {
             setExpandedKeys(expandKeys);
           }}
           onRightClick={({ event, node }) => {
