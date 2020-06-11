@@ -427,7 +427,7 @@ export default ({ type, setShowLoadingLayer }) => {
 
   const showTreeData = selectedKey => {
     const node = findNodeByKey(processTree, selectedKey[0]);
-    if (Object.keys(node.data).length === 0) {
+    if (node.data && Object.keys(node.data).length === 0) {
       let data = getProjectTreeData(currentProject, processTree, node);
       const maxLength = 470000;
       const isOverMaxLength = data[maxLength] !== undefined;
@@ -510,6 +510,11 @@ export default ({ type, setShowLoadingLayer }) => {
               : [currentCheckedModuleTreeNode]
           }
           onSelect={(selectedKey, e) => {
+            const node = findNodeByKey(processTree, selectedKey[0]);
+            if (node.data === undefined) {
+              // 目录
+              return;
+            }
             if (type === 'process') {
               if (currentCheckedTreeNode === undefined) {
                 // 首次打开时currentCheckedTreeNode为undefined
