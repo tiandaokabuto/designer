@@ -30,14 +30,14 @@ appexpress.use(bodyParser.urlencoded({ extended: false }));
 // 本地监听8888端口 获取动态的xpath元素回填
 
 // --------------------------- express版本
-appexpress.post('/query', function(req, res) {
+appexpress.post('/query', function (req, res) {
   if (targetId === undefined) {
     res.sendStatus(500);
   } else {
     res.sendStatus(200);
   }
 });
-appexpress.post('/upload', function(req, res) {
+appexpress.post('/upload', function (req, res) {
   try {
     const finallyResult = req.body;
 
@@ -65,7 +65,8 @@ appexpress.post('/upload', function(req, res) {
   res.sendStatus(200);
 });
 
-appexpress.post('/position', function(req, res) {
+appexpress.post('/position', function (req, res) {
+  console.log('position');
   try {
     const finallyResult = req.body;
 
@@ -78,6 +79,7 @@ appexpress.post('/position', function(req, res) {
     if (!finallyResult.value) {
       return;
     }
+    console.log(finallyResult);
 
     mainWindow.restore();
     mainWindow.webContents.send('updateMousePosition', {
@@ -86,6 +88,36 @@ appexpress.post('/position', function(req, res) {
     });
     targetId = undefined;
   } catch (e) {
+    // 处理错误
+    res.sendStatus(200);
+  }
+
+  res.sendStatus(200);
+});
+
+appexpress.post('/windowArray', function (req, res) {
+  console.log('windowArray');
+  try {
+    const finallyResult = req.body;
+
+    // 将结果通知给渲染进程
+    if (targetId === undefined) {
+      res.sendStatus(500);
+      return;
+    }
+
+    if (!finallyResult.value) {
+      return;
+    }
+    console.log(finallyResult.value);
+    mainWindow.restore();
+    mainWindow.webContents.send('getWindowArray', {
+      resultArr: finallyResult.value,
+      targetId,
+    });
+    targetId = undefined;
+  } catch (e) {
+    console.log(e);
     // 处理错误
     res.sendStatus(200);
   }
@@ -152,7 +184,7 @@ const createLoginWindow = () => {
   loginWindow.loadURL(`file://${__dirname}/login.html`);
 
   // loginWindow.webContents.openDevTools();
-  loginWindow.on('ready-to-show', function() {
+  loginWindow.on('ready-to-show', function () {
     loginWindow.show();
   });
 };
@@ -233,7 +265,7 @@ const createWindow = async () => {
   });
 
   // 选择文件存储路径
-  ipcMain.on('open-directory-dialog', function(
+  ipcMain.on('open-directory-dialog', function (
     event,
     func,
     label = '存储',
@@ -256,7 +288,7 @@ const createWindow = async () => {
       .catch(err => console.log(err));
   });
 
-  ipcMain.on('choose-directory-dialog', function(
+  ipcMain.on('choose-directory-dialog', function (
     event,
     func,
     label = '存储',
@@ -297,7 +329,7 @@ const createWindow = async () => {
     targetId = id;
     if (isNetStart) return;
 
-    appexpress.listen(8888, function() {
+    appexpress.listen(8888, function () {
       console.log('服务器已启动');
     });
     isNetStart = true;
