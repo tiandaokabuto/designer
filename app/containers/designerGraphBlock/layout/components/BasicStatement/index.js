@@ -255,7 +255,6 @@ const BasicStatement = useInjectContext(props => {
   };
 
   const searchTargetDesc = card => {
-    console.log(card);
     if (card.main === 'mousePosition') {
       return '定位坐标';
     } else if (['changeWinStatus', 'closeWin'].includes(card.main)) {

@@ -6,7 +6,7 @@ import memoize from './reselect';
 
 const fs = require('fs');
 
-const paddingStart = (length) => '    '.repeat(length);
+const paddingStart = length => '    '.repeat(length);
 
 const handleModuleImport = (dataStructure, result, moduleMap) => {
   if (dataStructure.module) {
@@ -42,7 +42,7 @@ const handleMainFnGeneration = (dataStructure, params, result, padding) => {
     dataStructure.properties.required[1].selectedRows
   ) {
     const { selectedRows } = dataStructure.properties.required[1];
-    selectedRows.map((item) => {
+    selectedRows.map(item => {
       if (item.variableName !== '') {
         result.output += `${padding}${item.variableName} = ${dataStructure.properties.required[0].value}['${item.headerName}']\n`;
       }
@@ -58,7 +58,7 @@ const handleNote = (cmdDesc, result, padding, dataStructure) => {
   }
 };
 
-const handleFormJsonGenerate = (dataStructure) => {
+const handleFormJsonGenerate = dataStructure => {
   if (
     dataStructure.layout &&
     dataStructure.layout.data &&
@@ -66,7 +66,7 @@ const handleFormJsonGenerate = (dataStructure) => {
   ) {
     const { data } = dataStructure.layout;
     const { dataMap } = dataStructure.layout;
-    return JSON.stringify(data.map((item) => dataMap[item.i]));
+    return JSON.stringify(data.map(item => dataMap[item.i]));
   }
   return 'None';
 };
@@ -100,7 +100,7 @@ const transformBasicStatement = (
       console.log(item.value);
       if (Array.isArray(item.value)) {
         params += `${item.enName} = [${item.value
-          .map((valueItem) => valueItem)
+          .map(valueItem => valueItem)
           .join(',')}]`;
       } else {
         params += `${item.enName} = ${
@@ -125,15 +125,14 @@ const transformBasicStatement = (
         case 'formJson':
           if (params) params += ', ';
           const formJson = handleFormJsonGenerate(dataStructure);
-
+          console.log(formJson);
+          const temp = JSON.parse(formJson);
           if (formJson !== 'None') {
-            const temp = JSON.parse(formJson);
-            console.log(temp);
             // 返回值
             result.output +=
               `[${temp
                 .filter(
-                  (item) =>
+                  item =>
                     ![
                       'submit-btn',
                       'cancel-btn',
@@ -142,20 +141,19 @@ const transformBasicStatement = (
                       'file-upload',
                     ].includes(item.type) || item.key
                 )
-                .map((item) => {
-                  console.log(item.key);
+                .map(item => {
                   return item.key;
                 })
                 .join(',')}` + `] = `;
             // 变量
             params += `variables = [${temp
               .filter(
-                (item) =>
+                item =>
                   !['submit-btn', 'cancel-btn', 'file-upload'].includes(
                     item.type
                   )
               )
-              .map((item) => {
+              .map(item => {
                 if (item.type === 'drop-down') {
                   return `${item.value || ''},${item.dataSource || ''}`;
                 } else {
@@ -165,7 +163,16 @@ const transformBasicStatement = (
               .join(',')}], `;
           }
 
-          params += `${item.enName} = ${formJson}`;
+          const newTemp = temp.map(item => {
+            if (item.value === undefined) {
+              return item;
+            } else {
+              item.value = '';
+              return item;
+            }
+          });
+
+          params += `${item.enName} = ${JSON.stringify(newTemp)}`;
           break;
         case 'layout':
           if (params) params += ', ';
