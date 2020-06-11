@@ -9,6 +9,8 @@ export default card => {
   return (
     required.some(item => item.enName === 'xpath') ||
     optional.some(item => item.enName === 'xpath') ||
-    card.main === 'mousePosition'
+    card.main === 'mousePosition' ||
+    card.main === 'changeWinStatus' ||
+    card.main === 'closeWin'
   );
 };

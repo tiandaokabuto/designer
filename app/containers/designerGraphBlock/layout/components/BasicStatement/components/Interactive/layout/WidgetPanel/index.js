@@ -10,7 +10,7 @@ export let isLocked = false;
 export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
   useEffect(() => {
     const controlDom = document.querySelectorAll('.interactive-control');
-    const handleControlMouseenter = e => {
+    const handleControlMouseenter = (e) => {
       if (!isLocked) {
         isLocked = true;
         onAddControl(
@@ -23,17 +23,17 @@ export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
         );
       }
     };
-    const handleControlMouseleave = e => {
+    const handleControlMouseleave = (e) => {
       isLocked = false;
       popLayoutData();
     };
 
-    Array.from(controlDom).forEach(dom => {
+    Array.from(controlDom).forEach((dom) => {
       dom.addEventListener('mouseenter', handleControlMouseenter);
       dom.addEventListener('mouseleave', handleControlMouseleave);
     });
     return () => {
-      Array.from(controlDom).forEach(dom => {
+      Array.from(controlDom).forEach((dom) => {
         dom.addEventListener('mouseenter', handleControlMouseenter);
         dom.removeEventListener('mouseleave', handleControlMouseleave);
       });
@@ -108,12 +108,13 @@ export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
           <InteractiveControl
             onAddControl={onAddControl}
             item={{
-              label: '下拉单选框',
+              label: '下拉框',
               type: 'drop-down',
               desc: '提示信息，说明',
               value: "''",
               key: '赋值的变量名',
               dataSource: '数据源',
+              selectedType: 'radio',
             }}
           />
         </Panel>
