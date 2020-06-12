@@ -15,7 +15,7 @@ import { setGraphDataMap } from '../../../reduxActions';
 const fs = require('fs');
 
 // 获取所有的标准的原子能力数据结构描述。通过pkg + main + module字段的拼接来唯一确定
-const getAutoMicListMap = (automicList) => {
+const getAutoMicListMap = automicList => {
   let result = {};
   for (const child of automicList) {
     if (child.children) {
@@ -48,7 +48,7 @@ const traverseAllCards = (cards, callback) => {
   }
 };
 
-const getStandardProperties = (shape) => {
+const getStandardProperties = shape => {
   switch (shape) {
     case 'processblock':
       return [
@@ -103,7 +103,7 @@ const getStandardProperties = (shape) => {
   }
 };
 
-const isPlainObject = (obj) => {
+const isPlainObject = obj => {
   if (typeof obj !== 'object' || obj === null) return false;
   let proto = obj;
   while (Object.getPrototypeOf(proto) !== null) {
@@ -116,49 +116,121 @@ const hasOwnPropertyKey = (obj, key) => {
   return Object.hasOwnProperty(obj, key);
 };
 
-const typeOf = (obj) => {
+const typeOf = obj => {
   return Object.prototype.toString.call(obj);
 };
 
 /**
- *
- * @param {*} standard
- * @param {*} current
- * @param {*} isParam  // 判断当前对比的对象是否是属性下边的字段 properties
- * // 跟参数面板无关的那些字段直接用新的去替换掉老的值
+ * 递归判断是否存在参数是否存在变更
+ * @param {*} standard 新参数
+ * @param {*} current 被比对的现在使用的参数
+ * @param {*} isParam 是否属于原子能力中的参数
+ * @param {*} propertiesKey 父节点可能需要更动value的键值
+ * @param {*} fatherNode 父节点
  */
-const isEqualType = (standard, current, isParam = false) => {
+const isEqualType = (
+  standard,
+  current,
+  isParam = false,
+  propertiesKey,
+  fatherNode
+) => {
   // 标记当前是否存在类型不兼容的情况
   let flag = true;
-  for (const key in standard) {
-    // 过滤掉原型上的属性
-    if (!hasOwnPropertyKey(standard, key)) {
-      // 判断两者是否为同一类型， 🌰: 原来判断结点的条件为string类型 后来为数组类型
-      // 策略就是直接用新的数据结构去替换掉老的数据结构。
-      if (typeOf(standard[key]) !== typeOf(current[key])) {
-        flag = false;
-
-        current[key] = standard[key];
-      } else if (isPlainObject(standard[key])) {
-        if (key === 'properties') {
-          // 已经进入了属性参数的类型校验
-          isParam = true;
-        }
-        // 一旦 flag 从true修改成false, 那么就不对其再进行赋值。
+  // 如果key满足，根据新数组寻找旧数据对应的数据，进行精准对比
+  if (propertiesKey === 'optional' || propertiesKey === 'required') {
+    // 创建一个数值，寻找到的数据push进来，新增的数据push进来，删除的将不push，最终生成正确顺序的数组并替换现有数组
+    const newCurrent = [];
+    standard.forEach((item, index) => {
+      const { enName } = item;
+      const findIndex = current.findIndex(
+        currentItem => currentItem.enName === enName
+      );
+      if (findIndex > -1) {
+        // 当前存在这条属性，递归判断
         if (flag) {
-          flag = isEqualType(standard[key], current[key], isParam);
+          flag = isEqualType(
+            standard[index],
+            current[findIndex],
+            isParam,
+            findIndex,
+            current
+          );
         } else {
-          isEqualType(standard[key], current[key], isParam);
+          isEqualType(
+            standard[index],
+            current[findIndex],
+            isParam,
+            findIndex,
+            current
+          );
         }
-      } else if (Array.isArray(standard[key])) {
-        if (flag) {
-          flag = isEqualType(standard[key], current[key], isParam);
-        } else {
-          isEqualType(standard[key], current[key], isParam);
-        }
+        newCurrent.push(current[findIndex]);
       } else {
-        // 基本类型数据
-        if (standard[key] !== current[key]) {
+        // 当前没有这个属性，把新增属性push进新
+        flag = false;
+        newCurrent.push(current[findIndex]);
+      }
+    });
+    // 替换现有数组
+    fatherNode[propertiesKey] = newCurrent;
+  } else {
+    for (const key in standard) {
+      // 过滤掉原型上的属性
+      if (!hasOwnPropertyKey(standard, key)) {
+        // 判断两者是否为同一类型， 🌰: 原来判断结点的条件为string类型 后来为数组类型
+        // 策略就是直接用新的数据结构去替换掉老的数据结构。
+        // 第二版： 忽略参数面板中各个参数的类型不一致
+        if (!isParam && typeOf(standard[key]) !== typeOf(current[key])) {
+          flag = false;
+          current[key] = standard[key];
+        } else if (
+          // 参数面板如果整个参数类型不一致，直接进行全属性替换并且提示红框
+          isParam &&
+          key === 'componentType' &&
+          standard[key] !== current[key]
+        ) {
+          flag = false;
+          if (fatherNode) {
+            fatherNode[propertiesKey] = standard;
+          }
+        } else if (isPlainObject(standard[key])) {
+          // 递归比对
+          if (key === 'properties') {
+            // 已经进入了属性参数的类型校验P
+            isParam = true;
+          }
+          // 一旦 flag 从true修改成false, 那么就不对其再进行赋值。
+          if (flag) {
+            flag = isEqualType(standard[key], current[key], isParam);
+          } else {
+            isEqualType(standard[key], current[key], isParam);
+          }
+        } else if (Array.isArray(standard[key])) {
+          // 递归比对, 遇到与参数面板有关的数组时，对该数组进行特殊处理
+          let arrayFlag = false;
+          if (key === 'optional' || key === 'required') {
+            arrayFlag = true;
+          }
+          if (flag) {
+            flag = isEqualType(
+              standard[key],
+              current[key],
+              isParam,
+              arrayFlag ? key : undefined,
+              arrayFlag ? current : undefined
+            );
+          } else {
+            isEqualType(
+              standard[key],
+              current[key],
+              isParam,
+              arrayFlag ? key : undefined,
+              arrayFlag ? current : undefined
+            );
+          }
+        } else if (standard[key] !== current[key]) {
+          // 基本类型数据
           if (!isParam) {
             // 满足以下条件的 new -> old
             flag = false;
@@ -173,7 +245,7 @@ const isEqualType = (standard, current, isParam = false) => {
 
 const verifyCards = (current, standard) => {
   let flag = false;
-  traverseAllCards(current, (node) => {
+  traverseAllCards(current, node => {
     const isEqual = isEqualType(
       standard[node.pkg + node.main + node.module],
       node
@@ -224,7 +296,7 @@ export default () => {
         }
       );
       const { automicList = [] } = getDecryptOrNormal(data);
-      const temp = automicList.find((item) => item.key === 'aviable').children;
+      const temp = automicList.find(item => item.key === 'aviable').children;
       const automicListMap = getAutoMicListMap(temp);
       let isCompatable = false;
       let hasModified = false;
@@ -248,7 +320,7 @@ export default () => {
             setGraphDataMap(key, item);
           }
         } else if (item.shape === 'rhombus-node') {
-          item.properties.forEach((proItem) => {
+          item.properties.forEach(proItem => {
             if (proItem.enName === 'condition') {
               const flag = proItem.hasOwnProperty('valueMapping');
               if (!flag) {
