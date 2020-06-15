@@ -25,6 +25,7 @@ const token = remote.getGlobal('sharedObject').token;
 const key = 'refresh';
 const codeblock_left = localStorage.getItem('secondLeft');
 const codeblock_right = localStorage.getItem('secondRight');
+const electronLocalshortcut = require('electron-localshortcut');
 
 const ErrorPage = withRouter(({ history, errMessage }) => {
   return (
@@ -94,6 +95,10 @@ export default class App extends React.Component<Props> {
   init = () => {
     window.addEventListener('offline', this.handleOffLine);
     window.addEventListener('online', this.handleReconnet);
+    const win = remote.getCurrentWindow();
+    electronLocalshortcut.register(win, 'Ctrl+F12', () => {
+      win.webContents.openDevTools();
+    });
     // 初始化用户数据，用于断网重连
     const callback = (ip, port, userName, password, serialNumber, offLine) => {
       this.loginData.offLine = offLine;
