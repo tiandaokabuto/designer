@@ -120,6 +120,35 @@ const typeOf = obj => {
   return Object.prototype.toString.call(obj);
 };
 
+const isOldxPath = propertie => {
+  return (
+    propertie.enName === 'xpath' &&
+    propertie.value !== '""' &&
+    propertie.cnName === '元素XPath' &&
+    !/^"{/.test(propertie.value)
+  );
+};
+
+const handleOldPath = propertie => {
+  let originValue = propertie.value;
+  if (/^"/.test(originValue) && /"$/.test(originValue)) {
+    originValue = propertie.value.substring(1, propertie.value.length - 1);
+  }
+  /* if (/^"\/\/frame/.test(propertie.value)) {
+  } else { */
+  const value = { XPath: originValue, iframe: [] };
+  const config = {
+    XPath: [{ checked: true, key: 0, xpath: originValue }],
+    JSpath: [],
+    iframe: [],
+    selectedOption: 'xpath',
+  };
+  propertie.config = config;
+  propertie.value = JSON.stringify(JSON.stringify(value));
+  propertie._value = JSON.stringify(JSON.stringify(value));
+  // }
+};
+
 /**
  * 递归判断是否存在参数是否存在变更
  * @param {*} standard 新参数
@@ -147,6 +176,10 @@ const isEqualType = (
         currentItem => currentItem.enName === enName
       );
       if (findIndex > -1) {
+        if (isOldxPath(current[findIndex])) {
+          flag = false;
+          handleOldPath(current[findIndex]);
+        }
         // 当前存在这条属性，递归判断
         if (flag) {
           flag = isEqualType(
@@ -209,7 +242,7 @@ const isEqualType = (
         } else if (Array.isArray(standard[key])) {
           // 递归比对, 遇到与参数面板有关的数组时，对该数组进行特殊处理
           let arrayFlag = false;
-          if (key === 'optional' || key === 'required') {
+          if (key === 'optional' || key === 'required' || key === 'paramType') {
             arrayFlag = true;
           }
           if (flag) {
@@ -229,13 +262,16 @@ const isEqualType = (
               arrayFlag ? current : undefined
             );
           }
-        } else if (standard[key] !== current[key]) {
+        } else if (current && standard[key] !== current[key]) {
           // 基本类型数据
           if (!isParam) {
             // 满足以下条件的 new -> old
             flag = false;
             current[key] = standard[key];
           }
+        } else if (current === undefined && standard) {
+          fatherNode[propertiesKey] = standard;
+          break;
         }
       }
     }

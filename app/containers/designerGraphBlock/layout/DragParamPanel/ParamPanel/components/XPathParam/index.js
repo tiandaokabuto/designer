@@ -39,8 +39,8 @@ export default memo(
     const [xpath, setXpath] = useState('');
 
     const handleRadioChecked = (index, checked) => {
-      new Promise((resolve) => {
-        setData((data) => {
+      new Promise(resolve => {
+        setData(data => {
           const temp =
             selectedOption === 'xpath' ? data.xpathData : data.JSpathData;
           const result = temp.concat();
@@ -54,20 +54,22 @@ export default memo(
           });
           return { ...data };
         });
-      }).then((xpathTemp) => {
-        setXpath(
-          JSON.stringify({
-            [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: xpathTemp,
-            iframe: param.config.iframe || [],
-          })
-        );
-      });
+      })
+        .then(xpathTemp => {
+          setXpath(
+            JSON.stringify({
+              [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: xpathTemp,
+              iframe: param.config.iframe || [],
+            })
+          );
+        })
+        .catch(err => console.log(err));
     };
 
     const handleGenerateXpath = () => {
       const { xpathData, JSpathData } = data;
       const find = (selectedOption === 'xpath' ? xpathData : JSpathData).find(
-        (item) => item.checked
+        item => item.checked
       );
       if (find) {
         setXpath(
@@ -90,7 +92,7 @@ export default memo(
           return (
             <Radio
               checked={checked}
-              onChange={(e) => {
+              onChange={e => {
                 handleRadioChecked(index, e.target.checked);
               }}
             />
@@ -106,7 +108,7 @@ export default memo(
             <Input
               defaultValue={text}
               key={visible && selectedOption === 'xpath' ? '0' : '1'}
-              onChange={(e) => {
+              onChange={e => {
                 obj.xpath = e.target.value;
                 handleGenerateXpath();
               }}
@@ -142,8 +144,9 @@ export default memo(
       const { iframe = [], XPath = [], JSpath = [], selectedOption } =
         param.config || {};
       const find = (selectedOption === 'xpath' ? XPath : JSpath).find(
-        (item) => item.checked
+        item => item.checked
       );
+      const { value } = param;
       param.value = find
         ? JSON.stringify(
             JSON.stringify({
@@ -151,7 +154,7 @@ export default memo(
               iframe: param.config.iframe || [],
             })
           )
-        : '';
+        : value;
     }, [param.config]);
 
     return (
@@ -177,7 +180,7 @@ export default memo(
             if (prevConfig) {
               param.config = prevConfig;
             }
-            forceUpdate((_) => ++_);
+            forceUpdate(_ => ++_);
             setVisible(false);
           }}
           onOk={() => {
@@ -198,7 +201,7 @@ export default memo(
             <span className="xpathParam-choice-title">选择方法</span>
             <Radio.Group
               value={selectedOption}
-              onChange={(e) => {
+              onChange={e => {
                 param.config.selectedOption = e.target.value;
                 setSelectedOption(e.target.value);
               }}
