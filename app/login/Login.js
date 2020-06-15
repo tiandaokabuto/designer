@@ -24,7 +24,7 @@ const Login = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState(undefined);
 
-  // 保存设置的 IP 和 端口 a
+  // 保存设置的 IP 和 端口
   const [ip, setIp] = useState(undefined);
   const [port, setPort] = useState(undefined);
 
