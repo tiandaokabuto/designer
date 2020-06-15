@@ -214,11 +214,13 @@ const createMainWindow = () => {
   mainWindow.setIcon(path.join(__dirname, 'small.png'));
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
-  globalShortcut.register('f11', (event, arg) => {
-    if (mainWindow) {
-      mainWindow.webContents.openDevTools();
-    }
-  });
+
+  // globalShortcut.register('f11', (event, arg) => {
+  //   if (mainWindow) {
+  //     mainWindow.webContents.openDevTools();
+  //   }
+  // });
+
   // mainWindow.webContents.openDevTools();
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -365,6 +367,7 @@ app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   if (process.platform !== 'darwin') {
+    globalShortcut.unregisterAll();
     app.quit();
   }
 });

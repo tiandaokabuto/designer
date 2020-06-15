@@ -23,6 +23,8 @@ type Props = {
 let timerID = null;
 const token = remote.getGlobal('sharedObject').token;
 const key = 'refresh';
+const codeblock_left = localStorage.getItem('secondLeft');
+const codeblock_right = localStorage.getItem('secondRight');
 
 const ErrorPage = withRouter(({ history, errMessage }) => {
   return (
@@ -69,6 +71,15 @@ export default class App extends React.Component<Props> {
     ipcRenderer.on('updateIpAndPort', () => {
       readLoginConfig(this.resetConfig);
     });
+    console.log(codeblock_left);
+    console.log(codeblock_right);
+    if (codeblock_left === null) {
+      localStorage.setItem('secondLeft', '239');
+    }
+    if (codeblock_right === null) {
+      localStorage.setItem('secondRight', '300');
+    }
+
     this.showReconnentTip = false;
     this.loginData = {};
     this.timerId = null;

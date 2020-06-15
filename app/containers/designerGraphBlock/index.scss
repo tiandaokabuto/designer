@@ -81,6 +81,9 @@
         display: none;
       }
     }
+    .ant-tabs-nav {
+      width: 240px;
+    }
     // &-tree {
     //   .ant-tree-switcher_open {
     //     position: absolute !important;
@@ -130,6 +133,9 @@
     }
     &-tabs {
       @include tabs();
+    }
+    .ant-tabs-nav {
+      width: 240px;
     }
     .container-left {
       background: white;
@@ -187,6 +193,9 @@
         text-align: center;
       }
       @include tabs();
+    }
+    .ant-tabs-nav {
+      width: 300px;
     }
   }
   .cursor__after {
