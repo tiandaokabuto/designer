@@ -1,36 +1,96 @@
 import React, { useRef, useEffect } from 'react';
-import { mxGraph as MxGraph } from 'mxgraph-js';
+import { mxGraph as MxGraph, mxCell } from 'mxgraph-js';
 
 import MxGraphHeader from './components/MxGraphHeader';
-import DataSourceComponent from './DataSourceComponent';
+import DefaultComponent from './Component';
+import event from '../../../designerGraphBlock/layout/eventCenter';
 
 import './index.scss';
 
 const MxgraphContainer = () => {
   const graphContainer = useRef(null);
-
-  const container = graphContainer.current;
-  const graph = new MxGraph(container);
+  let graph = null;
 
   useEffect(() => {
+    const container = graphContainer.current;
+    graph = new MxGraph(container);
     // 启用插入html label
     graph.htmlLabels = true;
+    configMxCell();
   }, []);
 
-  /*   useEffect(() => {
-    this.createDataSourceCellEmitter = emitter.addListener(
-      'createDataSourceCell',
-      createDataSourceCell
-    );
-    return emitter.removeListener('createDataSourceCell', createDataSourceCell);
+  useEffect(() => {
+    // 监听添加事件
+    event.addListener('createFunctionCell', createFunctionCell);
+    return () => {
+      event.removeListener('createFunctionCell', createFunctionCell);
+    };
   }, []);
 
-  const createDataSourceCell = (commonData, data) => {
-    new DataSourceComponent(this.graph, commonData, data);
-  }; */
+  const createFunctionCell = (commonData, data) => {
+    switch (commonData.componentType) {
+      case 'process':
+        // 改造成function
+        new DefaultComponent(graph, commonData, data);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const configMxCell = () => {
+    mxCell.prototype.setNodeType = function(nodetype) {
+      this.nodetype = nodetype;
+    };
+    mxCell.prototype.setComponentType = function(componentType) {
+      this.componentType = componentType;
+    };
+    mxCell.prototype.setNodeId = function(nodeId) {
+      this.nodeId = nodeId;
+    };
+    //更新组件状态
+    mxCell.prototype.updateStatus = function(graph, status) {
+      let html = this.getValue();
+      let id = this.nodeId;
+      let index = html.indexOf('class="status');
+      if (index == -1) {
+        return;
+      }
+
+      html = html.substring(0, index);
+      switch (status) {
+        case 0:
+          html = html + 'class="status status-init"></span></div>';
+          break;
+        case 1:
+          html = html + 'class="status status-noparam"></span></div>';
+          break;
+        case 2:
+          html = html + 'class="status status-running"></span></div>';
+          break;
+        case 4:
+          html = html + 'class="status status-fail"></span></div>';
+          break;
+        case 3:
+          html = html + 'class="status status-success"></span></div>';
+          break;
+        default:
+          html = html + 'class="status"></span></div>';
+          console.log('状态改变异常');
+      }
+      this.setValue(html);
+      graph.cellLabelChanged(this, html);
+    };
+    mxCell.prototype.setPortIndex = function(portIndex) {
+      this.portIndex = portIndex;
+    };
+    mxCell.prototype.setPortType = function(portType) {
+      this.portType = portType;
+    };
+  };
 
   const onDrop = e => {
-    let componentToDropType = e.dataTransfer.getData('componentToDropType');
+    const componentToDropType = e.dataTransfer.getData('componentToDropType');
     if (componentToDropType) {
       let x = e.clientX;
       let y = e.clientY;
@@ -43,49 +103,19 @@ const MxgraphContainer = () => {
         this.loadExp(this.state.currentExp.id);
         return;
       } */
-
-      /* http
-          .POST(api.dataMining.addComponentNode, {
-            component_type: componentNames[componentToDropType]
-              ? componentToDropType
-              : 'LogisticRegression',
-            experiment_id: this.state.currentExp.id,
-            input_size: this.getInputSize(
-              componentNames[componentToDropType]
-                ? componentToDropType
-                : 'LogisticRegression'
-            ),
-            node_name: componentNames[componentToDropType]
-              ? componentNames[componentToDropType]
-              : componentToDropType,
-            node_status: 0,
-            parameters: '',
-            parameters_front: '',
-            style: '',
-            x: left,
-            y: top,
-          })
-          .then(response => response.json())
-          .then(json => {
-            let data = json.data;
-
-            if (json.success) {
-              emitter.emit(
-                'createFunctionCell',
-                {
-                  left: left,
-                  top: top,
-                  componentType: data.component_type,
-                  nodeId: data.id,
-                  name: data.node_name,
-                  node_status: 0,
-                },
-                {}
-              );
-            } else {
-              message.error(json.msg);
-            }
-          }); */
+      // 触发添加事件
+      event.emit(
+        'createFunctionCell',
+        {
+          left: x,
+          top: y,
+          componentType: 'process',
+          nodeId: 1,
+          name: '流程',
+          node_status: 0,
+        },
+        {}
+      );
     }
   };
 
