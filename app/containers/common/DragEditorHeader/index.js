@@ -39,6 +39,7 @@ import {
   downProcessZipToLocal,
   getChooseFilePath,
   transformPythonWithPoint,
+  deleteFolderRecursive,
 } from '../utils';
 import {
   updateCurrentPagePosition,
@@ -48,6 +49,7 @@ import api from '../../../api';
 import PATH_CONFIG from '@/constants/localFilePath.js';
 import RedoPNG from '@/containers/images/redo.png';
 import UndoPNG from '@/containers/images/undo.png';
+import { designerVersion } from '../GraphBlockHeader/HelpModel/version';
 
 import NewProcess from './NewProcess';
 
@@ -56,6 +58,7 @@ import './index.scss';
 const { remote, ipcRenderer } = require('electron');
 const { exec } = require('child_process');
 const process = require('process');
+const fs = require('fs');
 const adm_zip = require('adm-zip');
 
 const FormItem = Form.Item;
@@ -241,9 +244,18 @@ export default memo(
 
     const exportProcess = filePath => {
       const zip = new adm_zip();
+      fs.writeFileSync(
+        `${process.cwd()}/project/${projectName}/${getProcessName()}/designerVersion.json`,
+        JSON.stringify({
+          designerVersion,
+        })
+      );
       zip.addLocalFolder(
         `${process.cwd()}/project/${projectName}/${getProcessName()}`
       );
+      // deleteFolderRecursive(
+      //   `${process.cwd()}/project/${projectName}/${getProcessName()}/designerVersion.json`
+      // );
       zip.writeZip(`${filePath}.zip`);
     };
 
