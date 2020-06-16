@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'antd';
 
+import { designerVersion } from './version';
 import SdIcon from '@/containers/images/sdIcon.png';
 import './index.scss';
 
 /* const fs = require('fs'); */
 // 涉及git的同步问题，每次更改后不会同步下来，pull下来的时候还是原始版本，改为手动更改
-const version = '0.3.6.1';
+// const version = '0.3.6.1';
+// console.log(versionText);
 
 export default function HelpModel({ visible, handleCancel }) {
   /* const [version, setVersion] = useState('');
@@ -49,7 +51,7 @@ export default function HelpModel({ visible, handleCancel }) {
         <div className="help-model-version">
           <Button className="help-model-version-test">检测版本</Button>
           <p className="help-model-version-text help-model-version-current">
-            当前版本号：{version}
+            当前版本号：{designerVersion}
           </p>
           <p className="help-model-version-text help-model-version-copyright">
             版权所有 &copy; 广州市申迪计算机系统有限公司 保留所有权利

@@ -216,7 +216,9 @@ const createMainWindow = () => {
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   // globalShortcut.register('f11', (event, arg) => {
-  //   if (mainWindow) {
+  //   if (loginWindow) {
+  //     loginWindow.webContents.openDevTools();
+  //   } else if (mainWindow) {
   //     mainWindow.webContents.openDevTools();
   //   }
   // });
