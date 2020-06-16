@@ -26,6 +26,7 @@ const key = 'refresh';
 const codeblock_left = localStorage.getItem('secondLeft');
 const codeblock_right = localStorage.getItem('secondRight');
 const electronLocalshortcut = require('electron-localshortcut');
+const win = remote.getCurrentWindow();
 
 const ErrorPage = withRouter(({ history, errMessage }) => {
   return (
@@ -72,8 +73,6 @@ export default class App extends React.Component<Props> {
     ipcRenderer.on('updateIpAndPort', () => {
       readLoginConfig(this.resetConfig);
     });
-    console.log(codeblock_left);
-    console.log(codeblock_right);
     if (codeblock_left === null) {
       localStorage.setItem('secondLeft', '239');
     }
@@ -90,12 +89,13 @@ export default class App extends React.Component<Props> {
   componentWillUnmount() {
     window.removeEventListener('offline', this.handleOffLine);
     window.removeEventListener('online', this.handleReconnet);
+    electronLocalshortcut.unregisterAll(win);
   }
 
   init = () => {
     window.addEventListener('offline', this.handleOffLine);
     window.addEventListener('online', this.handleReconnet);
-    const win = remote.getCurrentWindow();
+
     electronLocalshortcut.register(win, 'Ctrl+F12', () => {
       win.webContents.openDevTools();
     });
