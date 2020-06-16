@@ -125,13 +125,17 @@ const isOldxPath = propertie => {
     propertie.enName === 'xpath' &&
     propertie.value !== '""' &&
     propertie.cnName === '元素XPath' &&
-    !/^"{/.test(propertie.value)
+    // !/^"{/.test(propertie.value)
+    (propertie.config === undefined ||
+      JSON.stringify(propertie.config) === '{}')
   );
 };
 
 const handleOldPath = propertie => {
   let originValue = propertie.value;
-  if (/^"/.test(originValue) && /"$/.test(originValue)) {
+  if (/^"{/.test(originValue)) {
+    originValue = JSON.parse(JSON.parse(originValue)).XPath;
+  } else if (/^"/.test(originValue) && /"$/.test(originValue)) {
     originValue = propertie.value.substring(1, propertie.value.length - 1);
   }
   /* if (/^"\/\/frame/.test(propertie.value)) {
@@ -202,7 +206,7 @@ const isEqualType = (
       } else {
         // 当前没有这个属性，把新增属性push进新
         flag = false;
-        newCurrent.push(current[findIndex]);
+        newCurrent.push(standard[index]);
       }
     });
     // 替换现有数组
