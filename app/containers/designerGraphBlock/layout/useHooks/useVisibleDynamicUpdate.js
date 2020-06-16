@@ -8,7 +8,7 @@ import useTransformToPython from './useTransformToPython';
 
 export default (id, visibleTemplate) => {
   if (visibleTemplate) {
-    const cards = useSelector((state) => state.blockcode.cards);
+    const cards = useSelector(state => state.blockcode.cards);
     const handleEmitCodeTransform = useTransformToPython();
     const [newVisible, setNewVisible] = useState('');
     const [condition, setCondition] = useState('');
@@ -78,7 +78,7 @@ export default (id, visibleTemplate) => {
       const forTypeNode = node.properties.required[0];
       let select = forTypeNode.value;
 
-      const setConditionVisible = (conditionExpression) => {
+      const setConditionVisible = conditionExpression => {
         const visibleTemplat = `循环：当 ${conditionExpression} 成立时`;
         setNewVisible(visibleTemplat);
       };
@@ -101,12 +101,12 @@ export default (id, visibleTemplate) => {
       };
       visibleTemplate = getVisibleTemplate();
 
-      const updateTemplate = (template) => {
+      const updateTemplate = template => {
         const result = template.replace(/({{.*?}})/g, (_, ...args) => {
           const enName = args[0].replace(/{|}/g, '');
           let value = '';
           if (proxy[select]) {
-            const temp = proxy[select].filter((item) => item.enName === enName);
+            const temp = proxy[select].filter(item => item.enName === enName);
             value = (temp[0] || {}).value;
           } else if (select === 'for_condition' && proxy.tag === 2) {
             value = proxy.value;
@@ -162,12 +162,12 @@ export default (id, visibleTemplate) => {
         } else updateTemplate(visibleTemplate);
       }, [id]);
 
-      const changeToEditableTemplate = (anchor) => {
+      const changeToEditableTemplate = anchor => {
         const result = visibleTemplate.replace(/({{.*?}})/g, (_, ...args) => {
           const enName = args[0].replace(/{|}/g, '');
           let value = '';
           if (proxy[select]) {
-            value = proxy[select].filter((item) => item.enName === enName)[0]
+            value = proxy[select].filter(item => item.enName === enName)[0]
               .value;
           } else if (select === 'for_condition' && proxy.tag === 2) {
             value = proxy.value;
@@ -195,13 +195,13 @@ export default (id, visibleTemplate) => {
         }, 0);
       };
 
-      const saveInputChange = (e) => {
+      const saveInputChange = e => {
         const dataId = e.target.dataset.anchor;
         const newValue = e.target.value;
         if (select === 'for_condition' && proxy.tag === 2) {
           proxy.value = newValue;
         } else if (proxy[select]) {
-          proxy[select].some((item) => {
+          proxy[select].some(item => {
             if (item.enName === dataId) {
               item.value = newValue;
               if (item.id.indexOf('tigger') > -1) {
@@ -225,25 +225,28 @@ export default (id, visibleTemplate) => {
 
     const watchingListTemp = visibleTemplate.match(/({{.*?}})/g);
     if (watchingListTemp === null) return [true, visibleTemplate];
-    const watchingList = watchingListTemp.map((item) =>
+    const watchingList = watchingListTemp.map(item =>
       item.replace(/[{}]/g, '')
     );
-    const proxyList = node.properties.required.filter((item) =>
+    const proxyList = node.properties.required.filter(item =>
       watchingList.includes(item.enName)
     );
     node.properties.optional &&
       proxyList.push(
-        ...node.properties.optional.filter((item) =>
+        ...node.properties.optional.filter(item =>
           watchingList.includes(item.enName)
         )
       );
-    const updateTemplate = (template) => {
+    const updateTemplate = template => {
       let result = template.replace(/({{.*?}})/g, (_, ...args) => {
-        const find = proxyList.find((item) => {
+        const find = proxyList.find(item => {
           return args[0].includes(item.enName);
         });
 
-        let value = find && find.value;
+        let value = '';
+        if (find) {
+          value = find.value || find.default;
+        }
         if (find && find.componentType === 2 && find.tag === 2) {
           const list = find.valueList;
           if (Array.isArray(list)) {
@@ -265,7 +268,7 @@ export default (id, visibleTemplate) => {
     };
     // 对属性的改变做一个代理
     useEffect(() => {
-      proxyList.forEach((item) => {
+      proxyList.forEach(item => {
         item._value = item.value;
         Object.defineProperty(item, 'value', {
           get() {
@@ -293,9 +296,9 @@ export default (id, visibleTemplate) => {
       updateTemplate(visibleTemplate);
     }, [id]);
 
-    const changeToEditableTemplate = (anchor) => {
+    const changeToEditableTemplate = anchor => {
       let result = visibleTemplate.replace(/({{.*?}})/g, (_, ...args) => {
-        const find = proxyList.find((item) => args[0].includes(item.enName));
+        const find = proxyList.find(item => args[0].includes(item.enName));
         // 判断是否为点击对象
 
         if (anchor !== find.enName) {
@@ -323,10 +326,10 @@ export default (id, visibleTemplate) => {
       }, 100);
     };
 
-    const saveInputChange = (e) => {
+    const saveInputChange = e => {
       const dataId = e.target.dataset.anchor;
       const newValue = e.target.value;
-      const find = proxyList.find((item) => item.enName === dataId);
+      const find = proxyList.find(item => item.enName === dataId);
       if (find) {
         find.value = newValue || '';
         event.emit('forceUpdate');
