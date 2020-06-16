@@ -1,0 +1,19 @@
+.designergraph-container-header {
+  flex: auto;
+  &-tool {
+    width: 100%;
+    height: 100%;
+    line-height: 40px;
+
+    &-process {
+      width: 100px;
+      height: 25px;
+      line-height: 25px;
+      border: #ccc 1px solid;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 20px;
+      cursor: pointer;
+    }
+  }
+}

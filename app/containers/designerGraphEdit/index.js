@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import GGEditor from 'gg-editor';
 import { Button } from 'antd';
 
@@ -11,10 +11,8 @@ import GraphContainer from './layout/GraphContainer';
 import GraphItem from './layout/GraphItem';
 import GraphParamPanel from './layout/GraphParamPanel';
 import Loading from '../../containers/images/loading.gif';
-
-import DesignerBody from './components/DesignerBody';
-
 import { history } from '../../store/configureStore';
+import MxGraph from './components/MxGraph';
 
 import './index.scss';
 
@@ -25,9 +23,7 @@ export default () => {
   }, []);
 
   return (
-    <>
-      {/* <GraphBlockHeader history={history} />
-      <DragEditorHeader type="process" /> */}
+    <Fragment>
       <div
         className={
           showLoadingLayer ? 'loadingLayer showLoadingLayer' : 'loadingLayer'
@@ -41,11 +37,13 @@ export default () => {
       </div>
       <GGEditor className="designergraph editor">
         <GraphItem setShowLoadingLayer={setShowLoadingLayer} />
-        <GraphContainer history={history} />
+        {
+          /* <GraphContainer history={history} /> */
+          <MxGraph />
+        }
         <GraphParamPanel />
         <FlowContextMenu />
-        {/* <ReuseCommand /> */}
       </GGEditor>
-    </>
+    </Fragment>
   );
 };
