@@ -1,5 +1,11 @@
 import React, { useRef, useEffect } from 'react';
-import { mxGraph as MxGraph, mxCell } from 'mxgraph-js';
+import {
+  mxGraph as MxGraph,
+  mxCell,
+  mxImage,
+  mxEdgeStyle,
+  mxConstants,
+} from 'mxgraph-js';
 
 import MxGraphHeader from './components/MxGraphHeader';
 import DefaultComponent from './Component';
@@ -16,7 +22,15 @@ const MxgraphContainer = () => {
     graph = new MxGraph(container);
     // 启用插入html label
     graph.htmlLabels = true;
+
+    // 启用连线功能
+    graph.setConnectable(true);
+    graph.connectionHandler.getConnectImage = function (state) {
+      return new mxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
+    };
+
     configMxCell();
+    configureStylesheet();
   }, []);
 
   useEffect(() => {
@@ -39,17 +53,17 @@ const MxgraphContainer = () => {
   };
 
   const configMxCell = () => {
-    mxCell.prototype.setNodeType = function(nodetype) {
+    mxCell.prototype.setNodeType = function (nodetype) {
       this.nodetype = nodetype;
     };
-    mxCell.prototype.setComponentType = function(componentType) {
+    mxCell.prototype.setComponentType = function (componentType) {
       this.componentType = componentType;
     };
-    mxCell.prototype.setNodeId = function(nodeId) {
+    mxCell.prototype.setNodeId = function (nodeId) {
       this.nodeId = nodeId;
     };
     //更新组件状态
-    mxCell.prototype.updateStatus = function(graph, status) {
+    mxCell.prototype.updateStatus = function (graph, status) {
       let html = this.getValue();
       let id = this.nodeId;
       let index = html.indexOf('class="status');
@@ -81,12 +95,80 @@ const MxgraphContainer = () => {
       this.setValue(html);
       graph.cellLabelChanged(this, html);
     };
-    mxCell.prototype.setPortIndex = function(portIndex) {
+    mxCell.prototype.setPortIndex = function (portIndex) {
       this.portIndex = portIndex;
     };
-    mxCell.prototype.setPortType = function(portType) {
+    mxCell.prototype.setPortType = function (portType) {
       this.portType = portType;
     };
+  };
+
+  const configureStylesheet = () => {
+    let style = new Object();
+    graph.getStylesheet().putCellStyle('port', style);
+    style = graph.getStylesheet().getDefaultEdgeStyle();
+    style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = '#777777';
+    style[mxConstants.STYLE_STROKEWIDTH] = '1';
+    style[mxConstants.STYLE_STROKECOLOR] = '#777777';
+    style[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
+    // style[mxConstants.STYLE_EDGE] = mxEdgeStyle.TopToBottom;
+    style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ComponentEdge;
+    style[mxConstants.STYLE_CURVED] = true;
+    mxConstants.EDGE_SELECTION_DASHED = false;
+    mxConstants.EDGE_SELECTION_STROKEWIDTH = 3;
+    mxConstants.EDGE_SELECTION_COLOR = '#777777';
+    mxConstants.VERTEX_SELECTION_STROKEWIDTH = 0;
+    mxConstants.VERTEX_SELECTION_COLOR = 'none';
+    mxConstants.HANDLE_FILLCOLOR = '#ffffff';
+    mxConstants.HANDLE_STROKECOLOR = '#000000';
+    mxConstants.GUIDE_COLOR = '#40a9ff';
+    mxConstants.VALID_COLOR = '#40a9ff';
+  };
+
+  const setDataMingEdgeStyle = () => {
+    mxEdgeStyle.ComponentEdge = function (
+      state,
+      source,
+      target,
+      points,
+      result
+    ) {
+      var view = state.view;
+      if (source != null && target != null) {
+        if (source.y < target.y) {
+          var t = Math.max(source.y, target.y);
+          var b = Math.min(source.y + source.height, target.y + target.height);
+
+          var x = view.getRoutingCenterX(source);
+          var y = Math.round(b + (t - b) / 2);
+
+          if (
+            !mxUtils.contains(target, x, y) &&
+            !mxUtils.contains(source, x, y)
+          ) {
+            result.push(new mxPoint(x, y));
+          }
+
+          x = view.getRoutingCenterX(target);
+
+          if (
+            !mxUtils.contains(target, x, y) &&
+            !mxUtils.contains(source, x, y)
+          ) {
+            result.push(new mxPoint(x, y));
+          }
+        } else {
+          result.push(
+            new mxPoint(view.getRoutingCenterX(source), source.y + 50)
+          );
+          result.push(
+            new mxPoint(view.getRoutingCenterX(target), target.y - 50)
+          );
+        }
+      }
+    };
+
+    mxStyleRegistry.putValue('ComponentEdge', mxEdgeStyle.ComponentEdge);
   };
 
   const onDrop = e => {
@@ -94,7 +176,7 @@ const MxgraphContainer = () => {
     if (componentToDropType) {
       let x = e.clientX;
       let y = e.clientY;
-      console.log(x, y);
+      const width = document.querySelector('.designergraph-item').clientWidth;
       /* let left = x - 450 + offsetLeft;
       let top = y - 70 + offsetTop;
 
@@ -107,8 +189,8 @@ const MxgraphContainer = () => {
       event.emit(
         'createFunctionCell',
         {
-          left: x,
-          top: y,
+          left: x - width - 87,
+          top: y - 112 - 19,
           componentType: 'process',
           nodeId: 1,
           name: '流程',
