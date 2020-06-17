@@ -3,6 +3,7 @@ import { Input, Icon, Tree, message, Tabs } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
+import useDebounce from 'react-hook-easier/lib/useDebounce';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -36,13 +37,28 @@ let startOffset = 0;
  * @param {*} match  待匹配文本
  * @param {*} filter
  */
-const canDisplay = (match, filter) => {
-  if (!match) return false;
-  const newMatch = match.toLocaleLowerCase();
+const canDisplay = (item, filter) => {
+  const { text, cmdDesc } = item;
+  let newMatchText = '';
+  let newMatchCmdDesc = '';
+  if (!text && !cmdDesc) return false;
+  if (text) newMatchText = text.toLocaleLowerCase();
+  if (cmdDesc) newMatchCmdDesc = cmdDesc.toLocaleLowerCase();
   const newFilter = filter.toLocaleLowerCase();
   let toMatch = '';
-  if (newMatch.includes(newFilter)) return [newFilter];
-  for (const char of newMatch) {
+  if (newMatchText.includes(newFilter) || newMatchCmdDesc.includes(newFilter)) {
+    return [newFilter];
+  }
+  for (const char of newMatchText) {
+    toMatch += char;
+    const queryList = query(toMatch);
+
+    if (queryList.includes(newFilter)) {
+      return queryList;
+    }
+  }
+  toMatch = '';
+  for (const char of newMatchCmdDesc) {
     toMatch += char;
     const queryList = query(toMatch);
 
@@ -88,7 +104,10 @@ export default useInjectContext(
         if (!child.children) {
           // 原子能力结点
           let find = false;
-          if (!(find = canDisplay(child.item && child.item.text, filter))) {
+          if (child.item) {
+            find = canDisplay(child.item, filter);
+          }
+          if (!find) {
             // no match
             child.isFilter = true;
           } else {
@@ -245,6 +264,8 @@ export default useInjectContext(
       };
     }, []);
 
+    const searchKeyWord = useDebounce(keyword => setFilter(keyword), 300);
+
     return (
       <div
         className="dragger-editor-item"
@@ -313,9 +334,7 @@ export default useInjectContext(
                     <Input
                       placeholder="请输入"
                       allowClear
-                      onChange={e => {
-                        setFilter(e.target.value);
-                      }}
+                      onChange={e => searchKeyWord(e.target.value)}
                     />
                   </div>
                   <Tree
@@ -349,8 +368,6 @@ export default useInjectContext(
                     position={position}
                     addToLovedList={addToLovedList}
                     removeFromLovedList={removeFromLovedList}
-                    // handleDelete={handleDelete}
-                    // handleRename={handleRename}
                   />
                 </div>
               </TabPane>
@@ -360,48 +377,6 @@ export default useInjectContext(
             </Tabs>
           </div>
         </div>
-        {/* <div className="dragger-editor-item-search">
-          <Input
-            placeholder="请输入"
-            onChange={e => {
-              setFilter(e.target.value);
-            }}
-          />
-        </div>
-        <Tree
-          className="atomicCList-tree"
-          expandedKeys={expandedKeys}
-          onExpand={expandedKeys => {
-            setExpandedKeys(expandedKeys);
-          }}
-          onRightClick={({ event, node }) => {
-            setPosition({
-              left: event.pageX + 40,
-              top: event.pageY - 20,
-              node: node.props,
-            });
-          }}
-          onSelect={(_, e) => {
-            const props = e.node.props;
-            if (props.children) {
-              setExpandedKeys(keys => {
-                if (keys.includes(props.eventKey)) {
-                  return keys.filter(item => item !== props.eventKey);
-                } else {
-                  return keys.concat(props.eventKey);
-                }
-              });
-            }
-          }}
-          treeData={treeData}
-        ></Tree>
-        <ContextMenu
-          position={position}
-          addToLovedList={addToLovedList}
-          removeFromLovedList={removeFromLovedList}
-          // handleDelete={handleDelete}
-          // handleRename={handleRename}
-        /> */}
       </div>
     );
   }
