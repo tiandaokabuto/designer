@@ -526,6 +526,15 @@ export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
   return files.find(item => item === title);
 };
 
+/**
+ * 检测流程树中是否存在重复目录名
+ * @param {*} tree 流程树
+ * @param {*} title 目录名
+ */
+export const isDirNameExist = (tree, title) => {
+  return tree.find(item => item.children && item.title === title);
+};
+
 export const getProjectTreeData = (currentProject, processTree, node) => {
   const filePath = PATH_CONFIG(
     'project',
