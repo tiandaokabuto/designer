@@ -21,6 +21,7 @@ import PATH_CONFIG from '../../constants/localFilePath'; // '@/constants/localFi
 import { encrypt } from '../../login/utils'; // '@/login/utils';
 import RenameInput from './components/RenameInput';
 import transformEditorGraphData from '../designerGraphEdit/RPAcore';
+import { designerVersion } from '../common/GraphBlockHeader/HelpModel/version';
 
 const fs = require('fs');
 const process = require('process');
@@ -68,7 +69,7 @@ export const transformPythonWithPoint = fromOrTo => {
  */
 export const newProject = (name, callback) => {
   clearGrapheditorData();
-  fs.mkdir(PATH_CONFIG('project', name), { recursive: true }, function(err) {
+  fs.mkdir(PATH_CONFIG('project', name), { recursive: true }, function (err) {
     if (!err) {
       // 修改左侧自定义目录树
       changeProcessTree([]);
@@ -83,7 +84,7 @@ export const newProject = (name, callback) => {
       fs.mkdir(
         PATH_CONFIG('project', `${name}/${name}_module`),
         { recursive: true },
-        function(err) {
+        function (err) {
           // callback();
           // 修改流程块树
           changeModuleTree([]);
@@ -225,7 +226,7 @@ export const deleteNodeByKey = (type, tree, name, key, parent = tree) => {
  */
 export const deleteFolderRecursive = path => {
   if (fs.existsSync(path)) {
-    fs.readdirSync(path).forEach(function(file) {
+    fs.readdirSync(path).forEach(function (file) {
       const curPath = `${path}/${file}`;
       if (fs.statSync(curPath).isDirectory()) {
         // recurse
@@ -338,7 +339,7 @@ export const persistentManifest = (tree, name, type, callback) => {
   } else {
     path = `${name}/${name}_module/manifest.json`;
   }
-  fs.readFile(PATH_CONFIG('project', path), function(err, data) {
+  fs.readFile(PATH_CONFIG('project', path), function (err, data) {
     if (!err) {
       const description = getDecryptOrNormal(data);
       fs.writeFileSync(
@@ -525,6 +526,15 @@ export const isNameExist = (tree, title, checkedTreeNode, currentProject) => {
   return files.find(item => item === title);
 };
 
+/**
+ * 检测流程树中是否存在重复目录名
+ * @param {*} tree 流程树
+ * @param {*} title 目录名
+ */
+export const isDirNameExist = (tree, title) => {
+  return tree.find(item => item.children && item.title === title);
+};
+
 export const getProjectTreeData = (currentProject, processTree, node) => {
   const filePath = PATH_CONFIG(
     'project',
@@ -538,7 +548,7 @@ export const getProjectTreeData = (currentProject, processTree, node) => {
  * @param {*} name 项目名
  */
 export const openProject = name => {
-  fs.readFile(PATH_CONFIG('project', `${name}/manifest.json`), function(
+  fs.readFile(PATH_CONFIG('project', `${name}/manifest.json`), function (
     err,
     data
   ) {
@@ -573,7 +583,7 @@ export const openProject = name => {
       checkAndMakeDir(PATH_CONFIG('project', `${name}/${name}_module`));
       fs.readFile(
         PATH_CONFIG('project', `${name}/${name}_module/manifest.json`),
-        function(err, data) {
+        function (err, data) {
           if (!err) {
             const { moduleTree } = getDecryptOrNormal(data);
             changeModuleTree(moduleTree);
@@ -684,7 +694,7 @@ export const downProcessZipToLocal = (
         level: 9,
       },
     })
-    .then(function(content) {
+    .then(function (content) {
       deleteFolderRecursive(filePath);
       fs.writeFileSync(`${filePath}.zip`, content);
     });
@@ -772,7 +782,7 @@ export const exportCustomProcessBlock = () => {
     fs.writeFileSync(
       `${filePath}/manifest.json`,
       encrypt.argEncryptByDES(JSON.stringify(data)),
-      function(err) {
+      function (err) {
         console.log(err);
       }
     );
@@ -787,7 +797,7 @@ export const exportCustomProcessBlock = () => {
           level: 9,
         },
       })
-      .then(function(content) {
+      .then(function (content) {
         deleteFolderRecursive(filePath);
         fs.writeFileSync(`${filePath}.zip`, content);
         message.success('导出成功');
@@ -811,10 +821,12 @@ export const copyModule = () => {
 };
 
 export const getChooseFilePath = (filePath, importType) => {
-  console.log(importType);
   const unzip = new adm_zip(filePath[0]);
-  const entry = unzip.getEntry('manifest.json');
-  const text = unzip.readAsText(entry, 'utf8');
+  const manifestEntry = unzip.getEntry('manifest.json');
+  const versionEntry = unzip.getEntry('designerVersion.json');
+  const text = unzip.readAsText(manifestEntry, 'utf8');
+  const versionText = unzip.readAsText(versionEntry, 'utf8');
+  const importVersion = JSON.parse(versionText).designerVersion;
   const data = getDecryptOrNormal(text);
 
   // /([^\.\/\\]+)\.(?:[a-z]+)$/i
@@ -922,6 +934,13 @@ export const getChooseFilePath = (filePath, importType) => {
     changeProcessTree(newProcessTree);
     changeCheckedTreeNode(uniqueid);
     persistentStorage([uniqueid], newProcessTree, currentProject, uniqueid);
+    const numImport = Number(importVersion.split('.').join(''));
+    const numLocal = Number(designerVersion.split('.').join(''));
+    if (numImport > numLocal) {
+      message.warning('当前流程版本比设计器版本高，可能存在不兼容');
+    } else if (numImport < numLocal) {
+      message.warning('当前流程版本比设计器版本低，可能存在不兼容');
+    }
   }
 };
 

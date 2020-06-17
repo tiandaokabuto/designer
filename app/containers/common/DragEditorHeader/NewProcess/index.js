@@ -6,6 +6,7 @@ import {
   newProcessOrDir,
   persistentStorage,
   isNameExist,
+  isDirNameExist,
   persistentManifest,
 } from '../../utils';
 
@@ -46,10 +47,12 @@ export default ({ resetVisible, tag }) => {
     }
     if (treeTab !== 'processModule') {
       // 做流程名校验避免重复
-      if (isNameExist(processTree, name, checkedTreeNode, currentProject)) {
-        return void message.info(
-          `${tag === 'newprocess' ? '流程名' : '目录名'}重复,请重新填写!`
-        );
+      if (tag === 'newprocess') {
+        if (isNameExist(processTree, name, checkedTreeNode, currentProject)) {
+          return void message.info('流程名重复,请重新填写!');
+        }
+      } else if (isDirNameExist(processTree, name)) {
+        return void message.info('目录名重复,请重新填写!');
       }
       const [newProcessTree, uniqueid] = newProcessOrDir(
         tag === 'newprocess' ? 'process' : 'dir',
