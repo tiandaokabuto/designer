@@ -268,17 +268,6 @@ export default ({ type, setShowLoadingLayer }) => {
                 message.error('流程块不能放在流程块上');
               }
             });
-          } else if (
-            (info.node.props.children || []).length > 0 && // Has children
-            info.node.props.expanded && // Is expanded
-            dropPosition === 1 // On the bottom gap
-          ) {
-            console.log('else if');
-            loop(data, dropKey, item => {
-              item.children = item.children || [];
-              // where to insert 示例添加到头部，可以是随意位置
-              item.children.unshift(dragObj);
-            });
           } else {
             console.log('else');
             let ar;
@@ -324,16 +313,6 @@ export default ({ type, setShowLoadingLayer }) => {
             } else {
               message.error('流程块不能放在流程块上');
             }
-          } else if (
-            (info.node.props.children || []).length > 0 && // Has children
-            info.node.props.expanded && // Is expanded
-            dropPosition === 1 // On the bottom gap
-          ) {
-            loop(data, dropKey, item => {
-              item.children = item.children || [];
-              // where to insert 示例添加到头部，可以是随意位置
-              item.children.unshift(dragObj);
-            });
           } else {
             let ar;
             let i;
