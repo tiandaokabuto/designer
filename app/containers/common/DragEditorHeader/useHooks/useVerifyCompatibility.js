@@ -133,7 +133,7 @@ const isOldxPath = propertie => {
 
 const handleOldPath = propertie => {
   let originValue = propertie.value;
-  if (/^"{/.test(originValue)) {
+  if (/^"{\\/.test(originValue)) {
     originValue = JSON.parse(JSON.parse(originValue)).XPath;
   } else if (/^"/.test(originValue) && /"$/.test(originValue)) {
     originValue = propertie.value.substring(1, propertie.value.length - 1);
