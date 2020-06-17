@@ -25,7 +25,7 @@ const MxgraphContainer = () => {
 
     // 启用连线功能
     graph.setConnectable(true);
-    graph.connectionHandler.getConnectImage = function (state) {
+    graph.connectionHandler.getConnectImage = function(state) {
       return new mxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
     };
 
@@ -53,17 +53,17 @@ const MxgraphContainer = () => {
   };
 
   const configMxCell = () => {
-    mxCell.prototype.setNodeType = function (nodetype) {
+    mxCell.prototype.setNodeType = function(nodetype) {
       this.nodetype = nodetype;
     };
-    mxCell.prototype.setComponentType = function (componentType) {
+    mxCell.prototype.setComponentType = function(componentType) {
       this.componentType = componentType;
     };
-    mxCell.prototype.setNodeId = function (nodeId) {
+    mxCell.prototype.setNodeId = function(nodeId) {
       this.nodeId = nodeId;
     };
     //更新组件状态
-    mxCell.prototype.updateStatus = function (graph, status) {
+    mxCell.prototype.updateStatus = function(graph, status) {
       let html = this.getValue();
       let id = this.nodeId;
       let index = html.indexOf('class="status');
@@ -95,10 +95,10 @@ const MxgraphContainer = () => {
       this.setValue(html);
       graph.cellLabelChanged(this, html);
     };
-    mxCell.prototype.setPortIndex = function (portIndex) {
+    mxCell.prototype.setPortIndex = function(portIndex) {
       this.portIndex = portIndex;
     };
-    mxCell.prototype.setPortType = function (portType) {
+    mxCell.prototype.setPortType = function(portType) {
       this.portType = portType;
     };
   };
@@ -126,7 +126,7 @@ const MxgraphContainer = () => {
   };
 
   const setDataMingEdgeStyle = () => {
-    mxEdgeStyle.ComponentEdge = function (
+    mxEdgeStyle.ComponentEdge = function(
       state,
       source,
       target,
@@ -193,7 +193,7 @@ const MxgraphContainer = () => {
           top: y - 112 - 19,
           componentType: 'process',
           nodeId: 1,
-          name: '流程',
+          name: '流程块',
           node_status: 0,
         },
         {}

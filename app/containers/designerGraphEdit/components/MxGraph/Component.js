@@ -21,6 +21,8 @@ import {
   mxPoint,
 } from 'mxgraph-js';
 
+import './Component.scss';
+
 export default class Component {
   constructor(graph, commomData, data) {
     this.graph = graph;
@@ -29,30 +31,24 @@ export default class Component {
     this.render(commomData, data);
   }
 
-  render(commonData, data) {
-    if (commonData.nodeId == undefined) {
+  render(commonData) {
+    if (commonData.nodeId === undefined) {
       return;
     }
 
-    const nodeId = commonData.nodeId;
-    const componentType = commonData.componentType;
-    const name = commonData.name;
+    const { nodeId, componentType, name } = commonData;
     const parent = this.graph.getDefaultParent();
     const model = this.graph.getModel();
     model.beginUpdate();
     try {
-      var v1 = this.graph.insertVertex(
+      const v1 = this.graph.insertVertex(
         parent,
         null,
-        '<div class="component"><label class="component-icon"></label><span class="component-name" title="' +
-          name +
-          '">' +
-          name +
-          '</span><span class="status"></span></div>',
+        `<div class="component"><div class="compoent-content"><label class="component-icon"></label><span class="component-name" title="${name}">${name}</span></div></div>`,
         commonData.left,
         commonData.top,
-        180,
-        30,
+        184,
+        55,
         'strokeWidth:none;html=1;strokeColor=none;overflow=fill;resizable=0;fillColor=none;'
       );
       v1.setConnectable(false);
@@ -60,7 +56,7 @@ export default class Component {
       v1.setComponentType(componentType);
       v1.setNodeId(nodeId);
       v1.updateStatus(this.graph, commonData.node_status);
-      var port = this.graph.insertVertex(
+      let port = this.graph.insertVertex(
         v1,
         null,
         '',
@@ -74,7 +70,7 @@ export default class Component {
       port.geometry.offset = new mxPoint(-6, -3);
       port.setPortIndex(0);
       port.setPortType('input');
-      var port = this.graph.insertVertex(
+      port = this.graph.insertVertex(
         v1,
         null,
         '',
