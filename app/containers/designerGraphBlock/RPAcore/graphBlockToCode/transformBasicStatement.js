@@ -124,11 +124,11 @@ const transformBasicStatement = (
           break;
         case 'formJson':
           if (params) params += ', ';
-          const formJson = handleFormJsonGenerate(dataStructure);
-          console.log(formJson);
-          const temp = JSON.parse(formJson);
+
+          let formJson = handleFormJsonGenerate(dataStructure);
           if (formJson !== 'None') {
             // 返回值
+            const temp = JSON.parse(formJson);
             result.output +=
               `[${temp
                 .filter(
@@ -163,7 +163,12 @@ const transformBasicStatement = (
               .join(',')}], `;
           }
 
-          const newTemp = temp.map(item => {
+          let newTemp = [];
+          let temp = [];
+          if (formJson !== 'None') {
+            temp = JSON.parse(formJson);
+          }
+          newTemp = temp.map(item => {
             if (item.value === undefined) {
               return item;
             } else {
