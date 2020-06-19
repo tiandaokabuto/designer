@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
+import useThrottle from 'react-hook-easier/lib/useThrottle';
 
 import InteractiveEditor from './layout/InteractiveEditor';
 import WidgetPanel from './layout/WidgetPanel';
@@ -83,6 +84,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
   };
 
   const popLayoutData = () => {
+    console.log('触发pop');
     setLayout(layout => {
       const lastItem = layout.data.pop();
       const newData = [...layout.data];
@@ -112,13 +114,22 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     }));
   };
 
-  const handleLayoutChange = data => {
+  const handleLayoutChange = useThrottle(data => {
+    console.log(data);
     noticyChange();
     setLayout(layout => ({
       ...layout,
       data,
     }));
-  };
+  }, 333);
+
+  // const handleLayoutChange = data => {
+  //   noticyChange();
+  //   setLayout(layout => ({
+  //     ...layout,
+  //     data,
+  //   }));
+  // };
 
   const handleControlDelete = i => {
     setLayout(layout => ({

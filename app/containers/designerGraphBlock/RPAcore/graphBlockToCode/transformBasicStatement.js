@@ -125,9 +125,9 @@ const transformBasicStatement = (
         case 'formJson':
           if (params) params += ', ';
           const formJson = handleFormJsonGenerate(dataStructure);
-          console.log(formJson);
-          const temp = JSON.parse(formJson);
+
           if (formJson !== 'None') {
+            const temp = JSON.parse(formJson);
             // 返回值
             result.output +=
               `[${temp
@@ -161,18 +161,20 @@ const transformBasicStatement = (
                 }
               })
               .join(',')}], `;
+            const newTemp = temp.map(item => {
+              if (item.value === undefined) {
+                return item;
+              } else {
+                item.value = '';
+                return item;
+              }
+            });
+
+            params += `${item.enName} = ${JSON.stringify(newTemp)}`;
+          } else {
+            params += `${item.enName} = ${formJson}`;
           }
 
-          const newTemp = temp.map(item => {
-            if (item.value === undefined) {
-              return item;
-            } else {
-              item.value = '';
-              return item;
-            }
-          });
-
-          params += `${item.enName} = ${JSON.stringify(newTemp)}`;
           break;
         case 'layout':
           if (params) params += ', ';

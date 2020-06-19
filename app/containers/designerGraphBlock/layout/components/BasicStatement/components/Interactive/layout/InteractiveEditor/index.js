@@ -55,7 +55,9 @@ export default ({
         setCheckedGridItemId(e.target.dataset.id);
       }
     };
+
     container.addEventListener('click', handleDridItemClick);
+
     return () => {
       container.removeEventListener('click', handleDridItemClick);
     };
@@ -68,6 +70,7 @@ export default ({
       if (isLocked && lastItem[0].i.includes('preset')) {
         // 滚动条下滑到底
         const layoutDom = document.querySelector('.interactive-placeholder');
+        if (!layoutDom) return;
         layoutDom.scrollIntoView({
           behavior: 'smooth',
         });

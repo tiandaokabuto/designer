@@ -13,6 +13,7 @@ export default ({
   isPreview,
 }) => {
   const isPlaceholder = gridItem.i.includes('preset');
+  console.log(isPlaceholder);
 
   return (
     <div
