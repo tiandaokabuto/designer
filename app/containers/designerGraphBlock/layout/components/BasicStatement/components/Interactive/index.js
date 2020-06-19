@@ -19,7 +19,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
 
   useEffect(() => {
     setLayout(interactiveCard.layout);
-  }, [interactiveCard]);
+  }, [interactiveCard.layout]);
 
   const INITIAL_WIDTH = {
     input: layout && (layout.cols || 4),
@@ -84,7 +84,6 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
   };
 
   const popLayoutData = () => {
-    console.log('触发pop');
     setLayout(layout => {
       const lastItem = layout.data.pop();
       const newData = [...layout.data];
@@ -161,6 +160,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
           <Button
             onClick={() => {
               setVisible(false);
+              setLayout(interactiveCard.layout);
             }}
           >
             取消
