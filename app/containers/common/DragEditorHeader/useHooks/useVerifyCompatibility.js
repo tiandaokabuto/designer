@@ -241,9 +241,10 @@ const isEqualType = (
           flag = false;
           if (fatherNode) {
             fatherNode[propertiesKey] = standard;
+            break;
           }
         } else if (isPlainObject(standard[key])) {
-          // 递归比对
+          // 处理对象
           if (key === 'properties') {
             // 已经进入了属性参数的类型校验P
             isParam = true;
@@ -255,36 +256,32 @@ const isEqualType = (
             isEqualType(standard[key], current[key], isParam);
           }
         } else if (Array.isArray(standard[key])) {
-          // 递归比对, 遇到与参数面板有关的数组时，对该数组进行特殊处理
-          let arrayFlag = false;
-          if (key === 'optional' || key === 'required' || key === 'paramType') {
-            arrayFlag = true;
-          }
-          if (flag) {
-            flag = isEqualType(
-              standard[key],
-              current[key],
-              isParam,
-              arrayFlag ? key : undefined,
-              arrayFlag ? current : undefined
-            );
+          // 处理数组
+          // 对optional和required属性面板相关数组进行enName的精准替换，（原因value值要保留）
+          // 否则对数组内容进行全替换
+          if (key === 'optional' || key === 'required') {
+            if (flag) {
+              flag = isEqualType(
+                standard[key],
+                current[key],
+                isParam,
+                key,
+                current
+              );
+            } else {
+              isEqualType(standard[key], current[key], isParam, key, current);
+            }
           } else {
-            isEqualType(
-              standard[key],
-              current[key],
-              isParam,
-              arrayFlag ? key : undefined,
-              arrayFlag ? current : undefined
-            );
+            current[key] = standard[key];
           }
         } else if (current && standard[key] !== current[key]) {
-          // 基本类型数据
+          // 如果不是参数面板上的值，而且值时基本数据类型，替换成新值
           if (!isParam) {
-            // 满足以下条件的 new -> old
             flag = false;
             current[key] = standard[key];
           }
-        } else if (current === undefined && standard) {
+        } else if (current === undefined && standard && fatherNode) {
+          // 对象属性缺失，添加属性（好像是针对paramType空数组用的，后面看看能不能删掉）
           fatherNode[propertiesKey] = standard;
           break;
         }
