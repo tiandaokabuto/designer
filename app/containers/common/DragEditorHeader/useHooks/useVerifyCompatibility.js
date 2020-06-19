@@ -141,26 +141,21 @@ const isOldxPath = propertie => {
  */
 const handleOldPath = propertie => {
   let originValue = propertie.value;
-  if (/^"{\\/.test(originValue)) {
+  /*   if (/^"{\\/.test(originValue)) {
     originValue = JSON.parse(JSON.parse(originValue)).XPath;
   } else if (/^"/.test(originValue) && /"$/.test(originValue)) {
     originValue = propertie.value.substring(1, propertie.value.length - 1);
-  }
-  /* if (/^"\/\/frame/.test(propertie.value)) {
-  } else { */
-  const value = { XPath: originValue, iframe: [] };
+  } */
+  // const value = { XPath: originValue, iframe: [] };
   const config = {
-    XPath: [{ checked: true, key: 0, xpath: originValue }],
+    XPath: [],
     JSpath: [],
     iframe: [],
     selectedOption: 'xpath',
   };
   propertie.config = config;
-  propertie.value = JSON.stringify(JSON.stringify(value));
-  propertie._value = JSON.stringify(JSON.stringify(value));
-  if (propertie.value.includes('format')) {
-    return false;
-  }
+  propertie.value = originValue;
+  propertie._value = originValue;
   return true;
   // }
 };

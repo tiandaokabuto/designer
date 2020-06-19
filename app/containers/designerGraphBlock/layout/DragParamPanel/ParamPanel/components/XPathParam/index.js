@@ -97,11 +97,7 @@ export default memo(
     };
 
     const isClientXpathChange = () => {
-      return (
-        clientXpath !== '' &&
-        xpath !== '' &&
-        clientXpath !== JSON.stringify(xpath)
-      );
+      return clientXpath !== '' && clientXpath !== JSON.stringify(xpath);
     };
 
     const xpathTitle = [
@@ -218,7 +214,7 @@ export default memo(
         <TextArea
           style={{ height: 32 }}
           className="xpathInput"
-          value={isClientXpathChange() ? clientXpath : xpath}
+          value={clientXpath}
           disabled
         />
         <Button
@@ -267,17 +263,20 @@ export default memo(
             <Radio.Group
               value={selectedOption}
               onChange={e => {
-                param.config.selectedOption = e.target.value;
                 if (isClientXpathChange()) {
                   new Promise(resolve => {
                     showConfirm(resolve);
                   })
                     .then(() => {
+                      param.config.selectedOption = e.target.value;
                       setSelectedOption(e.target.value);
                       return e.target.value;
                     })
                     .catch(err => console.log(err));
-                } else setSelectedOption(e.target.value);
+                } else {
+                  param.config.selectedOption = e.target.value;
+                  setSelectedOption(e.target.value);
+                }
               }}
             >
               <Radio value="xpath">xpath</Radio>
