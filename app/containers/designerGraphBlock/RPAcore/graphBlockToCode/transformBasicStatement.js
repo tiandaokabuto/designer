@@ -127,7 +127,6 @@ const transformBasicStatement = (
           const formJson = handleFormJsonGenerate(dataStructure);
 
           if (formJson !== 'None') {
-            const temp = JSON.parse(formJson);
             // 返回值
             const temp = JSON.parse(formJson);
             result.output +=

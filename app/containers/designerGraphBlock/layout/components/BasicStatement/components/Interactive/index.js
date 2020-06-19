@@ -114,22 +114,22 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     }));
   };
 
-  const handleLayoutChange = useThrottle(data => {
-    console.log(data);
-    noticyChange();
-    setLayout(layout => ({
-      ...layout,
-      data,
-    }));
-  }, 333);
-
-  // const handleLayoutChange = data => {
+  // const handleLayoutChange = useThrottle(data => {
+  //   console.log(data);
   //   noticyChange();
   //   setLayout(layout => ({
   //     ...layout,
   //     data,
   //   }));
-  // };
+  // }, 333);
+
+  const handleLayoutChange = data => {
+    noticyChange();
+    setLayout(layout => ({
+      ...layout,
+      data,
+    }));
+  };
 
   const handleControlDelete = i => {
     setLayout(layout => ({
