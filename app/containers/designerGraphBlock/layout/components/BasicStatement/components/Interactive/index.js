@@ -29,6 +29,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     'file-upload': layout && (layout.cols || 4),
     'file-download': layout && (layout.cols || 4),
     'drop-down': layout && (layout.cols || 4),
+    'images-upload': 1,
   };
 
   const INITIAL_HEIGHT = {
@@ -39,6 +40,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     'file-upload': 1,
     'file-download': 1,
     'drop-down': 1,
+    'images-upload': 3,
   };
 
   const noticyChange = useNoticyBlockCodeChange();

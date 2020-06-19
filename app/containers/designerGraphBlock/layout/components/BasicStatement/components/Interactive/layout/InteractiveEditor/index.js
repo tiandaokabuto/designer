@@ -10,6 +10,7 @@ import BasicButton from './components/BasicButton';
 import FileUpload from './components/FileUpload';
 import FileDownload from './components/FileDownload';
 import DropDown from './components/DropDown';
+import ImagesUpload from './components/ImagesUpload';
 
 import { isLocked } from '../WidgetPanel';
 
@@ -41,6 +42,8 @@ export default ({
         return <FileDownload desc={desc} i={gridItem.i} />;
       case 'drop-down':
         return <DropDown desc={desc} i={gridItem.i} />;
+      case 'images-upload':
+        return <ImagesUpload desc={desc} i={gridItem.i} />;
       default:
         return 'other';
     }
