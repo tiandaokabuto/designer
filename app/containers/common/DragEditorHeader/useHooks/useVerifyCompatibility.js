@@ -120,6 +120,10 @@ const typeOf = obj => {
   return Object.prototype.toString.call(obj);
 };
 
+/**
+ * 是否是旧的xpath结构
+ * @param {*} propertie xpath的属性
+ */
 const isOldxPath = propertie => {
   return (
     propertie.enName === 'xpath' &&
@@ -131,6 +135,10 @@ const isOldxPath = propertie => {
   );
 };
 
+/**
+ * 升级xpath
+ * @param {*} propertie xpath的属性
+ */
 const handleOldPath = propertie => {
   let originValue = propertie.value;
   if (/^"{\\/.test(originValue)) {
@@ -150,6 +158,10 @@ const handleOldPath = propertie => {
   propertie.config = config;
   propertie.value = JSON.stringify(JSON.stringify(value));
   propertie._value = JSON.stringify(JSON.stringify(value));
+  if (propertie.value.includes('format')) {
+    return false;
+  }
+  return true;
   // }
 };
 
@@ -181,8 +193,7 @@ const isEqualType = (
       );
       if (findIndex > -1) {
         if (isOldxPath(current[findIndex])) {
-          flag = false;
-          handleOldPath(current[findIndex]);
+          flag = handleOldPath(current[findIndex]);
         }
         // 当前存在这条属性，递归判断
         if (flag) {

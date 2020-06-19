@@ -129,6 +129,7 @@ const transformBasicStatement = (
           if (formJson !== 'None') {
             const temp = JSON.parse(formJson);
             // 返回值
+            const temp = JSON.parse(formJson);
             result.output +=
               `[${temp
                 .filter(
