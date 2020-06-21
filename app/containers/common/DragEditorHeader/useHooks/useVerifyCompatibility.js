@@ -254,24 +254,26 @@ const isEqualType = (
           // 处理数组
           // 对optional和required属性面板相关数组进行enName的精准替换，（原因value值要保留）
           // 否则对数组内容进行全替换
-          if (key === 'optional' || key === 'required') {
-            if (flag) {
-              flag = isEqualType(
-                standard[key],
-                current[key],
-                isParam,
-                key,
-                current
-              );
+          if (isParam) {
+            if (key === 'optional' || key === 'required') {
+              if (flag) {
+                flag = isEqualType(
+                  standard[key],
+                  current[key],
+                  isParam,
+                  key,
+                  current
+                );
+              } else {
+                isEqualType(standard[key], current[key], isParam, key, current);
+              }
             } else {
-              isEqualType(standard[key], current[key], isParam, key, current);
+              current[key] = standard[key];
             }
-          } else {
-            current[key] = standard[key];
           }
         } else if (current && standard[key] !== current[key]) {
           // 如果不是参数面板上的值，而且值时基本数据类型，替换成新值
-          if (!isParam) {
+          if (!isParam && key !== 'value') {
             flag = false;
             current[key] = standard[key];
           }
