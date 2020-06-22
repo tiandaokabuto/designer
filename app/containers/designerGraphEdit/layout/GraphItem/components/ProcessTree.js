@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Tree, Modal, Icon, Dropdown, Menu } from 'antd';
+import { Tree, Modal, Icon, Dropdown, Menu, message } from 'antd';
 import { useSelector } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
 import { ItemPanel, Item } from 'gg-editor';
@@ -30,6 +30,7 @@ import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/u
 import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
 import event from '../../../../designerGraphBlock/layout/eventCenter';
 import SaveConfirmModel from './SaveConfirmModel';
+import { info } from 'electron-log';
 
 const { ipcRenderer } = require('electron');
 
@@ -210,7 +211,7 @@ export default ({ type, setShowLoadingLayer }) => {
   // 右键菜单位置设定
   const [position, setPosition] = useState({});
   const onDragEnter = info => {
-    console.log(info);
+    // console.log(info);
     // expandedKeys 需要受控时设置
     // this.setState({
     //   expandedKeys: info.expandedKeys,
@@ -227,7 +228,6 @@ export default ({ type, setShowLoadingLayer }) => {
   };
 
   const onDrop = info => {
-    console.log(info);
     const dropKey = info.node.props.eventKey; // 释放的元素
     const dragKey = info.dragNode.props.eventKey; // 拖动的元素
     const dropPos = info.node.props.pos.split('-'); //
@@ -245,35 +245,37 @@ export default ({ type, setShowLoadingLayer }) => {
     };
     if (type === 'process') {
       const data = [...processTree];
-      traverseTree(data, item => {
-        if (item.key === dropKey && item.type === 'dir') {
+      traverseTree(data, treeitem => {
+        if (treeitem.key === dropKey) {
           // Find dragObject
           let dragObj;
-          loop(data, dragKey, (item, index, arr) => {
-            arr.splice(index, 1);
-            dragObj = item;
-          });
 
+          // info.dropToGap = false 为放到元素头上
           if (!info.dropToGap) {
+            console.log('放到元素上');
             // Drop on the content
             loop(data, dropKey, item => {
-              item.children = item.children || [];
-              // where to insert 示例添加到尾部，可以是随意位置
-              item.children.push(dragObj);
-            });
-          } else if (
-            (info.node.props.children || []).length > 0 && // Has children
-            info.node.props.expanded && // Is expanded
-            dropPosition === 1 // On the bottom gap
-          ) {
-            loop(data, dropKey, item => {
-              item.children = item.children || [];
-              // where to insert 示例添加到头部，可以是随意位置
-              item.children.unshift(dragObj);
+              if (item.type === 'dir') {
+                loop(data, dragKey, (item, index, arr) => {
+                  arr.splice(index, 1);
+                  dragObj = item;
+                });
+                item.children = item.children || [];
+                // where to insert 示例添加到尾部，可以是随意位置
+                item.children.push(dragObj);
+              } else {
+                // arr.push(dragObj);
+                message.error('流程块不能放在流程块上');
+              }
             });
           } else {
+            console.log('else');
             let ar;
             let i;
+            loop(data, dragKey, (item, index, arr) => {
+              arr.splice(index, 1);
+              dragObj = item;
+            });
             loop(data, dropKey, (item, index, arr) => {
               ar = arr;
               i = index;
@@ -284,6 +286,7 @@ export default ({ type, setShowLoadingLayer }) => {
               ar.splice(i + 1, 0, dragObj);
             }
           }
+
           changeProcessTree(data);
         }
       });
@@ -291,34 +294,32 @@ export default ({ type, setShowLoadingLayer }) => {
     } else {
       const data = [...moduleTree];
       traverseTree(data, item => {
-        if (item.key === dropKey && item.type === 'dir') {
+        if (item.key === dropKey) {
           // Find dragObject
           let dragObj;
-          loop(data, dragKey, (item, index, arr) => {
-            arr.splice(index, 1);
-            dragObj = item;
-          });
 
           if (!info.dropToGap) {
             // Drop on the content
-            loop(data, dropKey, item => {
-              item.children = item.children || [];
-              // where to insert 示例添加到尾部，可以是随意位置
-              item.children.push(dragObj);
-            });
-          } else if (
-            (info.node.props.children || []).length > 0 && // Has children
-            info.node.props.expanded && // Is expanded
-            dropPosition === 1 // On the bottom gap
-          ) {
-            loop(data, dropKey, item => {
-              item.children = item.children || [];
-              // where to insert 示例添加到头部，可以是随意位置
-              item.children.unshift(dragObj);
-            });
+            if (item.type === 'dir') {
+              loop(data, dropKey, item => {
+                loop(data, dragKey, (item, index, arr) => {
+                  arr.splice(index, 1);
+                  dragObj = item;
+                });
+                item.children = item.children || [];
+                // where to insert 示例添加到尾部，可以是随意位置
+                item.children.push(dragObj);
+              });
+            } else {
+              message.error('流程块不能放在流程块上');
+            }
           } else {
             let ar;
             let i;
+            loop(data, dragKey, (item, index, arr) => {
+              arr.splice(index, 1);
+              dragObj = item;
+            });
             loop(data, dropKey, (item, index, arr) => {
               ar = arr;
               i = index;

@@ -10,6 +10,7 @@ import BasicButton from './components/BasicButton';
 import FileUpload from './components/FileUpload';
 import FileDownload from './components/FileDownload';
 import DropDown from './components/DropDown';
+import ImagesUpload from './components/ImagesUpload';
 
 import { isLocked } from '../WidgetPanel';
 
@@ -41,6 +42,8 @@ export default ({
         return <FileDownload desc={desc} i={gridItem.i} />;
       case 'drop-down':
         return <DropDown desc={desc} i={gridItem.i} />;
+      case 'images-upload':
+        return <ImagesUpload desc={desc} i={gridItem.i} />;
       default:
         return 'other';
     }
@@ -55,7 +58,9 @@ export default ({
         setCheckedGridItemId(e.target.dataset.id);
       }
     };
+
     container.addEventListener('click', handleDridItemClick);
+
     return () => {
       container.removeEventListener('click', handleDridItemClick);
     };
@@ -68,6 +73,7 @@ export default ({
       if (isLocked && lastItem[0].i.includes('preset')) {
         // 滚动条下滑到底
         const layoutDom = document.querySelector('.interactive-placeholder');
+        if (!layoutDom) return;
         layoutDom.scrollIntoView({
           behavior: 'smooth',
         });

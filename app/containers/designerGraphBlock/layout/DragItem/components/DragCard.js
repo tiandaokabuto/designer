@@ -16,7 +16,7 @@ const transformText = (item, filter, node) => {
     (prev, next) =>
       prev.replace(
         new RegExp(next, 'i'),
-        (match) => `<span style="color: red;">${match}</span>`
+        match => `<span style="color: red;">${match}</span>`
       ),
     item.text
   );
@@ -33,7 +33,7 @@ export default ({
   updateCheckedBlockId = () => {},
 }) => {
   const dispatch = useDispatch();
-  const cards = useSelector((state) => state.blockcode.cards);
+  const cards = useSelector(state => state.blockcode.cards);
   const cardsRef = useRef(null);
   cardsRef.current = cards;
 
@@ -75,7 +75,7 @@ export default ({
   }
   const [{ isDragging }, drag] = useDrag({
     item: newItem,
-    collect: (monitor) => ({
+    collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
     end: (item, monitor) => {

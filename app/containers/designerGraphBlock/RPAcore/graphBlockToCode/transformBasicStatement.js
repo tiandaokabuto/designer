@@ -65,6 +65,7 @@ const handleFormJsonGenerate = dataStructure => {
     dataStructure.layout.data.length
   ) {
     const { data } = dataStructure.layout;
+    data.sort((preValue, nextValue) => preValue.y - nextValue.y);
     const { dataMap } = dataStructure.layout;
     return JSON.stringify(data.map(item => dataMap[item.i]));
   }
@@ -125,10 +126,10 @@ const transformBasicStatement = (
         case 'formJson':
           if (params) params += ', ';
           const formJson = handleFormJsonGenerate(dataStructure);
-          console.log(formJson);
-          const temp = JSON.parse(formJson);
+
           if (formJson !== 'None') {
             // 返回值
+            const temp = JSON.parse(formJson);
             result.output +=
               `[${temp
                 .filter(
@@ -161,18 +162,20 @@ const transformBasicStatement = (
                 }
               })
               .join(',')}], `;
+            const newTemp = temp.map(item => {
+              if (item.value === undefined) {
+                return item;
+              } else {
+                item.value = '';
+                return item;
+              }
+            });
+
+            params += `${item.enName} = ${JSON.stringify(newTemp)}`;
+          } else {
+            params += `${item.enName} = ${formJson}`;
           }
 
-          const newTemp = temp.map(item => {
-            if (item.value === undefined) {
-              return item;
-            } else {
-              item.value = '';
-              return item;
-            }
-          });
-
-          params += `${item.enName} = ${JSON.stringify(newTemp)}`;
           break;
         case 'layout':
           if (params) params += ', ';

@@ -28,42 +28,52 @@ let prevConfig = null;
 // }
 
 const { TextArea } = Input;
+const { confirm } = Modal;
 export default memo(
   ({ param, markBlockIsUpdated, handleEmitCodeTransform }) => {
-    param.config = param.config || {};
+    param.config = param.config || {
+      XPath: [],
+      JSpath: [],
+      selectedOption: 'xpath',
+    };
     const [_, forceUpdate] = useState(0);
     const [visible, setVisible] = useState(false);
     const [iframeData, setIframeData] = useState([]);
-    const [data, setData] = useState({ xpathData: [], JSpathData: [] });
-    const [selectedOption, setSelectedOption] = useState('xpath');
-    const [xpath, setXpath] = useState('');
+    const [data, setData] = useState({
+      xpathData: param.config.XPath,
+      JSpathData: param.config.JSpath,
+    });
+    const [selectedOption, setSelectedOption] = useState(
+      param.config.selectedOption
+    );
+    const find = (param.config.selectedOption === 'xpath'
+      ? param.config.XPath
+      : param.config.JSpath
+    ).find(item => item.checked);
+    let value = '';
+    if (find) {
+      value = JSON.stringify({
+        [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: find.xpath,
+        iframe: param.config.iframe || [],
+      });
+    }
+    const [xpath, setXpath] = useState(value);
+    const [clientXpath, setClientXpath] = useState(param.value);
 
     const handleRadioChecked = (index, checked) => {
-      new Promise(resolve => {
-        setData(data => {
-          const temp =
-            selectedOption === 'xpath' ? data.xpathData : data.JSpathData;
-          const result = temp.concat();
-          result.forEach((item, i) => {
-            if (i !== index) {
-              item.checked = false;
-            } else {
-              item.checked = checked;
-              resolve(item.xpath);
-            }
-          });
-          return { ...data };
+      setData(data => {
+        const temp =
+          selectedOption === 'xpath' ? data.xpathData : data.JSpathData;
+        const result = temp.concat();
+        result.forEach((item, i) => {
+          if (i !== index) {
+            item.checked = false;
+          } else {
+            item.checked = checked;
+          }
         });
-      })
-        .then(xpathTemp => {
-          setXpath(
-            JSON.stringify({
-              [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: xpathTemp,
-              iframe: param.config.iframe || [],
-            })
-          );
-        })
-        .catch(err => console.log(err));
+        return { ...data };
+      });
     };
 
     const handleGenerateXpath = () => {
@@ -72,15 +82,22 @@ export default memo(
         item => item.checked
       );
       if (find) {
-        setXpath(
-          JSON.stringify({
-            [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: find.xpath,
-            iframe: param.config.iframe || [],
-          })
-        );
+        const value = JSON.stringify({
+          [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: find.xpath,
+          iframe: param.config.iframe || [],
+        });
+        if (value !== xpath) {
+          setXpath(value);
+          setClientXpath(JSON.stringify(value));
+        }
       } else {
         setXpath('');
+        setClientXpath('');
       }
+    };
+
+    const isClientXpathChange = () => {
+      return clientXpath !== '' && clientXpath !== JSON.stringify(xpath);
     };
 
     const xpathTitle = [
@@ -93,7 +110,23 @@ export default memo(
             <Radio
               checked={checked}
               onChange={e => {
-                handleRadioChecked(index, e.target.checked);
+                const newChecked = e.target.checked;
+                const { target } = e;
+                if (isClientXpathChange()) {
+                  new Promise((resolve, reject) => {
+                    showConfirm(resolve, reject);
+                  })
+                    .then(() => {
+                      handleRadioChecked(index, newChecked);
+                      return checked;
+                    })
+                    .catch(err => {
+                      console.log(err);
+                      return false;
+                    });
+                } else {
+                  handleRadioChecked(index, newChecked);
+                }
               }}
             />
           );
@@ -109,8 +142,24 @@ export default memo(
               defaultValue={text}
               key={visible && selectedOption === 'xpath' ? '0' : '1'}
               onChange={e => {
-                obj.xpath = e.target.value;
-                handleGenerateXpath();
+                const newValue = e.target.value;
+                const { target } = e;
+                if (isClientXpathChange()) {
+                  new Promise((resolve, reject) => {
+                    showConfirm(resolve, reject);
+                  })
+                    .then(() => {
+                      obj.xpath = newValue;
+                      handleGenerateXpath();
+                      return newValue;
+                    })
+                    .catch(err => {
+                      target.value = text;
+                    });
+                } else {
+                  obj.xpath = newValue;
+                  handleGenerateXpath();
+                }
               }}
             />
           );
@@ -128,10 +177,13 @@ export default memo(
           index: '0' + ++index,
         }))
       );
-      setData({
+      const newData = {
         xpathData: XPath,
         JSpathData: JSpath,
-      });
+      };
+      if (JSON.stringify(data) !== JSON.stringify(newData)) {
+        setData(newData);
+      }
 
       setSelectedOption(selectedOption);
     }, [param.config]);
@@ -141,25 +193,30 @@ export default memo(
     }, [selectedOption, param.config, data]);
 
     useEffect(() => {
-      const { iframe = [], XPath = [], JSpath = [], selectedOption } =
-        param.config || {};
-      const find = (selectedOption === 'xpath' ? XPath : JSpath).find(
-        item => item.checked
-      );
-      const { value } = param;
-      param.value = find
-        ? JSON.stringify(
-            JSON.stringify({
-              [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: find.xpath,
-              iframe: param.config.iframe || [],
-            })
-          )
-        : value;
-    }, [param.config]);
+      setClientXpath(param.value);
+    }, []);
+
+    const showConfirm = (resolve, reject) => {
+      confirm({
+        title: '你确定要执行该操作吗',
+        content: '该操作会覆盖自定义xpath',
+        onOk() {
+          if (resolve) resolve();
+        },
+        onCancel() {
+          if (reject) reject();
+        },
+      });
+    };
 
     return (
       <div className="xpathParam">
-        <TextArea style={{ height: 32 }} value={xpath} />
+        <TextArea
+          style={{ height: 32 }}
+          className="xpathInput"
+          value={clientXpath}
+          disabled
+        />
         <Button
           onClick={() => {
             prevConfig = cloneDeep(param.config);
@@ -177,15 +234,19 @@ export default memo(
             overflow: 'auto',
           }}
           onCancel={() => {
-            if (prevConfig) {
+            if (
+              prevConfig &&
+              JSON.stringify(prevConfig) !== JSON.stringify(param.config)
+            ) {
               param.config = prevConfig;
+              setClientXpath(param.value);
             }
             forceUpdate(_ => ++_);
             setVisible(false);
           }}
           onOk={() => {
             setVisible(false);
-            param.value = JSON.stringify(xpath);
+            param.value = clientXpath;
             markBlockIsUpdated();
             handleEmitCodeTransform();
           }}
@@ -202,8 +263,20 @@ export default memo(
             <Radio.Group
               value={selectedOption}
               onChange={e => {
-                param.config.selectedOption = e.target.value;
-                setSelectedOption(e.target.value);
+                if (isClientXpathChange()) {
+                  new Promise(resolve => {
+                    showConfirm(resolve);
+                  })
+                    .then(() => {
+                      param.config.selectedOption = e.target.value;
+                      setSelectedOption(e.target.value);
+                      return e.target.value;
+                    })
+                    .catch(err => console.log(err));
+                } else {
+                  param.config.selectedOption = e.target.value;
+                  setSelectedOption(e.target.value);
+                }
               }}
             >
               <Radio value="xpath">xpath</Radio>
@@ -212,12 +285,22 @@ export default memo(
           </div>
           <div className="xpathParam-title">元素xpath</div>
           <Table
+            className="xpathTable"
             columns={xpathTitle}
             dataSource={
               selectedOption === 'xpath' ? data.xpathData : data.JSpathData
             }
             pagination={false}
             rowKey="key"
+          />
+          <div className="xpathParam-title">自定义xpath</div>
+          <TextArea
+            value={clientXpath}
+            onChange={e => {
+              if (e.target.value === '') {
+                setClientXpath(JSON.stringify(xpath));
+              } else setClientXpath(e.target.value);
+            }}
           />
         </Modal>
       </div>

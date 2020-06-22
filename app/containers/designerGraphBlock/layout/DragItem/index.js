@@ -150,9 +150,13 @@ export default useInjectContext(
         }
         recentList.unshift(item);
       }
+      // Promise.resolve().then(() => {
 
-      updateAutomicList([...atomicCList]);
-      saveAutomicList(cloneDeep(atomicCList));
+      // });
+      setTimeout(() => {
+        updateAutomicList([...atomicCList]);
+        saveAutomicList(cloneDeep(atomicCList));
+      }, 0);
     };
 
     const renderTreeNode = (tree, filter) => {

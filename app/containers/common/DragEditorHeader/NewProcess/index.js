@@ -36,6 +36,10 @@ export default ({ resetVisible, tag }) => {
 
   /* ---------- 流程/目录新增逻辑 ----------- */
   const handleAddProcessOrProject = () => {
+    if (!name) {
+      message.info('请填写名称');
+      return;
+    }
     const reg = /(^\s+)|(\s+$)|[?:<>|*"{}\[\]\/\\]/g;
     if (reg.test(name)) {
       message.error('不能包含特殊字符，前后不能包含空格');
