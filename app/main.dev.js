@@ -56,7 +56,6 @@ appexpress.post('/upload', function (req, res) {
     if (!finallyResult.value) {
       return;
     }
-
     mainWindow.restore();
     mainWindow.webContents.send('updateXpath', {
       ...finallyResult.value,
@@ -71,8 +70,17 @@ appexpress.post('/upload', function (req, res) {
   res.sendStatus(200);
 });
 
+appexpress.post('/xpathStatus', function (rea, res) {
+  console.log('/xpathStatus');
+  if (global.sharedObject.xpathStatus) {
+    res.status(200).send('is_done');
+    global.sharedObject.xpathStatus = false;
+  } else {
+    res.status.send('not_ok');
+  }
+});
+
 appexpress.post('/position', function (req, res) {
-  console.log('position');
   try {
     const finallyResult = req.body;
 
@@ -259,6 +267,7 @@ const createWindow = async () => {
   global.sharedObject = {
     token: undefined,
     userName: '',
+    xpathStatus: false,
   };
 
   // 登录成功切换到主页面

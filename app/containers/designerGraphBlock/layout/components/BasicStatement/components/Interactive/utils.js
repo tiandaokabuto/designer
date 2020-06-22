@@ -8,6 +8,7 @@ export const generateLastPosition = data => {
   if (!data) return position;
   data.forEach(item => {
     if (item.y + item.h > position.y) {
+      // 新增的位置 = y + 组件的高度h
       position.y = item.y + item.h;
     }
   });
