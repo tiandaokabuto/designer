@@ -65,6 +65,7 @@ const handleFormJsonGenerate = dataStructure => {
     dataStructure.layout.data.length
   ) {
     const { data } = dataStructure.layout;
+    data.sort((preValue, nextValue) => preValue.y - nextValue.y);
     const { dataMap } = dataStructure.layout;
     return JSON.stringify(data.map(item => dataMap[item.i]));
   }
