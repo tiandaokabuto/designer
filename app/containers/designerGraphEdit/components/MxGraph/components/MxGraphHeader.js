@@ -22,6 +22,20 @@ const MxGraphHeader = () => {
         >
           流程块
         </div>
+        <div
+          className="designergraph-container-header-tool-rhombus"
+          draggable
+          data-component-type="rhombus"
+          onDragStart={onComponentDragStart}
+        >
+          <div className="designergraph-container-header-tool-rhombus-left">
+            <span></span>
+          </div>
+          <div className="designergraph-container-header-tool-rhombus-right">
+            <span></span>
+          </div>
+          <span style={{ position: 'absolute', right: '18px' }}>判断</span>
+        </div>
       </div>
       <span className="designergraph-container-header-title">
         {/* node && node.title */}
