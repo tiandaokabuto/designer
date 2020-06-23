@@ -56,6 +56,7 @@ appexpress.post('/upload', function (req, res) {
     if (!finallyResult.value) {
       return;
     }
+    // console.log(finallyResult.value);
     mainWindow.restore();
     mainWindow.webContents.send('updateXpath', {
       ...finallyResult.value,
@@ -70,13 +71,17 @@ appexpress.post('/upload', function (req, res) {
   res.sendStatus(200);
 });
 
+// let count = 0;
 appexpress.post('/xpathStatus', function (rea, res) {
-  console.log('/xpathStatus');
+  // count++;
+  // console.log(
+  //   '/xpathStatus' + count + '_____' + global.sharedObject.xpathStatus
+  // );
   if (global.sharedObject.xpathStatus) {
     res.status(200).send('is_done');
     global.sharedObject.xpathStatus = false;
   } else {
-    res.status.send('not_ok');
+    res.status(200).send('not_ok');
   }
 });
 
@@ -93,7 +98,7 @@ appexpress.post('/position', function (req, res) {
     if (!finallyResult.value) {
       return;
     }
-    console.log(finallyResult);
+    // console.log(finallyResult.value);
 
     mainWindow.restore();
     mainWindow.webContents.send('updateMousePosition', {
@@ -123,7 +128,7 @@ appexpress.post('/windowArray', function (req, res) {
     if (!finallyResult.value) {
       return;
     }
-    console.log(finallyResult.value);
+    // console.log(finallyResult.value);
     mainWindow.restore();
     mainWindow.webContents.send('getWindowArray', {
       resultArr: finallyResult.value,
