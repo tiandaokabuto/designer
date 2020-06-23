@@ -11,11 +11,20 @@ export default () => {
     if (!find) return;
     if (type !== 'win') {
       const { XPath, JSpath, iframe } = xpath;
+      const setValue = xpath => {
+        find.value = JSON.stringify(
+          JSON.stringify({
+            XPath: xpath,
+            iframe,
+          })
+        );
+        return true;
+      };
       find.config = {
         XPath: XPath.map((xpath, key) => ({
           xpath,
           key,
-          checked: key === 0,
+          checked: key === 0 ? setValue(xpath) : false,
         })),
         JSpath: JSpath.map((xpath, key) => ({
           xpath,
@@ -26,7 +35,6 @@ export default () => {
         iframe,
       };
 
-      find.value = '""';
       find.updateId = true;
     } else {
       find.value = `"${xpath}"`;

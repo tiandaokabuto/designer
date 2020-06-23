@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
+import useThrottle from 'react-hook-easier/lib/useThrottle';
 
 import InteractiveEditor from './layout/InteractiveEditor';
 import WidgetPanel from './layout/WidgetPanel';
@@ -18,7 +19,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
 
   useEffect(() => {
     setLayout(interactiveCard.layout);
-  }, [interactiveCard]);
+  }, [interactiveCard.layout]);
 
   const INITIAL_WIDTH = {
     input: layout && (layout.cols || 4),
@@ -28,6 +29,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     'file-upload': layout && (layout.cols || 4),
     'file-download': layout && (layout.cols || 4),
     'drop-down': layout && (layout.cols || 4),
+    'images-upload': 1,
   };
 
   const INITIAL_HEIGHT = {
@@ -38,6 +40,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     'file-upload': 1,
     'file-download': 1,
     'drop-down': 1,
+    'images-upload': 3,
   };
 
   const noticyChange = useNoticyBlockCodeChange();
@@ -112,6 +115,15 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
     }));
   };
 
+  // const handleLayoutChange = useThrottle(data => {
+  //   console.log(data);
+  //   noticyChange();
+  //   setLayout(layout => ({
+  //     ...layout,
+  //     data,
+  //   }));
+  // }, 333);
+
   const handleLayoutChange = data => {
     noticyChange();
     setLayout(layout => ({
@@ -150,6 +162,7 @@ export default ({ visible, setVisible, interactiveCard, saveLayoutChange }) => {
           <Button
             onClick={() => {
               setVisible(false);
+              setLayout(interactiveCard.layout);
             }}
           >
             取消

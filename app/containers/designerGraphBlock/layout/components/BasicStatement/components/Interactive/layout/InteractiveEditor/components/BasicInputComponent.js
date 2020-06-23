@@ -8,9 +8,9 @@ export default ({ desc, i }) => {
         {desc.label}
       </div>
       {desc.password === 'true' ? (
-        <Input.Password value={desc.value} />
+        <Input.Password data-id={i} value={desc.value} />
       ) : (
-        <Input value={desc.value} />
+        <Input data-id={i} value={desc.value} />
       )}
     </div>
   );

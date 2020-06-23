@@ -27,7 +27,8 @@ export default memo(
           <span>列数设置</span>
           <Input
             value={cols}
-            onChange={(e) => {
+            disabled
+            onChange={e => {
               handleLayoutColChange(e.target.value);
             }}
           />
@@ -43,7 +44,7 @@ export default memo(
           return (
             <Select
               value={desc[item]}
-              onChange={(value) => {
+              onChange={value => {
                 desc[item] = value;
                 handleLabelChange();
               }}
@@ -60,7 +61,7 @@ export default memo(
           return (
             <Select
               value={desc[item]}
-              onChange={(value) => {
+              onChange={value => {
                 desc[item] = value;
                 handleLabelChange();
               }}
@@ -77,7 +78,7 @@ export default memo(
           return (
             <Input
               value={desc[item]}
-              onChange={(e) => {
+              onChange={e => {
                 desc[item] = e.target.value;
                 handleLabelChange();
               }}

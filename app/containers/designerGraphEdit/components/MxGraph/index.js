@@ -11,6 +11,7 @@ import MxGraphHeader from './components/MxGraphHeader';
 import DefaultComponent from './Component';
 import RComponent from './RComponent';
 import event from '../../../designerGraphBlock/layout/eventCenter';
+import OutputPanel from '../../../designerGraphBlock//layout/DragContainer/OutputPanel';
 
 import './index.scss';
 
@@ -65,7 +66,7 @@ const MxgraphContainer = () => {
     mxCell.prototype.setNodeId = function (nodeId) {
       this.nodeId = nodeId;
     };
-    //更新组件状态
+    // 更新组件状态
     mxCell.prototype.updateStatus = function (graph, status) {
       let html = this.getValue();
       let id = this.nodeId;
@@ -77,23 +78,22 @@ const MxgraphContainer = () => {
       html = html.substring(0, index);
       switch (status) {
         case 0:
-          html = html + 'class="status status-init"></span></div>';
+          html += 'class="status status-init"></span></div>';
           break;
         case 1:
-          html = html + 'class="status status-noparam"></span></div>';
+          html += 'class="status status-noparam"></span></div>';
           break;
         case 2:
-          html = html + 'class="status status-running"></span></div>';
+          html += 'class="status status-running"></span></div>';
           break;
         case 4:
-          html = html + 'class="status status-fail"></span></div>';
+          html += 'class="status status-fail"></span></div>';
           break;
         case 3:
-          html = html + 'class="status status-success"></span></div>';
+          html += 'class="status status-success"></span></div>';
           break;
         default:
-          html = html + 'class="status"></span></div>';
-          console.log('状态改变异常');
+          html += 'class="status"></span></div>';
       }
       this.setValue(html);
       graph.cellLabelChanged(this, html);
@@ -179,8 +179,8 @@ const MxgraphContainer = () => {
     const rComponentToDropType = e.dataTransfer.getData('rComponentToDropType');
 
     if (componentToDropType) {
-      let x = e.clientX;
-      let y = e.clientY;
+      const x = e.clientX;
+      const y = e.clientY;
       const width = document.querySelector('.designergraph-item').clientWidth;
       /* let left = x - 450 + offsetLeft;
       let top = y - 70 + offsetTop;
@@ -236,6 +236,7 @@ const MxgraphContainer = () => {
           id="graphContainer"
         />
       </div>
+      <OutputPanel tag="graph" />
     </div>
   );
 };

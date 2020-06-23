@@ -823,11 +823,15 @@ export const copyModule = () => {
 export const getChooseFilePath = (filePath, importType) => {
   const unzip = new adm_zip(filePath[0]);
   const manifestEntry = unzip.getEntry('manifest.json');
-  const versionEntry = unzip.getEntry('designerVersion.json');
   const text = unzip.readAsText(manifestEntry, 'utf8');
-  const versionText = unzip.readAsText(versionEntry, 'utf8');
-  const importVersion = JSON.parse(versionText).designerVersion;
   const data = getDecryptOrNormal(text);
+  try {
+    const versionEntry = unzip.getEntry('designerVersion.json');
+    const versionText = unzip.readAsText(versionEntry, 'utf8');
+    const importVersion = JSON.parse(versionText).designerVersion;
+  } catch (e) {
+    console.log(e);
+  }
 
   // /([^\.\/\\]+)\.(?:[a-z]+)$/i
   const re = /([^?:<>|*"{}\[\]\/\\]+)\.(?:[a-z]+)$/i;
@@ -934,12 +938,16 @@ export const getChooseFilePath = (filePath, importType) => {
     changeProcessTree(newProcessTree);
     changeCheckedTreeNode(uniqueid);
     persistentStorage([uniqueid], newProcessTree, currentProject, uniqueid);
-    const numImport = Number(importVersion.split('.').join(''));
-    const numLocal = Number(designerVersion.split('.').join(''));
-    if (numImport > numLocal) {
-      message.warning('当前流程版本比设计器版本高，可能存在不兼容');
-    } else if (numImport < numLocal) {
-      message.warning('当前流程版本比设计器版本低，可能存在不兼容');
+    try {
+      const numImport = Number(importVersion.split('.').join(''));
+      const numLocal = Number(designerVersion.split('.').join(''));
+      if (numImport > numLocal) {
+        message.warning('当前流程版本比设计器版本高，可能存在不兼容');
+      } else if (numImport < numLocal) {
+        message.warning('当前流程版本比设计器版本低，可能存在不兼容');
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 };
