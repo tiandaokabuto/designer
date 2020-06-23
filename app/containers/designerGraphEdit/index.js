@@ -38,7 +38,7 @@ export default () => {
       <GGEditor className="designergraph editor">
         <GraphItem setShowLoadingLayer={setShowLoadingLayer} />
         {
-          /* <GraphContainer history={history} /> */
+          // <GraphContainer history={history} />
           <MxGraph />
         }
         <GraphParamPanel />
