@@ -44,26 +44,31 @@ export default class RComponent {
       const v1 = this.graph.insertVertex(
         parent,
         null,
-        `<div class="rcomponent"><div class="rcompoent-content"><label class="rcomponent-content-icon"></label><span class="rcomponent-name" title="${name}">${name}</span></div></div>`,
+        `<div class="rcomponent">
+          <div class="rcomponent-content">
+            <label class="rcomponent-content-icon"></label>
+            <span class="rcomponent-name" title="${name}">${name}</span>
+          </div>
+        </div>`,
+        // name,
         commonData.left,
         commonData.top,
-        92,
-        92,
-        'strokeWidth:none;html=1;strokeColor=none;overflow=fill;resizable=0;fillColor=none;'
+        100,
+        100,
+        'shape=rhombus;perimeter=ellipsePerimeter;resizable=0;'
       );
       v1.setConnectable(false);
       v1.setNodeType('functional');
       v1.setComponentType(componentType);
       v1.setNodeId(nodeId);
       v1.updateStatus(this.graph, commonData.node_status);
-      // insertVertex 创建并插入一个新的顶点到模型中
-      // 参数：父元素，ID，X，Y，宽度，高度，风格
+
       let port = this.graph.insertVertex(
         v1,
         null,
         '',
-        0.5,
-        0,
+        0.53,
+        -0.03,
         6,
         6,
         'port;align=right;spacingRight=18;resizable=0;',
@@ -76,8 +81,8 @@ export default class RComponent {
         v1,
         null,
         '',
-        0.5,
-        1,
+        0.53,
+        1.03,
         6,
         6,
         'port;align=right;spacingRight=18;resizable=0;',

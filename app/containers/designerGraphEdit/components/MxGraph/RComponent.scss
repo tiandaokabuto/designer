@@ -1,24 +1,21 @@
 #graphContent {
   .rcomponent {
-    width: 60px;
-    height: 60px;
-    transform: rotate(45deg) translate(20%, 0%);
-    line-height: 60px;
-    background-color: #edf6f7;
-    border: 1px solid rgba(61, 109, 204, 1);
-    text-align: center;
-    // &-content {
-    //   vertical-align: middle;
-    //   display: inline-block;
-    //   &-icon {
-    //     width: 25px;
-    //     height: 22px;
-    //     margin: 0 10px;
-    //     background: url(../../../images/judge.jpg) no-repeat;
-    //     background-size: 100% 100%;
-    //     display: inline-block;
-    //     vertical-align: middle;
-    //   }
-    // }
+    &-content {
+      vertical-align: middle;
+      display: inline-block;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      &-icon {
+        width: 25px;
+        height: 22px;
+        margin: 0 10px;
+        background: url(../../../images/judge.jpg) no-repeat;
+        background-size: 100% 100%;
+        display: inline-block;
+        vertical-align: top;
+      }
+    }
   }
 }
