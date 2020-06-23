@@ -4,5 +4,10 @@
   .dropContent {
     width: 100%;
     height: 100%;
+    #graphContainer {
+      svg {
+        height: calc(100vh - 112px) !important;
+      }
+    }
   }
 }
