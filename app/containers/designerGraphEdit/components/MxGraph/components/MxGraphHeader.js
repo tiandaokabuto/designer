@@ -11,6 +11,13 @@ const MxGraphHeader = () => {
     );
   };
 
+  const onRComponentDragStart = e => {
+    e.dataTransfer.setData(
+      'rComponentToDropType',
+      e.target.getAttribute('data-component-type')
+    );
+  };
+
   return (
     <div className="designergraph-container-header">
       <div className="designergraph-container-header-tool">
@@ -26,7 +33,7 @@ const MxGraphHeader = () => {
           className="designergraph-container-header-tool-rhombus"
           draggable
           data-component-type="rhombus"
-          onDragStart={onComponentDragStart}
+          onDragStart={onRComponentDragStart}
         >
           <div className="designergraph-container-header-tool-rhombus-left">
             <span></span>
