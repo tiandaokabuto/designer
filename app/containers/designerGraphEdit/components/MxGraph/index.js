@@ -9,6 +9,7 @@ import {
   mxPoint as MxPonint,
   mxStyleRegistry,
   mxUtils,
+  mxGraphHandler,
 } from 'mxgraph-js';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import { useSelector } from 'react-redux';
@@ -45,6 +46,9 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
     // 连线不允许悬空
     graph.setAllowDanglingEdges(false);
+
+    // 启用辅助线
+    mxGraphHandler.prototype.guidesEnabled = true;
 
     // 设置连线样式
     setDataMingEdgeStyle();

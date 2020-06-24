@@ -67,7 +67,7 @@ export default class Component {
         'port;align=right;spacingRight=18;resizable=0;',
         true
       );
-      port.geometry.offset = new mxPoint(-6, -3);
+      port.geometry.offset = new mxPoint(-3, -3);
       port.setPortIndex(0);
       port.setPortType('input');
       port = this.graph.insertVertex(
@@ -81,7 +81,7 @@ export default class Component {
         'port;align=right;spacingRight=18;resizable=0;',
         true
       );
-      port.geometry.offset = new mxPoint(-6, -3);
+      port.geometry.offset = new mxPoint(-3, -3);
       port.setPortIndex(0);
       port.setPortType('output');
     } finally {
