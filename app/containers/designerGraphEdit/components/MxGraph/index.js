@@ -18,7 +18,7 @@ import MxGraphHeader from './components/MxGraphHeader';
 import component from './Component';
 import RComponent from './RComponent';
 import event from '../../../designerGraphBlock/layout/eventCenter';
-import OutputPanel from '../../../designerGraphBlock//layout/DragContainer/OutputPanel';
+import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
 
 import './index.scss';
 

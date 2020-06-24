@@ -3,7 +3,8 @@ module.exports = {
   settings: {
     'import/resolver': {
       webpack: {
-        config: require.resolve('./configs/webpack.config.eslint.js'),
+        config:
+          '../configs/webpack.config.renderer.dev.babel' /* require.resolve('./configs/webpack.config.eslint.js'), */,
       },
     },
   },
