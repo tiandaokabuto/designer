@@ -15,7 +15,7 @@ import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import { useSelector } from 'react-redux';
 
 import MxGraphHeader from './components/MxGraphHeader';
-import DefaultComponent from './Component';
+import component from './Component';
 import RComponent from './RComponent';
 import event from '../../../designerGraphBlock/layout/eventCenter';
 import OutputPanel from '../../../designerGraphBlock//layout/DragContainer/OutputPanel';
@@ -70,7 +70,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     switch (commonData.componentType) {
       case 'process':
         // 改造成function
-        new DefaultComponent(graph, commonData, data);
+        component(graph, commonData, data);
         break;
       case 'rhombus':
         new RComponent(graph, commonData, data);
