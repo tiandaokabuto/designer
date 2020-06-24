@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import {
   mxGraph as MxGraph,
   mxCell,
-  mxImage,
+  mxImage as MxImage,
   mxEdgeStyle,
   mxConstants,
   mxEdgeHandler,
@@ -35,12 +35,12 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     graph.htmlLabels = true;
 
     // 取消设置连线选中时出现那个调整点
-    mxEdgeHandler.prototype.handleImage = new mxImage('', 0, 0);
+    mxEdgeHandler.prototype.handleImage = new MxImage('', 0, 0);
 
     // 启用连线功能
     graph.setConnectable(true);
-    graph.connectionHandler.getConnectImage = function (state) {
-      return new mxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
+    graph.connectionHandler.getConnectImage = function(state) {
+      return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
     };
 
     // 连线不允许悬空
@@ -70,27 +70,27 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
         break;
       case 'rhombus':
         new RComponent(graph, commonData, data);
+        break;
       default:
         break;
     }
   };
 
   const configMxCell = () => {
-    mxCell.prototype.setNodeType = function (nodetype) {
+    mxCell.prototype.setNodeType = function(nodetype) {
       this.nodetype = nodetype;
     };
-    mxCell.prototype.setComponentType = function (componentType) {
+    mxCell.prototype.setComponentType = function(componentType) {
       this.componentType = componentType;
     };
-    mxCell.prototype.setNodeId = function (nodeId) {
+    mxCell.prototype.setNodeId = function(nodeId) {
       this.nodeId = nodeId;
     };
     // 更新组件状态
-    mxCell.prototype.updateStatus = function (graph, status) {
+    mxCell.prototype.updateStatus = function(graph, status) {
       let html = this.getValue();
-      let id = this.nodeId;
-      let index = html.indexOf('class="status');
-      if (index == -1) {
+      const index = html.indexOf('class="status');
+      if (index === -1) {
         return;
       }
 
@@ -117,16 +117,16 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       this.setValue(html);
       graph.cellLabelChanged(this, html);
     };
-    mxCell.prototype.setPortIndex = function (portIndex) {
+    mxCell.prototype.setPortIndex = function(portIndex) {
       this.portIndex = portIndex;
     };
-    mxCell.prototype.setPortType = function (portType) {
+    mxCell.prototype.setPortType = function(portType) {
       this.portType = portType;
     };
   };
 
   const configureStylesheet = () => {
-    let style = new Object();
+    let style = {};
     graph.getStylesheet().putCellStyle('port', style);
     style = graph.getStylesheet().getDefaultEdgeStyle();
     style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = '#777777';
@@ -147,14 +147,11 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     mxConstants.VALID_COLOR = '#40a9ff';
   };
 
+  /**
+   * 设置连线样式
+   */
   const setDataMingEdgeStyle = () => {
-    mxEdgeStyle.ComponentEdge = function (
-      state,
-      source,
-      target,
-      points,
-      result
-    ) {
+    mxEdgeStyle.ComponentEdge = (state, source, target, points, result) => {
       const { view } = state;
       if (source != null && target != null) {
         if (source.y < target.y) {
@@ -196,6 +193,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     mxStyleRegistry.putValue('ComponentEdge', mxEdgeStyle.ComponentEdge);
   };
 
+  /**
+   * 拖拽放手后的处理函数
+   * @param {*} e event对象
+   */
   const onDrop = e => {
     const componentToDropType = e.dataTransfer.getData('componentToDropType');
     const rComponentToDropType = e.dataTransfer.getData('rComponentToDropType');
@@ -244,6 +245,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     }
   };
 
+  /**
+   * 可拖拽区域
+   * @param {*} e event对象
+   */
   const allowDrop = e => {
     e.preventDefault();
   };
