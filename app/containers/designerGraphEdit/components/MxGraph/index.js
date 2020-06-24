@@ -5,7 +5,13 @@ import {
   mxImage,
   mxEdgeStyle,
   mxConstants,
+  mxEdgeHandler,
+  mxPoint as MxPonint,
+  mxStyleRegistry,
+  mxUtils,
 } from 'mxgraph-js';
+import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
+import { useSelector } from 'react-redux';
 
 import MxGraphHeader from './components/MxGraphHeader';
 import DefaultComponent from './Component';
@@ -14,7 +20,10 @@ import OutputPanel from '../../../designerGraphBlock//layout/DragContainer/Outpu
 
 import './index.scss';
 
-const MxgraphContainer = () => {
+const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
+  const graphData = useSelector(state => state.grapheditor.graphData);
+  const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+  console.log(graphData, graphDataMap);
   const graphContainer = useRef(null);
   let graph = null;
 
@@ -24,14 +33,24 @@ const MxgraphContainer = () => {
     // 启用插入html label
     graph.htmlLabels = true;
 
+    // 取消设置连线选中时出现那个调整点
+    mxEdgeHandler.prototype.handleImage = new mxImage('', 0, 0);
+
     // 启用连线功能
     graph.setConnectable(true);
     graph.connectionHandler.getConnectImage = function(state) {
       return new mxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
     };
 
-    configMxCell();
+    // 连线不允许悬空
+    graph.setAllowDanglingEdges(false);
+
+    // 设置连线样式
+    setDataMingEdgeStyle();
+    // 设置
     configureStylesheet();
+    // 配置mxCell方法
+    configMxCell();
   }, []);
 
   useEffect(() => {
@@ -133,20 +152,23 @@ const MxgraphContainer = () => {
       points,
       result
     ) {
-      var view = state.view;
+      const { view } = state;
       if (source != null && target != null) {
         if (source.y < target.y) {
-          var t = Math.max(source.y, target.y);
-          var b = Math.min(source.y + source.height, target.y + target.height);
+          const t = Math.max(source.y, target.y);
+          const b = Math.min(
+            source.y + source.height,
+            target.y + target.height
+          );
 
-          var x = view.getRoutingCenterX(source);
-          var y = Math.round(b + (t - b) / 2);
+          let x = view.getRoutingCenterX(source);
+          const y = Math.round(b + (t - b) / 2);
 
           if (
             !mxUtils.contains(target, x, y) &&
             !mxUtils.contains(source, x, y)
           ) {
-            result.push(new mxPoint(x, y));
+            result.push(new MxPonint(x, y));
           }
 
           x = view.getRoutingCenterX(target);
@@ -155,14 +177,14 @@ const MxgraphContainer = () => {
             !mxUtils.contains(target, x, y) &&
             !mxUtils.contains(source, x, y)
           ) {
-            result.push(new mxPoint(x, y));
+            result.push(new MxPonint(x, y));
           }
         } else {
           result.push(
-            new mxPoint(view.getRoutingCenterX(source), source.y + 50)
+            new MxPonint(view.getRoutingCenterX(source), source.y + 50)
           );
           result.push(
-            new mxPoint(view.getRoutingCenterX(target), target.y - 50)
+            new MxPonint(view.getRoutingCenterX(target), target.y - 50)
           );
         }
       }
@@ -218,6 +240,6 @@ const MxgraphContainer = () => {
       <OutputPanel tag="graph" />
     </div>
   );
-};
+});
 
 export default MxgraphContainer;
