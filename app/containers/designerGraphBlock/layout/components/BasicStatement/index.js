@@ -192,6 +192,7 @@ const BasicStatement = useInjectContext(props => {
     const xpathCmdNameForBrowser = '点击元素';
     const mouseCmdName = '鼠标-获取光标位置';
     const windowsCmdNameArr = ['设置窗口状态', '关闭软件窗口'];
+    const clickImage = '点击图片';
 
     if (xpathCmdNameArrForWindows.includes(card.cmdName)) {
       try {
@@ -217,10 +218,17 @@ const BasicStatement = useInjectContext(props => {
       } catch (e) {
         console.log(e);
       }
+    } else if (clickImage === card.cmdName) {
+      try {
+        const clickImageWorker = exec(`${PATH_CONFIG('CaptureAreaScreen')}`);
+      } catch (e) {
+        console.log(e);
+      }
     }
     ipcRenderer.removeAllListeners('updateXpath');
     ipcRenderer.removeAllListeners('updateMousePosition');
     ipcRenderer.removeAllListeners('getWindowArray');
+    ipcRenderer.removeAllListeners('updateClickImage');
     ipcRenderer.on(
       'updateXpath',
       (e, { targetId, imageData, xpath: xpathBuffer, type }) => {
@@ -258,6 +266,16 @@ const BasicStatement = useInjectContext(props => {
       if (obj.targetId !== id) return;
       card.properties.required[1].valueMapping = obj.resultArr;
       card.properties.required[1].updateId = true;
+      card.hasModified = true;
+      handleEmitCodeTransform(cards);
+    });
+    ipcRenderer.on('updateClickImage', (e, { imageData, targetId }) => {
+      if (targetId !== id) return;
+      card.properties.required[0].updateId = true;
+      if (imageData) {
+        card.properties.required[0].value = `"${imageData}"`;
+        setTargetImage(imageData);
+      }
       card.hasModified = true;
       handleEmitCodeTransform(cards);
     });

@@ -144,6 +144,35 @@ appexpress.post('/windowArray', function (req, res) {
   res.sendStatus(200);
 });
 
+appexpress.post('/clickImage', function (req, res) {
+  try {
+    const finallyResult = req.body;
+
+    // 将结果通知给渲染进程
+    if (targetId === undefined) {
+      res.sendStatus(500);
+      return;
+    }
+
+    if (!finallyResult.value) {
+      return;
+    }
+    console.log(finallyResult.value);
+
+    mainWindow.restore();
+    mainWindow.webContents.send('updateClickImage', {
+      ...finallyResult.value,
+      targetId,
+    });
+    targetId = undefined;
+  } catch (e) {
+    // 处理错误
+    res.sendStatus(200);
+  }
+
+  res.sendStatus(200);
+});
+
 module.exports = exports = class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
