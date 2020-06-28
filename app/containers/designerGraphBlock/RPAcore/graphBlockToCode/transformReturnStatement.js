@@ -12,8 +12,6 @@ const transformReturnStatement = (
   blockNode = {},
   options
 ) => {
-  console.log(dataStructure);
-  console.log(blockNode);
   const ignore = dataStructure.ignore ? '# ' : '';
   result.output += `${padding}${ignore}`;
   const returnList =
@@ -30,8 +28,6 @@ const transformReturnStatement = (
       return_string[i] = 'None';
     }
   }
-  console.log(returnList);
-  console.log(return_string);
   result.output += `return ${return_string.join(', ')}`;
   return result.output;
 };

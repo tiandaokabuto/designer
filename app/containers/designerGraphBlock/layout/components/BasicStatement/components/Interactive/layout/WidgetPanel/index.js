@@ -9,7 +9,10 @@ export let isLocked = false;
 
 export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
   useEffect(() => {
+    // 获取左侧基础组件
     const controlDom = document.querySelectorAll('.interactive-control');
+
+    // 鼠标在组件上时
     const handleControlMouseenter = e => {
       if (!isLocked) {
         isLocked = true;
@@ -23,11 +26,14 @@ export default ({ onAddControl, setCheckedGridItemId, popLayoutData }) => {
         );
       }
     };
+
+    // 鼠标离开组件时
     const handleControlMouseleave = e => {
       isLocked = false;
       popLayoutData();
     };
 
+    // 把类数组controlDom转换成数组进行遍历，绑定事件
     Array.from(controlDom).forEach(dom => {
       dom.addEventListener('mouseenter', handleControlMouseenter);
       dom.addEventListener('mouseleave', handleControlMouseleave);

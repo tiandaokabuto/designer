@@ -35,7 +35,7 @@ import ItemTypes from '../../statementTypes';
 
 import './index.scss';
 
-const { ipcRenderer } = require('electron');
+const { ipcRenderer, remote } = require('electron');
 
 const style = {
   borderTop: '4px solid transparent',
@@ -180,7 +180,7 @@ const BasicStatement = useInjectContext(props => {
     });
     ipcRenderer.send('min');
     ipcRenderer.send('start_server', id);
-    const xpathCmdNameArr = [
+    const xpathCmdNameArrForWindows = [
       '鼠标-点击目标',
       '鼠标-移动',
       '键盘-目标中按键',
@@ -189,10 +189,11 @@ const BasicStatement = useInjectContext(props => {
       '判断元素是否存在',
       '上传文件',
     ];
+    const xpathCmdNameForBrowser = '点击元素';
     const mouseCmdName = '鼠标-获取光标位置';
     const windowsCmdNameArr = ['设置窗口状态', '关闭软件窗口'];
 
-    if (xpathCmdNameArr.includes(card.cmdName)) {
+    if (xpathCmdNameArrForWindows.includes(card.cmdName)) {
       try {
         const worker = exec(PATH_CONFIG('windowHook'));
       } catch (e) {
@@ -207,6 +208,12 @@ const BasicStatement = useInjectContext(props => {
     } else if (windowsCmdNameArr.includes(card.cmdName)) {
       try {
         const windowsWorker = exec(`${PATH_CONFIG('WinRun')} -w`);
+      } catch (e) {
+        console.log(e);
+      }
+    } else if (xpathCmdNameForBrowser === card.cmdName) {
+      try {
+        const browserXpathWorker = exec(`${PATH_CONFIG('getBrowserXpath')}`);
       } catch (e) {
         console.log(e);
       }
@@ -227,6 +234,8 @@ const BasicStatement = useInjectContext(props => {
         setTargetImage(imageData);
         updateXpath(id, xpath, type);
         handleEmitCodeTransform(cards);
+        remote.getGlobal('sharedObject').xpathStatus = true;
+        console.log(remote.getGlobal('sharedObject').xpathStatus);
       }
     );
     ipcRenderer.on(
