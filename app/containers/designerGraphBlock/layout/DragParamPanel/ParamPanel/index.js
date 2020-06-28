@@ -56,6 +56,7 @@ const getComponentType = (
   markBlockIsUpdated,
   cmdName,
   isWindowsAuto
+  // properties
 ) => {
   const [inputValue, setInputValue] = useState(
     param.enName === 'sqlStr'
@@ -72,8 +73,6 @@ const getComponentType = (
   const emitCode = () => {
     handleEmitCodeTransform(cards);
   };
-
-  const isMultiple = () => {};
 
   // 任务数据下拉列表
   const [appendDataSource] = useAppendDataSource(param);
@@ -258,12 +257,17 @@ const getComponentType = (
       />
     );
   }
+  // 常规处理
   switch (param.componentType) {
     case COMPONENT_TYPE.INPUT:
+      // const flag = isParentLink(param, properties);
+
       if (param.enName !== 'outPut') {
         return (
           <AutoCompletePlusParam
             param={param}
+            // parentLink={flag}
+            // showParentLinkItem={showParentLinkItem}
             aiHintList={aiHintList}
             appendDataSource={appendDataSource}
             keyFlag={keyFlag}
@@ -377,14 +381,43 @@ const ParamItem = ({
   setFlag,
   cmdName,
   isWindowsAuto,
+  properties,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
   const specialParam = ['条件', '循环条件', '任务数据名称'];
   // const specialParam = ['条件', '循环条件'];
 
+  // 判断是否是关联属性
+  const isParentLink = (param, properties) => {
+    let flag = false;
+    if (param.parentLink) {
+      properties.required.forEach(requiredItem => {
+        if (requiredItem.enName === param.parentLink.enName) {
+          flag = requiredItem;
+        }
+      });
+    }
+    return flag;
+  };
+
+  const showParentLinkItem = (param, item) => {
+    if (item.value.toString() === param.parentLink.value.toString()) {
+      return 'flex';
+    } else {
+      return 'none';
+    }
+  };
+
+  const f = isParentLink(param, properties);
+
   return (
     <React.Fragment>
-      <div className="parampanel-item">
+      <div
+        className="parampanel-item"
+        style={{
+          display: f ? showParentLinkItem(param, f) : 'flex',
+        }}
+      >
         {specialParam.includes(param.cnName) ||
         param.componentType === COMPONENT_TYPE.FILEPATHINPUT ? (
           ''
@@ -637,6 +670,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                     setFlag={setFlag}
                     cmdName={checkedBlock.cmdName}
                     isWindowsAuto={checkedBlock.pkg === 'WindowsAuto'}
+                    properties={checkedBlock.properties}
                   />
                 </SelectContext.Provider>
               );
@@ -647,6 +681,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
             {(checkedBlock.properties.optional || []).map((param, index) => {
               return (
                 <ParamItem
+                  properties={checkedBlock.properties}
                   key={checkedBlock.id + index}
                   param={param}
                   handleEmitCodeTransform={handleEmitCodeTransform}
