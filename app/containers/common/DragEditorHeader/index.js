@@ -71,6 +71,7 @@ const layout = {
 export default memo(
   withRouter(({ history }) => {
     const dispatch = useDispatch();
+    const forceUpdateTag = useSelector(state => state.blockcode.forceUpdateTag);
 
     const [visible, setVisible] = useState(undefined);
     const [isExport, setIsExport] = useState(false);
@@ -295,17 +296,17 @@ export default memo(
           onClick: () => {
             dispatch({
               type: CHANGE_FORCEUPDATE_TAG,
-              payload: true,
+              payload: !forceUpdateTag,
             });
             dispatch({
               type: UNDO_CARDSDATA,
             });
-            setTimeout(() => {
-              dispatch({
-                type: CHANGE_FORCEUPDATE_TAG,
-                payload: false,
-              });
-            }, 0);
+            // setTimeout(() => {
+            //   dispatch({
+            //     type: CHANGE_FORCEUPDATE_TAG,
+            //     payload: false,
+            //   });
+            // }, 0);
           },
         },
         {
@@ -316,17 +317,17 @@ export default memo(
           onClick: () => {
             dispatch({
               type: CHANGE_FORCEUPDATE_TAG,
-              payload: true,
+              payload: !forceUpdateTag,
             });
             dispatch({
               type: REDO_CARDSDATA,
             });
-            setTimeout(() => {
-              dispatch({
-                type: CHANGE_FORCEUPDATE_TAG,
-                payload: false,
-              });
-            }, 0);
+            // setTimeout(() => {
+            //   dispatch({
+            //     type: CHANGE_FORCEUPDATE_TAG,
+            //     payload: false,
+            //   });
+            // }, 0);
           },
         },
         {

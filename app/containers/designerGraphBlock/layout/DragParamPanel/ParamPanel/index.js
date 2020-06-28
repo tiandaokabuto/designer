@@ -8,10 +8,11 @@ import React, {
   useCallback,
 } from 'react';
 import { Input, Select, Tooltip, Button, Modal } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 
 import event from '../../eventCenter';
+import { CHANGE_FORCEUPDATE_TAG } from '../../../../../actions/codeblock';
 import {
   useAIHintWatch,
   useAppendDataSource,
@@ -55,8 +56,9 @@ const getComponentType = (
   handleValidate,
   markBlockIsUpdated,
   cmdName,
-  isWindowsAuto
-  // properties
+  isWindowsAuto,
+  dispatch,
+  forceUpdateTag
 ) => {
   const [inputValue, setInputValue] = useState(
     param.enName === 'sqlStr'
@@ -325,6 +327,10 @@ const getComponentType = (
           dropdownMatchSelectWidth={false}
           onChange={value => {
             param.value = value;
+            dispatch({
+              type: CHANGE_FORCEUPDATE_TAG,
+              payload: !forceUpdateTag,
+            });
             markBlockIsUpdated();
             handleEmitCodeTransform(cards);
           }}
@@ -382,6 +388,8 @@ const ParamItem = ({
   cmdName,
   isWindowsAuto,
   properties,
+  dispatch,
+  forceUpdateTag,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
   const specialParam = ['条件', '循环条件', '任务数据名称'];
@@ -400,6 +408,7 @@ const ParamItem = ({
     return flag;
   };
 
+  // 是否显示关联属性
   const showParentLinkItem = (param, item) => {
     if (item.value.toString() === param.parentLink.value.toString()) {
       return 'flex';
@@ -437,7 +446,9 @@ const ParamItem = ({
             handleValidate,
             markBlockIsUpdated,
             cmdName,
-            isWindowsAuto
+            isWindowsAuto,
+            dispatch,
+            forceUpdateTag
           )}
         </div>
       </div>
@@ -456,6 +467,7 @@ const SelectContext = React.createContext({
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const forceUpdateTag = useSelector(state => state.blockcode.forceUpdateTag);
+  const dispatch = useDispatch();
   const { main } = checkedBlock;
   const isDescUseOriginDate = main === 'loop' || main === 'condition';
   const [flag, setFlag] = useState(false);
@@ -661,6 +673,8 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                   key={checkedBlock.id + index}
                 >
                   <ParamItem
+                    dispatch={dispatch}
+                    forceUpdateTag={forceUpdateTag}
                     param={param}
                     handleEmitCodeTransform={handleEmitCodeTransform}
                     markBlockIsUpdated={markBlockIsUpdated}
@@ -681,6 +695,8 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
             {(checkedBlock.properties.optional || []).map((param, index) => {
               return (
                 <ParamItem
+                  dispatch={dispatch}
+                  forceUpdateTag={forceUpdateTag}
                   properties={checkedBlock.properties}
                   key={checkedBlock.id + index}
                   param={param}
