@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   mxGraph as MxGraph,
   mxCell,
@@ -10,13 +10,16 @@ import {
   mxStyleRegistry,
   mxUtils,
   mxGraphHandler,
+  mxRubberband as MxRubberband,
 } from 'mxgraph-js';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import { useSelector } from 'react-redux';
+import uniqueId from 'lodash/uniqueId';
 
 import MxGraphHeader from './components/MxGraphHeader';
 import component from './Component';
 import RComponent from './RComponent';
+import groundComponent from './GroupComponent';
 import event from '../../../designerGraphBlock/layout/eventCenter';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
 
@@ -27,36 +30,52 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
   console.log(graphData, graphDataMap);
   const graphContainer = useRef(null);
-  let graph = null;
+  const [graph, setGraph] = useState(null);
 
   useEffect(() => {
     const container = graphContainer.current;
-    graph = new MxGraph(container);
-    // 启用插入html label
-    graph.htmlLabels = true;
-
-    // 取消设置连线选中时出现那个调整点
-    mxEdgeHandler.prototype.handleImage = new MxImage('', 0, 0);
-
-    // 启用连线功能
-    graph.setConnectable(true);
-    graph.connectionHandler.getConnectImage = function(state) {
-      return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
-    };
-
-    // 连线不允许悬空
-    graph.setAllowDanglingEdges(false);
-
-    // 启用辅助线
-    mxGraphHandler.prototype.guidesEnabled = true;
-
-    // 设置连线样式
-    setDataMingEdgeStyle();
-    // 设置
-    configureStylesheet();
-    // 配置mxCell方法
-    configMxCell();
+    setGraph(new MxGraph(container));
   }, []);
+
+  useEffect(() => {
+    if (graph) {
+      // 启用插入html label
+      graph.htmlLabels = true;
+
+      // 取消设置连线选中时出现那个调整点
+      mxEdgeHandler.prototype.handleImage = new MxImage('', 0, 0);
+
+      // 启用连线功能
+      graph.setConnectable(true);
+      graph.connectionHandler.getConnectImage = function(state) {
+        return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
+      };
+
+      // 连线不允许悬空
+      graph.setAllowDanglingEdges(false);
+      // 允许子项内容超出父项
+      graph.constrainChildren = false;
+      // 允许子项改变宽度后，内容超出父项
+      graph.extendParents = false;
+      // 允许拖拽到另一个单元格中
+      graph.setDropEnabled(true);
+
+      // 允许框线选择
+      // eslint-disable-next-line no-new
+      new MxRubberband(graph);
+
+      // 启用辅助线
+      mxGraphHandler.prototype.guidesEnabled = true;
+      window.mxGraphHandler = mxGraphHandler;
+
+      // 设置连线样式
+      setDataMingEdgeStyle();
+      // 设置
+      configureStylesheet();
+      // 配置mxCell方法
+      configMxCell();
+    }
+  }, [graph]);
 
   useEffect(() => {
     // 监听添加事件
@@ -64,7 +83,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     return () => {
       event.removeListener('createFunctionCell', createFunctionCell);
     };
-  }, []);
+  }, [graph]);
 
   const createFunctionCell = (commonData, data) => {
     switch (commonData.componentType) {
@@ -74,6 +93,9 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
         break;
       case 'rhombus':
         new RComponent(graph, commonData, data);
+        break;
+      case 'group':
+        groundComponent(graph, commonData, data);
         break;
       default:
         break;
@@ -204,11 +226,14 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   const onDrop = e => {
     const componentToDropType = e.dataTransfer.getData('componentToDropType');
     const rComponentToDropType = e.dataTransfer.getData('rComponentToDropType');
+    const groupComponentToDropType = e.dataTransfer.getData(
+      'groupComponentToDropType'
+    );
 
+    const x = e.clientX;
+    const y = e.clientY;
+    const width = document.querySelector('.designergraph-item').clientWidth;
     if (componentToDropType) {
-      const x = e.clientX;
-      const y = e.clientY;
-      const width = document.querySelector('.designergraph-item').clientWidth;
       /* let left = x - 450 + offsetLeft;
       let top = y - 70 + offsetTop;
 
@@ -224,24 +249,34 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
           left: x - width - 87,
           top: y - 112 - 19,
           componentType: 'process',
-          nodeId: 1,
+          nodeId: uniqueId('mxGraph'),
           name: '流程块',
           node_status: 0,
         },
         {}
       );
     } else if (rComponentToDropType) {
-      let x = e.clientX;
-      let y = e.clientY;
-      const width = document.querySelector('.designergraph-item').clientWidth;
       event.emit(
         'createFunctionCell',
         {
           left: x - width - 87,
           top: y - 112 - 19,
           componentType: 'rhombus',
-          nodeId: 1,
+          nodeId: uniqueId('mxGraph'),
           name: '判断',
+          node_status: 0,
+        },
+        {}
+      );
+    } else if (groupComponentToDropType) {
+      event.emit(
+        'createFunctionCell',
+        {
+          left: x - width - 87,
+          top: y - 112 - 19,
+          componentType: 'group',
+          nodeId: uniqueId('mxGraph'),
+          name: '容器',
           node_status: 0,
         },
         {}
@@ -259,7 +294,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
   return (
     <div id="graphContent">
-      <MxGraphHeader />
+      <MxGraphHeader graph={graph} />
       <div onDrop={onDrop} className="dropContent" onDragOver={allowDrop}>
         <div
           className="graph-container"
