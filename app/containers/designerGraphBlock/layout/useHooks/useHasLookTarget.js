@@ -11,6 +11,7 @@ export default card => {
     optional.some(item => item.enName === 'xpath') ||
     card.main === 'mousePosition' ||
     card.main === 'changeWinStatus' ||
-    card.main === 'closeWin'
+    card.main === 'closeWin' ||
+    card.main === 'clickImage'
   );
 };

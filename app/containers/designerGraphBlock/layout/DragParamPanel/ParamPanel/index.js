@@ -8,10 +8,11 @@ import React, {
   useCallback,
 } from 'react';
 import { Input, Select, Tooltip, Button, Modal } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 
 import event from '../../eventCenter';
+import { CHANGE_FORCEUPDATE_TAG } from '../../../../../actions/codeblock';
 import {
   useAIHintWatch,
   useAppendDataSource,
@@ -55,7 +56,9 @@ const getComponentType = (
   handleValidate,
   markBlockIsUpdated,
   cmdName,
-  isWindowsAuto
+  isWindowsAuto,
+  dispatch,
+  forceUpdateTag
 ) => {
   const [inputValue, setInputValue] = useState(
     param.enName === 'sqlStr'
@@ -72,8 +75,6 @@ const getComponentType = (
   const emitCode = () => {
     handleEmitCodeTransform(cards);
   };
-
-  const isMultiple = () => {};
 
   // 任务数据下拉列表
   const [appendDataSource] = useAppendDataSource(param);
@@ -258,12 +259,17 @@ const getComponentType = (
       />
     );
   }
+  // 常规处理
   switch (param.componentType) {
     case COMPONENT_TYPE.INPUT:
+      // const flag = isParentLink(param, properties);
+
       if (param.enName !== 'outPut') {
         return (
           <AutoCompletePlusParam
             param={param}
+            // parentLink={flag}
+            // showParentLinkItem={showParentLinkItem}
             aiHintList={aiHintList}
             appendDataSource={appendDataSource}
             keyFlag={keyFlag}
@@ -321,6 +327,10 @@ const getComponentType = (
           dropdownMatchSelectWidth={false}
           onChange={value => {
             param.value = value;
+            dispatch({
+              type: CHANGE_FORCEUPDATE_TAG,
+              payload: !forceUpdateTag,
+            });
             markBlockIsUpdated();
             handleEmitCodeTransform(cards);
           }}
@@ -377,14 +387,46 @@ const ParamItem = ({
   setFlag,
   cmdName,
   isWindowsAuto,
+  properties,
+  dispatch,
+  forceUpdateTag,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
   const specialParam = ['条件', '循环条件', '任务数据名称'];
   // const specialParam = ['条件', '循环条件'];
 
+  // 判断是否是关联属性
+  const isParentLink = (param, properties) => {
+    let flag = false;
+    if (param.parentLink) {
+      properties.required.forEach(requiredItem => {
+        if (requiredItem.enName === param.parentLink.enName) {
+          flag = requiredItem;
+        }
+      });
+    }
+    return flag;
+  };
+
+  // 是否显示关联属性
+  const showParentLinkItem = (param, item) => {
+    if (item.value.toString() === param.parentLink.value.toString()) {
+      return 'flex';
+    } else {
+      return 'none';
+    }
+  };
+
+  const f = isParentLink(param, properties);
+
   return (
     <React.Fragment>
-      <div className="parampanel-item">
+      <div
+        className="parampanel-item"
+        style={{
+          display: f ? showParentLinkItem(param, f) : 'flex',
+        }}
+      >
         {specialParam.includes(param.cnName) ||
         param.componentType === COMPONENT_TYPE.FILEPATHINPUT ? (
           ''
@@ -404,7 +446,9 @@ const ParamItem = ({
             handleValidate,
             markBlockIsUpdated,
             cmdName,
-            isWindowsAuto
+            isWindowsAuto,
+            dispatch,
+            forceUpdateTag
           )}
         </div>
       </div>
@@ -423,6 +467,7 @@ const SelectContext = React.createContext({
 
 export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
   const forceUpdateTag = useSelector(state => state.blockcode.forceUpdateTag);
+  const dispatch = useDispatch();
   const { main } = checkedBlock;
   const isDescUseOriginDate = main === 'loop' || main === 'condition';
   const [flag, setFlag] = useState(false);
@@ -628,6 +673,8 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                   key={checkedBlock.id + index}
                 >
                   <ParamItem
+                    dispatch={dispatch}
+                    forceUpdateTag={forceUpdateTag}
                     param={param}
                     handleEmitCodeTransform={handleEmitCodeTransform}
                     markBlockIsUpdated={markBlockIsUpdated}
@@ -637,6 +684,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                     setFlag={setFlag}
                     cmdName={checkedBlock.cmdName}
                     isWindowsAuto={checkedBlock.pkg === 'WindowsAuto'}
+                    properties={checkedBlock.properties}
                   />
                 </SelectContext.Provider>
               );
@@ -647,6 +695,9 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
             {(checkedBlock.properties.optional || []).map((param, index) => {
               return (
                 <ParamItem
+                  dispatch={dispatch}
+                  forceUpdateTag={forceUpdateTag}
+                  properties={checkedBlock.properties}
                   key={checkedBlock.id + index}
                   param={param}
                   handleEmitCodeTransform={handleEmitCodeTransform}
