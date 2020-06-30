@@ -18,12 +18,18 @@ const Tags = ({ tagsData, className, selectedTags, handleChange }) => {
     <div className={className}>
       {tagsData.map(({ label, icon, fill }) => (
         <CheckableTag
+          // style={{
+          //   background: 'rgba(50,166,127,1)',
+          // }}
           key={label}
           checked={checkTagIsChecked(label)}
           onChange={checked => handleChange(checked, label)}
         >
-          <Icon type={icon} style={{ color: fill }} />
-          <span className={`${className}-label`}>{label}</span>
+          {/* <Icon type={icon} style={{ color: fill }} /> */}
+          <Icon type={icon} style={{ color: 'black' }} />
+          <span style={{ color: 'black' }} className={`${className}-label`}>
+            {label}
+          </span>
         </CheckableTag>
       ))}
     </div>

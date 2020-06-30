@@ -270,10 +270,12 @@ const BasicStatement = useInjectContext(props => {
       handleEmitCodeTransform(cards);
     });
     ipcRenderer.on('updateClickImage', (e, { imageData, targetId }) => {
+      console.log(imageData);
       if (targetId !== id) return;
       card.properties.required[0].updateId = true;
       if (imageData) {
         card.properties.required[0].value = `"${imageData}"`;
+        card.targetImage = imageData;
         setTargetImage(imageData);
       }
       card.hasModified = true;
