@@ -91,6 +91,18 @@ const getComponentType = (
                   onChange(e.target.value);
                   setInputValue(e.target.value);
                 }}
+                placeholder={param.default}
+                onFocus={e => {
+                  console.log(String(param.default) === inputValue);
+                  if (String(param.default) === inputValue) {
+                    setInputValue('');
+                  }
+                }}
+                onBlur={e => {
+                  if (inputValue === '') {
+                    setInputValue(param.default);
+                  }
+                }}
               />
             );
           }}
@@ -262,14 +274,10 @@ const getComponentType = (
   // 常规处理
   switch (param.componentType) {
     case COMPONENT_TYPE.INPUT:
-      // const flag = isParentLink(param, properties);
-
       if (param.enName !== 'outPut') {
         return (
           <AutoCompletePlusParam
             param={param}
-            // parentLink={flag}
-            // showParentLinkItem={showParentLinkItem}
             aiHintList={aiHintList}
             appendDataSource={appendDataSource}
             keyFlag={keyFlag}
@@ -288,6 +296,18 @@ const getComponentType = (
             return (
               <Input
                 {...props}
+                placeholder={param.default}
+                onFocus={e => {
+                  console.log('focus');
+                  if (String(param.default) === inputValue) {
+                    setInputValue('');
+                  }
+                }}
+                onBlur={e => {
+                  if (inputValue === '') {
+                    setInputValue(param.default);
+                  }
+                }}
                 onChange={e => {
                   onChange(e.target.value);
                   setInputValue(e.target.value);
@@ -390,6 +410,7 @@ const ParamItem = ({
   properties,
   dispatch,
   forceUpdateTag,
+  required,
 }) => {
   const [err, message, handleValidate] = useVerifyInput(param);
   const specialParam = ['条件', '循环条件', '任务数据名称'];
@@ -411,7 +432,7 @@ const ParamItem = ({
   // 是否显示关联属性
   const showParentLinkItem = (param, item) => {
     if (item.value.toString() === param.parentLink.value.toString()) {
-      return 'flex';
+      return '';
     } else {
       return 'none';
     }
@@ -424,7 +445,7 @@ const ParamItem = ({
       <div
         className="parampanel-item"
         style={{
-          display: f ? showParentLinkItem(param, f) : 'flex',
+          display: f ? showParentLinkItem(param, f) : '',
         }}
       >
         {specialParam.includes(param.cnName) ||
@@ -432,7 +453,12 @@ const ParamItem = ({
           ''
         ) : (
           <span className="param-title" title={param.desc}>
-            {param.cnName}
+            <span style={{ color: 'red' }}>{required ? '* ' : ''}</span>
+            <span>{param.cnName}</span>
+            <span style={{ color: 'rgba(204,204,204,1)', fontSize: 12 }}>
+              {' '}
+              ({param.desc})
+            </span>
           </span>
         )}
         <div style={{ flex: 1, overflow: 'hidden' }}>
@@ -550,8 +576,12 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
     <div className="parampanel" onKeyDown={e => stopDeleteKeyDown(e)}>
       {checkedBlock && (
         <Fragment>
-          <div className="parampanel-desc" key={forceUpdateTag ? '0' : '1'}>
-            <span>命令描述符</span>
+          <div
+            className="parampanel-content"
+            style={{ paddingTop: 8 }}
+            key={forceUpdateTag ? '0' : '1'}
+          >
+            <span className="param-title">命令描述符</span>
             <RenderWithPlusInput
               render={({ onChange, ...props }) => {
                 return (
@@ -646,7 +676,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
         </Fragment>
       ) : (
         <Fragment key={forceUpdateTag ? '0' : '1'}>
-          <div className="parampanel-required">必选项</div>
+          {/* <div className="parampanel-required">必选项</div> */}
           <div className="parampanel-content">
             {(checkedBlock.properties.required || []).map((param, index) => {
               if (param.enName === 'return_string') {
@@ -685,12 +715,13 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                     cmdName={checkedBlock.cmdName}
                     isWindowsAuto={checkedBlock.pkg === 'WindowsAuto'}
                     properties={checkedBlock.properties}
+                    required={true}
                   />
                 </SelectContext.Provider>
               );
             })}
           </div>
-          <div className="parampanel-optional">选填项</div>
+          {/* <div className="parampanel-optional">选填项</div> */}
           <div className="parampanel-content">
             {(checkedBlock.properties.optional || []).map((param, index) => {
               return (
@@ -707,6 +738,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
                   aiHintList={aiHintList}
                   setFlag={setFlag}
                   cmdName={checkedBlock.cmdName}
+                  required={false}
                 />
               );
             })}

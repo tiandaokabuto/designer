@@ -20,7 +20,7 @@ export default param => {
     axios
       .get(api('taskDataNames'))
       .then(res => {
-        console.log(res);
+        // console.log(res);
         return res ? res.data : { code: -1 };
       })
       .then(json => {

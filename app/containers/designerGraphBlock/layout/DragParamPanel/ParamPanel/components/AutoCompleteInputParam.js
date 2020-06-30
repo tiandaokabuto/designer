@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { AutoComplete, Input } from 'antd';
 import PropTypes from 'prop-types';
 import uniqueId from 'lodash/uniqueId';
@@ -48,7 +48,17 @@ const AutoCompleteInputParam = React.forwardRef(
     },
     ref
   ) => {
+    // 对密文进行解密
+    const defaultValue = () => {
+      const value = String(param.value || param.default);
+      if (param.enName === '_text' && isSelectEncty === 'True') {
+        return encrypt.argDecryptByDES(value);
+      }
+      return value;
+    };
+
     const [positionId, setPositionId] = useState('positon');
+    const [inputValue, setInputValue] = useState(defaultValue());
 
     const { paramType } = param;
     const hasParamType = paramType && Array.isArray(paramType);
@@ -96,6 +106,7 @@ const AutoCompleteInputParam = React.forwardRef(
         newValue = encrypt.argEncryptByDES(value);
       }
       param.value = newValue;
+      setInputValue(newValue);
       // 更改后，编译py代码
       handleEmitCodeTransform();
       if (onChange) onChange(newValue);
@@ -112,23 +123,24 @@ const AutoCompleteInputParam = React.forwardRef(
     };
 
     const id = useMemo(() => {
-      if (keyFlag || param.enName === 'xpath') {
-        return uniqueId('key_');
-      } else if (param.enName === 'position') {
+      if (param.enName === 'position') {
         if (param.updateId) {
           if (positionId === 'position') {
             setPositionId('triggleposition');
             param.updateId = false;
+            setInputValue(param.value);
             return 'triggleposition';
           } else {
             setPositionId('position');
             param.updateId = false;
+            setInputValue(param.value);
             return 'position';
           }
         }
         return positionId;
       } else if (param.updateId) {
         param.updateId = false;
+        setInputValue(param.value);
         return uniqueId('key_');
       }
       return '';
@@ -138,26 +150,20 @@ const AutoCompleteInputParam = React.forwardRef(
       if (param.enName === '_text' && isSelectEncty === 'True') {
         return <Input.Password visibilityToggle={false} />;
       } else if (!needTextArea) {
-        return <TextArea className="custom" style={{ height: 32 }} />;
+        return (
+          <TextArea className="custom" style={{ height: 32, width: '100%' }} />
+        );
       }
       return null;
-    };
-
-    // 对密文进行解密
-    const defaultValue = () => {
-      const value = String(param.value || param.default);
-      if (param.enName === '_text' && isSelectEncty === 'True') {
-        return encrypt.argDecryptByDES(value);
-      }
-      return value;
     };
 
     return (
       <AutoComplete
         key={id}
         ref={ref}
-        defaultValue={defaultValue()}
+        value={inputValue}
         dataSource={(dataSource || []).concat(appendDataSource)}
+        placeholder={param.default === 0 ? '0' : param.default}
         onSelect={value => {
           const dep = depList.find(item => {
             if (item.isVariable) {
@@ -200,12 +206,27 @@ const AutoCompleteInputParam = React.forwardRef(
             newValue = encrypt.argEncryptByDES(value);
           }
           param.value = newValue;
+          setInputValue(newValue);
           handleEmitCodeTransform();
           // 验证
           handleValidate({
             value,
           });
           if (onChange) onChange(newValue);
+        }}
+        onFocus={() => {
+          // 默认值跟当前值相等，清空重新输入
+          console.log(String(ref.current.props.placeholder) === inputValue);
+          if (String(ref.current.props.placeholder) === inputValue) {
+            ref.current.props.onChange('');
+          }
+        }}
+        onBlur={() => {
+          console.log(ref.current.props.placeholder);
+          // 当前输入框为空
+          if (inputValue === '') {
+            ref.current.props.onChange(String(ref.current.props.placeholder));
+          }
         }}
         // 不对DataSource进行查询，详情咨询吴炯
         filterOption={() => true}
