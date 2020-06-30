@@ -1,9 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Input, Button, Modal } from 'antd';
 import PropTypes from 'prop-types';
 
 import AutoCompleteInputParam from './AutoCompleteInputParam';
-import { useEffect } from 'react';
 
 const RenderWithPlusInput = ({ render, value, onChange, ...props }) => {
   const inputEl = useRef(null);
@@ -26,11 +25,17 @@ const RenderWithPlusInput = ({ render, value, onChange, ...props }) => {
   };
 
   return (
-    <div className="parampanel-item">
-      <div className="parampanel-item-adapt">
+    <div className="parampanel-item-content">
+      <div className="parampanel-item-content-adapt">
         {render({ onChange, value, ...props })}
       </div>
-      <Button onClick={() => setVisible(true)}>...</Button>
+      <Button
+        style={{
+          marginLeft: 8,
+        }}
+        icon="credit-card"
+        onClick={() => setVisible(true)}
+      ></Button>
       <Modal
         title="请输入内容"
         visible={visible}

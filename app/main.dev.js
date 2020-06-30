@@ -157,7 +157,7 @@ appexpress.post('/clickImage', function (req, res) {
     if (!finallyResult.value) {
       return;
     }
-    console.log(finallyResult.value);
+    // console.log(finallyResult.value);
 
     mainWindow.restore();
     mainWindow.webContents.send('updateClickImage', {

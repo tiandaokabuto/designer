@@ -332,9 +332,7 @@ export default memo(
             prevConfig = cloneDeep(param.config);
             setVisible(true);
           }}
-        >
-          ...
-        </Button>
+        ></Button>
         <Modal
           title="xpath"
           visible={visible}
