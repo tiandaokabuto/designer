@@ -21,7 +21,7 @@ import './MxGraphHeader.scss';
 const MxGraphHeader = ({ graph, container }) => {
   /**
    * 判断是否是可容纳组件
-   * @param {*} cell 单元
+   * @param {mxCell} cell 单元
    */
   const isContainer = cell => {
     const style = graph.getCellStyle(cell);
@@ -322,13 +322,17 @@ const MxGraphHeader = ({ graph, container }) => {
     if (graph) {
       let cell = null;
       for (let i = 0; i < 2; i += 1) {
-        const label = i === 0 ? 'contain' : 'process';
+        const label =
+          i === 0
+            ? 'contain'
+            : '<div class="compoent-content"><label class="component-icon"></label><span class="component-name" title="process">流程块</span></div>';
         const style =
           i === 0
-            ? 'html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;'
+            ? 'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;'
             : 'label;whiteSpace=wrap;html=1;image=../../../../images/icon.jpg';
-        cell = new mxCell(label, new mxGeometry(0, 0, 160, 70), style);
+        cell = new mxCell(label, new mxGeometry(0, 0, 186, 55), style);
         cell.vertex = true;
+        cell.setConnectable(false);
         const eltClassName = i === 0 ? 'ground' : 'process';
         const elt = document.getElementsByClassName(
           `designergraph-container-header-tool-${eltClassName}`

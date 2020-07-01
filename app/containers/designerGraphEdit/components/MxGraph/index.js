@@ -11,6 +11,7 @@ import {
   mxUtils,
   mxGraphHandler,
   mxRubberband as MxRubberband,
+  mxPerimeter,
 } from 'mxgraph-js';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import { useSelector } from 'react-redux';
@@ -24,6 +25,8 @@ import event from '../../../designerGraphBlock/layout/eventCenter';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
 
 import './index.scss';
+
+window.mxLoadStylesheets = false;
 
 const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   const graphData = useSelector(state => state.grapheditor.graphData);
@@ -152,6 +155,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   };
 
   const configureStylesheet = () => {
+    // 定义连线点的样式
     let style = {};
     graph.getStylesheet().putCellStyle('port', style);
     style = graph.getStylesheet().getDefaultEdgeStyle();
@@ -159,7 +163,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     style[mxConstants.STYLE_STROKEWIDTH] = '1';
     style[mxConstants.STYLE_STROKECOLOR] = '#777777';
     style[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
-    // style[mxConstants.STYLE_EDGE] = mxEdgeStyle.TopToBottom;
     style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ComponentEdge;
     style[mxConstants.STYLE_CURVED] = true;
     mxConstants.EDGE_SELECTION_DASHED = false;
@@ -171,6 +174,37 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     mxConstants.HANDLE_STROKECOLOR = '#000000';
     mxConstants.GUIDE_COLOR = '#40a9ff';
     mxConstants.VALID_COLOR = '#40a9ff';
+
+    // 定义流程块的样式
+    style = {};
+    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
+    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
+    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
+    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
+    style[mxConstants.STYLE_FILLCOLOR] = '#edf6f7';
+    style[mxConstants.STYLE_STROKECOLOR] = '#3d6dcc';
+    style[mxConstants.STYLE_FONTCOLOR] = '#000000';
+    style[mxConstants.STYLE_ROUNDED] = true;
+    style[mxConstants.STYLE_FONTSIZE] = '12';
+    style[mxConstants.STYLE_FONTSTYLE] = 0;
+    style[mxConstants.STYLE_IMAGE_WIDTH] = '48';
+    style[mxConstants.STYLE_IMAGE_HEIGHT] = '48';
+    graph.getStylesheet().putDefaultVertexStyle(style);
+
+    // 定义容器块的样式
+    style = {};
+    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_SWIMLANE;
+    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
+    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_FILLCOLOR] = '#33a58a';
+    style[mxConstants.STYLE_STROKECOLOR] = '#33a58a';
+    style[mxConstants.STYLE_FONTCOLOR] = '#fff';
+    style[mxConstants.STYLE_ROUNDED] = true;
+    style[mxConstants.STYLE_STARTSIZE] = '30';
+    style[mxConstants.STYLE_FONTSIZE] = '16';
+    style[mxConstants.STYLE_FONTSTYLE] = 1;
+    graph.getStylesheet().putCellStyle('group', style);
   };
 
   /**
