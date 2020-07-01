@@ -73,28 +73,30 @@ class EditableCell extends React.Component {
     const { editing } = this.state;
     return editing ? (
       <Form.Item style={{ margin: 0 }}>
-        {/*
+        {
+          /*
           经过 getFieldDecorator 包装的控件，表单控件会自动添加 value（或 valuePropName 指定的其他属性） onChange（或 trigger 指定的其他属性）
           数据同步将被 Form 接管，这会导致以下结果：
           1. 你不再需要也不应该用 onChange 来做同步，但还是可以继续监听 onChange 等事件。
           2. 你不能用控件的 value defaultValue 等属性来设置表单域的值，默认值可以用 getFieldDecorator 里的 initialValue。
           3. 你不应该用 setState，可以使用 this.props.form.setFieldsValue 来动态改变表单值。 */
-        form.getFieldDecorator(dataIndex, {
-          rules: [
-            {
-              // required: true,
-              // message: `${title} is required.`,
-            },
-          ],
-          initialValue: record[dataIndex],
-        })(
-          // 回调ref，函数接受 React 组件实例或 HTML DOM 元素作为参数，以使它们能在其他地方被存储和访问。
-          <Input
-            ref={node => (this.input = node)}
-            onPressEnter={this.save}
-            onBlur={this.save}
-          />
-        )}
+          form.getFieldDecorator(dataIndex, {
+            rules: [
+              {
+                // required: true,
+                // message: `${title} is required.`,
+              },
+            ],
+            initialValue: record[dataIndex],
+          })(
+            // 回调ref，函数接受 React 组件实例或 HTML DOM 元素作为参数，以使它们能在其他地方被存储和访问。
+            <Input
+              ref={node => (this.input = node)}
+              onPressEnter={this.save}
+              onBlur={this.save}
+            />
+          )
+        }
       </Form.Item>
     ) : (
       <div

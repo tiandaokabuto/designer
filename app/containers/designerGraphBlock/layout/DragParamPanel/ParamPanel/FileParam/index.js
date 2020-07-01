@@ -39,6 +39,10 @@ export default ({
         }}
       />
       <Button
+        style={{
+          marginLeft: 8,
+          width: 38,
+        }}
         onClick={() => {
           listener = param;
           ipcRenderer.removeAllListeners('chooseItem');
@@ -51,9 +55,8 @@ export default ({
           );
           ipcRenderer.on('chooseItem', handleFilePath);
         }}
-      >
-        选择
-      </Button>
+        icon="ellipsis"
+      ></Button>
     </div>
   );
 };

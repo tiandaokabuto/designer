@@ -53,9 +53,12 @@
       box-shadow: 0 1px 0 0 rgba(238, 238, 238, 1);
       display: flex;
       .current-project-name {
+        font-size: 16px;
+        font-family: Heiti SC, '黑体-简';
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        // width: 130px;
         width: 180px;
       }
       i {
