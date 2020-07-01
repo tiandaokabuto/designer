@@ -31,6 +31,7 @@ module.exports = {
     'prettier/prettier': 'error',
     'react/jsx-filename-extension': [0],
     'import/no-extraneous-dependencies': 0,
+    'react/display-name': 0,
   },
   parserOptions: {
     ecmaVersion: 2019,
