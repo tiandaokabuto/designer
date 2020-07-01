@@ -192,14 +192,18 @@
         min-width: 68px;
         text-align: center;
       }
-      .ant-tabs-content {
-        height: calc(100vh - 120px);
-        overflow: auto;
-      }
+      // .ant-tabs-tabpane-active {
+      //   height: calc(100vh - 120px);
+      //   overflow: auto;
+      // }
       @include tabs();
     }
     .ant-tabs-nav {
       width: 288px;
+    }
+    .parampanel {
+      height: calc(100vh - 120px);
+      overflow: auto;
     }
   }
   .cursor__after {
