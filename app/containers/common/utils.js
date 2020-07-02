@@ -825,10 +825,12 @@ export const getChooseFilePath = (filePath, importType) => {
   const manifestEntry = unzip.getEntry('manifest.json');
   const text = unzip.readAsText(manifestEntry, 'utf8');
   const data = getDecryptOrNormal(text);
+
+  let importVersion = '0.0.0.0';
   try {
     const versionEntry = unzip.getEntry('designerVersion.json');
     const versionText = unzip.readAsText(versionEntry, 'utf8');
-    const importVersion = JSON.parse(versionText).designerVersion;
+    importVersion = JSON.parse(versionText)['designerVersion'];
   } catch (e) {
     console.log(e);
   }
