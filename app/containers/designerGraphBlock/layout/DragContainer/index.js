@@ -25,8 +25,8 @@ const DragContainer = () => {
         onClick={() => {
           const outputDom = document.querySelector('.dragger-editor-item');
           outputDom.style.display = '';
-          outputDom.style.flexBasis = '239px';
-          localStorage.setItem('secondLeft', '239');
+          outputDom.style.flexBasis = '288px';
+          localStorage.setItem('secondLeft', '288');
           localStorage.setItem('secondLeftHide', 'false');
           document.querySelector('.container-left').style.display = 'none';
         }}
@@ -41,8 +41,8 @@ const DragContainer = () => {
             '.dragger-editor-parampanel'
           );
           outputDom.style.display = '';
-          outputDom.style.flexBasis = '300px';
-          localStorage.setItem('secondRight', '300');
+          outputDom.style.flexBasis = '288px';
+          localStorage.setItem('secondRight', '288');
           localStorage.setItem('secondRightHide', 'false');
           document.querySelector('.container-right').style.display = 'none';
         }}

@@ -115,7 +115,7 @@ appexpress.post('/position', function (req, res) {
 });
 
 appexpress.post('/windowArray', function (req, res) {
-  console.log('windowArray');
+  // console.log('windowArray');
   try {
     const finallyResult = req.body;
 
@@ -157,7 +157,7 @@ appexpress.post('/clickImage', function (req, res) {
     if (!finallyResult.value) {
       return;
     }
-    console.log(finallyResult.value);
+    // console.log(finallyResult.value);
 
     mainWindow.restore();
     mainWindow.webContents.send('updateClickImage', {

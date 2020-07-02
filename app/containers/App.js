@@ -74,10 +74,10 @@ export default class App extends React.Component<Props> {
       readLoginConfig(this.resetConfig);
     });
     if (codeblock_left === null) {
-      localStorage.setItem('secondLeft', '239');
+      localStorage.setItem('secondLeft', '288');
     }
     if (codeblock_right === null) {
-      localStorage.setItem('secondRight', '300');
+      localStorage.setItem('secondRight', '288');
     }
 
     this.showReconnentTip = false;
@@ -200,8 +200,6 @@ export default class App extends React.Component<Props> {
       err => {
         if (err) {
           console.log(err);
-        } else {
-          console.log('写入成功');
         }
       }
     );

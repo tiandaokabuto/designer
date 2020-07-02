@@ -101,7 +101,7 @@ export default memo(
         }
       } else {
         setXpath('');
-        setClientXpath('');
+        setClientXpath(param.value);
         param.config.iframe = [];
       }
     };
@@ -324,13 +324,15 @@ export default memo(
           disabled
         />
         <Button
+          icon="credit-card"
+          style={{
+            marginLeft: 8,
+          }}
           onClick={() => {
             prevConfig = cloneDeep(param.config);
             setVisible(true);
           }}
-        >
-          ...
-        </Button>
+        ></Button>
         <Modal
           title="xpath"
           visible={visible}

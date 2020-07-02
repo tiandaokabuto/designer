@@ -32,6 +32,8 @@ export default memo(
       state => state.temporaryvariable.executeOutput
     );
 
+    const [openFlag, setOpenFlag] = useState(false);
+
     const [output, setOutput] = useState(executeOutput);
     const [filter, setFilter] = useState('');
     const [matchNum, setMatchNum] = useState(0);
@@ -68,7 +70,12 @@ export default memo(
           // originHeight = originHeight < 74 ? 74 : originHeight;
           const currentHeight = originHeight + offset;
           outputDom.style.height = currentHeight + 'px';
-          if (currentHeight > 40) setNewOutputTip(false);
+          if (currentHeight > 40) {
+            setNewOutputTip(false);
+            setOpenFlag(true);
+          } else {
+            setOpenFlag(false);
+          }
         }
       }, 0);
 
@@ -201,6 +208,7 @@ export default memo(
     }, [output, filter, cursor, selectedTags]);
 
     const handleTriggerOpen = () => {
+      // setOpenFlag(!openFlag);
       const basicHeight = '220px';
       const minHeight = '40px';
       const outputDom = document.querySelector(
@@ -212,6 +220,11 @@ export default memo(
       outputDom.className =
         'dragger-editor-container-output dragger-editor-container-output-animateOpen';
       outputDom.style.height = isMinStatus ? basicHeight : minHeight;
+      if (isMinStatus) {
+        setOpenFlag(true);
+      } else {
+        setOpenFlag(false);
+      }
       if (isMinStatus && newOutputTip) setNewOutputTip(false);
       setTimeout(() => {
         outputDom.className = 'dragger-editor-container-output';
@@ -277,7 +290,9 @@ export default memo(
           {tag === 'graph' && <ZoomToolBar />}
           <span
             className={
-              newOutputTip ? 'dragger-editor-container-output-title-tip' : ''
+              newOutputTip
+                ? 'dragger-editor-container-output-title-tip normal-tip'
+                : 'normal-tip'
             }
           >
             输出
@@ -287,8 +302,10 @@ export default memo(
             className="dragger-editor-container-output-anchor"
             onClick={handleTriggerOpen}
           >
-            <Icon type="caret-up" style={{ marginBottom: '-3px' }} />
-            <Icon type="caret-down" />
+            <Icon type={openFlag ? 'down' : 'up'} />
+            {/* <Icon type="caret-up" style={{ marginBottom: '-3px' }} />
+            
+            <Icon type="caret-down" /> */}
           </div>
           <Tags
             className="dragger-editor-container-output-tages"
@@ -333,6 +350,9 @@ export default memo(
           <pre
             className="dragger-editor-container-output-content"
             onMouseDown={e => e.stopPropagation()}
+            style={{
+              background: 'rgba(244,252,250,1)',
+            }}
           >
             {transformOutput}
           </pre>

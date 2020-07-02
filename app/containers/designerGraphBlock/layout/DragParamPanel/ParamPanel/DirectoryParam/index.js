@@ -54,7 +54,9 @@ export default ({
       <span className="param-title" title={param.desc}>
         {param.cnName}
       </span>
-      <div style={{ flex: 1, overflow: 'hidden' }}>
+      <div
+        style={{ flex: 1, overflow: 'hidden', marginTop: 4, marginBottom: 4 }}
+      >
         <Radio.Group onChange={onChange} value={tag}>
           <Radio value={1}>选择模式</Radio>
           <Radio value={2}>拼接模式</Radio>

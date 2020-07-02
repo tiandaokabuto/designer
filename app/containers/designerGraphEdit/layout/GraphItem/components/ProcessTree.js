@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Tree, Modal, Icon, Dropdown, Menu, message } from 'antd';
+import { Tree, Modal, Icon, Dropdown, Menu, message, Tooltip } from 'antd';
 import { useSelector } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
 import { ItemPanel, Item } from 'gg-editor';
@@ -68,28 +68,31 @@ const TreeNodeTitle = ({
           currentProject={currentProject}
         />
       ) : (
-        <div
-          style={{
-            flexBasis: 150,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {title}
-        </div>
+        <Tooltip placement="right" title={title}>
+          <div
+            style={{
+              flexBasis: 150,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {title}
+          </div>
+        </Tooltip>
       )}
+
       <span
         style={{
           visibility: hasModified ? 'visible' : 'hidden',
           verticalAlign: 'sub',
           display: 'inline-block',
           marginRight: 4,
-          color: hasModified ? 'red' : '',
+          color: hasModified ? 'rgba(204,204,204,1)' : '',
         }}
         className={hasModified ? 'hasModified' : 'notModified'}
       >
-        *
+        (未保存)
       </span>
     </div>
   );

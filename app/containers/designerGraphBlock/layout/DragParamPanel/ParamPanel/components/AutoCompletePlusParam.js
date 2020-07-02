@@ -31,8 +31,8 @@ const AutoCompletePlusParam = ({
   };
 
   return (
-    <div className="parampanel-item">
-      <div className="parampanel-item-adapt">
+    <div className="parampanel-item-content">
+      <div className="parampanel-item-content-adapt">
         <AutoCompleteInputParam
           ref={inputEl}
           param={param}
@@ -52,10 +52,12 @@ const AutoCompletePlusParam = ({
           setValue(String(param.value || param.default));
           setVisible(true);
         }}
+        style={{
+          marginLeft: 8,
+        }}
         disabled={isSelectEncty === 'True'}
-      >
-        ...
-      </Button>
+        icon="credit-card"
+      ></Button>
       <Modal
         title="请输入内容"
         visible={visible}

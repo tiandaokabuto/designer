@@ -98,12 +98,12 @@ const transformBasicStatement = (
   result.output += `${padding}${ignore}`;
   let params = ''; // 生成参数类型
   dataStructure.properties.required.forEach((item, index) => {
-    const f = isParentLink(item, dataStructure.properties);
+    const linkFlag = isParentLink(item, dataStructure.properties);
 
     // 是否是关联属性
-    if (f) {
+    if (linkFlag) {
       // 值是否与关联的值相等
-      if (f.value.toString() === item.parentLink.value.toString()) {
+      if (linkFlag.value.toString() === item.parentLink.value.toString()) {
         // 文件类型选择拼接模式，将item.valueList[0]目录名和item.valueList[1]文件名拼接起来
         if (item.componentType === 2 && item.tag === 2) {
           if (params) params += ', ';
