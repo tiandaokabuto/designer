@@ -115,7 +115,7 @@ appexpress.post('/position', function (req, res) {
 });
 
 appexpress.post('/windowArray', function (req, res) {
-  console.log('windowArray');
+  // console.log('windowArray');
   try {
     const finallyResult = req.body;
 

@@ -200,8 +200,6 @@ export default class App extends React.Component<Props> {
       err => {
         if (err) {
           console.log(err);
-        } else {
-          console.log('写入成功');
         }
       }
     );

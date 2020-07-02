@@ -270,10 +270,10 @@ export const renameNodeByKey = (
     getDecryptOrNormal
   );
   if (type === 'process') {
-    console.log('change tree');
+    // console.log('change tree');
     changeProcessTree([...tree]);
   } else {
-    console.log('change module tree');
+    // console.log('change module tree');
     changeModuleTree([...tree]);
   }
   return node;
@@ -718,7 +718,7 @@ export const addToReuse = () => {
     checkNode.shape === 'rhombus-node' ||
     checkNode.shape === 'end-node'
   ) {
-    console.log(checkNode);
+    // console.log(checkNode);
     message.warning('不能复用此节点');
     return;
   }
@@ -764,8 +764,6 @@ export const exportCustomProcessBlock = () => {
   } = store.getState();
 
   const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
-
-  console.log(data);
 
   getDownloadPath(filePath => {
     try {
