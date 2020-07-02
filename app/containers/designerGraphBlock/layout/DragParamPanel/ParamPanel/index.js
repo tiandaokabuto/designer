@@ -298,7 +298,6 @@ const getComponentType = (
                 {...props}
                 placeholder={param.default}
                 onFocus={e => {
-                  console.log('focus');
                   if (String(param.default) === inputValue) {
                     setInputValue('');
                   }
@@ -438,14 +437,14 @@ const ParamItem = ({
     }
   };
 
-  const f = isParentLink(param, properties);
+  const linkFlag = isParentLink(param, properties);
 
   return (
     <React.Fragment>
       <div
         className="parampanel-item"
         style={{
-          display: f ? showParentLinkItem(param, f) : '',
+          display: linkFlag ? showParentLinkItem(param, linkFlag) : '',
         }}
       >
         {specialParam.includes(param.cnName) ||
