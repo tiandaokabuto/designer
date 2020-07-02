@@ -174,6 +174,12 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
                 !this.isCellCollapsed(cell)))))
       );
     };
+    // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
+    MxGraph.prototype.isPort = function(cell) {
+      const geo = this.getCellGeometry(cell);
+
+      return geo != null ? geo.relative : false;
+    };
   };
 
   const configEventHandle = () => {
@@ -182,8 +188,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
       if (cell != null) {
         const overlays = graph.getCellOverlays(cell);
+        // 排除连接点和连接线
+        const isPort = graph.isPort(cell);
 
-        if (overlays == null) {
+        if (overlays == null && !isPort) {
           // Creates a new overlay with an image and a tooltip
           const overlay = new mxCellOverlay(
             new MxImage('./containers/images/check.png', 16, 16),
@@ -192,7 +200,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
           // Installs a handler for clicks on the overlay
           overlay.addListener(mxEvent.CLICK, function(sender, evt2) {
-            mxUtils.alert('Overlay clicked');
+            // mxUtils.alert('Overlay clicked');
           });
 
           // Sets the overlay for the cell in the graph
