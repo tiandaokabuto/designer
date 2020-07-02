@@ -245,11 +245,13 @@ export default (id, visibleTemplate) => {
 
         let value = '';
         if (find) {
-          if (find.valueMapping && find.valueMapping.length !== 0) {
-            if (find.cnName !== '条件') {
-              value = find.valueMapping.find(item => item.value === find.value)
-                .name;
-            }
+          if (
+            find.valueMapping &&
+            find.valueMapping.length !== 0 &&
+            find.cnName !== '条件'
+          ) {
+            value = find.valueMapping.find(item => item.value === find.value)
+              .name;
           } else {
             value = find.value || find.default;
           }
