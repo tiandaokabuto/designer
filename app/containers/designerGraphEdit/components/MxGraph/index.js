@@ -152,6 +152,22 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     mxCell.prototype.setPortType = function(portType) {
       this.portType = portType;
     };
+
+    // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
+    MxGraph.prototype.isValidDropTarget = function(cell, cells, evt) {
+      const style = this.getCellStyle(cell);
+      const isContainer = style.container === 1;
+
+      return (
+        cell != null &&
+        ((this.isSplitEnabled() && this.isSplitTarget(cell, cells, evt)) ||
+          (!this.model.isEdge(cell) &&
+            (this.isSwimlane(cell) ||
+              (this.model.getChildCount(cell) > 0 &&
+                isContainer &&
+                !this.isCellCollapsed(cell)))))
+      );
+    };
   };
 
   const configureStylesheet = () => {

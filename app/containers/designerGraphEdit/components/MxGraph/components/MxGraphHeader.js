@@ -9,7 +9,7 @@ import {
   mxEvent,
   mxEventObject,
   mxDragSource,
-  mxPoint,
+  mxPoint as MxPoint,
   mxGraph,
   Graph,
 } from 'mxgraph-js';
@@ -121,7 +121,6 @@ const MxGraphHeader = ({ graph, container }) => {
           while (
             target !== null &&
             !graph.isValidDropTarget(target, cells, evt) &&
-            !isContainer(target) &&
             model.isVertex(model.getParent(target))
           ) {
             target = model.getParent(target);
@@ -134,8 +133,7 @@ const MxGraphHeader = ({ graph, container }) => {
                 graph.getModel().getChildCount(target) == 0) ||
               graph.isCellLocked(target) ||
               model.isEdge(target) ||
-              (!graph.isValidDropTarget(target, cells, evt) &&
-                !isContainer(target)))
+              !graph.isValidDropTarget(target, cells, evt))
           ) {
             target = null;
           }
@@ -329,10 +327,49 @@ const MxGraphHeader = ({ graph, container }) => {
         const style =
           i === 0
             ? 'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;'
-            : 'label;whiteSpace=wrap;html=1;image=../../../../images/icon.jpg';
+            : 'label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg';
         cell = new mxCell(label, new mxGeometry(0, 0, 186, 55), style);
         cell.vertex = true;
         cell.setConnectable(false);
+
+        // 连接点配置
+        const id = null;
+        const portHtml = '';
+        const portWidth = 6;
+        const portXPercent = 0.5;
+        const portBasicYPercent = 0;
+        const portHeight = 6;
+        const portStyle = 'port;align=center;spacingRight=18;resizable=0;';
+        const isPortPositionUsePercent = true;
+
+        // 生成单元格上连接点
+        let port = graph.insertVertex(
+          cell,
+          id,
+          portHtml,
+          portXPercent,
+          portBasicYPercent,
+          portWidth,
+          portHeight,
+          portStyle,
+          isPortPositionUsePercent
+        );
+        // 连接点偏移
+        port.geometry.offset = new MxPoint(-3, -3);
+        // 生成流程块主体下连接点
+        port = graph.insertVertex(
+          cell,
+          id,
+          portHtml,
+          portXPercent,
+          portBasicYPercent + 1,
+          portWidth,
+          portHeight,
+          portStyle,
+          isPortPositionUsePercent
+        );
+        port.geometry.offset = new MxPoint(-3, -3);
+
         const eltClassName = i === 0 ? 'ground' : 'process';
         const elt = document.getElementsByClassName(
           `designergraph-container-header-tool-${eltClassName}`
