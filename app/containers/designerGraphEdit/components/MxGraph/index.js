@@ -1,3 +1,4 @@
+/* eslint-disable no-new */
 import React, { useRef, useEffect, useState } from 'react';
 import {
   mxGraph as MxGraph,
@@ -12,6 +13,9 @@ import {
   mxGraphHandler,
   mxRubberband as MxRubberband,
   mxPerimeter,
+  mxEvent,
+  mxCellTracker as MxCellTracker,
+  mxCellOverlay,
 } from 'mxgraph-js';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import { useSelector } from 'react-redux';
@@ -25,8 +29,6 @@ import event from '../../../designerGraphBlock/layout/eventCenter';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
 
 import './index.scss';
-
-window.mxLoadStylesheets = false;
 
 const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   const graphData = useSelector(state => state.grapheditor.graphData);
@@ -64,8 +66,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       graph.setDropEnabled(true);
 
       // 允许框线选择
-      // eslint-disable-next-line no-new
       new MxRubberband(graph);
+
+      // 设置hover的高亮
+      new MxCellTracker(graph, '#00FF00');
 
       // 启用辅助线
       mxGraphHandler.prototype.guidesEnabled = true;
@@ -77,6 +81,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       configureStylesheet();
       // 配置mxCell方法
       configMxCell();
+      // 配置事件监听
+      configEventHandle();
     }
   }, [graph]);
 
@@ -168,6 +174,34 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
                 !this.isCellCollapsed(cell)))))
       );
     };
+  };
+
+  const configEventHandle = () => {
+    graph.addListener(mxEvent.CLICK, function(sender, evt) {
+      const cell = evt.getProperty('cell');
+
+      if (cell != null) {
+        const overlays = graph.getCellOverlays(cell);
+
+        if (overlays == null) {
+          // Creates a new overlay with an image and a tooltip
+          const overlay = new mxCellOverlay(
+            new MxImage('./containers/images/check.png', 16, 16),
+            'Overlay tooltip'
+          );
+
+          // Installs a handler for clicks on the overlay
+          overlay.addListener(mxEvent.CLICK, function(sender, evt2) {
+            mxUtils.alert('Overlay clicked');
+          });
+
+          // Sets the overlay for the cell in the graph
+          graph.addCellOverlay(cell, overlay);
+        } else {
+          graph.removeCellOverlays(cell);
+        }
+      }
+    });
   };
 
   const configureStylesheet = () => {
