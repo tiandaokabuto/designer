@@ -51,7 +51,7 @@ if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
 }
 
 module.exports = merge.smart(baseConfig, {
-  devtool: 'inline-source-map',
+  devtool: 'cheap-module-eval-source-map',
 
   mode: 'development',
 
