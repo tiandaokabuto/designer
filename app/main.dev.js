@@ -115,7 +115,7 @@ appexpress.post('/position', function (req, res) {
 });
 
 appexpress.post('/windowArray', function (req, res) {
-  console.log('windowArray');
+  // console.log('windowArray');
   try {
     const finallyResult = req.body;
 
@@ -212,8 +212,8 @@ const installExtensions = async () => {
 const createLoginWindow = () => {
   loginWindow = new BrowserWindow({
     show: false,
-    width: 800,
-    height: 500,
+    width: 804,
+    height: 504,
     // useContentSize: true,
     frame: false,
     hasShadow: true,

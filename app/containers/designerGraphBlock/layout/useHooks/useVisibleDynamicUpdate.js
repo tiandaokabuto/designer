@@ -245,7 +245,29 @@ export default (id, visibleTemplate) => {
 
         let value = '';
         if (find) {
-          value = find.value || find.default;
+          if (
+            find.valueMapping &&
+            find.valueMapping.length !== 0 &&
+            find.cnName !== '条件'
+          ) {
+            value = find.valueMapping.find(item => item.value === find.value)
+              .name;
+          } else {
+            value = find.value || find.default;
+          }
+          // if (
+          //   template.indexOf('设置任务数据字典') !== -1 &&
+          //   find.cnName === '状态'
+          // ) {
+          //   value = find.valueMapping.find(item => item.value === find.value)
+          //     .name;
+          // } else if (
+          //   template.indexOf('新增名称为') !== -1 &&
+          //   find.cnName === '优先级'
+          // ) {
+          // } else {
+          //   value = find.value || find.default;
+          // }
         }
         if (find && find.componentType === 2 && find.tag === 2) {
           const list = find.valueList;

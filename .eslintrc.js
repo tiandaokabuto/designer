@@ -32,7 +32,6 @@ module.exports = {
     'react/jsx-filename-extension': [0],
     'import/no-extraneous-dependencies': 0,
     'react/display-name': 0,
-    'no-param-reassign': 0,
   },
   parserOptions: {
     ecmaVersion: 2019,

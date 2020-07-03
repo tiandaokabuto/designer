@@ -213,7 +213,6 @@ export default memo(
         if (fromOrTo === undefined) {
           transformProcessToPython();
         } else {
-          console.log();
           transformPythonWithPoint(fromOrTo);
         }
         executePython(uuid, () => {

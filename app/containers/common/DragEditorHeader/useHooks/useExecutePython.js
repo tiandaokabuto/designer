@@ -65,11 +65,11 @@ export default () => {
         }
       }
     );
-    worker.stdout.on('data', function(data) {
+    worker.stdout.on('data', function (data) {
       const log = getUTF8(data);
       event.emit(PYTHON_OUTPUT, log);
     });
-    worker.stderr.on('data', function(data) {
+    worker.stderr.on('data', function (data) {
       const log = getUTF8(data);
       event.emit(PYTHON_OUTPUT, log);
     });
@@ -80,7 +80,6 @@ export default () => {
       callback && callback();
     });
     worker.on('exit', () => {
-      console.log('结束了');
       message.destroy();
       callback && callback();
     });

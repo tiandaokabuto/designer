@@ -243,7 +243,6 @@ const BasicStatement = useInjectContext(props => {
         updateXpath(id, xpath, type);
         handleEmitCodeTransform(cards);
         remote.getGlobal('sharedObject').xpathStatus = true;
-        console.log(remote.getGlobal('sharedObject').xpathStatus);
       }
     );
     ipcRenderer.on(
@@ -270,7 +269,6 @@ const BasicStatement = useInjectContext(props => {
       handleEmitCodeTransform(cards);
     });
     ipcRenderer.on('updateClickImage', (e, { imageData, targetId }) => {
-      console.log(imageData);
       if (targetId !== id) return;
       card.properties.required[0].updateId = true;
       if (imageData) {

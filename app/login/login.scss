@@ -1,12 +1,21 @@
 .login {
   display: flex;
+  background: white;
+  height: calc(100vh - 4px);
+  width: calc(100vw - 4px);
   // height: 100vh;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
-  position: absolute;
-  width: calc(100% - 16px);
-  height: calc(100% - 16px);
-  border-radius: 4px;
-  margin: 8px;
+  // box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  // position: absolute;
+  // width: calc(100% - 16px);
+  // height: calc(100% - 16px);
+  // border-radius: 4px;
+  // margin: 8px;
+  // position: fixed;
+  // top: 2px;
+  // left: 2px;
+  // box-shadow: 0 0 10px rgba(42, 140, 108, 1);
+  // width: 800px;
+  // background: white;
 
   &-left {
     flex-basis: 400px;
