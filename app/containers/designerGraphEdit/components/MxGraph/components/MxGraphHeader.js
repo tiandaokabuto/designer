@@ -33,12 +33,12 @@ const MxGraphHeader = ({ graph, container }) => {
     }
   };
 
-  const onComponentDragStart = (e, componentName) => {
-    e.dataTransfer.setData(
-      componentName,
-      e.target.getAttribute('data-component-type')
-    );
-  };
+  // const onComponentDragStart = (e, componentName) => {
+  //   e.dataTransfer.setData(
+  //     componentName,
+  //     e.target.getAttribute('data-component-type')
+  //   );
+  // };
 
   const createDragSource = (elt, dropHandler, preview, cells, bounds) => {
     let firstVertex = null;
@@ -55,7 +55,7 @@ const MxGraphHeader = ({ graph, container }) => {
     }
 
     // 成功拖拽后的回调方法
-    const funt = mxUtils.bind(this, function(...args) {
+    const funt = mxUtils.bind(this, function (...args) {
       dropHandler.apply(this, args);
     });
 
@@ -77,12 +77,12 @@ const MxGraphHeader = ({ graph, container }) => {
       highlightDropTargets
     );
 
-    dragSource.dragOver = function(...args) {
+    dragSource.dragOver = function (...args) {
       mxDragSource.prototype.dragOver.apply(this, args);
     };
 
     // 仅当拖拽目标是一个合法根的时候可以拖进
-    dragSource.getDropTarget = mxUtils.bind(this, function(graph, x, y, evt) {
+    dragSource.getDropTarget = mxUtils.bind(this, function (graph, x, y, evt) {
       // Alt表示没有目标
       // 得到与x，y相交的底层单元格
       let cell =
@@ -152,7 +152,7 @@ const MxGraphHeader = ({ graph, container }) => {
       allowCellsInserted !== null ? allowCellsInserted : true;
 
     // 更新视图
-    return mxUtils.bind(this, function(graph, evt, target, x, y, force) {
+    return mxUtils.bind(this, function (graph, evt, target, x, y, force) {
       let elt = null;
       if (!force) {
         elt = mxEvent.isTouchEvent(evt) /* || mxEvent.isPenEvent(evt) */
@@ -258,7 +258,7 @@ const MxGraphHeader = ({ graph, container }) => {
               select !== null &&
               select.length === 1
             ) {
-              window.setTimeout(function() {
+              window.setTimeout(function () {
                 graph.startEditing(select[0]);
               }, 0);
             }
@@ -275,7 +275,7 @@ const MxGraphHeader = ({ graph, container }) => {
     const oldMouseUp = ds.mouseUp;
     let first = null;
 
-    ds.mouseUp = function(evt) {
+    ds.mouseUp = function (evt) {
       try {
         if (
           !mxEvent.isPopupTrigger(evt) &&
@@ -319,15 +319,37 @@ const MxGraphHeader = ({ graph, container }) => {
   useEffect(() => {
     if (graph) {
       let cell = null;
-      for (let i = 0; i < 2; i += 1) {
-        const label =
-          i === 0
-            ? 'contain'
-            : '<div class="compoent-content"><label class="component-icon"></label><span class="component-name" title="process">流程块</span></div>';
-        const style =
-          i === 0
-            ? 'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;'
-            : 'label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg';
+      for (let i = 0; i < 3; i += 1) {
+        let label = '';
+        let style = '';
+        let eltClassName = '';
+        if (i === 0) {
+          label = 'contain';
+          style =
+            'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;';
+          eltClassName = 'ground';
+        } else if (i === 1) {
+          label =
+            '<div class="compoent-content"><label class="component-icon"></label><span class="component-name" title="process">流程块</span></div>';
+          style =
+            'label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg';
+          eltClassName = 'process';
+        } else if (i === 2) {
+          label = `<div class="rcomponent-content">
+            <label class="rcomponent-content-icon"></label>
+            <span class="rcomponent-name" title="condition">判断</span>
+          </div>`;
+          style = 'shape=rhombus;perimeter=ellipsePerimeter;resizable=0;';
+          eltClassName = 'condition';
+        }
+        // const label =
+        //   i === 0
+        //     ? 'contain'
+        //     : '<div class="compoent-content"><label class="component-icon"></label><span class="component-name" title="process">流程块</span></div>';
+        // const style =
+        //   i === 0
+        //     ? 'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;'
+        //     : 'label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg';
         cell = new mxCell(label, new mxGeometry(0, 0, 186, 55), style);
         cell.vertex = true;
         cell.setConnectable(false);
@@ -370,7 +392,7 @@ const MxGraphHeader = ({ graph, container }) => {
         );
         port.geometry.offset = new MxPoint(-3, -3);
 
-        const eltClassName = i === 0 ? 'ground' : 'process';
+        // const eltClassName = i === 0 ? 'ground' : 'process';
         const elt = document.getElementsByClassName(
           `designergraph-container-header-tool-${eltClassName}`
         )[0];
@@ -402,15 +424,15 @@ const MxGraphHeader = ({ graph, container }) => {
         </div>
 
         <div
-          className="designergraph-container-header-tool-rhombus"
-          draggable
-          data-component-type="rhombus"
-          onDragStart={e => onComponentDragStart(e, 'rComponentToDropType')}
+          className="designergraph-container-header-tool-condition"
+          // draggable
+          // data-component-type="rhombus"
+          // onDragStart={e => onComponentDragStart(e, 'rComponentToDropType')}
         >
-          <div className="designergraph-container-header-tool-rhombus-left">
+          <div className="designergraph-container-header-tool-condition-left">
             <span />
           </div>
-          <div className="designergraph-container-header-tool-rhombus-right">
+          <div className="designergraph-container-header-tool-condition-right">
             <span />
           </div>
           <span style={{ position: 'absolute', right: '18px' }}>判断</span>

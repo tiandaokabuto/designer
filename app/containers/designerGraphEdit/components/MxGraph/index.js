@@ -23,7 +23,7 @@ import uniqueId from 'lodash/uniqueId';
 
 import MxGraphHeader from './components/MxGraphHeader';
 import component from './Component';
-import RComponent from './RComponent';
+import conditionalComponent from './ConditionalComponent';
 import groundComponent from './GroupComponent';
 import event from '../../../designerGraphBlock/layout/eventCenter';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
@@ -52,7 +52,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
       // 启用连线功能
       graph.setConnectable(true);
-      graph.connectionHandler.getConnectImage = function(state) {
+      graph.connectionHandler.getConnectImage = function (state) {
         return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
       };
 
@@ -100,8 +100,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
         // 改造成function
         component(graph, commonData, data);
         break;
-      case 'rhombus':
-        new RComponent(graph, commonData, data);
+      case 'condition':
+        conditionalComponent(graph, commonData, data);
         break;
       case 'group':
         groundComponent(graph, commonData, data);
@@ -112,17 +112,17 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   };
 
   const configMxCell = () => {
-    mxCell.prototype.setNodeType = function(nodetype) {
+    mxCell.prototype.setNodeType = function (nodetype) {
       this.nodetype = nodetype;
     };
-    mxCell.prototype.setComponentType = function(componentType) {
+    mxCell.prototype.setComponentType = function (componentType) {
       this.componentType = componentType;
     };
-    mxCell.prototype.setNodeId = function(nodeId) {
+    mxCell.prototype.setNodeId = function (nodeId) {
       this.nodeId = nodeId;
     };
     // 更新组件状态
-    mxCell.prototype.updateStatus = function(graph, status) {
+    mxCell.prototype.updateStatus = function (graph, status) {
       let html = this.getValue();
       const index = html.indexOf('class="status');
       if (index === -1) {
@@ -152,15 +152,15 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       this.setValue(html);
       graph.cellLabelChanged(this, html);
     };
-    mxCell.prototype.setPortIndex = function(portIndex) {
+    mxCell.prototype.setPortIndex = function (portIndex) {
       this.portIndex = portIndex;
     };
-    mxCell.prototype.setPortType = function(portType) {
+    mxCell.prototype.setPortType = function (portType) {
       this.portType = portType;
     };
 
     // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
-    MxGraph.prototype.isValidDropTarget = function(cell, cells, evt) {
+    MxGraph.prototype.isValidDropTarget = function (cell, cells, evt) {
       const style = this.getCellStyle(cell);
       const isContainer = style.container === 1;
 
@@ -175,7 +175,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       );
     };
     // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
-    MxGraph.prototype.isPort = function(cell) {
+    MxGraph.prototype.isPort = function (cell) {
       const geo = this.getCellGeometry(cell);
 
       return geo != null ? geo.relative : false;
@@ -183,7 +183,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   };
 
   const configEventHandle = () => {
-    graph.addListener(mxEvent.CLICK, function(sender, evt) {
+    graph.addListener(mxEvent.CLICK, function (sender, evt) {
       const cell = evt.getProperty('cell');
 
       if (cell != null) {
@@ -199,7 +199,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
           );
 
           // Installs a handler for clicks on the overlay
-          overlay.addListener(mxEvent.CLICK, function(sender, evt2) {
+          overlay.addListener(mxEvent.CLICK, function (sender, evt2) {
             // mxUtils.alert('Overlay clicked');
           });
 
@@ -317,7 +317,9 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
    */
   const onDrop = e => {
     const componentToDropType = e.dataTransfer.getData('componentToDropType');
-    const rComponentToDropType = e.dataTransfer.getData('rComponentToDropType');
+    const conditionalComponentToDropType = e.dataTransfer.getData(
+      'conditionalComponentToDropType'
+    );
     const groupComponentToDropType = e.dataTransfer.getData(
       'groupComponentToDropType'
     );
@@ -347,13 +349,13 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
         },
         {}
       );
-    } else if (rComponentToDropType) {
+    } else if (conditionalComponentToDropType) {
       event.emit(
         'createFunctionCell',
         {
           left: x - width - 87,
           top: y - 112 - 19,
-          componentType: 'rhombus',
+          componentType: 'condition',
           nodeId: uniqueId('mxGraph'),
           name: '判断',
           node_status: 0,
