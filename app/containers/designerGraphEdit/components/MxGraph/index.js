@@ -16,6 +16,8 @@ import {
   mxEvent,
   mxCellTracker as MxCellTracker,
   mxCellOverlay,
+  mxCodec,
+  mxGraphModel,
 } from 'mxgraph-js';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import { useSelector } from 'react-redux';
@@ -39,7 +41,11 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
   useEffect(() => {
     const container = graphContainer.current;
-    setGraph(new MxGraph(container));
+
+    const root = new mxCell();
+    root.insert(new mxCell().insert(new mxCell()));
+    const model = new mxGraphModel(root);
+    setGraph(new MxGraph(container, model));
   }, []);
 
   useEffect(() => {
@@ -83,33 +89,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       configMxCell();
       // 配置事件监听
       configEventHandle();
+
+      console.log(graph);
     }
   }, [graph]);
-
-  useEffect(() => {
-    // 监听添加事件
-    event.addListener('createFunctionCell', createFunctionCell);
-    return () => {
-      event.removeListener('createFunctionCell', createFunctionCell);
-    };
-  }, [graph]);
-
-  const createFunctionCell = (commonData, data) => {
-    switch (commonData.componentType) {
-      case 'process':
-        // 改造成function
-        component(graph, commonData, data);
-        break;
-      case 'condition':
-        conditionalComponent(graph, commonData, data);
-        break;
-      case 'group':
-        groundComponent(graph, commonData, data);
-        break;
-      default:
-        break;
-    }
-  };
 
   const configMxCell = () => {
     mxCell.prototype.setNodeType = function (nodetype) {
@@ -184,6 +167,11 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
   const configEventHandle = () => {
     graph.addListener(mxEvent.CLICK, function (sender, evt) {
+      console.log(graph);
+
+      // const enc = new mxCodec();
+      // console.log(enc.encode(graph.getModel()));
+
       const cell = evt.getProperty('cell');
 
       if (cell != null) {
@@ -270,6 +258,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
    */
   const setDataMingEdgeStyle = () => {
     mxEdgeStyle.ComponentEdge = (state, source, target, points, result) => {
+      console.log('连线');
       const { view } = state;
       if (source != null && target != null) {
         if (source.y < target.y) {
@@ -311,85 +300,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     mxStyleRegistry.putValue('ComponentEdge', mxEdgeStyle.ComponentEdge);
   };
 
-  /**
-   * 拖拽放手后的处理函数
-   * @param {*} e event对象
-   */
-  const onDrop = e => {
-    const componentToDropType = e.dataTransfer.getData('componentToDropType');
-    const conditionalComponentToDropType = e.dataTransfer.getData(
-      'conditionalComponentToDropType'
-    );
-    const groupComponentToDropType = e.dataTransfer.getData(
-      'groupComponentToDropType'
-    );
-
-    const x = e.clientX;
-    const y = e.clientY;
-    const width = document.querySelector('.designergraph-item').clientWidth;
-    if (componentToDropType) {
-      /* let left = x - 450 + offsetLeft;
-      let top = y - 70 + offsetTop;
-
-      if (left < 0 || top < 0) {
-        message.info('拖动超出操作区域');
-        this.loadExp(this.state.currentExp.id);
-        return;
-      } */
-      // 触发添加事件
-      event.emit(
-        'createFunctionCell',
-        {
-          left: x - width - 87,
-          top: y - 112 - 19,
-          componentType: 'process',
-          nodeId: uniqueId('mxGraph'),
-          name: '流程块',
-          node_status: 0,
-        },
-        {}
-      );
-    } else if (conditionalComponentToDropType) {
-      event.emit(
-        'createFunctionCell',
-        {
-          left: x - width - 87,
-          top: y - 112 - 19,
-          componentType: 'condition',
-          nodeId: uniqueId('mxGraph'),
-          name: '判断',
-          node_status: 0,
-        },
-        {}
-      );
-    } else if (groupComponentToDropType) {
-      event.emit(
-        'createFunctionCell',
-        {
-          left: x - width - 87,
-          top: y - 112 - 19,
-          componentType: 'group',
-          nodeId: uniqueId('mxGraph'),
-          name: '容器',
-          node_status: 0,
-        },
-        {}
-      );
-    }
-  };
-
-  /**
-   * 可拖拽区域
-   * @param {*} e event对象
-   */
-  const allowDrop = e => {
-    e.preventDefault();
-  };
-
   return (
     <div id="graphContent">
       <MxGraphHeader graph={graph} />
-      <div onDrop={onDrop} className="dropContent" onDragOver={allowDrop}>
+      <div className="dropContent">
         <div
           className="graph-container"
           ref={graphContainer}

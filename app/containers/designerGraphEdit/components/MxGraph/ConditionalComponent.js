@@ -21,7 +21,7 @@ const conditionalComponent = (graph, commonData) => {
     </div>
   </div>`;
     const blockWidth = 100;
-    const blockHeight = 100;
+    const blockHeight = 150;
     const blockStyle = 'shape=rhombus;perimeter=ellipsePerimeter;resizable=0;';
 
     // 流程块连线节点配置参数

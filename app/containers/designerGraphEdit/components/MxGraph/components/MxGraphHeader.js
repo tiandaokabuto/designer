@@ -1,5 +1,6 @@
 /* eslint-disable react/no-this-in-sfc */
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
   mxCell,
   mxGeometry,
@@ -19,6 +20,9 @@ import PropTypes from 'prop-types';
 import './MxGraphHeader.scss';
 
 const MxGraphHeader = ({ graph, container }) => {
+  const graphData = useSelector(state => state.grapheditor.graphData);
+  const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+
   /**
    * 判断是否是可容纳组件
    * @param {mxCell} cell 单元
@@ -311,7 +315,7 @@ const MxGraphHeader = ({ graph, container }) => {
         cells,
         bounds
       );
-      addClickHandler(elt, ds, cells);
+      // addClickHandler(elt, ds, cells);
     }
   };
 
@@ -328,19 +332,19 @@ const MxGraphHeader = ({ graph, container }) => {
           style =
             'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;';
           eltClassName = 'ground';
+          cell = new mxCell(label, new mxGeometry(0, 0, 186, 55), style);
         } else if (i === 1) {
           label =
             '<div class="compoent-content"><label class="component-icon"></label><span class="component-name" title="process">流程块</span></div>';
           style =
             'label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg';
           eltClassName = 'process';
+          cell = new mxCell(label, new mxGeometry(0, 0, 186, 55), style);
         } else if (i === 2) {
-          label = `<div class="rcomponent-content">
-            <label class="rcomponent-content-icon"></label>
-            <span class="rcomponent-name" title="condition">判断</span>
-          </div>`;
+          label = `<div class="rcomponent-content"><label class="rcomponent-content-icon"></label><span class="rcomponent-name" title="condition">判断</span></div>`;
           style = 'shape=rhombus;perimeter=ellipsePerimeter;resizable=0;';
           eltClassName = 'condition';
+          cell = new mxCell(label, new mxGeometry(0, 0, 100, 100), style);
         }
         // const label =
         //   i === 0
@@ -350,7 +354,7 @@ const MxGraphHeader = ({ graph, container }) => {
         //   i === 0
         //     ? 'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;'
         //     : 'label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg';
-        cell = new mxCell(label, new mxGeometry(0, 0, 186, 55), style);
+
         cell.vertex = true;
         cell.setConnectable(false);
 
