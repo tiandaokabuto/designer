@@ -14,21 +14,15 @@ import {
   mxRubberband as MxRubberband,
   mxPerimeter,
   mxEvent,
-  mxCellTracker as MxCellTracker,
   mxCellOverlay,
-  mxCodec,
   mxGraphModel,
 } from 'mxgraph-js';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import { useSelector } from 'react-redux';
-import uniqueId from 'lodash/uniqueId';
 
 import MxGraphHeader from './components/MxGraphHeader';
-import component from './Component';
-import conditionalComponent from './ConditionalComponent';
-import groundComponent from './GroupComponent';
-import event from '../../../designerGraphBlock/layout/eventCenter';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
+import setConnection from './methods/setConnection';
 
 import './index.scss';
 
@@ -58,7 +52,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
       // 启用连线功能
       graph.setConnectable(true);
-      graph.connectionHandler.getConnectImage = function (state) {
+      graph.connectionHandler.getConnectImage = function(state) {
         return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
       };
 
@@ -74,9 +68,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       // 允许框线选择
       new MxRubberband(graph);
 
-      // 设置hover的高亮
-      new MxCellTracker(graph, '#00FF00');
-
       // 启用辅助线
       mxGraphHandler.prototype.guidesEnabled = true;
       window.mxGraphHandler = mxGraphHandler;
@@ -89,23 +80,25 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       configMxCell();
       // 配置事件监听
       configEventHandle();
+      // 配置连接约束点
+      setConnection();
 
       console.log(graph);
     }
   }, [graph]);
 
   const configMxCell = () => {
-    mxCell.prototype.setNodeType = function (nodetype) {
+    mxCell.prototype.setNodeType = function(nodetype) {
       this.nodetype = nodetype;
     };
-    mxCell.prototype.setComponentType = function (componentType) {
+    mxCell.prototype.setComponentType = function(componentType) {
       this.componentType = componentType;
     };
-    mxCell.prototype.setNodeId = function (nodeId) {
+    mxCell.prototype.setNodeId = function(nodeId) {
       this.nodeId = nodeId;
     };
     // 更新组件状态
-    mxCell.prototype.updateStatus = function (graph, status) {
+    mxCell.prototype.updateStatus = function(graph, status) {
       let html = this.getValue();
       const index = html.indexOf('class="status');
       if (index === -1) {
@@ -135,15 +128,15 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       this.setValue(html);
       graph.cellLabelChanged(this, html);
     };
-    mxCell.prototype.setPortIndex = function (portIndex) {
+    mxCell.prototype.setPortIndex = function(portIndex) {
       this.portIndex = portIndex;
     };
-    mxCell.prototype.setPortType = function (portType) {
+    mxCell.prototype.setPortType = function(portType) {
       this.portType = portType;
     };
 
     // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
-    MxGraph.prototype.isValidDropTarget = function (cell, cells, evt) {
+    MxGraph.prototype.isValidDropTarget = function(cell, cells, evt) {
       const style = this.getCellStyle(cell);
       const isContainer = style.container === 1;
 
@@ -158,7 +151,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       );
     };
     // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
-    MxGraph.prototype.isPort = function (cell) {
+    MxGraph.prototype.isPort = function(cell) {
       const geo = this.getCellGeometry(cell);
 
       return geo != null ? geo.relative : false;
@@ -166,9 +159,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   };
 
   const configEventHandle = () => {
-    graph.addListener(mxEvent.CLICK, function (sender, evt) {
-      console.log(graph);
-
+    graph.addListener(mxEvent.CLICK, function(sender, evt) {
       // const enc = new mxCodec();
       // console.log(enc.encode(graph.getModel()));
 
@@ -187,7 +178,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
           );
 
           // Installs a handler for clicks on the overlay
-          overlay.addListener(mxEvent.CLICK, function (sender, evt2) {
+          overlay.addListener(mxEvent.CLICK, function(sender, evt2) {
             // mxUtils.alert('Overlay clicked');
           });
 

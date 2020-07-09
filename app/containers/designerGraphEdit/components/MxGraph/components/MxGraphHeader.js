@@ -59,7 +59,7 @@ const MxGraphHeader = ({ graph, container }) => {
     }
 
     // 成功拖拽后的回调方法
-    const funt = mxUtils.bind(this, function (...args) {
+    const funt = mxUtils.bind(this, function(...args) {
       dropHandler.apply(this, args);
     });
 
@@ -81,12 +81,12 @@ const MxGraphHeader = ({ graph, container }) => {
       highlightDropTargets
     );
 
-    dragSource.dragOver = function (...args) {
+    dragSource.dragOver = function(...args) {
       mxDragSource.prototype.dragOver.apply(this, args);
     };
 
     // 仅当拖拽目标是一个合法根的时候可以拖进
-    dragSource.getDropTarget = mxUtils.bind(this, function (graph, x, y, evt) {
+    dragSource.getDropTarget = mxUtils.bind(this, function(graph, x, y, evt) {
       // Alt表示没有目标
       // 得到与x，y相交的底层单元格
       let cell =
@@ -156,7 +156,7 @@ const MxGraphHeader = ({ graph, container }) => {
       allowCellsInserted !== null ? allowCellsInserted : true;
 
     // 更新视图
-    return mxUtils.bind(this, function (graph, evt, target, x, y, force) {
+    return mxUtils.bind(this, function(graph, evt, target, x, y, force) {
       let elt = null;
       if (!force) {
         elt = mxEvent.isTouchEvent(evt) /* || mxEvent.isPenEvent(evt) */
@@ -262,7 +262,7 @@ const MxGraphHeader = ({ graph, container }) => {
               select !== null &&
               select.length === 1
             ) {
-              window.setTimeout(function () {
+              window.setTimeout(function() {
                 graph.startEditing(select[0]);
               }, 0);
             }
@@ -279,7 +279,7 @@ const MxGraphHeader = ({ graph, container }) => {
     const oldMouseUp = ds.mouseUp;
     let first = null;
 
-    ds.mouseUp = function (evt) {
+    ds.mouseUp = function(evt) {
       try {
         if (
           !mxEvent.isPopupTrigger(evt) &&
@@ -346,55 +346,7 @@ const MxGraphHeader = ({ graph, container }) => {
           eltClassName = 'condition';
           cell = new mxCell(label, new mxGeometry(0, 0, 100, 100), style);
         }
-        // const label =
-        //   i === 0
-        //     ? 'contain'
-        //     : '<div class="compoent-content"><label class="component-icon"></label><span class="component-name" title="process">流程块</span></div>';
-        // const style =
-        //   i === 0
-        //     ? 'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;'
-        //     : 'label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg';
-
         cell.vertex = true;
-        cell.setConnectable(false);
-
-        // 连接点配置
-        const id = null;
-        const portHtml = '';
-        const portWidth = 6;
-        const portXPercent = 0.5;
-        const portBasicYPercent = 0;
-        const portHeight = 6;
-        const portStyle = 'port;align=center;spacingRight=18;resizable=0;';
-        const isPortPositionUsePercent = true;
-
-        // 生成单元格上连接点
-        let port = graph.insertVertex(
-          cell,
-          id,
-          portHtml,
-          portXPercent,
-          portBasicYPercent,
-          portWidth,
-          portHeight,
-          portStyle,
-          isPortPositionUsePercent
-        );
-        // 连接点偏移
-        port.geometry.offset = new MxPoint(-3, -3);
-        // 生成流程块主体下连接点
-        port = graph.insertVertex(
-          cell,
-          id,
-          portHtml,
-          portXPercent,
-          portBasicYPercent + 1,
-          portWidth,
-          portHeight,
-          portStyle,
-          isPortPositionUsePercent
-        );
-        port.geometry.offset = new MxPoint(-3, -3);
 
         // const eltClassName = i === 0 ? 'ground' : 'process';
         const elt = document.getElementsByClassName(

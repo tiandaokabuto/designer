@@ -11,7 +11,44 @@
       touch-action: none;
     }
   }
+  .component {
+    &-icon {
+      width: 25px;
+      height: 22px;
+      margin: 0 10px;
+      background: url(../../../images/icon.jpg) no-repeat;
+      background-size: 100% 100%;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+  .rcomponent {
+    &-content {
+      margin-left: 24px;
+      vertical-align: middle;
+      display: inline-block;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      &-icon {
+        width: 25px;
+        height: 22px;
+        margin: 0 10px;
+        background: url(../../../images/judge.jpg) no-repeat;
+        background-size: 100% 100%;
+        display: inline-block;
+        vertical-align: top;
+      }
+    }
+  }
 }
+@keyframes loadingCircle {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* common.css内容 */
 div.mxRubberband {
   position: absolute;
