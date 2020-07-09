@@ -39,7 +39,7 @@ export default () => {
     new MxConnectionConstraint(new MxPonint(1, 0.5)),
   ];
 
-  // 设置容器状态hover时出现的连接点
+  // 设置容器形状hover时出现的连接点
   mxSwimlane.prototype.constraints = [
     new MxConnectionConstraint(new MxPonint(0.5, 0), true),
     new MxConnectionConstraint(new MxPonint(0, 0.5), true),
