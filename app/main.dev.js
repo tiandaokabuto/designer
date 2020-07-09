@@ -56,9 +56,37 @@ appexpress.post('/upload', function (req, res) {
     if (!finallyResult.value) {
       return;
     }
-    // console.log(finallyResult.value);
+    console.log(finallyResult.value);
     mainWindow.restore();
     mainWindow.webContents.send('updateXpath', {
+      ...finallyResult.value,
+      targetId,
+    });
+    targetId = undefined;
+  } catch (e) {
+    // 处理错误
+    res.sendStatus(200);
+  }
+
+  res.sendStatus(200);
+});
+
+appexpress.post('/win_get_xpath', function (req, res) {
+  try {
+    const finallyResult = req.body;
+
+    // 将结果通知给渲染进程
+    if (targetId === undefined) {
+      res.sendStatus(500);
+      return;
+    }
+
+    if (!finallyResult.value) {
+      return;
+    }
+    // console.log(finallyResult.value);
+    mainWindow.restore();
+    mainWindow.webContents.send('updateWinXpath', {
       ...finallyResult.value,
       targetId,
     });

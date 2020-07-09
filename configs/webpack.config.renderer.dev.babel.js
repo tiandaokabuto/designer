@@ -50,7 +50,7 @@ if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
   execSync('yarn build-dll');
 }
 
-module.exports = exports = merge.smart(baseConfig, {
+module.exports = merge.smart(baseConfig, {
   devtool: 'cheap-module-eval-source-map',
 
   mode: 'development',

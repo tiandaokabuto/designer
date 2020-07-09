@@ -23,7 +23,7 @@ const CheckNodeEnv = require('../internals/scripts/CheckNodeEnv');
 
 CheckNodeEnv('production');
 
-module.exports = exports = merge.smart(baseConfig, {
+module.exports = merge.smart(baseConfig, {
   devtool: 'cheap-module-source-map',
 
   mode: 'production',

@@ -6,6 +6,7 @@ import React, {
   useRef,
   Fragment,
   useCallback,
+  memo,
 } from 'react';
 import { Input, Select, Tooltip, Button, Modal } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
