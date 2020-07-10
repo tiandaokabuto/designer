@@ -230,9 +230,14 @@ const BasicStatement = useInjectContext(props => {
       e,
       { targetId, imageData, xpath: xpathBuffer, type }
     ) => {
-      console.log(xpathBuffer);
-      const xpath =
-        type !== 'win' && xpathBuffer ? JSON.parse(xpathBuffer) : xpathBuffer;
+      let xpath = '';
+      if (type === 'win' || type === 'ie') {
+        xpath = xpathBuffer;
+      } else {
+        xpath = JSON.parse(xpathBuffer);
+      }
+      // const xpath =
+      //   type !== 'win' && xpathBuffer ? JSON.parse(xpathBuffer) : xpathBuffer;
       if (xpath === undefined) return;
       // 接收到xpath并作出更新
       if (targetId !== id) return;

@@ -84,7 +84,7 @@ appexpress.post('/win_get_xpath', function (req, res) {
     if (!finallyResult.value) {
       return;
     }
-    // console.log(finallyResult.value);
+    console.log(finallyResult.value);
     mainWindow.restore();
     mainWindow.webContents.send('updateWinXpath', {
       ...finallyResult.value,
