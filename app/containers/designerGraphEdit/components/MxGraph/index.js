@@ -14,11 +14,10 @@ import {
   mxRubberband as MxRubberband,
   mxPerimeter,
   mxEvent,
-  mxCellOverlay,
-  mxGraphModel,
+  mxCellOverlay as MxCellOverlay,
 } from 'mxgraph-js';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
 import MxGraphHeader from './components/MxGraphHeader';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
@@ -27,65 +26,15 @@ import setConnection from './methods/setConnection';
 import './index.scss';
 
 const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
-  const graphData = useSelector(state => state.grapheditor.graphData);
-  const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
-  console.log(graphData, graphDataMap);
+  // const graphData = useSelector(state => state.grapheditor.graphData);
+  // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
   const graphContainer = useRef(null);
   const [graph, setGraph] = useState(null);
 
   useEffect(() => {
     const container = graphContainer.current;
-
-    const root = new mxCell();
-    root.insert(new mxCell().insert(new mxCell()));
-    const model = new mxGraphModel(root);
-    setGraph(new MxGraph(container, model));
+    setGraph(new MxGraph(container));
   }, []);
-
-  useEffect(() => {
-    if (graph) {
-      // 启用插入html label
-      graph.htmlLabels = true;
-
-      // 取消设置连线选中时出现那个调整点
-      mxEdgeHandler.prototype.handleImage = new MxImage('', 0, 0);
-
-      // 启用连线功能
-      graph.setConnectable(true);
-      graph.connectionHandler.getConnectImage = function(state) {
-        return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
-      };
-
-      // 连线不允许悬空
-      graph.setAllowDanglingEdges(false);
-      // 允许子项内容超出父项
-      graph.constrainChildren = false;
-      // 允许子项改变宽度后，内容超出父项
-      graph.extendParents = false;
-      // 允许拖拽到另一个单元格中
-      graph.setDropEnabled(true);
-
-      // 允许框线选择
-      new MxRubberband(graph);
-
-      // 启用辅助线
-      mxGraphHandler.prototype.guidesEnabled = true;
-      window.mxGraphHandler = mxGraphHandler;
-
-      // 设置连线样式
-      setDataMingEdgeStyle();
-      // 设置
-      configureStylesheet();
-      // 配置mxCell方法
-      configMxCell();
-      // 配置事件监听
-      configEventHandle();
-      // 配置连接约束点
-      setConnection();
-
-      console.log(graph);
-    }
-  }, [graph]);
 
   const configMxCell = () => {
     mxCell.prototype.setNodeType = function(nodetype) {
@@ -150,7 +99,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
                 !this.isCellCollapsed(cell)))))
       );
     };
-    // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
+    // 重写isPort
     MxGraph.prototype.isPort = function(cell) {
       const geo = this.getCellGeometry(cell);
 
@@ -172,27 +121,32 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
         if (overlays == null && !isPort) {
           // Creates a new overlay with an image and a tooltip
-          const overlay = new mxCellOverlay(
+          const overlay = new MxCellOverlay(
             new MxImage('./containers/images/check.png', 16, 16),
             'Overlay tooltip'
           );
 
           // Installs a handler for clicks on the overlay
-          overlay.addListener(mxEvent.CLICK, function(sender, evt2) {
+          /* overlay.addListener(mxEvent.CLICK, function(sender, evt2) {
             // mxUtils.alert('Overlay clicked');
-          });
+          }); */
 
           // Sets the overlay for the cell in the graph
           graph.addCellOverlay(cell, overlay);
         } else {
           graph.removeCellOverlays(cell);
         }
+
+        /*   if (!isPort) {
+          const colorKey = 'fillColor';
+          const color = '#9ed4fb';
+          graph.setCellStyles(colorKey, color, graph.getSelectionCells());
+        } */
       }
     });
   };
 
-  const configureStylesheet = () => {
-    // 定义连线点的样式
+  const configLineStyleSheet = () => {
     let style = {};
     graph.getStylesheet().putCellStyle('port', style);
     style = graph.getStylesheet().getDefaultEdgeStyle();
@@ -211,9 +165,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     mxConstants.HANDLE_STROKECOLOR = '#000000';
     mxConstants.GUIDE_COLOR = '#40a9ff';
     mxConstants.VALID_COLOR = '#40a9ff';
+  };
 
-    // 定义流程块的样式
-    style = {};
+  const configProcessStyleSheet = () => {
+    const style = {};
     style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
@@ -227,9 +182,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     style[mxConstants.STYLE_IMAGE_WIDTH] = '48';
     style[mxConstants.STYLE_IMAGE_HEIGHT] = '48';
     graph.getStylesheet().putDefaultVertexStyle(style);
+  };
 
-    // 定义容器块的样式
-    style = {};
+  const configContainerStyleSheet = () => {
+    const style = {};
     style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_SWIMLANE;
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
@@ -244,12 +200,20 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     graph.getStylesheet().putCellStyle('group', style);
   };
 
+  const configureStylesheet = () => {
+    // 定义连线点的样式
+    configLineStyleSheet();
+    // 定义流程块的样式
+    configProcessStyleSheet();
+    // 定义容器块的样式
+    configContainerStyleSheet();
+  };
+
   /**
    * 设置连线样式
    */
   const setDataMingEdgeStyle = () => {
     mxEdgeStyle.ComponentEdge = (state, source, target, points, result) => {
-      console.log('连线');
       const { view } = state;
       if (source != null && target != null) {
         if (source.y < target.y) {
@@ -290,6 +254,48 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
     mxStyleRegistry.putValue('ComponentEdge', mxEdgeStyle.ComponentEdge);
   };
+
+  useEffect(() => {
+    if (!graph) return;
+    // 启用插入html label
+    graph.htmlLabels = true;
+
+    // 取消设置连线选中时出现那个调整点
+    mxEdgeHandler.prototype.handleImage = new MxImage('', 0, 0);
+
+    // 启用连线功能
+    graph.setConnectable(true);
+    graph.connectionHandler.getConnectImage = function(state) {
+      return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
+    };
+
+    // 连线不允许悬空
+    graph.setAllowDanglingEdges(false);
+    // 允许子项内容超出父项
+    graph.constrainChildren = false;
+    // 允许子项改变宽度后，内容超出父项
+    graph.extendParents = false;
+    // 允许拖拽到另一个单元格中
+    graph.setDropEnabled(true);
+
+    // 允许框线选择
+    new MxRubberband(graph);
+
+    // 启用辅助线
+    mxGraphHandler.prototype.guidesEnabled = true;
+    window.mxGraphHandler = mxGraphHandler;
+
+    // 设置连线样式
+    setDataMingEdgeStyle();
+    // 设置
+    configureStylesheet();
+    // 配置mxCell方法
+    configMxCell();
+    // 配置事件监听
+    configEventHandle();
+    // 配置连接约束点
+    setConnection();
+  }, [graph]);
 
   return (
     <div id="graphContent">

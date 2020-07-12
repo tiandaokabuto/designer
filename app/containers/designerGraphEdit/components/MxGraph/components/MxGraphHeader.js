@@ -1,18 +1,14 @@
 /* eslint-disable react/no-this-in-sfc */
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import {
   mxCell,
   mxGeometry,
   mxRectangle,
   mxUtils,
-  mxConstants,
   mxEvent,
   mxEventObject,
   mxDragSource,
-  mxPoint as MxPoint,
-  mxGraph,
-  Graph,
 } from 'mxgraph-js';
 import PropTypes from 'prop-types';
 // import FlowItemPanel from '../../../layout/GraphContainer/components/FlowItemPanel';
@@ -20,8 +16,8 @@ import PropTypes from 'prop-types';
 import './MxGraphHeader.scss';
 
 const MxGraphHeader = ({ graph, container }) => {
-  const graphData = useSelector(state => state.grapheditor.graphData);
-  const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+  // const graphData = useSelector(state => state.grapheditor.graphData);
+  // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
 
   /**
    * 判断是否是可容纳组件
@@ -118,7 +114,6 @@ const MxGraphHeader = ({ graph, container }) => {
           ? mxDragSource.prototype.getDropTarget.apply(this, arguments)
           : null;
       const model = graph.getModel();
-
       if (target !== null) {
         if (activeArrow !== null || !graph.isSplitTarget(target, cells, evt)) {
           // Selects parent group as drop target

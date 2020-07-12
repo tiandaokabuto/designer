@@ -15,13 +15,11 @@ import {
 
 export default () => {
   // 创建连接点图像
-  if (mxClient.IS_SVG) {
-    mxConstraintHandler.prototype.pointImage = new MxImage(
-      'containers/images/point.gif',
-      5,
-      5
-    );
-  }
+  mxConstraintHandler.prototype.pointImage = new MxImage(
+    'containers/images/point.gif',
+    5,
+    5
+  );
 
   // 设置长方形形状hover时会出现的连线点
   mxRectangleShape.prototype.constraints = [
@@ -39,7 +37,7 @@ export default () => {
     new MxConnectionConstraint(new MxPonint(1, 0.5)),
   ];
 
-  // 设置容器形状hover时出现的连接点
+  // 设置容器形状hover时出现的连接点----泳道
   mxSwimlane.prototype.constraints = [
     new MxConnectionConstraint(new MxPonint(0.5, 0), true),
     new MxConnectionConstraint(new MxPonint(0, 0.5), true),
