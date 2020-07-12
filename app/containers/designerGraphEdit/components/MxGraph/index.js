@@ -10,28 +10,28 @@ import setConnection from './methods/setConnection';
 
 import './index.scss';
 
-const {
-  mxGraph,
-  mxCell,
-  mxImage: MxImage,
-  mxEdgeStyle,
-  mxConstants,
-  mxEdgeHandler,
-  mxPoint: MxPonint,
-  mxStyleRegistry,
-  mxUtils,
-  mxGraphHandler,
-  mxRubberband: MxRubberband,
-  mxPerimeter,
-  mxEvent,
-  mxCellOverlay: MxCellOverlay,
-} = mxgraph;
-
 const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   // const graphData = useSelector(state => state.grapheditor.graphData);
   // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
   const graphContainer = useRef(null);
   const [graph, setGraph] = useState(null);
+  const {
+    mxGraph,
+    mxCell,
+    mxImage: MxImage,
+    mxEdgeStyle,
+    mxConstants,
+    mxEdgeHandler,
+    mxPoint: MxPonint,
+    mxStyleRegistry,
+    mxUtils,
+    mxGraphHandler,
+    mxRubberband: MxRubberband,
+    mxPerimeter,
+    mxEvent,
+    mxCellOverlay: MxCellOverlay,
+    mxCodec,
+  } = mxgraph;
 
   useEffect(() => {
     const container = graphContainer.current;
@@ -259,7 +259,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
   useEffect(() => {
     if (!graph) return;
-    // 启用插入html label
     graph.htmlLabels = true;
 
     // 取消设置连线选中时出现那个调整点
@@ -297,6 +296,16 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     configEventHandle();
     // 配置连接约束点
     setConnection();
+
+    // 添加数据
+    const div = document.createElement('div');
+    div.innerText =
+      '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="295" y="167" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="3" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="322" y="304" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="4" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>';
+    const xml = mxUtils.getTextContent(div);
+    const xmlDocument = mxUtils.parseXml(xml);
+    const decoder = new mxCodec(xmlDocument);
+    const node = xmlDocument.documentElement;
+    decoder.decode(node, graph.getModel());
   }, [graph]);
 
   return (
