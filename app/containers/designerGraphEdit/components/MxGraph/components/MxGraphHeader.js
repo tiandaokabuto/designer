@@ -1,7 +1,14 @@
 /* eslint-disable react/no-this-in-sfc */
 import React, { useEffect } from 'react';
 // import { useSelector } from 'react-redux';
-import {
+import PropTypes from 'prop-types';
+
+import mxgraph from '../mxgraph';
+// import FlowItemPanel from '../../../layout/GraphContainer/components/FlowItemPanel';
+
+import './MxGraphHeader.scss';
+
+const {
   mxCell,
   mxGeometry,
   mxRectangle,
@@ -9,11 +16,7 @@ import {
   mxEvent,
   mxEventObject,
   mxDragSource,
-} from 'mxgraph-js';
-import PropTypes from 'prop-types';
-// import FlowItemPanel from '../../../layout/GraphContainer/components/FlowItemPanel';
-
-import './MxGraphHeader.scss';
+} = mxgraph;
 
 const MxGraphHeader = ({ graph, container }) => {
   // const graphData = useSelector(state => state.grapheditor.graphData);

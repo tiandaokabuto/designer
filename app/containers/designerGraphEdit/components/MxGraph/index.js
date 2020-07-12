@@ -1,29 +1,31 @@
 /* eslint-disable no-new */
 import React, { useRef, useEffect, useState } from 'react';
-import {
-  mxGraph as MxGraph,
-  mxCell,
-  mxImage as MxImage,
-  mxEdgeStyle,
-  mxConstants,
-  mxEdgeHandler,
-  mxPoint as MxPonint,
-  mxStyleRegistry,
-  mxUtils,
-  mxGraphHandler,
-  mxRubberband as MxRubberband,
-  mxPerimeter,
-  mxEvent,
-  mxCellOverlay as MxCellOverlay,
-} from 'mxgraph-js';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 // import { useSelector } from 'react-redux';
 
+import mxgraph from './mxgraph';
 import MxGraphHeader from './components/MxGraphHeader';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
 import setConnection from './methods/setConnection';
 
 import './index.scss';
+
+const {
+  mxGraph,
+  mxCell,
+  mxImage: MxImage,
+  mxEdgeStyle,
+  mxConstants,
+  mxEdgeHandler,
+  mxPoint: MxPonint,
+  mxStyleRegistry,
+  mxUtils,
+  mxGraphHandler,
+  mxRubberband: MxRubberband,
+  mxPerimeter,
+  mxEvent,
+  mxCellOverlay: MxCellOverlay,
+} = mxgraph;
 
 const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   // const graphData = useSelector(state => state.grapheditor.graphData);
@@ -33,7 +35,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
   useEffect(() => {
     const container = graphContainer.current;
-    setGraph(new MxGraph(container));
+    setGraph(new mxGraph(container));
   }, []);
 
   const configMxCell = () => {
@@ -85,7 +87,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     };
 
     // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
-    MxGraph.prototype.isValidDropTarget = function(cell, cells, evt) {
+    mxGraph.prototype.isValidDropTarget = function(cell, cells, evt) {
       const style = this.getCellStyle(cell);
       const isContainer = style.container === 1;
 
@@ -100,7 +102,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       );
     };
     // 重写isPort
-    MxGraph.prototype.isPort = function(cell) {
+    mxGraph.prototype.isPort = function(cell) {
       const geo = this.getCellGeometry(cell);
 
       return geo != null ? geo.relative : false;

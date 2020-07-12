@@ -1,7 +1,9 @@
-import {
-  mxPoint as MxPonint,
+import mxgraph from '../mxgraph';
+
+const {
+  mxPoint: MxPonint,
   mxRectangleShape,
-  mxConnectionConstraint as MxConnectionConstraint,
+  mxConnectionConstraint: MxConnectionConstraint,
   mxRhombus,
   mxSwimlane,
   mxShape,
@@ -9,9 +11,8 @@ import {
   mxUtils,
   mxConstants,
   mxConstraintHandler,
-  mxClient,
-  mxImage as MxImage,
-} from 'mxgraph-js';
+  mxImage: MxImage,
+} = mxgraph;
 
 export default () => {
   // 创建连接点图像
