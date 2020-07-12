@@ -248,7 +248,8 @@ export default (id, visibleTemplate) => {
           if (
             find.valueMapping &&
             find.valueMapping.length !== 0 &&
-            find.cnName !== '条件'
+            find.cnName !== '条件' &&
+            !Array.isArray(find.value)
           ) {
             value = find.valueMapping.find(item => item.value === find.value)
               .name;

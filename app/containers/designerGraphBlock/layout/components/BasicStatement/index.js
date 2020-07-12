@@ -225,26 +225,42 @@ const BasicStatement = useInjectContext(props => {
         console.log(e);
       }
     }
+
+    const handleUpdateXpath = (
+      e,
+      { targetId, imageData, xpath: xpathBuffer, type }
+    ) => {
+      let xpath = '';
+      if (type === 'win' || type === 'ie') {
+        xpath = xpathBuffer;
+      } else {
+        xpath = JSON.parse(xpathBuffer);
+      }
+      // const xpath =
+      //   type !== 'win' && xpathBuffer ? JSON.parse(xpathBuffer) : xpathBuffer;
+      if (xpath === undefined) return;
+      // 接收到xpath并作出更新
+      if (targetId !== id) return;
+      card.xpathImage = imageData;
+      card.hasModified = true;
+      setTargetImage(imageData);
+      updateXpath(id, xpath, type);
+      handleEmitCodeTransform(cards);
+      remote.getGlobal('sharedObject').xpathStatus = true;
+    };
+
+    // 浏览器xpath
     ipcRenderer.removeAllListeners('updateXpath');
+    // window自动化xpath
+    ipcRenderer.removeAllListeners('updateWinXpath');
     ipcRenderer.removeAllListeners('updateMousePosition');
     ipcRenderer.removeAllListeners('getWindowArray');
     ipcRenderer.removeAllListeners('updateClickImage');
-    ipcRenderer.on(
-      'updateXpath',
-      (e, { targetId, imageData, xpath: xpathBuffer, type }) => {
-        const xpath =
-          type !== 'win' && xpathBuffer ? JSON.parse(xpathBuffer) : xpathBuffer;
-        if (xpath === undefined) return;
-        // 接收到xpath并作出更新
-        if (targetId !== id) return;
-        card.xpathImage = imageData;
-        card.hasModified = true;
-        setTargetImage(imageData);
-        updateXpath(id, xpath, type);
-        handleEmitCodeTransform(cards);
-        remote.getGlobal('sharedObject').xpathStatus = true;
-      }
-    );
+
+    // 浏览器xpath
+    ipcRenderer.on('updateXpath', handleUpdateXpath);
+    // window自动化xpath
+    ipcRenderer.on('updateWinXpath', handleUpdateXpath);
     ipcRenderer.on(
       'updateMousePosition',
       (e, { x, y, imageData, targetId }) => {
