@@ -25,7 +25,7 @@ import { isArray } from './utils';
 
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
 
-const paddingStart = (length) => '    '.repeat(length);
+const paddingStart = length => '    '.repeat(length);
 
 const result = {
   output: '',
@@ -244,6 +244,12 @@ const transformBlockToCodeImpl = (
             blockNode,
             options
           );
+          const ifChildrenIgnoreFlag = statement.ifChildren.every(
+            item => item.ignore
+          );
+          if (ifChildrenIgnoreFlag) {
+            result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
+          }
         }
 
         result.output += `${padding}${ignore}else:\n`;
@@ -256,6 +262,12 @@ const transformBlockToCodeImpl = (
             blockNode,
             options
           );
+          const elseChildrenIgnoreFlag = statement.elseChildren.every(
+            item => item.ignore
+          );
+          if (elseChildrenIgnoreFlag) {
+            result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
+          }
         }
       default:
       // do nothing
@@ -276,8 +288,8 @@ const transformModuleImport = (result, moduleMap, depth) => {
 const transformModuleVariable = (result, depth, variable) => {
   if (Array.isArray(variable)) {
     result.output += `${variable
-      .filter((item) => item.name && item.value)
-      .map((item) => paddingStart(depth) + item.name + ' = ' + item.value)
+      .filter(item => item.name && item.value)
+      .map(item => paddingStart(depth) + item.name + ' = ' + item.value)
       .join('\n')}\n`;
   }
 };
