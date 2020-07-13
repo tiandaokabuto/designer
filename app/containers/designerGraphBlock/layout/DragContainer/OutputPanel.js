@@ -27,7 +27,7 @@ const tagsFromServer = [
 ];
 
 export default memo(
-  useInjectContext(({ tag, updateExecuteOutput }) => {
+  useInjectContext(({ tag, updateExecuteOutput, zoomIn, zoomOut }) => {
     const executeOutput = useSelector(
       state => state.temporaryvariable.executeOutput
     );
@@ -287,7 +287,7 @@ export default memo(
           className="dragger-editor-container-output-title"
           onMouseDown={e => e.stopPropagation()}
         >
-          {tag === 'graph' && <ZoomToolBar />}
+          {tag === 'graph' && <ZoomToolBar zoomIn={zoomIn} zoomOut={zoomOut} />}
           <span
             className={
               newOutputTip
@@ -303,9 +303,6 @@ export default memo(
             onClick={handleTriggerOpen}
           >
             <Icon type={openFlag ? 'down' : 'up'} />
-            {/* <Icon type="caret-up" style={{ marginBottom: '-3px' }} />
-            
-            <Icon type="caret-down" /> */}
           </div>
           <Tags
             className="dragger-editor-container-output-tages"

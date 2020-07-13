@@ -14,12 +14,27 @@ for (let i = 0; i < zoomCount; i += 1) {
   zoomOptions.push([`${zoomStep * (i + 1)}%`]);
 }
 
-const Zoom = () => {
+const Zoom = ({ zoomIn, zoomOut }) => {
   const [zoomLevel, setZoomLevel] = useState(9);
   const graphData = useSelector(state => state.grapheditor.graphData) || {
     nodes: [],
   };
-  const isCanvasNoNode = !graphData.nodes || graphData.nodes.length === 0;
+  const isCanvasNoNode = /* !graphData.nodes || graphData.nodes.length === 0 */ false;
+
+  const handleClick = (type, frequency) => {
+    if (isCanvasNoNode) return;
+    if (type === 'zoom-in') {
+      if (zoomLevel >= 19) return;
+      // event.emit(CANVAS_ZOOM_IN, frequency);
+      if (zoomIn) zoomIn(frequency);
+      setZoomLevel(zoomLevel + frequency);
+    } else if (type === 'zoom-out') {
+      if (zoomLevel <= 1) return;
+      // event.emit(CANVAS_ZOOM_OUT, frequency);
+      if (zoomOut) zoomOut(frequency);
+      setZoomLevel(zoomLevel - frequency);
+    }
+  };
 
   const handleChange = value => {
     if (isCanvasNoNode) return;
@@ -32,19 +47,6 @@ const Zoom = () => {
       handleClick('zoom-in', numberDiff);
     }
     setZoomLevel(currentZoomLevel);
-  };
-
-  const handleClick = (type, frequency) => {
-    if (isCanvasNoNode) return;
-    if (type === 'zoom-in') {
-      if (zoomLevel >= 19) return;
-      event.emit(CANVAS_ZOOM_IN, frequency);
-      setZoomLevel(zoomLevel + frequency);
-    } else if (type === 'zoom-out') {
-      if (zoomLevel <= 1) return;
-      event.emit(CANVAS_ZOOM_OUT, frequency);
-      setZoomLevel(zoomLevel - frequency);
-    }
   };
 
   return (

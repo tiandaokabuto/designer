@@ -30,7 +30,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     mxPerimeter,
     mxEvent,
     mxCellOverlay: MxCellOverlay,
-    mxCodec,
+    mxCodec: MxCodec,
   } = mxgraph;
 
   useEffect(() => {
@@ -111,9 +111,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
   const configEventHandle = () => {
     graph.addListener(mxEvent.CLICK, function(sender, evt) {
-      // const enc = new mxCodec();
-      // console.log(enc.encode(graph.getModel()));
-
       const cell = evt.getProperty('cell');
 
       if (cell != null) {
@@ -303,10 +300,18 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="295" y="167" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="3" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="322" y="304" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="4" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>';
     const xml = mxUtils.getTextContent(div);
     const xmlDocument = mxUtils.parseXml(xml);
-    const decoder = new mxCodec(xmlDocument);
+    const decoder = new MxCodec(xmlDocument);
     const node = xmlDocument.documentElement;
     decoder.decode(node, graph.getModel());
   }, [graph]);
+
+  const handleZoomIn = frequency => {
+    for (let i = 0; i < frequency; i += 1) graph.zoomIn();
+  };
+
+  const handleZoomOut = frequency => {
+    for (let i = 0; i < frequency; i += 1) graph.zoomOut();
+  };
 
   return (
     <div id="graphContent">
@@ -318,7 +323,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
           id="graphContainer"
         />
       </div>
-      <OutputPanel tag="graph" />
+      <OutputPanel tag="graph" zoomIn={handleZoomIn} zoomOut={handleZoomOut} />
     </div>
   );
 });
