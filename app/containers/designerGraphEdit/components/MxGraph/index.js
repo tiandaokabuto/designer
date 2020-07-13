@@ -14,7 +14,9 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   // const graphData = useSelector(state => state.grapheditor.graphData);
   // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
   const graphContainer = useRef(null);
+  const graphData = useRef({ selectCells: [], handleClickFun: () => {} });
   const [graph, setGraph] = useState(null);
+
   const {
     mxGraph,
     mxCell,
@@ -107,42 +109,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
       return geo != null ? geo.relative : false;
     };
-  };
-
-  const configEventHandle = () => {
-    graph.addListener(mxEvent.CLICK, function(sender, evt) {
-      const cell = evt.getProperty('cell');
-
-      if (cell != null) {
-        const overlays = graph.getCellOverlays(cell);
-        // 排除连接点和连接线
-        const isPort = graph.isPort(cell);
-
-        if (overlays == null && !isPort) {
-          // Creates a new overlay with an image and a tooltip
-          const overlay = new MxCellOverlay(
-            new MxImage('./containers/images/check.png', 16, 16),
-            'Overlay tooltip'
-          );
-
-          // Installs a handler for clicks on the overlay
-          /* overlay.addListener(mxEvent.CLICK, function(sender, evt2) {
-            // mxUtils.alert('Overlay clicked');
-          }); */
-
-          // Sets the overlay for the cell in the graph
-          graph.addCellOverlay(cell, overlay);
-        } else {
-          graph.removeCellOverlays(cell);
-        }
-
-        /*   if (!isPort) {
-          const colorKey = 'fillColor';
-          const color = '#9ed4fb';
-          graph.setCellStyles(colorKey, color, graph.getSelectionCells());
-        } */
-      }
-    });
   };
 
   const configLineStyleSheet = () => {
@@ -252,6 +218,54 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     };
 
     mxStyleRegistry.putValue('ComponentEdge', mxEdgeStyle.ComponentEdge);
+  };
+
+  const configEventHandle = () => {
+    graph.addListener(mxEvent.CLICK, (sender, evt) => {
+      const cell = evt.getProperty('cell');
+      const colorKey = 'fillColor';
+      let color = '#9ed4fb';
+
+      if (cell != null) {
+        const overlays = graph.getCellOverlays(cell);
+        // 排除连接点和连接线
+        const isPort = graph.isPort(cell);
+
+        if (overlays == null && !isPort) {
+          // Creates a new overlay with an image and a tooltip
+          const overlay = new MxCellOverlay(
+            new MxImage('./containers/images/check.png', 16, 16),
+            'Overlay tooltip'
+          );
+
+          // Installs a handler for clicks on the overlay
+          /* overlay.addListener(mxEvent.CLICK, function(sender, evt2) {
+          // mxUtils.alert('Overlay clicked');
+        }); */
+
+          // Sets the overlay for the cell in the graph
+          graph.addCellOverlay(cell, overlay);
+        } else {
+          graph.removeCellOverlays(cell);
+        }
+
+        if (!isPort) {
+          if (graphData.current.selectCells.length > 0) {
+            color = '#edf6f7';
+            graph.setCellStyles(colorKey, color, graphData.current.selectCells);
+            graphData.current.selectCells = [];
+          }
+          color = '#9ed4fb';
+          const cells = graph.getSelectionCells();
+          graphData.current.selectCells = cells;
+          graph.setCellStyles(colorKey, color, cells);
+        }
+      } else if (graphData.current.selectCells.length > 0) {
+        color = '#edf6f7';
+        graph.setCellStyles(colorKey, color, graphData.current.selectCells);
+        graphData.current.selectCells = [];
+      }
+    });
   };
 
   useEffect(() => {
