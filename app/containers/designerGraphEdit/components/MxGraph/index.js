@@ -7,14 +7,20 @@ import mxgraph from './mxgraph';
 import MxGraphHeader from './components/MxGraphHeader';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
 import setConnection from './methods/setConnection';
+// import useSaveAsXML from '../../../common/DragEditorHeader/useHooks/useSaveAsXML';
+import { changeMxGraphData } from '../../../reduxActions';
 
 import './index.scss';
+
+const fs = require('fs');
 
 const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   // const graphData = useSelector(state => state.grapheditor.graphData);
   // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
   const graphContainer = useRef(null);
   const [graph, setGraph] = useState(null);
+
+  // const saveAsXML = useSaveAsXML();
 
   const {
     mxGraph,
@@ -42,17 +48,17 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   }, []);
 
   const configMxCell = () => {
-    mxCell.prototype.setNodeType = function(nodetype) {
+    mxCell.prototype.setNodeType = function (nodetype) {
       this.nodetype = nodetype;
     };
-    mxCell.prototype.setComponentType = function(componentType) {
+    mxCell.prototype.setComponentType = function (componentType) {
       this.componentType = componentType;
     };
-    mxCell.prototype.setNodeId = function(nodeId) {
+    mxCell.prototype.setNodeId = function (nodeId) {
       this.nodeId = nodeId;
     };
     // 更新组件状态
-    mxCell.prototype.updateStatus = function(graph, status) {
+    mxCell.prototype.updateStatus = function (graph, status) {
       let html = this.getValue();
       const index = html.indexOf('class="status');
       if (index === -1) {
@@ -82,15 +88,15 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       this.setValue(html);
       graph.cellLabelChanged(this, html);
     };
-    mxCell.prototype.setPortIndex = function(portIndex) {
+    mxCell.prototype.setPortIndex = function (portIndex) {
       this.portIndex = portIndex;
     };
-    mxCell.prototype.setPortType = function(portType) {
+    mxCell.prototype.setPortType = function (portType) {
       this.portType = portType;
     };
 
     // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
-    mxGraph.prototype.isValidDropTarget = function(cell, cells, evt) {
+    mxGraph.prototype.isValidDropTarget = function (cell, cells, evt) {
       const style = this.getCellStyle(cell);
       const isContainer = style.container === 1;
 
@@ -106,14 +112,14 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     };
 
     // 判断是否是连线约束点
-    mxGraph.prototype.isPort = function(cell) {
+    mxGraph.prototype.isPort = function (cell) {
       const geo = this.getCellGeometry(cell);
 
       return geo != null ? geo.relative : false;
     };
 
     // 添加顶点选中时处理函数
-    mxVertexHandler.prototype.createCustomHandles = function() {
+    mxVertexHandler.prototype.createCustomHandles = function () {
       const colorKey = 'fillColor';
       let color = '';
       let cells = graph.getSelectionCells();
@@ -252,6 +258,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
   const configEventHandle = () => {
     graph.addListener(mxEvent.CLICK, (sender, evt) => {
+      console.log(graph);
+
       const cell = evt.getProperty('cell');
 
       if (cell != null) {
@@ -278,6 +286,12 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
         }
       }
     });
+    graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
+      const codec = new MxCodec();
+      const node = codec.encode(sender);
+      const xml = mxUtils.getXml(node);
+      changeMxGraphData(xml);
+    });
   };
 
   useEffect(() => {
@@ -289,7 +303,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
     // 启用连线功能
     graph.setConnectable(true);
-    graph.connectionHandler.getConnectImage = function(state) {
+    graph.connectionHandler.getConnectImage = function (state) {
       return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
     };
 
@@ -321,15 +335,32 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     setConnection();
 
     // 添加数据
-    const div = document.createElement('div');
-    div.innerText =
-      '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="295" y="167" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="3" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="322" y="304" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="4" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>';
-    const xml = mxUtils.getTextContent(div);
-    const xmlDocument = mxUtils.parseXml(xml);
-    const decoder = new MxCodec(xmlDocument);
-    const node = xmlDocument.documentElement;
-    decoder.decode(node, graph.getModel());
+    // const div = document.createElement('div');
+    // div.innerText =
+    //   '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="295" y="167" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="3" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="322" y="304" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="4" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>';
+    // const xml = mxUtils.getTextContent(div);
+    // const xmlDocument = mxUtils.parseXml(xml);
+    // const decoder = new MxCodec(xmlDocument);
+    // const node = xmlDocument.documentElement;
+    // decoder.decode(node, graph.getModel());
+
+    parseJsonFile();
+
+    loadGraph();
   }, [graph]);
+
+  const parseJsonFile = () => {
+    const jsonFile = fs.readFileSync('D:/临时文件存放/test.json');
+    // 获得流程
+    const graphData = jsonFile ? JSON.parse(jsonFile).graphData : {};
+  };
+
+  const loadGraph = () => {
+    const xmlReq = mxUtils.load('D:/临时文件存放/asd.xml');
+    const root = xmlReq.getDocumentElement();
+    const dec = new MxCodec(root);
+    dec.decode(root, graph.getModel());
+  };
 
   const handleZoomIn = frequency => {
     for (let i = 0; i < frequency; i += 1) graph.zoomIn();

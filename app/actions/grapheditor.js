@@ -18,3 +18,4 @@ export const CHANGE_TREE_TAB = 'change_tree_tab';
 export const CHANGE_SAVING_MODULE_DATA = 'change_saving_module_data';
 export const CHANGE_MOVING_MODULE_NODE = 'moving_module_node';
 export const CHANGE_MOVING_MODULE_NODE_DATA = 'moving_module_node_data';
+export const CHANGE_MXGRAPH_DATA = 'change_mxgraph_data';

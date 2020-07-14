@@ -31,6 +31,7 @@ import usePersistentStorage from './useHooks/usePersistentStorage';
 import useExecutePython from './useHooks/useExecutePython';
 import useGetDownloadPath from './useHooks/useGetDownloadPath';
 import useVerifyCompatibility from './useHooks/useVerifyCompatibility';
+import useSaveAsXML from './useHooks/useSaveAsXML';
 import useGetProcessName, {
   isEffectProcess,
 } from './useHooks/useGetProcessName';
@@ -116,6 +117,8 @@ export default memo(
     const [tools, setTools] = useState([]);
 
     const uuidRef = useRef(null);
+
+    const saveAsXML = useSaveAsXML();
 
     const persistentStorage = usePersistentStorage();
 
@@ -443,13 +446,14 @@ export default memo(
           type: 'save',
           onClick: () => {
             // 保存到本地
-            changeModifyState(
-              processTreeRef.current,
-              currentCheckedTreeNodeRef.current,
-              false
-            );
-            persistentStorage();
+            // changeModifyState(
+            //   processTreeRef.current,
+            //   currentCheckedTreeNodeRef.current,
+            //   false
+            // );
+            // persistentStorage();
             message.success('保存成功');
+            saveAsXML();
           },
         },
         {

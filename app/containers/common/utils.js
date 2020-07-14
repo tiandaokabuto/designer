@@ -968,3 +968,8 @@ export const checkProjectExist = projectName => {
   const projectPath = PATH_CONFIG('project', `${projectName}`);
   return fs.existsSync(projectPath);
 };
+
+export const saveAsXML = data => {
+  console.log(data);
+  fs.writeFileSync(PATH_CONFIG('current', `test.xml`), data);
+};
