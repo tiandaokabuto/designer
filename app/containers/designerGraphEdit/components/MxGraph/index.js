@@ -6,9 +6,9 @@ import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import mxgraph from './mxgraph';
 import MxGraphHeader from './components/MxGraphHeader';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
-import setConnection from './methods/setConnection';
 // import useSaveAsXML from '../../../common/DragEditorHeader/useHooks/useSaveAsXML';
 import { changeMxGraphData } from '../../../reduxActions';
+import { setConnection, createPopupMenu } from './methods';
 
 import './index.scss';
 
@@ -315,6 +315,12 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     graph.extendParents = false;
     // 允许拖拽到另一个单元格中
     graph.setDropEnabled(true);
+    //  启用画布平移
+    graph.setPanning(true);
+    // 开启右键菜单
+    graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
+      return createPopupMenu(graph, menu, cell, evt);
+    };
 
     // 允许框线选择
     new MxRubberband(graph);
