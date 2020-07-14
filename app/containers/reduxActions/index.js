@@ -16,6 +16,7 @@ import {
   CHANGE_SAVING_MODULE_DATA,
   CHANGE_MOVING_MODULE_NODE,
   CHANGE_MOVING_MODULE_NODE_DATA,
+  CHANGE_MXGRAPH_DATA,
 } from '../../actions/grapheditor';
 import {
   SYNCHRO_CODEBLOCK,
@@ -34,35 +35,35 @@ import store from '../../store';
 
 const { dispatch } = store || { dispatch: () => {} };
 
-export const changeBlockTreeTab = (tab) => {
+export const changeBlockTreeTab = tab => {
   dispatch({
     type: CHANGE_BLOCK_TREE_TAB,
     payload: tab,
   });
 };
 
-export const updateCardData = (data) => {
+export const updateCardData = data => {
   dispatch({
     type: CHANGE_CARDDATA,
     payload: data,
   });
 };
 
-export const updateClipBoardData = (data) => {
+export const updateClipBoardData = data => {
   dispatch({
     type: CHANGE_CLIPBOARDDATA,
     payload: data,
   });
 };
 
-export const updateAIHintList = (list) => {
+export const updateAIHintList = list => {
   dispatch({
     type: CHANGE_AIHINTLIST,
     payload: list,
   });
 };
 
-export const updateCheckedBlockId = (id) => {
+export const updateCheckedBlockId = id => {
   dispatch({
     type: CHANGE_CHECKEDID,
     payload: id,
@@ -72,14 +73,14 @@ export const updateCheckedBlockId = (id) => {
 /**
  * 修改当前所处的页面位置
  */
-export const updateCurrentPagePosition = (position) => {
+export const updateCurrentPagePosition = position => {
   dispatch({
     type: UPDATE_CURRENTPAGEPOSITION,
     payload: position,
   });
 };
 
-export const updateExecuteOutput = (data) => {
+export const updateExecuteOutput = data => {
   dispatch({
     type: UPDATE_EXECUTEOUTPUT,
     payload: data,
@@ -92,7 +93,7 @@ export const clearGrapheditorData = () => {
   });
 };
 
-export const updateAutomicList = (treeData) => {
+export const updateAutomicList = treeData => {
   dispatch({
     type: CHANGE_AUTOMICLIST,
     payload: treeData,
@@ -158,7 +159,7 @@ export const setGraphDataMap = (key, value = {}) => {
 /**
  * 修改当前正处于点击状态的流程图的流程块的id
  */
-export const changeCheckedGraphBlockId = (id) => {
+export const changeCheckedGraphBlockId = id => {
   dispatch({
     type: CHANGE_CHECKEDGRAPHBLOCKID,
     payload: id,
@@ -169,7 +170,7 @@ export const changeCheckedGraphBlockId = (id) => {
  * 更新当前流程图的转译后的python代码
  */
 
-export const updateEditorBlockPythonCode = (code) => {
+export const updateEditorBlockPythonCode = code => {
   dispatch({
     type: CHANGE_EDITORBLOCKPYTHONCODE,
     payload: code,
@@ -191,7 +192,7 @@ export const changeProcessTree = (processTree = []) => {
  * 修改当前选中的流程树结点
  * @param {*} checkedTreeNode
  */
-export const changeCheckedTreeNode = (checkedTreeNode) => {
+export const changeCheckedTreeNode = checkedTreeNode => {
   dispatch({
     type: CHANGE_CHECKEDTREENODE,
     payload: checkedTreeNode,
@@ -213,42 +214,42 @@ export const changeModuleTree = (moduleTree = []) => {
  * 当前选中的复用流程块
  * @param {*} checkedModuleTreeNode
  */
-export const changeCheckedModuleTreeNode = (checkedModuleTreeNode) => {
+export const changeCheckedModuleTreeNode = checkedModuleTreeNode => {
   dispatch({
     type: CHANGE_CHECKED_MODULE_TREE_NODE,
     payload: checkedModuleTreeNode,
   });
 };
 
-export const changeTreeTab = (tab) => {
+export const changeTreeTab = tab => {
   dispatch({
     type: CHANGE_TREE_TAB,
     payload: tab,
   });
 };
 
-export const changeSavingModuleData = (data) => {
+export const changeSavingModuleData = data => {
   dispatch({
     type: CHANGE_SAVING_MODULE_DATA,
     payload: data,
   });
 };
 
-export const changeMovingModuleNode = (node) => {
+export const changeMovingModuleNode = node => {
   dispatch({
     type: CHANGE_MOVING_MODULE_NODE,
     payload: node,
   });
 };
 
-export const changeMovingModuleNodeData = (data) => {
+export const changeMovingModuleNodeData = data => {
   dispatch({
     type: CHANGE_MOVING_MODULE_NODE_DATA,
     payload: data,
   });
 };
 
-export const changeCurrentProject = (projectName) => {
+export const changeCurrentProject = projectName => {
   dispatch({
     type: CHANGE_CURRENTPROJECT,
     payload: projectName,
@@ -261,5 +262,12 @@ export const changeCurrentProject = (projectName) => {
 export const resetGraphEditData = () => {
   dispatch({
     type: RESET_ALLGRAPHEDITDATA,
+  });
+};
+
+export const changeMxGraphData = data => {
+  dispatch({
+    type: CHANGE_MXGRAPH_DATA,
+    payload: data,
   });
 };
