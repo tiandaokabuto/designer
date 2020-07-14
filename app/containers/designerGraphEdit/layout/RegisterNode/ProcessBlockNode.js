@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { RegisterNode } from 'gg-editor';
 
-import Image from '../../../images/icon.jpg';
+import Image from '../../../images/icon.png';
 import ExecuteImage from '../../../images/execute.jpg';
 import EditImage from '../../../images/edit.jpg';
 

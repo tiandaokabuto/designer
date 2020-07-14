@@ -14,7 +14,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   // const graphData = useSelector(state => state.grapheditor.graphData);
   // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
   const graphContainer = useRef(null);
-  const graphData = useRef({ selectCells: [], handleClickFun: () => {} });
   const [graph, setGraph] = useState(null);
 
   const {
@@ -33,6 +32,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     mxEvent,
     mxCellOverlay: MxCellOverlay,
     mxCodec: MxCodec,
+    mxVertexHandler,
+    mxSelectionCellsHandler,
   } = mxgraph;
 
   useEffect(() => {
@@ -103,12 +104,41 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
                 !this.isCellCollapsed(cell)))))
       );
     };
-    // 重写isPort
+
+    // 判断是否是连线约束点
     mxGraph.prototype.isPort = function(cell) {
       const geo = this.getCellGeometry(cell);
 
       return geo != null ? geo.relative : false;
     };
+
+    // 添加顶点选中时处理函数
+    mxVertexHandler.prototype.createCustomHandles = function() {
+      const colorKey = 'fillColor';
+      let color = '';
+      let cells = graph.getSelectionCells();
+      cells = cells.filter(cell => {
+        // const style = graph.getCellStyle(cell);
+        return cell.vertex && !graph.isSwimlane(cell);
+      });
+      if (cells.length > 0) {
+        color = '#9ed4fb';
+        graph.setCellStyles(colorKey, color, cells);
+      }
+      return null;
+    };
+
+    // 添加取消选中时处理函数
+    mxSelectionCellsHandler.prototype.eventListeners = [
+      'remove',
+      (sender, evt) => {
+        const { cell } = evt.properties.state;
+        if (cell.vertex === false || graph.isSwimlane(cell)) return;
+        const colorKey = 'fillColor';
+        const color = '#edf6f7';
+        graph.setCellStyles(colorKey, color, [cell]);
+      },
+    ];
   };
 
   const configLineStyleSheet = () => {
@@ -223,8 +253,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   const configEventHandle = () => {
     graph.addListener(mxEvent.CLICK, (sender, evt) => {
       const cell = evt.getProperty('cell');
-      const colorKey = 'fillColor';
-      let color = '#9ed4fb';
 
       if (cell != null) {
         const overlays = graph.getCellOverlays(cell);
@@ -248,22 +276,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
         } else {
           graph.removeCellOverlays(cell);
         }
-
-        if (!isPort) {
-          if (graphData.current.selectCells.length > 0) {
-            color = '#edf6f7';
-            graph.setCellStyles(colorKey, color, graphData.current.selectCells);
-            graphData.current.selectCells = [];
-          }
-          color = '#9ed4fb';
-          const cells = graph.getSelectionCells();
-          graphData.current.selectCells = cells;
-          graph.setCellStyles(colorKey, color, cells);
-        }
-      } else if (graphData.current.selectCells.length > 0) {
-        color = '#edf6f7';
-        graph.setCellStyles(colorKey, color, graphData.current.selectCells);
-        graphData.current.selectCells = [];
       }
     });
   };
