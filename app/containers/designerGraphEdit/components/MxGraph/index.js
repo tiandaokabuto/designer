@@ -13,6 +13,7 @@ import { setConnection, createPopupMenu } from './methods';
 import './index.scss';
 
 const fs = require('fs');
+const checkPng = require('./images/check.png');
 
 const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   // const graphData = useSelector(state => state.grapheditor.graphData);
@@ -48,17 +49,17 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   }, []);
 
   const configMxCell = () => {
-    mxCell.prototype.setNodeType = function (nodetype) {
+    mxCell.prototype.setNodeType = function(nodetype) {
       this.nodetype = nodetype;
     };
-    mxCell.prototype.setComponentType = function (componentType) {
+    mxCell.prototype.setComponentType = function(componentType) {
       this.componentType = componentType;
     };
-    mxCell.prototype.setNodeId = function (nodeId) {
+    mxCell.prototype.setNodeId = function(nodeId) {
       this.nodeId = nodeId;
     };
     // 更新组件状态
-    mxCell.prototype.updateStatus = function (graph, status) {
+    mxCell.prototype.updateStatus = function(graph, status) {
       let html = this.getValue();
       const index = html.indexOf('class="status');
       if (index === -1) {
@@ -88,15 +89,15 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       this.setValue(html);
       graph.cellLabelChanged(this, html);
     };
-    mxCell.prototype.setPortIndex = function (portIndex) {
+    mxCell.prototype.setPortIndex = function(portIndex) {
       this.portIndex = portIndex;
     };
-    mxCell.prototype.setPortType = function (portType) {
+    mxCell.prototype.setPortType = function(portType) {
       this.portType = portType;
     };
 
     // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
-    mxGraph.prototype.isValidDropTarget = function (cell, cells, evt) {
+    mxGraph.prototype.isValidDropTarget = function(cell, cells, evt) {
       const style = this.getCellStyle(cell);
       const isContainer = style.container === 1;
 
@@ -112,14 +113,14 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     };
 
     // 判断是否是连线约束点
-    mxGraph.prototype.isPort = function (cell) {
+    mxGraph.prototype.isPort = function(cell) {
       const geo = this.getCellGeometry(cell);
 
       return geo != null ? geo.relative : false;
     };
 
     // 添加顶点选中时处理函数
-    mxVertexHandler.prototype.createCustomHandles = function () {
+    mxVertexHandler.prototype.createCustomHandles = function() {
       const colorKey = 'fillColor';
       let color = '';
       let cells = graph.getSelectionCells();
@@ -258,8 +259,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
   const configEventHandle = () => {
     graph.addListener(mxEvent.CLICK, (sender, evt) => {
-      console.log(graph);
-
       const cell = evt.getProperty('cell');
 
       if (cell != null) {
@@ -270,7 +269,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
         if (overlays == null && !isPort) {
           // Creates a new overlay with an image and a tooltip
           const overlay = new MxCellOverlay(
-            new MxImage('./containers/images/check.png', 16, 16),
+            new MxImage(checkPng.default, 16, 16),
             'Overlay tooltip'
           );
 
@@ -303,7 +302,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
     // 启用连线功能
     graph.setConnectable(true);
-    graph.connectionHandler.getConnectImage = function (state) {
+    graph.connectionHandler.getConnectImage = function(state) {
       return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
     };
 
@@ -318,7 +317,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     //  启用画布平移
     graph.setPanning(true);
     // 开启右键菜单
-    graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
+    graph.popupMenuHandler.factoryMethod = function(menu, cell, evt) {
       return createPopupMenu(graph, menu, cell, evt);
     };
 

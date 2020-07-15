@@ -14,10 +14,12 @@ const {
   mxImage: MxImage,
 } = mxgraph;
 
+const pointGif = require('../../../../images/point.gif');
+
 export default () => {
   // 创建连接点图像
   mxConstraintHandler.prototype.pointImage = new MxImage(
-    'containers/images/point.gif',
+    pointGif.default,
     5,
     5
   );

@@ -351,7 +351,7 @@ const MxGraphHeader = ({ graph, container }) => {
           className="mxgraph-cell designergraph-container-header-tool-start"
           data-width="50"
           data-height="50"
-          data-style="shape=ellipse;label;whiteSpace=wrap;html=1;;resizable=0"
+          data-style="shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;align=center"
           data-label="开始"
         >
           开始
@@ -397,7 +397,7 @@ const MxGraphHeader = ({ graph, container }) => {
           className="mxgraph-cell designergraph-container-header-tool-end"
           data-width="80"
           data-height="55"
-          data-style="shape=ellipse;label;whiteSpace=wrap;html=1;;resizable=0"
+          data-style="shape=ellipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center"
           data-label="结束"
         >
           结束
