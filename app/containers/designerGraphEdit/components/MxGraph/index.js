@@ -1,6 +1,7 @@
 /* eslint-disable no-new */
 import React, { useRef, useEffect, useState } from 'react';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
+import X2JS from 'x2js';
 // import { useSelector } from 'react-redux';
 
 import mxgraph from './mxgraph';
@@ -14,6 +15,8 @@ import './index.scss';
 
 const fs = require('fs');
 const checkPng = require('./images/check.png');
+
+const x2js = new X2JS();
 
 const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   // const graphData = useSelector(state => state.grapheditor.graphData);
@@ -286,6 +289,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       }
     });
     graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
+      console.log(sender);
       const codec = new MxCodec();
       const node = codec.encode(sender);
       const xml = mxUtils.getXml(node);
@@ -340,24 +344,33 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     setConnection();
 
     // 添加数据
-    // const div = document.createElement('div');
-    // div.innerText =
-    //   '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="295" y="167" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="3" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="322" y="304" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="4" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>';
-    // const xml = mxUtils.getTextContent(div);
-    // const xmlDocument = mxUtils.parseXml(xml);
-    // const decoder = new MxCodec(xmlDocument);
-    // const node = xmlDocument.documentElement;
-    // decoder.decode(node, graph.getModel());
+    const div = document.createElement('div');
+    div.innerText =
+      '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="295" y="167" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="3" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="322" y="304" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="4" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>';
+    const xml = mxUtils.getTextContent(div);
+    const xmlDocument = mxUtils.parseXml(xml);
+    const decoder = new MxCodec(xmlDocument);
+    const node = xmlDocument.documentElement;
+    decoder.decode(node, graph.getModel());
 
-    parseJsonFile();
+    // parseJsonFile();
 
-    loadGraph();
+    // loadGraph();
   }, [graph]);
 
   const parseJsonFile = () => {
     const jsonFile = fs.readFileSync('D:/临时文件存放/test.json');
     // 获得流程
     const graphData = jsonFile ? JSON.parse(jsonFile).graphData : {};
+
+    const codec = new MxCodec();
+    const node = codec.encode(graph.getModel());
+    const xml = mxUtils.getXml(node);
+
+    const json = x2js.dom2js(node);
+
+    console.log(json);
+    console.log(x2js.js2xml(json));
   };
 
   const loadGraph = () => {
