@@ -9,9 +9,9 @@ import mxgraph from '../mxgraph';
 import './MxGraphHeader.scss';
 
 const {
-  mxCell,
-  mxGeometry,
-  mxRectangle,
+  mxCell: MxCell,
+  mxGeometry: MxGeometry,
+  mxRectangle: MxRectangle,
   mxUtils,
   mxEvent,
   mxEventObject,
@@ -285,7 +285,7 @@ const MxGraphHeader = ({ graph, container }) => {
           this.dragElement !== null &&
           this.dragElement.style.display === 'none'
         ) {
-          //sb.itemClicked(cells, ds, evt, elt);
+          // sb.itemClicked(cells, ds, evt, elt);
         }
 
         oldMouseUp.apply(ds, arguments);
@@ -303,9 +303,9 @@ const MxGraphHeader = ({ graph, container }) => {
 
   // 创建可拖拽的单元源，当拖拽结束时，生成对应的单元格
   const createItem = (cells, width, height, title, allowCellsInserted, elt) => {
-    const bounds = new mxRectangle(0, 0, width, height);
+    const bounds = new MxRectangle(0, 0, width, height);
     if (cells.length > 1 || cells[0].vertex) {
-      const ds = createDragSource(
+      /* const ds =  */ createDragSource(
         elt,
         createDropHandler(cells, true, allowCellsInserted, bounds),
         // this.createDragPreview(width, height),
@@ -321,35 +321,17 @@ const MxGraphHeader = ({ graph, container }) => {
   useEffect(() => {
     if (graph) {
       let cell = null;
-      for (let i = 0; i < 3; i += 1) {
-        let label = '';
-        let style = '';
-        let eltClassName = '';
-        if (i === 0) {
-          label = 'contain';
-          style =
-            'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;';
-          eltClassName = 'ground';
-          cell = new mxCell(label, new mxGeometry(0, 0, 186, 55), style);
-        } else if (i === 1) {
-          label =
-            '<div class="compoent-content"><label class="component-icon"></label><span class="component-name" title="process">流程块</span></div>';
-          style =
-            'label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg';
-          eltClassName = 'process';
-          cell = new mxCell(label, new mxGeometry(0, 0, 186, 55), style);
-        } else if (i === 2) {
-          label = `<div class="rcomponent-content"><label class="rcomponent-content-icon"></label><span class="rcomponent-name" title="condition">判断</span></div>`;
-          style = 'shape=rhombus;perimeter=ellipsePerimeter;resizable=0;';
-          eltClassName = 'condition';
-          cell = new mxCell(label, new mxGeometry(0, 0, 100, 100), style);
-        }
+      const toolCells = document.querySelectorAll('.mxgraph-cell');
+      for (let i = 0; i < toolCells.length; i += 1) {
+        const elt = toolCells[i];
+        const { label, style, width, height } = elt.dataset;
+        cell = new MxCell(
+          label,
+          new MxGeometry(0, 0, parseInt(width, 10), parseInt(height, 10)),
+          style
+        );
         cell.vertex = true;
 
-        // const eltClassName = i === 0 ? 'ground' : 'process';
-        const elt = document.getElementsByClassName(
-          `designergraph-container-header-tool-${eltClassName}`
-        )[0];
         createItem(
           [cell],
           cell.geometry.width,
@@ -365,23 +347,32 @@ const MxGraphHeader = ({ graph, container }) => {
   return (
     <div className="designergraph-container-header">
       <div className="designergraph-container-header-tool">
-        {/* <div
-          className="designergraph-container-header-tool-process"
-          draggable
-          data-component-type="process"
-          onDragStart={e => onComponentDragStart(e, 'componentToDropType')}
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-start"
+          data-width="50"
+          data-height="50"
+          data-style="shape=ellipse;label;whiteSpace=wrap;html=1;;resizable=0"
+          data-label="开始"
         >
-          流程块
-        </div> */}
-        <div className="designergraph-container-header-tool-process">
+          开始
+        </div>
+
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-process"
+          data-width="186"
+          data-height="55"
+          data-style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg"
+          data-label="<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>流程块</span></div>"
+        >
           流程块
         </div>
 
         <div
-          className="designergraph-container-header-tool-condition"
-          // draggable
-          // data-component-type="rhombus"
-          // onDragStart={e => onComponentDragStart(e, 'rComponentToDropType')}
+          className="mxgraph-cell designergraph-container-header-tool-condition"
+          data-width="100"
+          data-height="100"
+          data-style="shape=rhombus;perimeter=ellipsePerimeter;resizable=0"
+          data-label="<div class='rcomponent-content'><label class='rcomponent-content-icon'></label><span class='rcomponent-name' title='condition'>判断</span></div>"
         >
           <div className="designergraph-container-header-tool-condition-left">
             <span />
@@ -392,7 +383,25 @@ const MxGraphHeader = ({ graph, container }) => {
           <span style={{ position: 'absolute', right: '18px' }}>判断</span>
         </div>
 
-        <div className="designergraph-container-header-tool-ground">容器</div>
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-ground"
+          data-width="186"
+          data-height="55"
+          data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;"
+          data-label="contain"
+        >
+          容器
+        </div>
+
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-end"
+          data-width="80"
+          data-height="55"
+          data-style="shape=ellipse;label;whiteSpace=wrap;html=1;;resizable=0"
+          data-label="结束"
+        >
+          结束
+        </div>
       </div>
       <span className="designergraph-container-header-title">
         {/* node && node.title */}
