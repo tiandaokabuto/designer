@@ -266,6 +266,7 @@
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0",
     "webpack-merge": "^4.2.2",
+    "x2js": "^3.4.0",
     "yarn": "^1.21.1"
   },
   "dependencies": {
