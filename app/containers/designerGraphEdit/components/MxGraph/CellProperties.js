@@ -14,3 +14,17 @@ export const CONDITION_NODE = {
   width: 100,
   height: 100,
 };
+
+export const START_NODE = {
+  label: '开始',
+  style: 'shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;align=center',
+  width: 50,
+  height: 50,
+};
+
+export const END_NODE = {
+  label: '结束',
+  style: 'shape=ellipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center',
+  width: 80,
+  height: 55,
+};

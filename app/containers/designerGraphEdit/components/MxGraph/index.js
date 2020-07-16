@@ -10,8 +10,13 @@ import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/Output
 // import useSaveAsXML from '../../../common/DragEditorHeader/useHooks/useSaveAsXML';
 import { changeMxGraphData } from '../../../reduxActions';
 import { setConnection, createPopupMenu } from './methods';
-import { PROCESS_NODE, CONDITION_NODE } from './CellProperties';
-import { POINT_POSITION } from './PointPosition';
+import {
+  PROCESS_NODE,
+  CONDITION_NODE,
+  START_NODE,
+  END_NODE,
+} from './CellProperties';
+import { POINT_POSITION_EXIT, POINT_POSITION_ENTRY } from './PointPosition';
 
 import './index.scss';
 
@@ -54,17 +59,17 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
   }, []);
 
   const configMxCell = () => {
-    mxCell.prototype.setNodeType = function(nodetype) {
+    mxCell.prototype.setNodeType = function (nodetype) {
       this.nodetype = nodetype;
     };
-    mxCell.prototype.setComponentType = function(componentType) {
+    mxCell.prototype.setComponentType = function (componentType) {
       this.componentType = componentType;
     };
-    mxCell.prototype.setNodeId = function(nodeId) {
+    mxCell.prototype.setNodeId = function (nodeId) {
       this.nodeId = nodeId;
     };
     // 更新组件状态
-    mxCell.prototype.updateStatus = function(graph, status) {
+    mxCell.prototype.updateStatus = function (graph, status) {
       let html = this.getValue();
       const index = html.indexOf('class="status');
       if (index === -1) {
@@ -94,15 +99,15 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
       this.setValue(html);
       graph.cellLabelChanged(this, html);
     };
-    mxCell.prototype.setPortIndex = function(portIndex) {
+    mxCell.prototype.setPortIndex = function (portIndex) {
       this.portIndex = portIndex;
     };
-    mxCell.prototype.setPortType = function(portType) {
+    mxCell.prototype.setPortType = function (portType) {
       this.portType = portType;
     };
 
     // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
-    mxGraph.prototype.isValidDropTarget = function(cell, cells, evt) {
+    mxGraph.prototype.isValidDropTarget = function (cell, cells, evt) {
       const style = this.getCellStyle(cell);
       const isContainer = style.container === 1;
 
@@ -118,14 +123,14 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     };
 
     // 判断是否是连线约束点
-    mxGraph.prototype.isPort = function(cell) {
+    mxGraph.prototype.isPort = function (cell) {
       const geo = this.getCellGeometry(cell);
 
       return geo != null ? geo.relative : false;
     };
 
     // 添加顶点选中时处理函数
-    mxVertexHandler.prototype.createCustomHandles = function() {
+    mxVertexHandler.prototype.createCustomHandles = function () {
       const colorKey = 'fillColor';
       let color = '';
       let cells = graph.getSelectionCells();
@@ -308,7 +313,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
     // 启用连线功能
     graph.setConnectable(true);
-    graph.connectionHandler.getConnectImage = function(state) {
+    graph.connectionHandler.getConnectImage = function (state) {
       return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
     };
 
@@ -323,7 +328,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     //  启用画布平移
     graph.setPanning(true);
     // 开启右键菜单
-    graph.popupMenuHandler.factoryMethod = function(menu, cell, evt) {
+    graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
       return createPopupMenu(graph, menu, cell, evt);
     };
 
@@ -355,9 +360,9 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     // const node = xmlDocument.documentElement;
     // decoder.decode(node, graph.getModel());
 
-    loadGraph();
+    // loadGraph();
 
-    parseJsonFile();
+    // parseJsonFile();
   }, [graph]);
 
   const parseJsonFile = () => {
@@ -380,7 +385,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     console.log(x2js.dom2js(node));
 
     const newNodes = nodes.map(item => {
-      console.log(item);
       const obj = {};
       if (item.shape === 'processblock') {
         const labelStr = PROCESS_NODE.label;
@@ -395,99 +399,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
         obj.mxGeometry._width = String(PROCESS_NODE.width);
         obj.mxGeometry._height = String(PROCESS_NODE.height);
         obj.mxGeometry._as = 'geometry';
-        obj.Array = [];
-        obj.Array.push({
-          _as: 'properties',
-          Object: [
-            {
-              _cnName: '标签名称',
-              _enName: 'label',
-              _value: '流程块',
-              _default: '',
-            },
-            {
-              _cnName: '输入参数',
-              _default: '',
-              _enName: 'param',
-              Array: [
-                {
-                  _as: 'value',
-                },
-              ],
-            },
-            {
-              _cnName: '流程块返回',
-              _default: '',
-              _enName: 'output',
-              Array: [
-                {
-                  _as: 'value',
-                },
-              ],
-            },
-          ],
-        });
-        obj.Array.push({
-          _as: 'variable',
-        });
-        // obj.Array[0].Object = [];
-        // obj.Array.push({
-        //   _as: 'properties',
-        //   Object: [
-        //     {
-        //       _cnName: '标签名称',
-        //       _enName: 'label',
-        //       _value: '判断',
-        //       _default: '',
-        //     },
-        //     {
-        //       _cnName: '输入参数',
-        //       _default: '',
-        //       _enName: 'param',
-        //       Array: [
-        //         {
-        //           _as: 'value',
-        //         },
-        //       ],
-        //     },
-        //     {
-        //       _cnName: '流程块返回',
-        //       _default: '',
-        //       _enName: 'output',
-        //       Array: [
-        //         {
-        //           _as: 'value',
-        //         },
-        //       ],
-        //     },
-        //   ],
-        // });
-        // obj.Array[0].Object.push({
-        //   _cnName: '标签名称',
-        //   _enName: 'label',
-        //   _value: '流程块',
-        //   _default: '',
-        // });
-        // obj.Array[0].Object.push({
-        //   _cnName: '输入参数',
-        //   _default: '',
-        //   _enName: 'param',
-        //   Array: [
-        //     {
-        //       _as: 'value',
-        //     },
-        //   ],
-        // });
-        // obj.Array[0].Object.push({
-        //   _cnName: '流程块返回',
-        //   _default: '',
-        //   _enName: 'output',
-        //   Array: [
-        //     {
-        //       _as: 'value',
-        //     },
-        //   ],
-        // });
       } else if (item.shape === 'rhombus-node') {
         obj._id = item.id;
         obj._parent = '1';
@@ -500,62 +411,101 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
         obj.mxGeometry._width = String(CONDITION_NODE.width);
         obj.mxGeometry._height = String(CONDITION_NODE.height);
         obj.mxGeometry._as = 'geometry';
-        obj.Array = [];
-        obj.Array.push({
-          _as: 'properties',
-          Object: [
-            {
-              _cnName: '标签名称',
-              _enName: 'label',
-              _value: '判断',
-              _default: '',
-            },
-            {
-              _cnName: '分支条件',
-              _enName: 'condition',
-              _value: '',
-              _default: '',
-              _tag: 1,
-              Array: [
-                {
-                  _as: 'valueMapping',
-                  Object: [
-                    { _name: '等于', _value: '==' },
-                    { _name: '不等于', _value: '!=' },
-                    { _name: '大于', _value: '>' },
-                    { _name: '小于', _value: '<' },
-                    { _name: '大于等于', _value: '>=' },
-                    { _name: '小于等于', _value: '<=' },
-                    { _name: '空', _value: 'is None' },
-                    { _name: '非空', _value: 'not None' },
-                  ],
-                },
-                {
-                  _as: 'valueList',
-                },
-              ],
-            },
-          ],
-        });
+      } else if (item.shape === 'start-node') {
+        obj._id = item.id;
+        obj._parent = '1';
+        obj._style = START_NODE.style;
+        obj._value = START_NODE.label;
+        obj._vertex = '1';
+        obj.mxGeometry = {};
+        obj.mxGeometry._x = String(item.x);
+        obj.mxGeometry._y = String(item.y);
+        obj.mxGeometry._width = String(START_NODE.width);
+        obj.mxGeometry._height = String(START_NODE.height);
+        obj.mxGeometry._as = 'geometry';
+      } else if (item.shape === 'end-node') {
+        obj._id = item.id;
+        obj._parent = '1';
+        obj._style = END_NODE.style;
+        obj._value = END_NODE.label;
+        obj._vertex = '1';
+        obj.mxGeometry = {};
+        obj.mxGeometry._x = String(item.x);
+        obj.mxGeometry._y = String(item.y);
+        obj.mxGeometry._width = String(END_NODE.width);
+        obj.mxGeometry._height = String(END_NODE.height);
+        obj.mxGeometry._as = 'geometry';
       }
       return obj;
     });
 
-    json.root.mxCell = json.root.mxCell.concat(newNodes);
+    const newEdges = edges.map(item => {
+      const obj = {};
+      let point = '';
+      obj._id = item.id;
+      obj._parent = '1';
+      obj._edge = '1';
+      obj._source = item.source;
+      obj._target = item.target;
+      obj.mxGeometry = {};
+      obj.mxGeometry._as = 'geometry';
+      obj.mxGeometry._relative = '1';
+      switch (item.sourceAnchor) {
+        case 0:
+          point += POINT_POSITION_EXIT.TOP + POINT_POSITION_EXIT.NORMAL;
+          break;
+        case 1:
+          point += POINT_POSITION_EXIT.BOTTOM + POINT_POSITION_EXIT.NORMAL;
+          break;
+        case 2:
+          point += POINT_POSITION_EXIT.LEFT + POINT_POSITION_EXIT.NORMAL;
+          break;
+        case 3:
+          point += POINT_POSITION_EXIT.RIGHT + POINT_POSITION_EXIT.NORMAL;
+          break;
+        default:
+          break;
+      }
+      switch (item.targetAnchor) {
+        case 0:
+          point += POINT_POSITION_ENTRY.TOP + POINT_POSITION_ENTRY.NORMAL;
+          break;
+        case 1:
+          point += POINT_POSITION_ENTRY.BOTTOM + POINT_POSITION_ENTRY.NORMAL;
+          break;
+        case 2:
+          point += POINT_POSITION_ENTRY.LEFT + POINT_POSITION_ENTRY.NORMAL;
+          break;
+        case 3:
+          point += POINT_POSITION_ENTRY.RIGHT + POINT_POSITION_ENTRY.NORMAL;
+          break;
+        default:
+          break;
+      }
+      console.log(point);
+      obj._style = point;
+      return obj;
+    });
+
+    json.root.mxCell = json.root.mxCell.concat(newNodes).concat(newEdges);
 
     const newJson = {};
     newJson.mxGraphModel = {};
     newJson.mxGraphModel.root = json.root;
 
     const xml = x2js.js2xml(newJson);
+    // const xml = mxUtils.getTextContent(div);
 
     console.log(xml);
+    const xmlDoc = mxUtils.parseXml(xml);
+    const codec = new MxCodec(xmlDoc);
+    codec.decode(xmlDoc.documentElement, graph.getModel());
   };
 
   const loadGraph = () => {
     // const xmlReq = mxUtils.load('D:/临时文件存放/fgh.xml');
-    const xmlReq2 = mxUtils.load('D:/临时文件存放/fgh.xml');
-    const root = xmlReq2.getDocumentElement();
+    const xmlReq = mxUtils.load('D:/临时文件存放/fgh.xml');
+    const root = xmlReq.getDocumentElement();
     const dec = new MxCodec(root);
     dec.decode(root, graph.getModel());
   };

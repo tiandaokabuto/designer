@@ -218,61 +218,63 @@ const MxGraphHeader = ({ graph, container }) => {
                 select = graph.importCells(importableCells, x, y, target);
               }
 
-              if (select[0].value.indexOf("class='compoent-content'") > -1) {
-                console.log('流程块');
-                select[0].properties = [
-                  {
-                    cnName: '标签名称',
-                    enName: 'label',
-                    value: '流程块',
-                    default: '',
-                  },
-                  {
-                    cnName: '输入参数',
-                    enName: 'param',
-                    value: [],
-                    default: '',
-                  },
-                  {
-                    cnName: '流程块返回',
-                    enName: 'output',
-                    value: [],
-                    default: '',
-                  },
-                ];
-                select[0].variable = [];
-              } else if (
-                select[0].value.indexOf("class='rcomponent-content'") > -1
-              ) {
-                console.log('判断块');
-                select[0].properties = [
-                  {
-                    cnName: '标签名称',
-                    enName: 'label',
-                    value: '判断',
-                    default: '',
-                  },
-                  {
-                    cnName: '分支条件',
-                    enName: 'condition',
-                    value: '',
-                    default: '',
-                    valueMapping: [
-                      { name: '等于', value: '==' },
-                      { name: '不等于', value: '!=' },
-                      { name: '大于', value: '>' },
-                      { name: '小于', value: '<' },
-                      { name: '大于等于', value: '>=' },
-                      { name: '小于等于', value: '<=' },
-                      { name: '空', value: 'is None' },
-                      { name: '非空', value: 'not None' },
-                    ],
-                    tag: 1,
-                    valueList: [],
-                  },
-                ];
-              }
-              console.log(select);
+              // if (select[0].value.indexOf("class='compoent-content'") > -1) {
+              //   console.log('流程块');
+              //   select[0].properties = [
+              //     {
+              //       cnName: '标签名称',
+              //       enName: 'label',
+              //       value: '流程块',
+              //       default: '',
+              //     },
+              //     {
+              //       cnName: '输入参数',
+              //       enName: 'param',
+              //       value: [],
+              //       default: '',
+              //     },
+              //     {
+              //       cnName: '流程块返回',
+              //       enName: 'output',
+              //       value: [],
+              //       default: '',
+              //     },
+              //   ];
+              //   select[0].pythonCode = '';
+              //   select[0].cards = [];
+              //   select[0].variable = [];
+              // } else if (
+              //   select[0].value.indexOf("class='rcomponent-content'") > -1
+              // ) {
+              //   console.log('判断块');
+              //   select[0].properties = [
+              //     {
+              //       cnName: '标签名称',
+              //       enName: 'label',
+              //       value: '判断',
+              //       default: '',
+              //     },
+              //     {
+              //       cnName: '分支条件',
+              //       enName: 'condition',
+              //       value: '',
+              //       default: '',
+              //       valueMapping: [
+              //         { name: '等于', value: '==' },
+              //         { name: '不等于', value: '!=' },
+              //         { name: '大于', value: '>' },
+              //         { name: '小于', value: '<' },
+              //         { name: '大于等于', value: '>=' },
+              //         { name: '小于等于', value: '<=' },
+              //         { name: '空', value: 'is None' },
+              //         { name: '非空', value: 'not None' },
+              //       ],
+              //       tag: 1,
+              //       valueList: [],
+              //     },
+              //   ];
+              // }
+              // console.log(select);
 
               // Executes parent layout hooks for position/order
               if (graph.layoutManager !== null) {
