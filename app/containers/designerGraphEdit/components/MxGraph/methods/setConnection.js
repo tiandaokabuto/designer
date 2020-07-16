@@ -14,10 +14,12 @@ const {
   mxImage: MxImage,
 } = mxgraph;
 
+const pointGif = require('../../../../images/point.gif');
+
 export default () => {
   // 创建连接点图像
   mxConstraintHandler.prototype.pointImage = new MxImage(
-    'containers/images/point.gif',
+    pointGif.default,
     5,
     5
   );
@@ -47,7 +49,7 @@ export default () => {
   ];
 
   // 重写方法为形状提供链接点
-  mxGraph.prototype.getAllConnectionConstraints = function(terminal) {
+  mxGraph.prototype.getAllConnectionConstraints = function (terminal) {
     if (terminal != null) {
       let constraints = mxUtils.getValue(terminal.style, 'points', null);
 
@@ -111,7 +113,7 @@ export default () => {
   };
 
   // 自定义链接点的钩子
-  mxShape.prototype.getConstraints = function() {
+  mxShape.prototype.getConstraints = function () {
     return null;
   };
 };

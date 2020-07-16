@@ -58,7 +58,7 @@ const MxGraphHeader = ({ graph, container }) => {
     }
 
     // 成功拖拽后的回调方法
-    const funt = mxUtils.bind(this, function(...args) {
+    const funt = mxUtils.bind(this, function (...args) {
       dropHandler.apply(this, args);
     });
 
@@ -80,12 +80,12 @@ const MxGraphHeader = ({ graph, container }) => {
       highlightDropTargets
     );
 
-    dragSource.dragOver = function(...args) {
+    dragSource.dragOver = function (...args) {
       mxDragSource.prototype.dragOver.apply(this, args);
     };
 
     // 仅当拖拽目标是一个合法根的时候可以拖进
-    dragSource.getDropTarget = mxUtils.bind(this, function(graph, x, y, evt) {
+    dragSource.getDropTarget = mxUtils.bind(this, function (graph, x, y, evt) {
       // Alt表示没有目标
       // 得到与x，y相交的底层单元格
       let cell =
@@ -154,7 +154,7 @@ const MxGraphHeader = ({ graph, container }) => {
       allowCellsInserted !== null ? allowCellsInserted : true;
 
     // 更新视图
-    return mxUtils.bind(this, function(graph, evt, target, x, y, force) {
+    return mxUtils.bind(this, function (graph, evt, target, x, y, force) {
       let elt = null;
       if (!force) {
         elt = mxEvent.isTouchEvent(evt) /* || mxEvent.isPenEvent(evt) */
@@ -218,6 +218,62 @@ const MxGraphHeader = ({ graph, container }) => {
                 select = graph.importCells(importableCells, x, y, target);
               }
 
+              if (select[0].value.indexOf("class='compoent-content'") > -1) {
+                console.log('流程块');
+                select[0].properties = [
+                  {
+                    cnName: '标签名称',
+                    enName: 'label',
+                    value: '流程块',
+                    default: '',
+                  },
+                  {
+                    cnName: '输入参数',
+                    enName: 'param',
+                    value: [],
+                    default: '',
+                  },
+                  {
+                    cnName: '流程块返回',
+                    enName: 'output',
+                    value: [],
+                    default: '',
+                  },
+                ];
+                select[0].variable = [];
+              } else if (
+                select[0].value.indexOf("class='rcomponent-content'") > -1
+              ) {
+                console.log('判断块');
+                select[0].properties = [
+                  {
+                    cnName: '标签名称',
+                    enName: 'label',
+                    value: '判断',
+                    default: '',
+                  },
+                  {
+                    cnName: '分支条件',
+                    enName: 'condition',
+                    value: '',
+                    default: '',
+                    valueMapping: [
+                      { name: '等于', value: '==' },
+                      { name: '不等于', value: '!=' },
+                      { name: '大于', value: '>' },
+                      { name: '小于', value: '<' },
+                      { name: '大于等于', value: '>=' },
+                      { name: '小于等于', value: '<=' },
+                      { name: '空', value: 'is None' },
+                      { name: '非空', value: 'not None' },
+                    ],
+                    tag: 1,
+                    valueList: [],
+                  },
+                ];
+              }
+              console.log(select);
+
               // Executes parent layout hooks for position/order
               if (graph.layoutManager !== null) {
                 const layout = graph.layoutManager.getLayout(target);
@@ -260,7 +316,7 @@ const MxGraphHeader = ({ graph, container }) => {
               select !== null &&
               select.length === 1
             ) {
-              window.setTimeout(function() {
+              window.setTimeout(function () {
                 graph.startEditing(select[0]);
               }, 0);
             }
@@ -277,7 +333,7 @@ const MxGraphHeader = ({ graph, container }) => {
     const oldMouseUp = ds.mouseUp;
     let first = null;
 
-    ds.mouseUp = function(evt) {
+    ds.mouseUp = function (evt) {
       try {
         if (
           !mxEvent.isPopupTrigger(evt) &&

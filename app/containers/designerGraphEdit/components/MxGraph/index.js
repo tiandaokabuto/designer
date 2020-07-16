@@ -10,6 +10,8 @@ import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/Output
 // import useSaveAsXML from '../../../common/DragEditorHeader/useHooks/useSaveAsXML';
 import { changeMxGraphData } from '../../../reduxActions';
 import { setConnection, createPopupMenu } from './methods';
+import { PROCESS_NODE, CONDITION_NODE } from './CellProperties';
+import { POINT_POSITION } from './PointPosition';
 
 import './index.scss';
 
@@ -342,18 +344,18 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
     setConnection();
 
     // 添加数据
-    const div = document.createElement('div');
-    div.innerText =
-      '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="295" y="167" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="3" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="322" y="304" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="4" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>';
-    const xml = mxUtils.getTextContent(div);
-    const xmlDocument = mxUtils.parseXml(xml);
-    const decoder = new MxCodec(xmlDocument);
-    const node = xmlDocument.documentElement;
-    decoder.decode(node, graph.getModel());
+    // const div = document.createElement('div');
+    // div.innerText =
+    //   '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="295" y="167" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="3" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="322" y="304" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="4" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>';
+    // const xml = mxUtils.getTextContent(div);
+    // const xmlDocument = mxUtils.parseXml(xml);
+    // const decoder = new MxCodec(xmlDocument);
+    // const node = xmlDocument.documentElement;
+    // decoder.decode(node, graph.getModel());
 
-    // parseJsonFile();
+    loadGraph();
 
-    // loadGraph();
+    parseJsonFile();
   }, [graph]);
 
   const parseJsonFile = () => {
@@ -363,17 +365,195 @@ const MxgraphContainer = useInjectContext(({ updateGraphData }) => {
 
     const codec = new MxCodec();
     const node = codec.encode(graph.getModel());
-    const xml = mxUtils.getXml(node);
 
+    // const xml = mxUtils.getXml(node);
+
+    // xml转换的json结构
     const json = x2js.dom2js(node);
 
-    console.log(json);
-    console.log(x2js.js2xml(json));
+    const nodes = graphData.nodes ? graphData.nodes : [];
+    const edges = graphData.edges ? graphData.edges : [];
+
+    console.log(edges);
+    console.log(x2js.dom2js(node));
+
+    const newNodes = nodes.map(item => {
+      console.log(item);
+      const obj = {};
+      if (item.shape === 'processblock') {
+        const labelStr = PROCESS_NODE.label;
+        obj._id = item.id;
+        obj._parent = '1';
+        obj._style = PROCESS_NODE.style;
+        obj._value = labelStr.replace('流程快', item.label);
+        obj._vertex = '1';
+        obj.mxGeometry = {};
+        obj.mxGeometry._x = String(item.x);
+        obj.mxGeometry._y = String(item.y);
+        obj.mxGeometry._width = String(PROCESS_NODE.width);
+        obj.mxGeometry._height = String(PROCESS_NODE.height);
+        obj.mxGeometry._as = 'geometry';
+        obj.Array = [];
+        obj.Array.push({
+          _as: 'properties',
+          Object: [
+            {
+              _cnName: '标签名称',
+              _enName: 'label',
+              _value: '流程块',
+              _default: '',
+            },
+            {
+              _cnName: '输入参数',
+              _default: '',
+              _enName: 'param',
+              Array: [
+                {
+                  _as: 'value',
+                },
+              ],
+            },
+            {
+              _cnName: '流程块返回',
+              _default: '',
+              _enName: 'output',
+              Array: [
+                {
+                  _as: 'value',
+                },
+              ],
+            },
+          ],
+        });
+        obj.Array.push({
+          _as: 'variable',
+        });
+        // obj.Array[0].Object = [];
+        // obj.Array.push({
+        //   _as: 'properties',
+        //   Object: [
+        //     {
+        //       _cnName: '标签名称',
+        //       _enName: 'label',
+        //       _value: '判断',
+        //       _default: '',
+        //     },
+        //     {
+        //       _cnName: '输入参数',
+        //       _default: '',
+        //       _enName: 'param',
+        //       Array: [
+        //         {
+        //           _as: 'value',
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       _cnName: '流程块返回',
+        //       _default: '',
+        //       _enName: 'output',
+        //       Array: [
+        //         {
+        //           _as: 'value',
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // });
+        // obj.Array[0].Object.push({
+        //   _cnName: '标签名称',
+        //   _enName: 'label',
+        //   _value: '流程块',
+        //   _default: '',
+        // });
+        // obj.Array[0].Object.push({
+        //   _cnName: '输入参数',
+        //   _default: '',
+        //   _enName: 'param',
+        //   Array: [
+        //     {
+        //       _as: 'value',
+        //     },
+        //   ],
+        // });
+        // obj.Array[0].Object.push({
+        //   _cnName: '流程块返回',
+        //   _default: '',
+        //   _enName: 'output',
+        //   Array: [
+        //     {
+        //       _as: 'value',
+        //     },
+        //   ],
+        // });
+      } else if (item.shape === 'rhombus-node') {
+        obj._id = item.id;
+        obj._parent = '1';
+        obj._style = CONDITION_NODE.style;
+        obj._value = CONDITION_NODE.label;
+        obj._vertex = '1';
+        obj.mxGeometry = {};
+        obj.mxGeometry._x = String(item.x);
+        obj.mxGeometry._y = String(item.y);
+        obj.mxGeometry._width = String(CONDITION_NODE.width);
+        obj.mxGeometry._height = String(CONDITION_NODE.height);
+        obj.mxGeometry._as = 'geometry';
+        obj.Array = [];
+        obj.Array.push({
+          _as: 'properties',
+          Object: [
+            {
+              _cnName: '标签名称',
+              _enName: 'label',
+              _value: '判断',
+              _default: '',
+            },
+            {
+              _cnName: '分支条件',
+              _enName: 'condition',
+              _value: '',
+              _default: '',
+              _tag: 1,
+              Array: [
+                {
+                  _as: 'valueMapping',
+                  Object: [
+                    { _name: '等于', _value: '==' },
+                    { _name: '不等于', _value: '!=' },
+                    { _name: '大于', _value: '>' },
+                    { _name: '小于', _value: '<' },
+                    { _name: '大于等于', _value: '>=' },
+                    { _name: '小于等于', _value: '<=' },
+                    { _name: '空', _value: 'is None' },
+                    { _name: '非空', _value: 'not None' },
+                  ],
+                },
+                {
+                  _as: 'valueList',
+                },
+              ],
+            },
+          ],
+        });
+      }
+      return obj;
+    });
+
+    json.root.mxCell = json.root.mxCell.concat(newNodes);
+
+    const newJson = {};
+    newJson.mxGraphModel = {};
+    newJson.mxGraphModel.root = json.root;
+
+    const xml = x2js.js2xml(newJson);
+
+    console.log(xml);
   };
 
   const loadGraph = () => {
-    const xmlReq = mxUtils.load('D:/临时文件存放/asd.xml');
-    const root = xmlReq.getDocumentElement();
+    // const xmlReq = mxUtils.load('D:/临时文件存放/fgh.xml');
+    const xmlReq2 = mxUtils.load('D:/临时文件存放/fgh.xml');
+    const root = xmlReq2.getDocumentElement();
     const dec = new MxCodec(root);
     dec.decode(root, graph.getModel());
   };
