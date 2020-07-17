@@ -216,13 +216,13 @@ const AutoCompleteInputParam = React.forwardRef(
         }}
         onFocus={() => {
           // 默认值跟当前值相等，清空重新输入
-          console.log(String(ref.current.props.placeholder) === inputValue);
+          // console.log(String(ref.current.props.placeholder) === inputValue);
           if (String(ref.current.props.placeholder) === inputValue) {
             ref.current.props.onChange('');
           }
         }}
         onBlur={() => {
-          console.log(ref.current.props.placeholder);
+          // console.log(ref.current.props.placeholder);
           // 当前输入框为空
           if (inputValue === '') {
             ref.current.props.onChange(String(ref.current.props.placeholder));
