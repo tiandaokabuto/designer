@@ -507,12 +507,12 @@ export default memo(
           onClick: verifyCompatibility,
         },
       ];
-      if (history.location.pathname.includes('block')) {
+      if (history.location.hash.includes('block')) {
         setTools(toolsDescriptionForBlock);
       } else {
         setTools(toolsDescriptionForProcess);
       }
-    }, [isRunCode, history.location.pathname]);
+    }, [isRunCode, history.location.hash]);
 
     const renderIcon = tool => {
       if (tool.IconFont) {
