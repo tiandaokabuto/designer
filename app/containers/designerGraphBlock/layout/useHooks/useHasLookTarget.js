@@ -12,6 +12,7 @@ export default card => {
     card.main === 'mousePosition' ||
     card.main === 'changeWinStatus' ||
     card.main === 'closeWin' ||
-    card.main === 'clickImage'
+    card.main === 'clickImage' ||
+    card.main === 'isExistCapture'
   );
 };
