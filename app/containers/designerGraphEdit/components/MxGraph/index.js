@@ -25,6 +25,10 @@ import {
   updateCurrentPagePosition,
   changeBlockTreeTab,
 } from "../../../reduxActions";
+import { Action_DeleteCell } from "./actions/deleteCell";
+import { Action_CopyCell, Action_PasteCell } from "./actions/copyCell";
+import { translateToGraphData } from "./actions/translateToGraphData";
+
 import { message } from "antd";
 
 const fs = require("fs");
@@ -58,6 +62,9 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     mxCodec: MxCodec,
     mxVertexHandler,
     mxSelectionCellsHandler,
+
+    // 剪切板
+    mxClipboard,
   } = mxgraph;
 
   useEffect(() => {
@@ -66,7 +73,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   }, []);
 
   const configMxCell = () => {
-    // liuqi 禁用编辑
+    // 禁用双击编辑
     mxGraph.prototype.isCellEditable = function (cell) {
       //return !this.getModel().isEdge(cell)&&!this.getModel().isVertex(cell);
       return false;
@@ -280,22 +287,62 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     mxStyleRegistry.putValue("ComponentEdge", mxEdgeStyle.ComponentEdge);
   };
 
+  // const [dealingPool, setDealingPool] = useState([]);
+  // useEffect(()=>{
+  //   let temp = dealingPool;
+  //   const nextDeal = dealingPool.unshift();
+  //   console.log(dealingPool)
+  //   if(nextDeal.action === "记忆按键"){
+  //     setKeyLock(true);
+  //   }
+  // },[dealingPool])
+
   const configEventHandle = () => {
+    // 监听 - 键盘事件, 删除，复制，粘贴
+    mxEvent.addListener(document, "keydown", (evt) => {
+      // 删除
+      if (evt.key === "Delete") {
+        message.info(`删除 键盘事件${evt.key}`, 1);
+        const opt = {};
+        Action_DeleteCell(graph);
+      }
+    });
+
+    mxEvent.addListener(document, "keyup", (evt) => {
+      // message.success({ content: `按键松了`, key: "keyboard", duration: 1 });
+    });
+
+    mxEvent.addListener(document, "paste", function (evt) {
+      message.warning("粘贴");
+      Action_PasteCell(graph, { mxClipboard });
+    });
+
+    mxEvent.addListener(document, "copy", (evt) => {
+      message.warning("复制");
+      Action_CopyCell(graph, { mxClipboard });
+    });
+
+    // 监听 - 双击事件
     graph.addListener(mxEvent.DOUBLE_CLICK, (sender, evt) => {
       const cell = evt.getProperty("cell");
-
       if (cell != null) {
         const overlays = graph.getCellOverlays(cell);
 
         if (cell.vertex) {
-          message.info("[liuqi] 双击 cell, 是一个块");
-          console.log(`[liuqi] 双击 cell, 是一个块`, cell);
-
           updateCurrentPagePosition("block");
           // console.log(graphDataMapRef);
           // 将这个节点对应的card等等数据同步到全局
           // synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
           // synchroCodeBlock({});
+
+          // 假如是流程块，则进入
+          //console.log(cell.vertex);
+          // TODO：1， 检测当前选中的元素是否是流程快
+          if (true);
+
+          // TODO：2， Redux更新当前块并切换id
+
+          // TODO：3， 进入流程块
           Promise.resolve(true)
             .then(() => {
               history.push("/designGraph/block");
@@ -308,7 +355,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     graph.addListener(mxEvent.CLICK, (sender, evt) => {
       const cell = evt.getProperty("cell");
-
       if (cell != null) {
         const overlays = graph.getCellOverlays(cell);
         // 排除连接点和连接线
@@ -333,12 +379,19 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         }
       }
     });
+
     graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
-      console.log(sender);
-      const codec = new MxCodec();
-      const node = codec.encode(sender);
-      const xml = mxUtils.getXml(node);
-      changeMxGraphData(xml);
+      console.log("MxGraph发生了变动", sender, evt);
+      // const codec = new MxCodec();
+      // const node = codec.encode(sender);
+      // const xml = mxUtils.getXml(node);
+
+      // TODO: 将Mxgraph的结构转换成我们原来的GgEditor结构
+      const output = translateToGraphData(sender);
+      if (output) {
+        // 把graphData存入Redux
+        //changeMxGraphData(output);
+      }
     });
   };
 
@@ -429,7 +482,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         obj._id = item.id;
         obj._parent = "1";
         obj._style = PROCESS_NODE.style;
-        obj._value = labelStr.replace("流程快", item.label);
+        obj._value = labelStr.replace("流程块", item.label);
         obj._vertex = "1";
         obj.mxGeometry = {};
         obj.mxGeometry._x = String(item.x);

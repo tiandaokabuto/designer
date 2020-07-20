@@ -14,4 +14,7 @@ window.mxDefaultPopupMenu = mxgraph.mxDefaultPopupMenu;
 window.mxStylesheet = mxgraph.mxStylesheet;
 window.mxDefaultToolbar = mxgraph.mxDefaultToolbar;
 
+// mx剪切板
+window.mxClipboard = mxgraph.mxClipboard;
+
 export default mxgraph;
