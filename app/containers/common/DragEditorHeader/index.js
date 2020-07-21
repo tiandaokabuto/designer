@@ -446,14 +446,14 @@ export default memo(
           type: 'save',
           onClick: () => {
             // 保存到本地
-            // changeModifyState(
-            //   processTreeRef.current,
-            //   currentCheckedTreeNodeRef.current,
-            //   false
-            // );
-            // persistentStorage();
+            changeModifyState(
+              processTreeRef.current,
+              currentCheckedTreeNodeRef.current,
+              false
+            );
+            persistentStorage();
             message.success('保存成功');
-            saveAsXML();
+            // saveAsXML();
           },
         },
         {
