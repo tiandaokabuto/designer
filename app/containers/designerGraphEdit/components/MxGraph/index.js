@@ -15,6 +15,7 @@ import {
   setGraphDataMap,
   updateGraphData,
   synchroGraphDataToProcessTree,
+  changeCheckedGraphBlockId,
 } from '../../../reduxActions';
 import { setConnection, createPopupMenu } from './methods';
 import {
@@ -401,11 +402,29 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     });
 
     graph.addListener(mxEvent.CLICK, (sender, evt) => {
+      console.log('单击');
       const cell = evt.getProperty('cell');
       if (cell != null) {
+        console.log('点击了块');
         const overlays = graph.getCellOverlays(cell);
         // 排除连接点和连接线
         const isPort = graph.isPort(cell);
+
+        const cellId = cell.id;
+
+        console.log(graphDataMap);
+
+        console.log(graphDataMapRef);
+
+        const data = graphDataMapRef.current.get(cellId);
+
+        if (
+          // node.item &&
+          ['processblock', 'rhombus-node'].includes(data.shape)
+        ) {
+          changeCheckedGraphBlockId(cellId);
+          synchroCodeBlock(graphDataMapRef.current.get(cellId));
+        }
 
         if (overlays == null && !isPort) {
           // Creates a new overlay with an image and a tooltip
@@ -420,9 +439,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         }); */
 
           // Sets the overlay for the cell in the graph
-          graph.addCellOverlay(cell, overlay);
+          // 添加勾子的图片
+          // graph.addCellOverlay(cell, overlay);
         } else {
-          graph.removeCellOverlays(cell);
+          // graph.removeCellOverlays(cell);
         }
       }
     });
@@ -648,7 +668,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     const xml = x2js.js2xml(newJson);
     // const xml = mxUtils.getTextContent(div);
 
-    console.log(xml);
+    // console.log(xml);
     const xmlDoc = mxUtils.parseXml(xml);
     const codec02 = new MxCodec(xmlDoc);
     codec02.decode(xmlDoc.documentElement, graph.getModel());
