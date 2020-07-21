@@ -43,6 +43,9 @@ export function translateToGraphData(sender) {
     } else {
       const { style, value, source, target, mxObjectId, id } = cells[key];
 
+      // 由于监听会触发两次，只有后面那次有target，所以假如没有target则还没生成连线，不写入数组
+      if(!target) return;
+
       output.edges.push({
         source: source.mxObjectId,
         //sourceAnchor: 2,

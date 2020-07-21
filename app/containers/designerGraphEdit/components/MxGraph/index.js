@@ -36,6 +36,7 @@ import {
 import { Action_DeleteCell } from './actions/deleteCell';
 import { Action_CopyCell, Action_PasteCell } from './actions/copyCell';
 import { translateToGraphData } from './actions/translateToGraphData';
+import { Rule_checkConnection } from './rules/checkRules';
 
 import { message } from 'antd';
 
@@ -50,6 +51,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
   // 每个流程快包含的信息
   const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+  const graphDataRef = useRef({});
+  graphDataRef.current = graphData;
   const graphDataMapRef = useRef(new Map());
   graphDataMapRef.current = graphDataMap;
 
@@ -226,6 +229,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     style[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
     style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ComponentEdge;
     style[mxConstants.STYLE_CURVED] = true;
+    style[mxConstants.STYLE_FONTSIZE] = '28';
+    style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = 'none';
     mxConstants.EDGE_SELECTION_DASHED = false;
     mxConstants.EDGE_SELECTION_STROKEWIDTH = 3;
     mxConstants.EDGE_SELECTION_COLOR = '#777777';
@@ -325,16 +330,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     mxStyleRegistry.putValue('ComponentEdge', mxEdgeStyle.ComponentEdge);
   };
 
-  // const [dealingPool, setDealingPool] = useState([]);
-  // useEffect(()=>{
-  //   let temp = dealingPool;
-  //   const nextDeal = dealingPool.unshift();
-  //   console.log(dealingPool)
-  //   if(nextDeal.action === "记忆按键"){
-  //     setKeyLock(true);
-  //   }
-  // },[dealingPool])
-
   const configEventHandle = () => {
     // 监听 - 键盘事件, 删除，复制，粘贴
     mxEvent.addListener(document, 'keydown', evt => {
@@ -361,21 +356,38 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     });
 
     // 连线事件
-    // graph.addListener(mxEvent.CELL_CONNECTED, (sender, evt) => {
-    //   // TODO 规则拦截判断
+    graph.addListener(mxEvent.CELL_CONNECTED, (sender, evt) => {
+      if (!evt.getProperty('source')) {
+        if (!graphDataRef.current) return; //假如graphData还没更新，则不做校验，（因为连线会触发3次）
+        message.info('校验连线');
+        // 假如验证不通过，则不允许这条连线出现，直接删除
+        const ans = Rule_checkConnection(graph, {
+          evt,
+          graphData: graphDataRef.current,
+        });
 
-    //   message.info('组件结点不允许连接数据源');
-    //   console.log('这里要拦截掉新增的这个线', sender, evt);
-    //   graph.removeCells([evt.properties.edge]);
-    //   return;
-    // });
+        // 验证不通过，删除连线
+        if (!ans) return graph.removeCells([evt.properties.edge]);
+        // TODO: 假如成功了，则同步更新到grapDataMap
 
-    // 监听 - 双击事件
+        if (ans.rule === '判断') {
+          console.log(
+            `假如是判断，要触发判断逻辑，把连线改成是否`,
+            evt.properties.edge,
+            ans
+          );
+          evt.properties.edge.setValue(ans.type);
+        }
+      } else {
+        return false;
+      }
+      return;
+    });
+
+    // 监听 - 双击事件CLICK
     graph.addListener(mxEvent.DOUBLE_CLICK, (sender, evt) => {
       const cell = evt.getProperty('cell');
       if (cell != null) {
-        const overlays = graph.getCellOverlays(cell);
-
         if (cell.vertex) {
           updateCurrentPagePosition('block');
           // console.log(graphDataMapRef);
@@ -402,10 +414,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     });
 
     graph.addListener(mxEvent.CLICK, (sender, evt) => {
-      console.log('单击');
       const cell = evt.getProperty('cell');
       if (cell != null) {
-        console.log('点击了块');
         const overlays = graph.getCellOverlays(cell);
         // 排除连接点和连接线
         const isPort = graph.isPort(cell);
@@ -498,7 +508,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     graph.setPanning(true);
     // 开启右键菜单
     graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
-      return createPopupMenu(graph, menu, cell, evt);
+      return createPopupMenu(graph, menu, cell, evt, mxClipboard);
     };
 
     // 允许框线选择
