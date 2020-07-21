@@ -28,6 +28,7 @@ import {
 import { Action_DeleteCell } from "./actions/deleteCell";
 import { Action_CopyCell, Action_PasteCell } from "./actions/copyCell";
 import { translateToGraphData } from "./actions/translateToGraphData";
+import { Rule_checkConnection } from "./rules/checkRules";
 
 import { message } from "antd";
 
@@ -324,13 +325,27 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     // 连线事件
     graph.addListener(mxEvent.CELL_CONNECTED, (sender, evt) => {
-      // TODO 规则拦截判断
+      message.info("校验连线");
 
-      message.info("组件结点不允许连接数据源");
-      console.log("这里要拦截掉新增的这个线", sender, evt)
-      graph.removeCells([evt.properties.edge]);
+      console.clear();
+      console.log(sender, evt);
+      if (!evt.getProperty("source")) {
+        //const checkResult = Rule_checkConnection(graph, { evt });
+        Rule_checkConnection(graph, { evt });
+      } else {
+        return false;
+        //graph.removeCells([evt.properties.edge]);
+      }
+      // TODO 规则拦截判断
+      //
+
+      //graph.removeCells([evt.properties.edge]);
       return;
     });
+
+    graph.isConnectable = ()=>{
+      alert(666)
+    };
 
     // 监听 - 双击事件
     graph.addListener(mxEvent.DOUBLE_CLICK, (sender, evt) => {
@@ -412,6 +427,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     // 判断逻辑
     graph.setMultigraph(false); //
+
 
     // mxGraph.prototype.isConnectable = () => {
 
