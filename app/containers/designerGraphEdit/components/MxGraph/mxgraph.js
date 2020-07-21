@@ -4,6 +4,10 @@ const mxgraph = mx({
   mxImageBasePath: './containers/images',
   mxBasePath: './constants',
 });
+
+mxgraph.mxUtils.alert = () =>{};
+
+
 // decode bug https://github.com/jgraph/mxgraph/issues/49
 window.mxGraph = mxgraph.mxGraph;
 window.mxGraphModel = mxgraph.mxGraphModel;
@@ -16,5 +20,6 @@ window.mxDefaultToolbar = mxgraph.mxDefaultToolbar;
 
 // mx剪切板
 window.mxClipboard = mxgraph.mxClipboard;
+
 
 export default mxgraph;
