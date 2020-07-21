@@ -212,6 +212,7 @@ module.exports = exports = class AppUpdater {
 let mainWindow = null;
 let loginWindow = null;
 
+let isBrowserNetStart = false;
 let isNetStart = false;
 let targetId;
 
@@ -416,9 +417,19 @@ const createWindow = async () => {
     if (isNetStart) return;
 
     appexpress.listen(8888, function () {
-      console.log('服务器已启动');
+      console.log('8888服务器已启动');
     });
     isNetStart = true;
+  });
+
+  ipcMain.on('start_browser_server', (event, id) => {
+    targetId = id;
+    if (isBrowserNetStart) return;
+
+    appexpress.listen(8889, function () {
+      console.log('8889服务器已启动');
+    });
+    isBrowserNetStart = true;
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);

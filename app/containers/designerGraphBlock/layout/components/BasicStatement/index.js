@@ -179,7 +179,7 @@ const BasicStatement = useInjectContext(props => {
       payload: id,
     });
     ipcRenderer.send('min');
-    ipcRenderer.send('start_server', id);
+
     const xpathCmdNameArrForWindows = [
       '鼠标-点击目标',
       '鼠标-移动',
@@ -195,31 +195,35 @@ const BasicStatement = useInjectContext(props => {
     const clickImage = ['点击图片', '判断截屏区域是否存在'];
 
     if (xpathCmdNameArrForWindows.includes(card.cmdName)) {
+      ipcRenderer.send('start_server', id);
       try {
         const worker = exec(PATH_CONFIG('windowHook'));
       } catch (e) {
         console.log(e);
       }
     } else if (mouseCmdName === card.cmdName) {
+      ipcRenderer.send('start_server', id);
       try {
         const mouseWorker = exec(`${PATH_CONFIG('WinRun')} -p`);
       } catch (err) {
         console.log(err);
       }
     } else if (windowsCmdNameArr.includes(card.cmdName)) {
+      ipcRenderer.send('start_server', id);
       try {
         const windowsWorker = exec(`${PATH_CONFIG('WinRun')} -w`);
       } catch (e) {
         console.log(e);
       }
     } else if (xpathCmdNameForBrowser === card.cmdName) {
+      ipcRenderer.send('start_browser_server', id);
       try {
         const browserXpathWorker = exec(`${PATH_CONFIG('getBrowserXpath')}`);
       } catch (e) {
         console.log(e);
       }
     } else if (clickImage.includes(card.cmdName)) {
-      console.log('这里');
+      ipcRenderer.send('start_server', id);
       try {
         const clickImageWorker = exec(`${PATH_CONFIG('CaptureAreaScreen')}`);
       } catch (e) {
