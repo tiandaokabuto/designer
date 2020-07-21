@@ -4,7 +4,7 @@
  */
 
 export function translateToGraphData(sender) {
-  console.clear();
+  //console.clear();
   console.log(`[liuqi] action/translateToGraphData.js 将要被转换的`, sender);
 
   const { cells } = sender;

@@ -322,6 +322,16 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       Action_CopyCell(graph, { mxClipboard });
     });
 
+    // 连线事件
+    graph.addListener(mxEvent.CELL_CONNECTED, (sender, evt) => {
+      // TODO 规则拦截判断
+
+      message.info("组件结点不允许连接数据源");
+      console.log("这里要拦截掉新增的这个线", sender, evt)
+      graph.removeCells([evt.properties.edge]);
+      return;
+    });
+
     // 监听 - 双击事件
     graph.addListener(mxEvent.DOUBLE_CLICK, (sender, evt) => {
       const cell = evt.getProperty("cell");
@@ -381,6 +391,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     });
 
     graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
+      //console.clear();
       console.log("MxGraph发生了变动", sender, evt);
       // const codec = new MxCodec();
       // const node = codec.encode(sender);
@@ -398,6 +409,13 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   useEffect(() => {
     if (!graph) return;
     graph.htmlLabels = true;
+
+    // 判断逻辑
+    graph.setMultigraph(false); //
+
+    // mxGraph.prototype.isConnectable = () => {
+
+    // };
 
     // 取消设置连线选中时出现那个调整点
     mxEdgeHandler.prototype.handleImage = new MxImage("", 0, 0);
