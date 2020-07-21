@@ -8,6 +8,7 @@ import X2JS from 'x2js';
 import mxgraph from './mxgraph';
 import MxGraphHeader from './components/MxGraphHeader';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
+import { isDirNode } from '../../../common/utils';
 // import useSaveAsXML from '../../../common/DragEditorHeader/useHooks/useSaveAsXML';
 import {
   changeMxGraphData,
@@ -64,6 +65,11 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   // 流程树
   const processTree = useSelector(state => state.grapheditor.processTree);
 
+  const isProcessNode =
+    currentCheckedTreeNode && !!!isDirNode(processTree, currentCheckedTreeNode);
+
+  console.log(isProcessNode);
+
   const graphContainer = useRef(null);
   const [graph, setGraph] = useState(null);
 
@@ -96,6 +102,12 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     const container = graphContainer.current;
     setGraph(new mxGraph(container));
   }, []);
+
+  useEffect(() => {
+    if (!graph) return;
+    graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+    parseJsonFile(graphData);
+  }, [currentCheckedTreeNode]);
 
   const configMxCell = () => {
     // 禁用双击编辑
@@ -502,10 +514,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     // parseJsonFile();
   }, [graph]);
 
-  const parseJsonFile = () => {
-    const jsonFile = fs.readFileSync('D:/临时文件存放/test.json');
+  const parseJsonFile = graphData => {
+    // const jsonFile = fs.readFileSync('D:/临时文件存放/test.json');
     // 获得流程
-    const graphData = jsonFile ? JSON.parse(jsonFile).graphData : {};
+    // const graphData = jsonFile ? JSON.parse(jsonFile).graphData : {};
 
     const codec = new MxCodec();
     const node = codec.encode(graph.getModel());
@@ -528,7 +540,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         obj._id = item.id;
         obj._parent = '1';
         obj._style = PROCESS_NODE.style;
-        obj._value = labelStr.replace('流程块', item.label);
+        // obj._value = labelStr.replace('流程块', item.label);
+        obj._value = item.version
+          ? item.label
+          : labelStr.replace('流程块', item.label);
         obj._vertex = '1';
         obj.mxGeometry = {};
         obj.mxGeometry._x = String(item.x);
@@ -657,7 +672,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
   return (
     <div id="graphContent">
-      <MxGraphHeader graph={graph} />
+      {isProcessNode ? <MxGraphHeader graph={graph} /> : null}
       <div className="dropContent">
         <div
           className="graph-container"
