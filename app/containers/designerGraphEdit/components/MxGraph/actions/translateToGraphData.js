@@ -22,10 +22,10 @@ export function translateToGraphData(sender) {
       //console.log(cells[key].geometry);
 
       output.nodes.push({
-        type: "node",
+        type: 'node',
         size:
-          shape === "start" || shape === "end"
-            ? "40*40"
+          shape === 'start' || shape === 'end'
+            ? '40*40'
             : `${geometry.width}*${geometry.height}`,
         shape: getMeanShape(shape),
         newStyle: style, // 新版Style
@@ -56,18 +56,20 @@ export function translateToGraphData(sender) {
   });
 
   console.log(`[liuqi] action/translateToGraphData.js 转换后的`, output);
+
+  return output;
 }
 
 // 获取组件类型
 function getShape(style, value) {
   // 开始，流程，判断，容器
-  const typeList = ["ellipse", "label", "rhombus", "group"];
+  const typeList = ['ellipse', 'label', 'rhombus', 'group'];
   let type = false;
 
-  if (value === "开始") return "start";
-  if (value === "结束") return "end";
+  if (value === '开始') return 'start';
+  if (value === '结束') return 'end';
 
-  typeList.forEach((shape) => {
+  typeList.forEach(shape => {
     if (style.indexOf(`${shape}`) !== -1) {
       type = shape;
     }
@@ -78,15 +80,15 @@ function getShape(style, value) {
 // 转义为原来定义的shape
 function getMeanShape(name) {
   switch (name) {
-    case "start":
-      return "start-node";
-    case "end":
-      return "end-node";
-    case "label":
-      return "processblock";
-    case "rhombus":
-      return "rhombus-node";
-    case "group":
-      return "group";
+    case 'start':
+      return 'start-node';
+    case 'end':
+      return 'end-node';
+    case 'label':
+      return 'processblock';
+    case 'rhombus':
+      return 'rhombus-node';
+    case 'group':
+      return 'group';
   }
 }
