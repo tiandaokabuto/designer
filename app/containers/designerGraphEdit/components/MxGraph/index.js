@@ -178,20 +178,42 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     };
 
     // 添加顶点选中时处理函数
-    mxVertexHandler.prototype.createCustomHandles = function () {
-      const colorKey = "fillColor";
-      let color = "";
-      let cells = graph.getSelectionCells();
-      cells = cells.filter((cell) => {
-        // const style = graph.getCellStyle(cell);
-        return cell.vertex && !graph.isSwimlane(cell);
-      });
-      if (cells.length > 0) {
-        color = "#9ed4fb";
-        graph.setCellStyles(colorKey, color, cells);
-      }
-      return null;
-    };
+    // mxVertexHandler.prototype.createCustomHandles = function () {
+    //   const colorKey = "fillColor";
+    //   let color = "#9ed4fb";
+    //   let cells = graph.getSelectionCells();
+
+    //   console.log(`我要修改的一群`, cells);
+
+    //   console.log(cells);
+    //   // cells.forEach((cell) => {
+
+    //   //   ["ellipse", "label", "rhombus", "group"].forEach((shape) => {
+    //   //     console.log(cell.style);
+    //   //     const index = cell.style.indexOf(`${shape}`);
+    //   //     if (index !== -1) {
+    //   //       if (cell.style[index] !== "group") {
+    //   //         graph.setCellStyles(colorKey, color, [cell]);
+    //   //       }
+    //   //     }
+    //   //   });
+    //   // });
+    //   cells = cells.filter((cell) => {
+    //     // const style = graph.getCellStyle(cell);
+    //     return cell.vertex && !graph.isSwimlane(cell);
+    //   });
+
+    //   console.log(cells);
+    //   if (cells.length > 0) {
+    //     color = "#9ed4fb";
+    //     cells.forEach((cell) => {
+    //       graph.setCellStyles(colorKey, color, [cell]);
+    //     });
+    //   }
+
+    //   //graph.setCellStyles(colorKey, color, cells);
+    //   return null;
+    // };
 
     // 添加取消选中时处理函数
     mxSelectionCellsHandler.prototype.eventListeners = [
@@ -217,7 +239,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ComponentEdge;
     style[mxConstants.STYLE_CURVED] = true;
     style[mxConstants.STYLE_FONTSIZE] = "28";
-    style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = "none"
+    style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = "none";
     mxConstants.EDGE_SELECTION_DASHED = false;
     mxConstants.EDGE_SELECTION_STROKEWIDTH = 3;
     mxConstants.EDGE_SELECTION_COLOR = "#777777";

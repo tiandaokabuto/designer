@@ -2,7 +2,7 @@ export const PROCESS_NODE = {
   label:
     "<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>流程块</span></div>",
   style:
-    'label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg',
+    'label;whiteSpace=wrap;html=1;;resizable=0;',//image=../../../../images/icon.jpg',
   width: 186,
   height: 55,
 };

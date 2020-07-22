@@ -422,7 +422,7 @@ const MxGraphHeader = ({ graph, container }) => {
           className="mxgraph-cell designergraph-container-header-tool-process"
           data-width="186"
           data-height="55"
-          data-style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg"
+          data-style="label;whiteSpace=wrap;html=1;;resizable=0;"//image=../../../../images/icon.jpg"
           data-label="<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>流程块</span></div>"
         >
           流程块
