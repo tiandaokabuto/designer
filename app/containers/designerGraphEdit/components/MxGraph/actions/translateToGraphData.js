@@ -38,6 +38,7 @@ export function translateToGraphData(sender) {
 
         id: mxObjectId,
         index: id,
+        version: 'mxgraph',
       });
     } else {
       const { style, value, source, target, mxObjectId, id } = cells[key];
