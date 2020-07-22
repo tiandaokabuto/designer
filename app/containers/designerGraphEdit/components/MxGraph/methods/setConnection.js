@@ -12,6 +12,8 @@ const {
   mxConstants,
   mxConstraintHandler,
   mxImage: MxImage,
+
+  mxEllipse,
 } = mxgraph;
 
 const pointGif = require('../../../../images/point.gif');
@@ -23,6 +25,12 @@ export default () => {
     5,
     5
   );
+
+  // 结束、开始
+  mxEllipse.prototype.constraints = [
+    new MxConnectionConstraint(new MxPonint(0.5, 0), true),
+    new MxConnectionConstraint(new MxPonint(0.5, 1)),
+  ];
 
   // 设置长方形形状hover时会出现的连线点
   mxRectangleShape.prototype.constraints = [

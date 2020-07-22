@@ -232,30 +232,45 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       "remove",
       (sender, evt) => {
         const { cell } = evt.properties.state;
-        graph.removeCellOverlays(cell);
-
-        if (cell.vertex === false || graph.isSwimlane(cell)) return;
+        //graph.removeCellOverlays(cell);
         console.log("选中REMOVE", cell);
+        if (cell.vertex === false || graph.isSwimlane(cell)) return cell.vertex && !graph.isSwimlane(cell);
+
         const colorKey = "fillColor";
         const color = "#edf6f7";
 
-        graph.setCellStyles(colorKey, color, [cell]);
 
+        setTimeout(()=>graph.setCellStyles(colorKey, color, [cell]),0);
       },
       "add",
       (sender, evt) => {
         const { cell } = evt.properties.state;
+
+
+
+        console.log("当前sender",sender, evt, sender.graph.getModel())
+
+
         // graph.container.setAttribute('tabindex', '-1');
         // graph.container.focus();
-        graph.removeCellOverlays(cell);
-
-        if (cell.vertex === false || graph.isSwimlane(cell)) return;
+        //graph.removeCellOverlays(cell);
+        sender.reset();
         console.log("选中ADD", cell);
+        if (cell.vertex === false || graph.isSwimlane(cell)) return  cell.vertex && !graph.isSwimlane(cell);
+
         const colorKey = "fillColor";
         const color = "#9ed4fb";
 
-        graph.setCellStyles(colorKey, color, [cell]);
+        setTimeout(()=>graph.setCellStyles(colorKey, color, [cell]),0);
+        // graph.setCellStyles(colorKey, color, [cell]);
+        // graph.getModel().beginUpdate();
+        // try{
+        //   cell.setStyle(`[${colorKey}=${color};]`);
+        // }catch(e){
+        //   console.log(e)
+        // }
 
+        // graph.getModel().endUpdate();
       },
     ];
   };
