@@ -17,7 +17,7 @@ export const CONDITION_NODE = {
 
 export const START_NODE = {
   label: '开始',
-  style: 'shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;align=center',
+  style: 'shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;align=center;',
   width: 50,
   height: 50,
 };
