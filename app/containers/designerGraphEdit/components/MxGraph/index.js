@@ -434,7 +434,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
             ans
           );
           evt.properties.edge.setValue(ans.type);
+
         }
+
+
       } else {
         return false;
       }

@@ -6,8 +6,8 @@ export const Rule_checkConnection = (graph, option = {}, callback) => {
 
   const edge = evt.getProperty("edge");
   const model = graph.getModel();
-  const source = getNodeInfo(edge.source.mxObjectId, graphData);
-  const target = getNodeInfo(edge.target.mxObjectId, graphData);
+  const source = getNodeInfo(edge.source.id, graphData);
+  const target = getNodeInfo(edge.target.id, graphData);
 
   console.log(source, target, `\n\n\n\n输入，输出\n\n\n`);
 
@@ -44,14 +44,19 @@ export const Rule_checkConnection = (graph, option = {}, callback) => {
 
   // 04 判断只能出2条线，入一条
   if (source.shape === "rhombus-node") {
+    console.log(source.edges.output)
     if (source.edges.output.length >= 2) {
       message.warning("流程块只能有一条输出线");
       return false;
-    } else if (source.edges.output.length === 0) {
+    }
+    if (source.edges.output.length === 0) {
       return { rule: "判断", type: "是" };
-    } else {
+    }else if(source.edges.output[0].label === "否"){
+      return { rule: "判断", type: "是" };
+    }else{
       return { rule: "判断", type: "否" };
     }
+
   } else if (target.shape === "rhombus-node") {
     if (target.edges.input.length >= 1) {
       message.warning("流程块只能有一条输入线");
