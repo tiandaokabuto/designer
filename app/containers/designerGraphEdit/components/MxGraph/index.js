@@ -206,30 +206,83 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     };
 
     // 添加顶点选中时处理函数
-    mxVertexHandler.prototype.createCustomHandles = function () {
-      const colorKey = 'fillColor';
-      let color = '';
-      let cells = graph.getSelectionCells();
-      cells = cells.filter(cell => {
-        // const style = graph.getCellStyle(cell);
-        return cell.vertex && !graph.isSwimlane(cell);
-      });
-      if (cells.length > 0) {
-        color = '#9ed4fb';
-        graph.setCellStyles(colorKey, color, cells);
-      }
-      return null;
-    };
+    // mxVertexHandler.prototype.createCustomHandles = function () {
+    //   const colorKey = "fillColor";
+    //   let color = "#9ed4fb";
+    //   let cells = graph.getSelectionCells();
 
-    // 添加取消选中时处理函数
+    //   console.log(`我要修改的一群`, cells);
+
+    //   console.log(cells);
+    //   // cells.forEach((cell) => {
+
+    //   //   ["ellipse", "label", "rhombus", "group"].forEach((shape) => {
+    //   //     console.log(cell.style);
+    //   //     const index = cell.style.indexOf(`${shape}`);
+    //   //     if (index !== -1) {
+    //   //       if (cell.style[index] !== "group") {
+    //   //         graph.setCellStyles(colorKey, color, [cell]);
+    //   //       }
+    //   //     }
+    //   //   });
+    //   // });
+    //   cells = cells.filter((cell) => {
+    //     // const style = graph.getCellStyle(cell);
+    //     return cell.vertex && !graph.isSwimlane(cell);
+    //   });
+
+    //   console.log(cells);
+    //   if (cells.length > 0) {
+    //     color = "#9ed4fb";
+    //     graph.setCellStyles(colorKey, color, cells);
+    //   }
+
+    //   //graph.setCellStyles(colorKey, color, cells);
+    //   return null;
+    // };
+
+    //添加取消选中时处理函数;
     mxSelectionCellsHandler.prototype.eventListeners = [
       'remove',
       (sender, evt) => {
         const { cell } = evt.properties.state;
-        if (cell.vertex === false || graph.isSwimlane(cell)) return;
+        //graph.removeCellOverlays(cell);
+        console.log('选中REMOVE', cell);
+        if (cell.vertex === false || graph.isSwimlane(cell))
+          return cell.vertex && !graph.isSwimlane(cell);
+
         const colorKey = 'fillColor';
         const color = '#edf6f7';
-        graph.setCellStyles(colorKey, color, [cell]);
+
+        setTimeout(() => graph.setCellStyles(colorKey, color, [cell]), 0);
+      },
+      'add',
+      (sender, evt) => {
+        const { cell } = evt.properties.state;
+
+        console.log('当前sender', sender, evt, sender.graph.getModel());
+
+        // graph.container.setAttribute('tabindex', '-1');
+        // graph.container.focus();
+        //graph.removeCellOverlays(cell);
+        sender.reset();
+        console.log('选中ADD', cell);
+        if (cell.vertex === false || graph.isSwimlane(cell))
+          return cell.vertex && !graph.isSwimlane(cell);
+
+        const colorKey = 'fillColor';
+        const color = '#9ed4fb';
+
+        setTimeout(() => graph.setCellStyles(colorKey, color, [cell]), 0);
+        // graph.setCellStyles(colorKey, color, [cell]);
+        // graph.getModel().beginUpdate();
+        // try{
+        //   cell.setStyle(`[${colorKey}=${color};]`);
+        // }catch(e){
+        //   console.log(e)
+        // }
+
+        // graph.getModel().endUpdate();
       },
     ];
   };
@@ -406,6 +459,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         if (cell.vertex) {
           updateCurrentPagePosition('block');
           // console.log(graphDataMapRef);
+          console.clear();
+          console.log('双击', cell);
           // 将这个节点对应的card等等数据同步到全局
 
           const cellId = cell.id;
@@ -421,12 +476,12 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
           // TODO：2， Redux更新当前块并切换id
 
           // TODO：3， 进入流程块
-          Promise.resolve(true)
-            .then(() => {
-              history.push('/designGraph/block');
-              return true;
-            })
-            .catch(err => console.log(err));
+          // Promise.resolve(true)
+          //   .then(() => {
+          //     history.push('/designGraph/block');
+          //     return true;
+          //   })
+          //   .catch(err => console.log(err));
         }
       }
     });
@@ -434,6 +489,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     graph.addListener(mxEvent.CLICK, (sender, evt) => {
       const cell = evt.getProperty('cell');
       if (cell != null) {
+        if (!cell.vertex) return;
+
         const overlays = graph.getCellOverlays(cell);
         // 排除连接点和连接线
         const isPort = graph.isPort(cell);
