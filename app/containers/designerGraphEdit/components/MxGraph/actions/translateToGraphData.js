@@ -36,7 +36,8 @@ export function translateToGraphData(sender) {
         x: geometry.x,
         y: geometry.y,
 
-        id: mxObjectId,
+        // id: mxObjectId,
+        id,
         index: id,
         version: 'mxgraph',
       });
@@ -44,15 +45,16 @@ export function translateToGraphData(sender) {
       const { style, value, source, target, mxObjectId, id } = cells[key];
 
       // 由于监听会触发两次，只有后面那次有target，所以假如没有target则还没生成连线，不写入数组
-      if(!target) return;
+      if (!target) return;
 
       output.edges.push({
-        source: source.mxObjectId,
+        source: source.id,
         //sourceAnchor: 2,
         style: style, // 新增 出入点位置
-        target: target.mxObjectId,
+        target: target.id,
         //targetAnchor: 3,
-        id: mxObjectId,
+        // id: mxObjectId,
+        id,
         label: value,
         index: id,
       });
