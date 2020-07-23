@@ -8,7 +8,7 @@ import X2JS from 'x2js';
 import mxgraph from './mxgraph';
 import MxGraphHeader from './components/MxGraphHeader';
 import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
-import { isDirNode } from '../../../common/utils';
+import { isDirNode, changeModifyState } from '../../../common/utils';
 // import useSaveAsXML from '../../../common/DragEditorHeader/useHooks/useSaveAsXML';
 import {
   changeMxGraphData,
@@ -16,6 +16,7 @@ import {
   updateGraphData,
   synchroGraphDataToProcessTree,
   changeCheckedGraphBlockId,
+  synchroCodeBlock,
 } from '../../../reduxActions';
 import { setConnection, createPopupMenu } from './methods';
 import {
@@ -39,6 +40,7 @@ import { translateToGraphData } from './actions/translateToGraphData';
 import { Rule_checkConnection } from './rules/checkRules';
 
 import { message } from 'antd';
+import { resolve } from 'path';
 
 const fs = require('fs');
 const checkPng = require('./images/check.png');
@@ -53,6 +55,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
   const graphDataRef = useRef({});
   graphDataRef.current = graphData;
+
   const graphDataMapRef = useRef(new Map());
   graphDataMapRef.current = graphDataMap;
 
@@ -65,14 +68,22 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   const currentCheckedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
   );
+  const currentCheckedTreeNodeRef = useRef(null);
+  currentCheckedTreeNodeRef.current = currentCheckedTreeNode;
+
+  const currentPagePosition = useSelector(
+    state => state.temporaryvariable.currentPagePosition
+  );
+  const currentPagePositionRef = useRef(null);
+  currentPagePositionRef.current = currentPagePosition;
 
   // 流程树
   const processTree = useSelector(state => state.grapheditor.processTree);
+  const processTreeRef = useRef(null);
+  processTreeRef.current = processTree;
 
   const isProcessNode =
     currentCheckedTreeNode && !!!isDirNode(processTree, currentCheckedTreeNode);
-
-  console.log(isProcessNode);
 
   const graphContainer = useRef(null);
   const [graph, setGraph] = useState(null);
@@ -110,8 +121,12 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   useEffect(() => {
     if (!graph) return;
     graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
-    parseJsonFile(graphData);
-  }, [currentCheckedTreeNode]);
+    new Promise(resolve => {
+      resolve();
+    }).then(() => {
+      parseJsonFile(graphData);
+    });
+  }, [currentCheckedTreeNodeRef.current, graph]);
 
   const configMxCell = () => {
     // 禁用双击编辑
@@ -392,7 +407,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
           updateCurrentPagePosition('block');
           // console.log(graphDataMapRef);
           // 将这个节点对应的card等等数据同步到全局
-          // synchroCodeBlock(graphDataMapRef.current.get(node.item.id));
+
+          const cellId = cell.id;
+
+          synchroCodeBlock(graphDataMapRef.current.get(cellId));
           // synchroCodeBlock({});
 
           // 假如是流程块，则进入
@@ -420,13 +438,17 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         // 排除连接点和连接线
         const isPort = graph.isPort(cell);
 
-        const cellId = cell.id;
+        let data = undefined;
+        let cellId = undefined;
 
-        console.log(graphDataMap);
-
-        console.log(graphDataMapRef);
-
-        const data = graphDataMapRef.current.get(cellId);
+        // const cellId = cell.mxObjectId;
+        if (graphDataMapRef.current.get(cell.mxObjectId)) {
+          data = graphDataMapRef.current.get(cell.mxObjectId);
+          cellId = cell.mxObjectId;
+        } else {
+          data = graphDataMapRef.current.get(cell.id);
+          cellId = cell.id;
+        }
 
         if (
           // node.item &&
@@ -458,7 +480,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     });
 
     graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
-      //console.clear();
+      // console.clear();
       console.log('MxGraph发生了变动', sender, evt);
       // const codec = new MxCodec();
       // const node = codec.encode(sender);
@@ -470,6 +492,12 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       if (output) {
         updateGraphData(output);
         synchroGraphDataToProcessTree();
+        console.log(currentCheckedTreeNodeRef.current);
+        changeModifyState(
+          processTreeRef.current,
+          currentCheckedTreeNodeRef.current,
+          true
+        );
         // 把graphData存入Redux
         //changeMxGraphData(output);
       }

@@ -2,8 +2,10 @@
 import React, { useEffect } from 'react';
 // import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import uniqueId from 'lodash/uniqueId';
 
 import { setGraphDataMap } from '../../../../reduxActions';
+// import { getUniqueId } from '../../../../common/utils';
 import mxgraph from '../mxgraph';
 // import FlowItemPanel from '../../../layout/GraphContainer/components/FlowItemPanel';
 
@@ -248,8 +250,9 @@ const MxGraphHeader = ({ graph, container }) => {
             } finally {
               graph.model.endUpdate();
               if (select[0]) {
+                select[0].id = `mx_${uniqueId()}`;
                 if (select[0].value.indexOf("class='compoent-content'") > -1) {
-                  setGraphDataMap(select[0].mxObjectId, {
+                  setGraphDataMap(select[0].id, {
                     shape: 'processblock',
                     properties: [
                       {
@@ -276,7 +279,7 @@ const MxGraphHeader = ({ graph, container }) => {
                 } else if (
                   select[0].value.indexOf("class='rcomponent-content'") > -1
                 ) {
-                  setGraphDataMap(select[0].mxObjectId, {
+                  setGraphDataMap(select[0].id, {
                     shape: 'rhombus-node',
                     properties: [
                       {
@@ -458,7 +461,7 @@ const MxGraphHeader = ({ graph, container }) => {
           className="mxgraph-cell designergraph-container-header-tool-end"
           data-width="80"
           data-height="55"
-          data-style="shape=ellipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center"
+          data-style="ellipse;shape=doubleEllipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center"
           data-label="结束"
         >
           结束

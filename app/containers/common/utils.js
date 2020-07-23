@@ -33,19 +33,33 @@ const adm_zip = require('adm-zip');
 
 const defaultGraphData = {
   nodes: [
+    // {
+    //   id:
+    //   type: 'node',
+    //   size: '40*40',
+    //   shape: 'start-node',
+    //   color: '#FA8C16',
+    //   label: '开始',
+    //   x: 436,
+    //   y: 30,
+    //   index: 0,
+    //   style: {
+    //     stroke: 'rgba(61, 109, 204, 1)',
+    //     fill: '#ecf5f6',
+    //   },
+    // },
     {
-      type: 'node',
-      size: '40*40',
-      shape: 'start-node',
-      color: '#FA8C16',
+      id: 'mx_start',
+      index: 'mx_start',
       label: '开始',
+      newStyle:
+        'shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;align=center;fillColor=#edf6f7;',
+      shape: 'start-node',
+      size: '40*40',
+      type: 'node',
+      version: 'mxgraph',
       x: 436,
       y: 30,
-      index: 0,
-      style: {
-        stroke: 'rgba(61, 109, 204, 1)',
-        fill: '#ecf5f6',
-      },
     },
   ],
 };
