@@ -474,10 +474,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
           // TODO：3， 进入流程块
           Promise.resolve(true)
             .then(() => {
-              history.push("/designGraph/block");
+              history.push('/designGraph/block');
               return true;
             })
-            .catch((err) => console.log(err));
+            .catch(err => console.log(err));
         }
       }
     });
@@ -710,6 +710,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       obj._edge = "1";
       obj._source = item.source;
       obj._target = item.target;
+      obj._value = item.label ? item.label : '';
       obj.mxGeometry = {};
       obj.mxGeometry._as = "geometry";
       obj.mxGeometry._relative = "1";
