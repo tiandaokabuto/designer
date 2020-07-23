@@ -5,7 +5,7 @@
 
 export function translateToGraphData(sender) {
   //console.clear();
-  console.log(`[liuqi] action/translateToGraphData.js 将要被转换的`, sender);
+  // console.log(`[liuqi] action/translateToGraphData.js 将要被转换的`, sender);
 
   const { cells } = sender;
   if (cells.length <= 2) return false;
@@ -18,6 +18,26 @@ export function translateToGraphData(sender) {
       const { style, value, geometry, mxObjectId, id } = cells[key];
       // 根据style和value判断这个cell是什么类型的
       const shape = getShape(style, value);
+
+      let label = '';
+
+      if (shape === 'label') {
+        label = value
+          .replace(
+            "<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>",
+            ''
+          )
+          .replace('</span></div>', '');
+      } else if (shape === 'rhombus') {
+        label = value
+          .replace(
+            "<div class='rcomponent-content'><label class='rcomponent-content-icon'></label><span class='rcomponent-name' title='condition'>",
+            ''
+          )
+          .replace('</span></div>', '');
+      } else {
+        label = value;
+      }
 
       //console.log(cells[key].geometry);
 
@@ -32,7 +52,8 @@ export function translateToGraphData(sender) {
         //style: { stroke: "rgba(61, 109, 204, 1)", fill: "#ecf5f6" }, // 兼容旧版用，没实际意义
         //style: style,
         //color:
-        label: value, // 新增 value
+        // label: value, // 新增 value
+        label, // 队value进行处理
         x: geometry.x,
         y: geometry.y,
 
@@ -61,7 +82,7 @@ export function translateToGraphData(sender) {
     }
   });
 
-  console.log(`[liuqi] action/translateToGraphData.js 转换后的`, output);
+  // console.log(`[liuqi] action/translateToGraphData.js 转换后的`, output);
 
   return output;
 }

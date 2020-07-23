@@ -121,11 +121,14 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   useEffect(() => {
     if (!graph) return;
     graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
-    new Promise(resolve => {
-      resolve();
-    }).then(() => {
-      parseJsonFile(graphData);
-    });
+    // new Promise(resolve => {
+    //   resolve();
+    // }).then(() => {
+    //   loadGraph(graphData);
+    // });
+    setTimeout(() => {
+      loadGraph(graphData);
+    }, 0);
   }, [currentCheckedTreeNodeRef.current, graph]);
 
   const configMxCell = () => {
@@ -246,14 +249,13 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       'remove',
       (sender, evt) => {
         const { cell } = evt.properties.state;
-        //graph.removeCellOverlays(cell);
+
         console.log('选中REMOVE', cell);
         if (cell.vertex === false || graph.isSwimlane(cell))
           return cell.vertex && !graph.isSwimlane(cell);
 
         const colorKey = 'fillColor';
         const color = '#edf6f7';
-
         setTimeout(() => graph.setCellStyles(colorKey, color, [cell]), 0);
       },
       'add',
@@ -264,25 +266,15 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
         // graph.container.setAttribute('tabindex', '-1');
         // graph.container.focus();
-        //graph.removeCellOverlays(cell);
+        // graph.removeCellOverlays(cell);
+
         sender.reset();
         console.log('选中ADD', cell);
         if (cell.vertex === false || graph.isSwimlane(cell))
           return cell.vertex && !graph.isSwimlane(cell);
-
         const colorKey = 'fillColor';
         const color = '#9ed4fb';
-
         setTimeout(() => graph.setCellStyles(colorKey, color, [cell]), 0);
-        // graph.setCellStyles(colorKey, color, [cell]);
-        // graph.getModel().beginUpdate();
-        // try{
-        //   cell.setStyle(`[${colorKey}=${color};]`);
-        // }catch(e){
-        //   console.log(e)
-        // }
-
-        // graph.getModel().endUpdate();
       },
     ];
   };
@@ -465,15 +457,19 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
           const cellId = cell.id;
 
-          synchroCodeBlock(graphDataMapRef.current.get(cellId));
-          // synchroCodeBlock({});
-
           // 假如是流程块，则进入
-          //console.log(cell.vertex);
+
           // TODO：1， 检测当前选中的元素是否是流程快
-          if (true);
+          if (
+            evt.properties.cell.value.indexOf(
+              `span class='component-name' title='process'`
+            ) === -1
+          ) {
+            return message.info('只有流程块能双击进入编辑');
+          }
 
           // TODO：2， Redux更新当前块并切换id
+          synchroCodeBlock(graphDataMapRef.current.get(cellId));
 
           // TODO：3， 进入流程块
           Promise.resolve(true)
@@ -629,7 +625,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     // parseJsonFile();
   }, [graph]);
 
-  const parseJsonFile = graphData => {
+  const loadGraph = graphData => {
     // const jsonFile = fs.readFileSync('D:/临时文件存放/test.json');
     // 获得流程
     // const graphData = jsonFile ? JSON.parse(jsonFile).graphData : {};
@@ -645,8 +641,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     const nodes = graphData.nodes ? graphData.nodes : [];
     const edges = graphData.edges ? graphData.edges : [];
 
-    console.log(edges);
-    console.log(x2js.dom2js(node));
+    // console.log(edges);
+    // console.log(x2js.dom2js(node));
 
     const newNodes = nodes.map(item => {
       const obj = {};
@@ -656,9 +652,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         obj._parent = '1';
         obj._style = PROCESS_NODE.style;
         // obj._value = labelStr.replace('流程块', item.label);
-        obj._value = item.version
-          ? item.label
-          : labelStr.replace('流程块', item.label);
+        // obj._value = item.version
+        //   ? item.label
+        //   : labelStr.replace('流程块', item.label);
+        obj._value = PROCESS_NODE.getLabel(item.label);
         obj._vertex = '1';
         obj.mxGeometry = {};
         obj.mxGeometry._x = String(item.x);
@@ -670,7 +667,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         obj._id = item.id;
         obj._parent = '1';
         obj._style = CONDITION_NODE.style;
-        obj._value = CONDITION_NODE.label;
+        obj._value = CONDITION_NODE.getLabel(item.label);
         obj._vertex = '1';
         obj.mxGeometry = {};
         obj.mxGeometry._x = String(item.x);
@@ -714,7 +711,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       obj._edge = '1';
       obj._source = item.source;
       obj._target = item.target;
-      obj._label = item.label ? item.label : '';
+      obj._value = item.label ? item.label : '';
       obj.mxGeometry = {};
       obj.mxGeometry._as = 'geometry';
       obj.mxGeometry._relative = '1';
@@ -770,13 +767,13 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     codec02.decode(xmlDoc.documentElement, graph.getModel());
   };
 
-  const loadGraph = () => {
-    // const xmlReq = mxUtils.load('D:/临时文件存放/fgh.xml');
-    const xmlReq = mxUtils.load('D:/临时文件存放/fgh.xml');
-    const root = xmlReq.getDocumentElement();
-    const dec = new MxCodec(root);
-    dec.decode(root, graph.getModel());
-  };
+  // const loadGraph = () => {
+  //   // const xmlReq = mxUtils.load('D:/临时文件存放/fgh.xml');
+  //   const xmlReq = mxUtils.load('D:/临时文件存放/fgh.xml');
+  //   const root = xmlReq.getDocumentElement();
+  //   const dec = new MxCodec(root);
+  //   dec.decode(root, graph.getModel());
+  // };
 
   const handleZoomIn = frequency => {
     for (let i = 0; i < frequency; i += 1) graph.zoomIn();
@@ -788,7 +785,9 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
   return (
     <div id="graphContent">
-      {isProcessNode ? <MxGraphHeader graph={graph} /> : null}
+      {isProcessNode ? (
+        <MxGraphHeader graphData={graphDataRef.current} graph={graph} />
+      ) : null}
       <div className="dropContent">
         <div
           className="graph-container"

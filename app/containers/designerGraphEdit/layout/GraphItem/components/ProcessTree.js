@@ -425,8 +425,9 @@ export default ({ type, setShowLoadingLayer }) => {
   };
 
   const refreshGraph = key => {
-    resetGraphEditData();
-    changeCheckedTreeNode(key);
+    // resetGraphEditData();
+    showTreeData([key]);
+    // changeCheckedTreeNode(key);
   };
 
   const showTreeData = selectedKey => {
@@ -534,6 +535,7 @@ export default ({ type, setShowLoadingLayer }) => {
                 if (isModified) {
                   setSelectedKey(selectedKey[0]);
                   setModalVisible(true); // 提示保存
+                  // showTreeData(selectedKey);
                 } else {
                   setSelectedKey(selectedKey[0]);
                   showTreeData(selectedKey);

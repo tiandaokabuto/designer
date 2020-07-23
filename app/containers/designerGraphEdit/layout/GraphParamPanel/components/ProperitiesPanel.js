@@ -5,10 +5,12 @@ import useDebounce from 'react-hook-easier/lib/useDebounce';
 
 import VariablePanel from './VariablePanel';
 import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
+import event from '../../../../designerGraphBlock/layout/eventCenter';
 
 import {
   updateGraphData,
   synchroGraphDataToProcessTree,
+  changeCheckedGraphBlockId,
 } from '../../../../reduxActions';
 
 const { Option } = Select;
@@ -19,6 +21,7 @@ const FormItem = ({
   checkedGraphBlockId,
   noticyBlockCodeChange,
   graphDataMap,
+  graphData,
   setFlag,
 }) => {
   const ifItem = graphDataMap.get(checkedGraphBlockId).properties[1];
@@ -44,13 +47,13 @@ const FormItem = ({
     }
   };
 
-  const handleDelete = (index) => {
+  const handleDelete = index => {
     ifItem.valueList.splice(index, 1);
     forceUpdate();
   };
 
   const { executeCommand, update, save, find } = propsAPI;
-  const handleLableChange = useDebounce((e) => {
+  const handleLableChange = useDebounce(e => {
     const item = find(checkedGraphBlockId);
     if (!item) {
       return;
@@ -96,6 +99,24 @@ const FormItem = ({
     );
   }, 333);
 
+  const handleLableChangeTwo = useDebounce(e => {
+    const labelValue = e.target.value;
+    param.value = labelValue;
+
+    const node = graphData.nodes.find(item => item.id === checkedGraphBlockId);
+
+    node.label = labelValue;
+
+    event.emit('resetGraph');
+
+    changeCheckedGraphBlockId(checkedGraphBlockId);
+
+    setTimeout(() => {
+      updateGraphData(graphData);
+      synchroGraphDataToProcessTree();
+    }, 0);
+  }, 333);
+
   return (
     <div
       style={{
@@ -120,7 +141,7 @@ const FormItem = ({
               display: 'flex',
               marginBottom: '10px',
             }}
-            onChange={(e) => {
+            onChange={e => {
               ifItem.tag = e.target.value;
               synchroGraphDataToProcessTree();
               noticyBlockCodeChange();
@@ -155,7 +176,7 @@ const FormItem = ({
                         <Input
                           placeholder="输入文本"
                           defaultValue={item.v1}
-                          onChange={(e) => {
+                          onChange={e => {
                             item.v1 = e.target.value;
                             synchroGraphDataToProcessTree();
                             noticyBlockCodeChange();
@@ -165,13 +186,13 @@ const FormItem = ({
                           style={{ width: '100%' }}
                           defaultValue={item.rule}
                           dropdownMatchSelectWidth={false}
-                          onChange={(value) => {
+                          onChange={value => {
                             item.rule = value;
                             synchroGraphDataToProcessTree();
                             noticyBlockCodeChange();
                           }}
                         >
-                          {(ifItem.valueMapping || []).map((ruleItem) => (
+                          {(ifItem.valueMapping || []).map(ruleItem => (
                             <Option key={ruleItem.value} value={ruleItem.value}>
                               {ruleItem.name}
                             </Option>
@@ -180,7 +201,7 @@ const FormItem = ({
                         <Input
                           placeholder="输入"
                           defaultValue={item.v2}
-                          onChange={(e) => {
+                          onChange={e => {
                             item.v2 = e.target.value;
                             synchroGraphDataToProcessTree();
                             noticyBlockCodeChange();
@@ -199,7 +220,7 @@ const FormItem = ({
                       <div className="condition-param-ifcondition">
                         <Radio.Group
                           defaultValue={item.connect}
-                          onChange={(e) => {
+                          onChange={e => {
                             item.connect = e.target.value;
                             synchroGraphDataToProcessTree();
                             noticyBlockCodeChange();
@@ -220,7 +241,7 @@ const FormItem = ({
           ) : (
             <Input
               defaultValue={ifItem.value}
-              onChange={(e) => {
+              onChange={e => {
                 ifItem.value = e.target.value;
                 synchroGraphDataToProcessTree();
                 noticyBlockCodeChange();
@@ -233,12 +254,12 @@ const FormItem = ({
           defaultValue={param.value}
           onChange={
             param.enName === 'label'
-              ? (e) => {
+              ? e => {
                   e.persist();
-                  handleLableChange(e);
+                  handleLableChangeTwo(e);
                   noticyBlockCodeChange();
                 }
-              : (e) => {
+              : e => {
                   param.value = e.target.value;
                   setTimeout(() => {
                     updateGraphData(save());
@@ -254,7 +275,7 @@ const FormItem = ({
 };
 
 export default withPropsAPI(
-  ({ propsAPI, checkedGraphBlockId, graphDataMap, blockNode }) => {
+  ({ propsAPI, checkedGraphBlockId, graphDataMap, blockNode, graphData }) => {
     const noticyBlockCodeChange = useNoticyBlockCodeChange();
     const [flag, setFlag] = useState(false);
 
@@ -288,6 +309,7 @@ export default withPropsAPI(
             <FormItem
               param={param}
               graphDataMap={graphDataMap}
+              graphData={graphData}
               checkedGraphBlockId={checkedGraphBlockId}
               key={index}
               setFlag={setFlag}
