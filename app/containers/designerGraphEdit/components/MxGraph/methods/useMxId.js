@@ -1,8 +1,14 @@
-import { useStore, useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
+import store from "../../../../../store";
 
 export default () => {
-  const graphData = useSelector(state => state.grapheditor.graphData);
+  //const graphData = useSelector(state => state.grapheditor.graphData);
+  const {
+    grapheditor: {
+      graphData, // 数据map
+    },
+  } = store.getState();
+
   const isDuplicat = (arr, key) => {
     const length = arr.length;
     for (let i = 0; i < length; i++) {
