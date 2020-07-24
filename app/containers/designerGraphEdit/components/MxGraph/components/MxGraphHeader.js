@@ -1,17 +1,18 @@
 /* eslint-disable react/no-this-in-sfc */
-import React, { useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
-import PropTypes from "prop-types";
-import { message } from "antd";
+import React, { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
+import { message } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
-import { setGraphDataMap } from "../../../../reduxActions";
-import mxgraph from "../mxgraph";
+import useMxId from '../methods/useMxId';
+import { setGraphDataMap } from '../../../../reduxActions';
+import mxgraph from '../mxgraph';
 // import FlowItemPanel from '../../../layout/GraphContainer/components/FlowItemPanel';
 
-import "./MxGraphHeader.scss";
+import './MxGraphHeader.scss';
 
-import { Action_findNode } from "../actions/findNode";
+import { Action_findNode } from '../actions/findNode';
 
 const {
   mxCell: MxCell,
@@ -24,16 +25,18 @@ const {
 } = mxgraph;
 
 const MxGraphHeader = ({ graph, container }) => {
-  const graphData = useSelector((state) => state.grapheditor.graphData);
+  const graphData = useSelector(state => state.grapheditor.graphData);
   const graphDataRef = useRef(null);
   graphDataRef.current = graphData;
+
+  const getMxId = useMxId();
   // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
 
   /**
    * 判断是否是可容纳组件
    * @param {mxCell} cell 单元
    */
-  const isContainer = (cell) => {
+  const isContainer = cell => {
     const style = graph.getCellStyle(cell);
 
     if (graph.isSwimlane(cell)) {
@@ -186,16 +189,16 @@ const MxGraphHeader = ({ graph, container }) => {
         // 拦截，只能有一个开始和结束
         console.log(`ok`, importableCells[0], graphDataRef.current);
         if (
-          importableCells[0].value === "开始" &&
-          Action_findNode("nodes.label", "开始", graphDataRef.current)
+          importableCells[0].value === '开始' &&
+          Action_findNode('nodes.label', '开始', graphDataRef.current)
         )
-          return message.info("开始块只能有一个");
+          return message.info('开始块只能有一个');
 
         if (
-          importableCells[0].value === "开始" &&
-          Action_findNode("nodes.label", "结束", graphDataRef.current)
+          importableCells[0].value === '开始' &&
+          Action_findNode('nodes.label', '结束', graphDataRef.current)
         )
-          return message.info("结束块只能有一个");
+          return message.info('结束块只能有一个');
 
         if (importableCells.length > 0) {
           graph.stopEditing();
@@ -264,7 +267,7 @@ const MxGraphHeader = ({ graph, container }) => {
                 (evt == null || !mxEvent.isShiftDown(evt))
               ) {
                 graph.fireEvent(
-                  new mxEventObject("cellsInserted", "cells", select)
+                  new mxEventObject('cellsInserted', 'cells', select)
                 );
               }
             } catch (e) {
@@ -272,28 +275,30 @@ const MxGraphHeader = ({ graph, container }) => {
             } finally {
               graph.model.endUpdate();
               if (select[0]) {
-                select[0].id = `mx_${uniqueId()}`;
+                // select[0].id = `mx_${uniqueId()}`;
+                select[0].id = getMxId();
+                console.log(select[0].id);
                 if (select[0].value.indexOf("class='compoent-content'") > -1) {
                   setGraphDataMap(select[0].id, {
                     shape: 'processblock',
                     properties: [
                       {
-                        cnName: "标签名称",
-                        enName: "label",
-                        value: "流程块",
-                        default: "",
+                        cnName: '标签名称',
+                        enName: 'label',
+                        value: '流程块',
+                        default: '',
                       },
                       {
-                        cnName: "输入参数",
-                        enName: "param",
+                        cnName: '输入参数',
+                        enName: 'param',
                         value: [],
-                        default: "",
+                        default: '',
                       },
                       {
-                        cnName: "流程块返回",
-                        enName: "output",
+                        cnName: '流程块返回',
+                        enName: 'output',
                         value: [],
-                        default: "",
+                        default: '',
                       },
                     ],
                     variable: [],
@@ -305,25 +310,25 @@ const MxGraphHeader = ({ graph, container }) => {
                     shape: 'rhombus-node',
                     properties: [
                       {
-                        cnName: "标签名称",
-                        enName: "label",
-                        value: "判断",
-                        default: "",
+                        cnName: '标签名称',
+                        enName: 'label',
+                        value: '判断',
+                        default: '',
                       },
                       {
-                        cnName: "分支条件",
-                        enName: "condition",
-                        value: "",
-                        default: "",
+                        cnName: '分支条件',
+                        enName: 'condition',
+                        value: '',
+                        default: '',
                         valueMapping: [
-                          { name: "等于", value: "==" },
-                          { name: "不等于", value: "!=" },
-                          { name: "大于", value: ">" },
-                          { name: "小于", value: "<" },
-                          { name: "大于等于", value: ">=" },
-                          { name: "小于等于", value: "<=" },
-                          { name: "空", value: "is None" },
-                          { name: "非空", value: "not None" },
+                          { name: '等于', value: '==' },
+                          { name: '不等于', value: '!=' },
+                          { name: '大于', value: '>' },
+                          { name: '小于', value: '<' },
+                          { name: '大于等于', value: '>=' },
+                          { name: '小于等于', value: '<=' },
+                          { name: '空', value: 'is None' },
+                          { name: '非空', value: 'not None' },
                         ],
                         tag: 1,
                         valueList: [],
@@ -369,7 +374,7 @@ const MxGraphHeader = ({ graph, container }) => {
           !mxEvent.isPopupTrigger(evt) &&
           this.currentGraph == null &&
           this.dragElement !== null &&
-          this.dragElement.style.display === "none"
+          this.dragElement.style.display === 'none'
         ) {
           // sb.itemClicked(cells, ds, evt, elt);
         }
@@ -407,7 +412,7 @@ const MxGraphHeader = ({ graph, container }) => {
   useEffect(() => {
     if (graph) {
       let cell = null;
-      const toolCells = document.querySelectorAll(".mxgraph-cell");
+      const toolCells = document.querySelectorAll('.mxgraph-cell');
       for (let i = 0; i < toolCells.length; i += 1) {
         const elt = toolCells[i];
         const { label, style, width, height } = elt.dataset;
@@ -422,7 +427,7 @@ const MxGraphHeader = ({ graph, container }) => {
           [cell],
           cell.geometry.width,
           cell.geometry.height,
-          "Shape Group",
+          'Shape Group',
           null,
           elt
         );
@@ -466,7 +471,7 @@ const MxGraphHeader = ({ graph, container }) => {
           <div className="designergraph-container-header-tool-condition-right">
             <span />
           </div>
-          <span style={{ position: "absolute", right: "18px" }}>判断</span>
+          <span style={{ position: 'absolute', right: '18px' }}>判断</span>
         </div>
 
         <div

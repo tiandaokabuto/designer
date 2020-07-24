@@ -19,8 +19,8 @@ import {
   synchroCodeBlock,
   changeSavingModuleData,
   deleteGraphDataMap,
-} from "../../../reduxActions";
-import { setConnection, createPopupMenu } from "./methods";
+} from '../../../reduxActions';
+import { setConnection, createPopupMenu } from './methods';
 import {
   PROCESS_NODE,
   CONDITION_NODE,
@@ -43,10 +43,10 @@ import { translateToGraphData } from './actions/translateToGraphData';
 import { Rule_checkConnection } from './rules/checkRules';
 
 import { message } from 'antd';
-import { resolve } from 'path';
 
 const fs = require('fs');
 const checkPng = require('./images/check.png');
+let graph = null;
 
 const x2js = new X2JS();
 
@@ -89,7 +89,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     currentCheckedTreeNode && !!!isDirNode(processTree, currentCheckedTreeNode);
 
   const graphContainer = useRef(null);
-  const [graph, setGraph] = useState(null);
+  // const [graph, setGraph] = useState(null);
 
   const [resetTag, setResetTag] = useState(false);
 
@@ -122,7 +122,9 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
   useEffect(() => {
     const container = graphContainer.current;
-    setGraph(new mxGraph(container));
+    // setGraph(new mxGraph(container));
+    graphRef.current = new mxGraph(container);
+    graph = graphRef.current;
     event.addListener('resetGraph', resetGraph);
     return () => {
       event.removeListener('resetGraph', resetGraph);
@@ -143,8 +145,19 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   }, [currentCheckedTreeNodeRef.current, graph, resetTag]);
 
   // 有坑
-  const resetGraph = () => {
-    setResetTag(s => !s);
+  const resetGraph = (value, id) => {
+    const cell = graph.getSelectionCell();
+    console.log('当前选中--修改前', cell);
+    graph.getModel().beginUpdate();
+    try {
+      if (cell.value.indexOf("class='compoent-content'") > -1) {
+        cell.value = PROCESS_NODE.getLabel(value);
+      }
+    } finally {
+      graph.getModel().endUpdate();
+    }
+
+    console.log('当前选中--修改后', cell);
   };
 
   const configMxCell = () => {
@@ -408,13 +421,16 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
   const configEventHandle = () => {
     // 监听 - 键盘事件, 删除，复制，粘贴
-    mxEvent.addListener(document, "keydown", function (evt) {
-      if (currentPagePositionRef.current === "block") return;
+    mxEvent.addListener(document, 'keydown', function (evt) {
+      if (currentPagePositionRef.current === 'block') return;
       // 删除
-      if (evt.key === "Delete") {
+      if (evt.key === 'Delete') {
         //message.info(`删除 键盘事件${evt.key}`, 1);
         const opt = {};
-        Action_DeleteCell(graph, { deleteGraphDataMap, changeCheckedGraphBlockId });
+        Action_DeleteCell(graph, {
+          deleteGraphDataMap,
+          changeCheckedGraphBlockId,
+        });
       }
     });
 
@@ -422,8 +438,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       // message.success({ content: `按键松了`, key: "keyboard", duration: 1 });
     });
 
-    mxEvent.addListener(document, "paste", function (evt) {
-      if (currentPagePositionRef.current === "block") return;
+    mxEvent.addListener(document, 'paste', function (evt) {
+      if (currentPagePositionRef.current === 'block') return;
       //message.warning("粘贴");
       Action_PasteCell(graph, {
         mxClipboard,
@@ -432,8 +448,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       });
     });
 
-    mxEvent.addListener(document, "copy", function (evt) {
-      if (currentPagePositionRef.current === "block") return;
+    mxEvent.addListener(document, 'copy', function (evt) {
+      if (currentPagePositionRef.current === 'block') return;
       //message.warning("复制");
       Action_CopyCell(graph, { mxClipboard, changeSavingModuleData });
     });
@@ -500,7 +516,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
           // }
           synchroCodeBlock(graphDataMapRef.current.get(cellId));
 
-          updateCurrentPagePosition("block");
+          updateCurrentPagePosition('block');
           // TODO：3， 进入流程块
           Promise.resolve(true)
             .then(() => {
@@ -575,12 +591,12 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       if (output) {
         updateGraphData(output);
         synchroGraphDataToProcessTree();
-        console.log(currentCheckedTreeNodeRef.current);
-        changeModifyState(
-          processTreeRef.current,
-          currentCheckedTreeNodeRef.current,
-          true
-        );
+        // console.log(currentCheckedTreeNodeRef.current);
+        // changeModifyState(
+        //   processTreeRef.current,
+        //   currentCheckedTreeNodeRef.current,
+        //   true
+        // );
         // 把graphData存入Redux
         //changeMxGraphData(output);
       }

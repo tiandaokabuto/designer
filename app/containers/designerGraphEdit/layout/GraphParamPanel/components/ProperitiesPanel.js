@@ -107,7 +107,7 @@ const FormItem = ({
 
     node.label = labelValue;
 
-    event.emit('resetGraph');
+    event.emit('resetGraph', labelValue, checkedGraphBlockId);
 
     changeCheckedGraphBlockId(checkedGraphBlockId);
 
