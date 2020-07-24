@@ -1,14 +1,14 @@
 /* eslint-disable no-new */
-import React, { useRef, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useInjectContext } from "react-hook-easier/lib/useInjectContext";
-import X2JS from "x2js";
+import React, { useRef, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
+import X2JS from 'x2js';
 // import { useSelector } from 'react-redux';
 
-import mxgraph from "./mxgraph";
-import MxGraphHeader from "./components/MxGraphHeader";
-import OutputPanel from "../../../designerGraphBlock/layout/DragContainer/OutputPanel";
-import { isDirNode, changeModifyState } from "../../../common/utils";
+import mxgraph from './mxgraph';
+import MxGraphHeader from './components/MxGraphHeader';
+import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
+import { isDirNode, changeModifyState } from '../../../common/utils';
 // import useSaveAsXML from '../../../common/DragEditorHeader/useHooks/useSaveAsXML';
 import {
   changeMxGraphData,
@@ -26,35 +26,36 @@ import {
   CONDITION_NODE,
   START_NODE,
   END_NODE,
-} from "./CellProperties";
-import { POINT_POSITION_EXIT, POINT_POSITION_ENTRY } from "./PointPosition";
+} from './CellProperties';
+import { POINT_POSITION_EXIT, POINT_POSITION_ENTRY } from './PointPosition';
+import event from '../../../designerGraphBlock/layout/eventCenter';
 
-import "./index.scss";
+import './index.scss';
 
 // liuqi
 import {
   updateCurrentPagePosition,
   changeBlockTreeTab,
-} from "../../../reduxActions";
-import { Action_DeleteCell } from "./actions/deleteCell";
-import { Action_CopyCell, Action_PasteCell } from "./actions/copyCell";
-import { translateToGraphData } from "./actions/translateToGraphData";
-import { Rule_checkConnection } from "./rules/checkRules";
+} from '../../../reduxActions';
+import { Action_DeleteCell } from './actions/deleteCell';
+import { Action_CopyCell, Action_PasteCell } from './actions/copyCell';
+import { translateToGraphData } from './actions/translateToGraphData';
+import { Rule_checkConnection } from './rules/checkRules';
 
-import { message } from "antd";
-import { resolve } from "path";
+import { message } from 'antd';
+import { resolve } from 'path';
 
-const fs = require("fs");
-const checkPng = require("./images/check.png");
+const fs = require('fs');
+const checkPng = require('./images/check.png');
 
 const x2js = new X2JS();
 
 const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   // 流程图的信息
-  const graphData = useSelector((state) => state.grapheditor.graphData);
+  const graphData = useSelector(state => state.grapheditor.graphData);
 
   // 每个流程快包含的信息
-  const graphDataMap = useSelector((state) => state.grapheditor.graphDataMap);
+  const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
   const graphDataRef = useRef({});
   graphDataRef.current = graphData;
 
@@ -63,24 +64,24 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
   // 选中的块
   const checkedGraphBlockId = useSelector(
-    (state) => state.grapheditor.checkedGraphBlockId
+    state => state.grapheditor.checkedGraphBlockId
   );
 
   // 左侧选中的节点
   const currentCheckedTreeNode = useSelector(
-    (state) => state.grapheditor.currentCheckedTreeNode
+    state => state.grapheditor.currentCheckedTreeNode
   );
   const currentCheckedTreeNodeRef = useRef(null);
   currentCheckedTreeNodeRef.current = currentCheckedTreeNode;
 
   const currentPagePosition = useSelector(
-    (state) => state.temporaryvariable.currentPagePosition
+    state => state.temporaryvariable.currentPagePosition
   );
   const currentPagePositionRef = useRef(null);
   currentPagePositionRef.current = currentPagePosition;
 
   // 流程树
-  const processTree = useSelector((state) => state.grapheditor.processTree);
+  const processTree = useSelector(state => state.grapheditor.processTree);
   const processTreeRef = useRef(null);
   processTreeRef.current = processTree;
 
@@ -89,6 +90,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
   const graphContainer = useRef(null);
   const [graph, setGraph] = useState(null);
+
+  const [resetTag, setResetTag] = useState(false);
+
+  const graphRef = useRef(null);
 
   // const saveAsXML = useSaveAsXML();
 
@@ -118,17 +123,29 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   useEffect(() => {
     const container = graphContainer.current;
     setGraph(new mxGraph(container));
+    event.addListener('resetGraph', resetGraph);
+    return () => {
+      event.removeListener('resetGraph', resetGraph);
+    };
   }, []);
 
   useEffect(() => {
     if (!graph) return;
     graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
-    new Promise((resolve) => {
-      resolve();
-    }).then(() => {
-      parseJsonFile(graphData);
-    });
-  }, [currentCheckedTreeNodeRef.current, graph]);
+    // new Promise(resolve => {
+    //   resolve();
+    // }).then(() => {
+    //   loadGraph(graphData);
+    // });
+    setTimeout(() => {
+      loadGraph(graphData);
+    }, 0);
+  }, [currentCheckedTreeNodeRef.current, graph, resetTag]);
+
+  // 有坑
+  const resetGraph = () => {
+    setResetTag(s => !s);
+  };
 
   const configMxCell = () => {
     // 禁用双击编辑
@@ -245,34 +262,34 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     //添加取消选中时处理函数;
     mxSelectionCellsHandler.prototype.eventListeners = [
-      "remove",
+      'remove',
       (sender, evt) => {
         const { cell } = evt.properties.state;
 
-        console.log("选中REMOVE", cell);
+        console.log('选中REMOVE', cell);
         if (cell.vertex === false || graph.isSwimlane(cell))
           return cell.vertex && !graph.isSwimlane(cell);
 
-        const colorKey = "fillColor";
-        const color = "#edf6f7";
+        const colorKey = 'fillColor';
+        const color = '#edf6f7';
         setTimeout(() => graph.setCellStyles(colorKey, color, [cell]), 0);
       },
-      "add",
+      'add',
       (sender, evt) => {
         const { cell } = evt.properties.state;
 
-        console.log("当前sender", sender, evt, sender.graph.getModel());
+        console.log('当前sender', sender, evt, sender.graph.getModel());
 
         // graph.container.setAttribute('tabindex', '-1');
         // graph.container.focus();
         // graph.removeCellOverlays(cell);
 
         sender.reset();
-        console.log("选中ADD", cell);
+        console.log('选中ADD', cell);
         if (cell.vertex === false || graph.isSwimlane(cell))
           return cell.vertex && !graph.isSwimlane(cell);
-        const colorKey = "fillColor";
-        const color = "#9ed4fb";
+        const colorKey = 'fillColor';
+        const color = '#9ed4fb';
         setTimeout(() => graph.setCellStyles(colorKey, color, [cell]), 0);
       },
     ];
@@ -280,25 +297,25 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
   const configLineStyleSheet = () => {
     let style = {};
-    graph.getStylesheet().putCellStyle("port", style);
+    graph.getStylesheet().putCellStyle('port', style);
     style = graph.getStylesheet().getDefaultEdgeStyle();
-    style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = "#777777";
-    style[mxConstants.STYLE_STROKEWIDTH] = "1";
-    style[mxConstants.STYLE_STROKECOLOR] = "#777777";
-    style[mxConstants.STYLE_FILLCOLOR] = "#ffffff";
+    style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = '#777777';
+    style[mxConstants.STYLE_STROKEWIDTH] = '1';
+    style[mxConstants.STYLE_STROKECOLOR] = '#777777';
+    style[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
     style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ComponentEdge;
     style[mxConstants.STYLE_CURVED] = true;
-    style[mxConstants.STYLE_FONTSIZE] = "28";
-    style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = "none";
+    style[mxConstants.STYLE_FONTSIZE] = '28';
+    style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = 'none';
     mxConstants.EDGE_SELECTION_DASHED = false;
     mxConstants.EDGE_SELECTION_STROKEWIDTH = 3;
-    mxConstants.EDGE_SELECTION_COLOR = "#777777";
+    mxConstants.EDGE_SELECTION_COLOR = '#777777';
     mxConstants.VERTEX_SELECTION_STROKEWIDTH = 0;
-    mxConstants.VERTEX_SELECTION_COLOR = "none";
-    mxConstants.HANDLE_FILLCOLOR = "#ffffff";
-    mxConstants.HANDLE_STROKECOLOR = "#000000";
-    mxConstants.GUIDE_COLOR = "#40a9ff";
-    mxConstants.VALID_COLOR = "#40a9ff";
+    mxConstants.VERTEX_SELECTION_COLOR = 'none';
+    mxConstants.HANDLE_FILLCOLOR = '#ffffff';
+    mxConstants.HANDLE_STROKECOLOR = '#000000';
+    mxConstants.GUIDE_COLOR = '#40a9ff';
+    mxConstants.VALID_COLOR = '#40a9ff';
   };
 
   const configProcessStyleSheet = () => {
@@ -307,14 +324,14 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
     style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
-    style[mxConstants.STYLE_FILLCOLOR] = "#edf6f7";
-    style[mxConstants.STYLE_STROKECOLOR] = "#3d6dcc";
-    style[mxConstants.STYLE_FONTCOLOR] = "#000000";
+    style[mxConstants.STYLE_FILLCOLOR] = '#edf6f7';
+    style[mxConstants.STYLE_STROKECOLOR] = '#3d6dcc';
+    style[mxConstants.STYLE_FONTCOLOR] = '#000000';
     style[mxConstants.STYLE_ROUNDED] = true;
-    style[mxConstants.STYLE_FONTSIZE] = "12";
+    style[mxConstants.STYLE_FONTSIZE] = '12';
     style[mxConstants.STYLE_FONTSTYLE] = 0;
-    style[mxConstants.STYLE_IMAGE_WIDTH] = "48";
-    style[mxConstants.STYLE_IMAGE_HEIGHT] = "48";
+    style[mxConstants.STYLE_IMAGE_WIDTH] = '48';
+    style[mxConstants.STYLE_IMAGE_HEIGHT] = '48';
     graph.getStylesheet().putDefaultVertexStyle(style);
   };
 
@@ -324,14 +341,14 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
     style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
-    style[mxConstants.STYLE_FILLCOLOR] = "#33a58a";
-    style[mxConstants.STYLE_STROKECOLOR] = "#33a58a";
-    style[mxConstants.STYLE_FONTCOLOR] = "#fff";
+    style[mxConstants.STYLE_FILLCOLOR] = '#33a58a';
+    style[mxConstants.STYLE_STROKECOLOR] = '#33a58a';
+    style[mxConstants.STYLE_FONTCOLOR] = '#fff';
     style[mxConstants.STYLE_ROUNDED] = true;
-    style[mxConstants.STYLE_STARTSIZE] = "30";
-    style[mxConstants.STYLE_FONTSIZE] = "16";
+    style[mxConstants.STYLE_STARTSIZE] = '30';
+    style[mxConstants.STYLE_FONTSIZE] = '16';
     style[mxConstants.STYLE_FONTSTYLE] = 1;
-    graph.getStylesheet().putCellStyle("group", style);
+    graph.getStylesheet().putCellStyle('group', style);
   };
 
   const configureStylesheet = () => {
@@ -386,7 +403,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       }
     };
 
-    mxStyleRegistry.putValue("ComponentEdge", mxEdgeStyle.ComponentEdge);
+    mxStyleRegistry.putValue('ComponentEdge', mxEdgeStyle.ComponentEdge);
   };
 
   const configEventHandle = () => {
@@ -401,7 +418,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       }
     });
 
-    mxEvent.addListener(document, "keyup", (evt) => {
+    mxEvent.addListener(document, 'keyup', evt => {
       // message.success({ content: `按键松了`, key: "keyboard", duration: 1 });
     });
 
@@ -423,9 +440,9 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     // 连线事件
     graph.addListener(mxEvent.CELL_CONNECTED, (sender, evt) => {
-      if (!evt.getProperty("source")) {
+      if (!evt.getProperty('source')) {
         if (!graphDataRef.current) return; //假如graphData还没更新，则不做校验，（因为连线会触发3次）
-        message.info("校验连线");
+        message.info('校验连线');
         // 假如验证不通过，则不允许这条连线出现，直接删除
         const ans = Rule_checkConnection(graph, {
           evt,
@@ -436,7 +453,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         if (!ans) return graph.removeCells([evt.properties.edge]);
         // TODO: 假如成功了，则同步更新到grapDataMap
 
-        if (ans.rule === "判断") {
+        if (ans.rule === '判断') {
           console.log(
             `假如是判断，要触发判断逻辑，把连线改成是否`,
             evt.properties.edge,
@@ -452,13 +469,12 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     // 监听 - 双击事件CLICK
     graph.addListener(mxEvent.DOUBLE_CLICK, (sender, evt) => {
-      const cell = evt.getProperty("cell");
+      const cell = evt.getProperty('cell');
       if (cell != null) {
         if (cell.vertex) {
-
           // console.log(graphDataMapRef);
           console.clear();
-          console.log("双击", cell);
+          console.log('双击', cell);
           // 将这个节点对应的card等等数据同步到全局
 
           const cellId = cell.id;
@@ -471,7 +487,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
               `span class='component-name' title='process'`
             ) === -1
           ) {
-            return message.info("只有流程块能双击进入编辑");
+            return message.info('只有流程块能双击进入编辑');
           }
 
           // TODO：2， Redux更新当前块并切换id
@@ -488,16 +504,16 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
           // TODO：3， 进入流程块
           Promise.resolve(true)
             .then(() => {
-              history.push("/designGraph/block");
+              history.push('/designGraph/block');
               return true;
             })
-            .catch((err) => console.log(err));
+            .catch(err => console.log(err));
         }
       }
     });
 
     graph.addListener(mxEvent.CLICK, (sender, evt) => {
-      const cell = evt.getProperty("cell");
+      const cell = evt.getProperty('cell');
       if (cell != null) {
         if (!cell.vertex) return;
 
@@ -519,7 +535,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
         if (
           // node.item &&
-          ["processblock", "rhombus-node"].includes(data.shape)
+          ['processblock', 'rhombus-node'].includes(data.shape)
         ) {
           changeCheckedGraphBlockId(cellId);
           synchroCodeBlock(graphDataMapRef.current.get(cellId));
@@ -529,7 +545,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
           // Creates a new overlay with an image and a tooltip
           const overlay = new MxCellOverlay(
             new MxImage(checkPng.default, 16, 16),
-            "Overlay tooltip"
+            'Overlay tooltip'
           );
 
           // Installs a handler for clicks on the overlay
@@ -548,7 +564,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
       // console.clear();
-      console.log("MxGraph发生了变动", sender, evt);
+      console.log('MxGraph发生了变动', sender, evt);
       // const codec = new MxCodec();
       // const node = codec.encode(sender);
       // const xml = mxUtils.getXml(node);
@@ -583,7 +599,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     // };
 
     // 取消设置连线选中时出现那个调整点
-    mxEdgeHandler.prototype.handleImage = new MxImage("", 0, 0);
+    mxEdgeHandler.prototype.handleImage = new MxImage('', 0, 0);
 
     // 启用连线功能
     graph.setConnectable(true);
@@ -648,7 +664,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     // parseJsonFile();
   }, [graph]);
 
-  const parseJsonFile = (graphData) => {
+  const loadGraph = graphData => {
     // const jsonFile = fs.readFileSync('D:/临时文件存放/test.json');
     // 获得流程
     // const graphData = jsonFile ? JSON.parse(jsonFile).graphData : {};
@@ -664,79 +680,80 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     const nodes = graphData.nodes ? graphData.nodes : [];
     const edges = graphData.edges ? graphData.edges : [];
 
-    console.log(edges);
-    console.log(x2js.dom2js(node));
+    // console.log(edges);
+    // console.log(x2js.dom2js(node));
 
-    const newNodes = nodes.map((item) => {
+    const newNodes = nodes.map(item => {
       const obj = {};
-      if (item.shape === "processblock") {
+      if (item.shape === 'processblock') {
         const labelStr = PROCESS_NODE.label;
         obj._id = item.id;
-        obj._parent = "1";
+        obj._parent = '1';
         obj._style = PROCESS_NODE.style;
         // obj._value = labelStr.replace('流程块', item.label);
-        obj._value = item.version
-          ? item.label
-          : labelStr.replace("流程块", item.label);
-        obj._vertex = "1";
+        // obj._value = item.version
+        //   ? item.label
+        //   : labelStr.replace('流程块', item.label);
+        obj._value = PROCESS_NODE.getLabel(item.label);
+        obj._vertex = '1';
         obj.mxGeometry = {};
         obj.mxGeometry._x = String(item.x);
         obj.mxGeometry._y = String(item.y);
         obj.mxGeometry._width = String(PROCESS_NODE.width);
         obj.mxGeometry._height = String(PROCESS_NODE.height);
-        obj.mxGeometry._as = "geometry";
-      } else if (item.shape === "rhombus-node") {
+        obj.mxGeometry._as = 'geometry';
+      } else if (item.shape === 'rhombus-node') {
         obj._id = item.id;
-        obj._parent = "1";
+        obj._parent = '1';
         obj._style = CONDITION_NODE.style;
-        obj._value = CONDITION_NODE.label;
-        obj._vertex = "1";
+        obj._value = CONDITION_NODE.getLabel(item.label);
+        obj._vertex = '1';
         obj.mxGeometry = {};
         obj.mxGeometry._x = String(item.x);
         obj.mxGeometry._y = String(item.y);
         obj.mxGeometry._width = String(CONDITION_NODE.width);
         obj.mxGeometry._height = String(CONDITION_NODE.height);
-        obj.mxGeometry._as = "geometry";
-      } else if (item.shape === "start-node") {
+        obj.mxGeometry._as = 'geometry';
+      } else if (item.shape === 'start-node') {
         obj._id = item.id;
-        obj._parent = "1";
+        obj._parent = '1';
         obj._style = START_NODE.style;
         obj._value = START_NODE.label;
-        obj._vertex = "1";
+        obj._vertex = '1';
         obj.mxGeometry = {};
         obj.mxGeometry._x = String(item.x);
         obj.mxGeometry._y = String(item.y);
         obj.mxGeometry._width = String(START_NODE.width);
         obj.mxGeometry._height = String(START_NODE.height);
-        obj.mxGeometry._as = "geometry";
-      } else if (item.shape === "end-node") {
+        obj.mxGeometry._as = 'geometry';
+      } else if (item.shape === 'end-node') {
         obj._id = item.id;
-        obj._parent = "1";
+        obj._parent = '1';
         obj._style = END_NODE.style;
         obj._value = END_NODE.label;
-        obj._vertex = "1";
+        obj._vertex = '1';
         obj.mxGeometry = {};
         obj.mxGeometry._x = String(item.x);
         obj.mxGeometry._y = String(item.y);
         obj.mxGeometry._width = String(END_NODE.width);
         obj.mxGeometry._height = String(END_NODE.height);
-        obj.mxGeometry._as = "geometry";
+        obj.mxGeometry._as = 'geometry';
       }
       return obj;
     });
 
-    const newEdges = edges.map((item) => {
+    const newEdges = edges.map(item => {
       const obj = {};
-      let point = "";
+      let point = '';
       obj._id = item.id;
-      obj._parent = "1";
-      obj._edge = "1";
+      obj._parent = '1';
+      obj._edge = '1';
       obj._source = item.source;
       obj._target = item.target;
-      obj._value = item.label ? item.label : "";
+      obj._value = item.label ? item.label : '';
       obj.mxGeometry = {};
-      obj.mxGeometry._as = "geometry";
-      obj.mxGeometry._relative = "1";
+      obj.mxGeometry._as = 'geometry';
+      obj.mxGeometry._relative = '1';
       switch (item.sourceAnchor) {
         case 0:
           point += POINT_POSITION_EXIT.TOP + POINT_POSITION_EXIT.NORMAL;
@@ -789,19 +806,19 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     codec02.decode(xmlDoc.documentElement, graph.getModel());
   };
 
-  const loadGraph = () => {
-    // const xmlReq = mxUtils.load('D:/临时文件存放/fgh.xml');
-    const xmlReq = mxUtils.load("D:/临时文件存放/fgh.xml");
-    const root = xmlReq.getDocumentElement();
-    const dec = new MxCodec(root);
-    dec.decode(root, graph.getModel());
-  };
+  // const loadGraph = () => {
+  //   // const xmlReq = mxUtils.load('D:/临时文件存放/fgh.xml');
+  //   const xmlReq = mxUtils.load('D:/临时文件存放/fgh.xml');
+  //   const root = xmlReq.getDocumentElement();
+  //   const dec = new MxCodec(root);
+  //   dec.decode(root, graph.getModel());
+  // };
 
-  const handleZoomIn = (frequency) => {
+  const handleZoomIn = frequency => {
     for (let i = 0; i < frequency; i += 1) graph.zoomIn();
   };
 
-  const handleZoomOut = (frequency) => {
+  const handleZoomOut = frequency => {
     for (let i = 0; i < frequency; i += 1) graph.zoomOut();
   };
 

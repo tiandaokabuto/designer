@@ -19,6 +19,8 @@ export default () => {
   );
   const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
 
+  const graphData = useSelector(state => state.grapheditor.graphData);
+
   const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
 
   const getParamPanelWidth = () => {
@@ -70,6 +72,7 @@ export default () => {
           <TabPane tab="属性" key="1">
             <ProperitiesPanel
               checkedGraphBlockId={checkedGraphBlockId}
+              graphData={graphData}
               graphDataMap={graphDataMap}
               blockNode={blockNode}
             />
