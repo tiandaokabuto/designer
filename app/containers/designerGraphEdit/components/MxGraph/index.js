@@ -26,6 +26,7 @@ import {
   END_NODE,
 } from './CellProperties';
 import { POINT_POSITION_EXIT, POINT_POSITION_ENTRY } from './PointPosition';
+import event from '../../../designerGraphBlock/layout/eventCenter';
 
 import './index.scss';
 
@@ -88,6 +89,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   const graphContainer = useRef(null);
   const [graph, setGraph] = useState(null);
 
+  const [resetTag, setResetTag] = useState(false);
+
+  const graphRef = useRef(null);
+
   // const saveAsXML = useSaveAsXML();
 
   const {
@@ -116,6 +121,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   useEffect(() => {
     const container = graphContainer.current;
     setGraph(new mxGraph(container));
+    event.addListener('resetGraph', resetGraph);
+    return () => {
+      event.removeListener('resetGraph', resetGraph);
+    };
   }, []);
 
   useEffect(() => {
@@ -129,7 +138,12 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     setTimeout(() => {
       loadGraph(graphData);
     }, 0);
-  }, [currentCheckedTreeNodeRef.current, graph]);
+  }, [currentCheckedTreeNodeRef.current, graph, resetTag]);
+
+  // 有坑
+  const resetGraph = () => {
+    setResetTag(s => !s);
+  };
 
   const configMxCell = () => {
     // 禁用双击编辑
