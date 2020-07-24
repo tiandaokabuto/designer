@@ -449,7 +449,9 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     mxEvent.addListener(document, 'paste', function (evt) {
       if (currentPagePositionRef.current === 'block') return;
-      //message.warning("粘贴");
+
+      if(evt.target.nodeName !== "PRE") return;
+
       Action_PasteCell(graph, {
         mxClipboard,
         graphDataMapRef,
@@ -459,7 +461,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     mxEvent.addListener(document, 'copy', function (evt) {
       if (currentPagePositionRef.current === 'block') return;
-      //message.warning("复制");
+
+      if(evt.target.nodeName !== "PRE") return;
+
+      message.warning("复制");
       Action_CopyCell(graph, { mxClipboard, changeSavingModuleData });
     });
 

@@ -24,7 +24,7 @@ export function Action_CopyCell(graph, option = {}, callback = {}) {
     console.log(`将要复制 `, item, item.id, item.isVertex());
     if(item.value === "开始" || item.value === "结束") {
       errorFlag = true;
-      return message.info("开始、结束不能复制");
+      return message.info({content: "开始、结束不能复制", key: "copy"});
     }
     if (item.isVertex()) {
       //temp.set(item.id, copyModule(item.id));
