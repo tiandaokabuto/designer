@@ -115,6 +115,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     mxCodec: MxCodec,
     mxVertexHandler,
     mxSelectionCellsHandler,
+    mxEventObject,
 
     // 剪切板
     mxClipboard,
@@ -146,16 +147,24 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
   // 有坑
   const resetGraph = (value, id) => {
-    const cell = graph.getSelectionCell();
+    console.log(graph);
+    // const cell = graph.getSelectionCell();
+    const cell = graph.getModel().getCell(id);
     console.log('当前选中--修改前', cell);
     graph.getModel().beginUpdate();
     try {
       if (cell.value.indexOf("class='compoent-content'") > -1) {
         cell.value = PROCESS_NODE.getLabel(value);
       }
+      // new mxEventObject('cellsInserted', 'cells', cell);
     } finally {
       graph.getModel().endUpdate();
     }
+    // new mxEventObject('change');
+    // graph.container.setAttribute('tabindex', '-1');
+    graph.refresh();
+    // graph.container.focus();
+    // graph.getSelectionCell(cell);
 
     console.log('当前选中--修改后', cell);
   };

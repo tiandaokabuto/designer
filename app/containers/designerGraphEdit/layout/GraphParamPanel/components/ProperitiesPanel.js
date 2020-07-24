@@ -1,8 +1,9 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect } from 'react';
 import { Input, Radio, Select, Icon } from 'antd';
 import { withPropsAPI } from 'gg-editor';
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 
+import mxgraph from '../../../../designerGraphEdit/components/MxGraph/mxgraph';
 import VariablePanel from './VariablePanel';
 import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
 import event from '../../../../designerGraphBlock/layout/eventCenter';
@@ -14,6 +15,8 @@ import {
 } from '../../../../reduxActions';
 
 const { Option } = Select;
+
+const { mxEvent } = mxgraph;
 
 const FormItem = ({
   param,
@@ -107,15 +110,38 @@ const FormItem = ({
 
     node.label = labelValue;
 
-    event.emit('resetGraph', labelValue, checkedGraphBlockId);
+    // event.emit('resetGraph', labelValue, checkedGraphBlockId);
 
-    changeCheckedGraphBlockId(checkedGraphBlockId);
+    // setTimeout(() => {
+    //   updateGraphData(graphData);
+    //   synchroGraphDataToProcessTree();
+    // }, 0);
+  }, 333);
+
+  const handleBlur = e => {
+    // console.log(e.target.value);
+    event.emit('resetGraph', e.target.value, checkedGraphBlockId);
 
     setTimeout(() => {
       updateGraphData(graphData);
       synchroGraphDataToProcessTree();
     }, 0);
-  }, 333);
+  };
+
+  useEffect(() => {
+    mxEvent.addListener(
+      document.getElementById('input-value'),
+      'blur',
+      handleBlur
+    );
+    return () => {
+      mxEvent.removeListener(
+        document.getElementById('input-value'),
+        'blur',
+        handleBlur
+      );
+    };
+  }, []);
 
   return (
     <div
@@ -251,6 +277,7 @@ const FormItem = ({
         </div>
       ) : (
         <Input
+          id="input-value"
           defaultValue={param.value}
           onChange={
             param.enName === 'label'
