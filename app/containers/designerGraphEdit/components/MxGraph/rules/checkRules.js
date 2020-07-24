@@ -46,7 +46,7 @@ export const Rule_checkConnection = (graph, option = {}, callback) => {
   if (source.shape === "rhombus-node") {
     console.log(source.edges.output)
     if (source.edges.output.length >= 2) {
-      message.warning("流程块只能有一条输出线");
+      message.warning("判断块只能有最多2条输出线");
       return false;
     }
     if (source.edges.output.length === 0) {
@@ -59,7 +59,7 @@ export const Rule_checkConnection = (graph, option = {}, callback) => {
 
   } else if (target.shape === "rhombus-node") {
     if (target.edges.input.length >= 1) {
-      message.warning("流程块只能有一条输入线");
+      message.warning("判断块只能有一条输入线");
       return false;
     }
   }

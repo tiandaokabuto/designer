@@ -17,6 +17,8 @@ import {
   synchroGraphDataToProcessTree,
   changeCheckedGraphBlockId,
   synchroCodeBlock,
+  changeSavingModuleData,
+  deleteGraphDataMap,
 } from "../../../reduxActions";
 import { setConnection, createPopupMenu } from "./methods";
 import {
@@ -389,12 +391,13 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
   const configEventHandle = () => {
     // 监听 - 键盘事件, 删除，复制，粘贴
-    mxEvent.addListener(document, "keydown", (evt) => {
+    mxEvent.addListener(document, "keydown", function (evt) {
+      if (currentPagePositionRef.current === "block") return;
       // 删除
       if (evt.key === "Delete") {
-        message.info(`删除 键盘事件${evt.key}`, 1);
+        //message.info(`删除 键盘事件${evt.key}`, 1);
         const opt = {};
-        Action_DeleteCell(graph);
+        Action_DeleteCell(graph, { deleteGraphDataMap, changeCheckedGraphBlockId });
       }
     });
 
@@ -403,13 +406,19 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     });
 
     mxEvent.addListener(document, "paste", function (evt) {
-      message.warning("粘贴");
-      Action_PasteCell(graph, { mxClipboard });
+      if (currentPagePositionRef.current === "block") return;
+      //message.warning("粘贴");
+      Action_PasteCell(graph, {
+        mxClipboard,
+        graphDataMapRef,
+        setGraphDataMap,
+      });
     });
 
-    mxEvent.addListener(document, "copy", (evt) => {
-      message.warning("复制");
-      Action_CopyCell(graph, { mxClipboard });
+    mxEvent.addListener(document, "copy", function (evt) {
+      if (currentPagePositionRef.current === "block") return;
+      //message.warning("复制");
+      Action_CopyCell(graph, { mxClipboard, changeSavingModuleData });
     });
 
     // 连线事件
@@ -434,10 +443,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
             ans
           );
           evt.properties.edge.setValue(ans.type);
-
         }
-
-
       } else {
         return false;
       }
@@ -449,7 +455,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       const cell = evt.getProperty("cell");
       if (cell != null) {
         if (cell.vertex) {
-          updateCurrentPagePosition("block");
+
           // console.log(graphDataMapRef);
           console.clear();
           console.log("双击", cell);
@@ -469,15 +475,23 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
           }
 
           // TODO：2， Redux更新当前块并切换id
+          // if (
+          //   // node.item &&
+          //   ["processblock", "rhombus-node"].includes(data.shape)
+          // ) {
+          //   changeCheckedGraphBlockId(cellId);
+
+          // }
           synchroCodeBlock(graphDataMapRef.current.get(cellId));
 
+          updateCurrentPagePosition("block");
           // TODO：3， 进入流程块
           Promise.resolve(true)
             .then(() => {
-              history.push('/designGraph/block');
+              history.push("/designGraph/block");
               return true;
             })
-            .catch(err => console.log(err));
+            .catch((err) => console.log(err));
         }
       }
     });
@@ -589,7 +603,16 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     graph.setPanning(true);
     // 开启右键菜单
     graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
-      return createPopupMenu(graph, menu, cell, evt, mxClipboard);
+      return createPopupMenu(
+        graph,
+        menu,
+        cell,
+        evt,
+        mxClipboard,
+        changeSavingModuleData,
+        graphDataMapRef,
+        setGraphDataMap
+      );
     };
 
     // 允许框线选择
@@ -710,7 +733,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       obj._edge = "1";
       obj._source = item.source;
       obj._target = item.target;
-      obj._value = item.label ? item.label : '';
+      obj._value = item.label ? item.label : "";
       obj.mxGeometry = {};
       obj.mxGeometry._as = "geometry";
       obj.mxGeometry._relative = "1";

@@ -1,7 +1,16 @@
 import { Action_DeleteCell } from "../actions/deleteCell";
 import { Action_CopyCell, Action_PasteCell } from "../actions/copyCell";
 
-export default (graph, menu, cell, evt, mxClipboard) => {
+export default (
+  graph,
+  menu,
+  cell,
+  evt,
+  mxClipboard,
+  changeSavingModuleData,
+  graphDataMapRef,
+  setGraphDataMap
+) => {
   if (cell != null) {
     const clickMenuCopy = () => {
       Action_CopyCell(graph, { mxClipboard });

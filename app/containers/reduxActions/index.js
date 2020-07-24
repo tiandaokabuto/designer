@@ -2,6 +2,7 @@ import {
   CHANGE_GRAPHDATA,
   SYNCHRO_GRAPHDATAMAP,
   SET_GRAPHDATAMAP,
+  DELETE_GRAPHDATAMAP,
   CHANGE_CHECKEDGRAPHBLOCKID,
   CHANGE_EDITORBLOCKPYTHONCODE,
   CHANGE_PROCESSTREE,
@@ -155,6 +156,19 @@ export const setGraphDataMap = (key, value = {}) => {
     synchroGraphDataToProcessTree();
   }, 333);
 };
+
+export const deleteGraphDataMap = (key, value = {}) => {
+  dispatch({
+    type: DELETE_GRAPHDATAMAP,
+    payload: {
+      key
+    },
+  });
+  setTimeout(() => {
+    synchroGraphDataToProcessTree();
+  }, 333);
+};
+
 
 /**
  * 修改当前正处于点击状态的流程图的流程块的id
