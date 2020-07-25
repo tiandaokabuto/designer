@@ -587,15 +587,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       }
     });
 
-    graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
-      // console.clear();
-      console.log('MxGraph发生了变动', sender, evt);
-      // const codec = new MxCodec();
-      // const node = codec.encode(sender);
-      // const xml = mxUtils.getXml(node);
-
-      // TODO: 将Mxgraph的结构转换成我们原来的GgEditor结构
-      const output = translateToGraphData(sender);
+    graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+      console.log('graph CELLS_ADDED的改变');
+      console.log(sender, evt);
+      const output = translateToGraphData(sender.model);
       console.log(output);
       if (output) {
         updateGraphData(output);
@@ -609,6 +604,45 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         // 把graphData存入Redux
         //changeMxGraphData(output);
       }
+    });
+
+    graph.addListener(mxEvent.MOVE_CELLS, (sender, evt) => {
+      console.log(sender);
+      console.log('移动了cell');
+    });
+
+    // graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+    //   console.log('graph CELLS_ADDED的改变');
+    // });
+
+    graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
+      // console.log('graph model的改变');
+      // console.clear();
+      // console.log('MxGraph发生了变动', sender, evt);
+
+      const changes = evt.getProperty('edit').changes;
+      // console.log(changes[0].constructor.name);
+
+      // if (evt.properties.changes[0])
+      // const codec = new MxCodec();
+      // const node = codec.encode(sender);
+      // const xml = mxUtils.getXml(node);
+
+      // TODO: 将Mxgraph的结构转换成我们原来的GgEditor结构
+      // const output = translateToGraphData(sender);
+      // console.log(output);
+      // if (output) {
+      // updateGraphData(output);
+      // synchroGraphDataToProcessTree();
+      // console.log(currentCheckedTreeNodeRef.current);
+      // changeModifyState(
+      //   processTreeRef.current,
+      //   currentCheckedTreeNodeRef.current,
+      //   true
+      // );
+      // 把graphData存入Redux
+      //changeMxGraphData(output);
+      // }
     });
   };
 
