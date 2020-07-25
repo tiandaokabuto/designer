@@ -198,7 +198,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         mxClipboard,
         changeSavingModuleData,
         graphDataMapRef,
-        setGraphDataMap
+        setGraphDataMap,
+
+        deleteGraphDataMap,
+        changeCheckedGraphBlockId
       );
     };
 

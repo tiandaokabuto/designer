@@ -9,14 +9,17 @@ export default (
   mxClipboard,
   changeSavingModuleData,
   graphDataMapRef,
-  setGraphDataMap
+  setGraphDataMap,
+
+  deleteGraphDataMap,
+  changeCheckedGraphBlockId
 ) => {
   if (cell != null) {
     const clickMenuCopy = () => {
       Action_CopyCell(graph, { mxClipboard });
     };
     const clickMenuDelet = () => {
-      Action_DeleteCell(graph);
+      Action_DeleteCell(graph, {deleteGraphDataMap,changeCheckedGraphBlockId});
     };
     const clickMenuAddToReuse = () => {};
     const clickMenuExport = () => {};
