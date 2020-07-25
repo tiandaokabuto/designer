@@ -136,25 +136,24 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     undoMng.redo();
   };
 
-
   useEffect(() => {
     const container = graphContainer.current;
     // setGraph(new mxGraph(container));
     graphRef.current = new mxGraph(container);
     graph = graphRef.current;
-    event.addListener("resetGraph", resetGraph);
+    event.addListener('resetGraph', resetGraph);
 
     undoMng = new mxUndoManager();
 
-    event.addListener("undo", handleUndo);
-    event.addListener("redo", handleRedo);
+    event.addListener('undo', handleUndo);
+    event.addListener('redo', handleRedo);
     return () => {
-      event.removeListener("undo", handleUndo);
-      event.removeListener("redo", handleRedo);
+      event.removeListener('undo', handleUndo);
+      event.removeListener('redo', handleRedo);
     };
 
     return () => {
-      event.removeListener("resetGraph", resetGraph);
+      event.removeListener('resetGraph', resetGraph);
     };
   }, []);
 
@@ -244,7 +243,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     loadGraph(graphData);
     undoMng.clear();
-
   }, [currentCheckedTreeNodeRef.current, resetTag]);
 
   // 有坑
@@ -488,9 +486,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
    * 设置连线样式
    */
   const setDataMingEdgeStyle = () => {
-    const listener = function(sender, evt)
-    {
-    undoMng.undoableEditHappened(evt.getProperty('edit'));
+    const listener = function (sender, evt) {
+      undoMng.undoableEditHappened(evt.getProperty('edit'));
     };
     graph.getModel().addListener(mxEvent.UNDO, listener);
     graph.getView().addListener(mxEvent.UNDO, listener);
@@ -559,31 +556,27 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     mxEvent.addListener(document, 'paste', function (evt) {
       if (currentPagePositionRef.current === 'block') return;
 
-      if(evt.target.nodeName === "PRE" || evt.target.nodeName === "BODY") {
-        message.warning("粘贴");
+      if (evt.target.nodeName === 'PRE' || evt.target.nodeName === 'BODY') {
+        message.warning('粘贴');
         Action_PasteCell(graph, {
           mxClipboard,
           graphDataMapRef,
           setGraphDataMap,
         });
-      }else{
+      } else {
         return;
       }
-
-
     });
 
     mxEvent.addListener(document, 'copy', function (evt) {
       if (currentPagePositionRef.current === 'block') return;
 
-      if(evt.target.nodeName === "PRE" || evt.target.nodeName === "BODY") {
-        message.warning("复制");
+      if (evt.target.nodeName === 'PRE' || evt.target.nodeName === 'BODY') {
+        message.warning('复制');
         Action_CopyCell(graph, { mxClipboard, changeSavingModuleData });
-      }else{
+      } else {
         return;
       }
-
-
     });
 
     // 连线事件
@@ -621,7 +614,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       if (cell != null) {
         if (cell.vertex) {
           // console.log(graphDataMapRef);
-          console.clear();
+          // console.clear();
           console.log('双击', cell);
           // 将这个节点对应的card等等数据同步到全局
 
@@ -712,45 +705,35 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
       console.log('添加');
-      // console.log(sender, evt);
-      // const output = translateToGraphData(sender.model);
-      // console.log(output);
-      // if (output) {
-      // updateGraphData(output);
-      // synchroGraphDataToProcessTree();
-      // console.log(currentCheckedTreeNodeRef.current);
-      // changeModifyState(
-      //   processTreeRef.current,
-      //   currentCheckedTreeNodeRef.current,
-      //   true
-      // );
-      // 把graphData存入Redux
-      //changeMxGraphData(output);
-      // }
+      changeModifyState(
+        processTreeRef.current,
+        currentCheckedTreeNodeRef.current,
+        true
+      );
     });
 
     graph.addListener(mxEvent.MOVE_CELLS, (sender, evt) => {
-      // console.log(sender);
       console.log('移动');
-      // const output = translateToGraphData(sender.model);
-      // if (output) {
-      //   updateGraphData(output);
-      //   synchroGraphDataToProcessTree();
-      // }
+      changeModifyState(
+        processTreeRef.current,
+        currentCheckedTreeNodeRef.current,
+        true
+      );
     });
 
-    graph.addListener(mxEvent.REMOVE_CELLS_FROM_PARENT, (sender, evt) => {
-      console.log('删除');
-      // const output = translateToGraphData(sender.model);
-      // if (output) {
-      //   updateGraphData(output);
-      //   synchroGraphDataToProcessTree();
-      // }
-    });
+    // graph.addListener(mxEvent.REMOVE_CELLS_FROM_PARENT, (sender, evt) => {
+    //   console.log('删除');
 
-    // graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
-    //   console.log('graph CELLS_ADDED的改变');
     // });
+
+    graph.addListener(mxEvent.CELLS_REMOVED, (sender, evt) => {
+      console.log('删除');
+      changeModifyState(
+        processTreeRef.current,
+        currentCheckedTreeNodeRef.current,
+        true
+      );
+    });
 
     graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
       // console.log('graph model的改变');
@@ -771,12 +754,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       if (output) {
         updateGraphData(output);
         synchroGraphDataToProcessTree();
-        // console.log(currentCheckedTreeNodeRef.current);
-        // changeModifyState(
-        //   processTreeRef.current,
-        //   currentCheckedTreeNodeRef.current,
-        //   true
-        // );
         // 把graphData存入Redux
         //changeMxGraphData(output);
       }
