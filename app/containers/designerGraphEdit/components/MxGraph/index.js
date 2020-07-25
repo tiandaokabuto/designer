@@ -168,7 +168,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     // });
     setTimeout(() => {
       loadGraph(graphData);
-      undoMng.clear();
+      //undoMng.clear();
     }, 0);
   }, [currentCheckedTreeNodeRef.current, graph, resetTag]);
 
@@ -413,6 +413,13 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
    * 设置连线样式
    */
   const setDataMingEdgeStyle = () => {
+    const listener = function(sender, evt)
+    {
+    undoMng.undoableEditHappened(evt.getProperty('edit'));
+    };
+    graph.getModel().addListener(mxEvent.UNDO, listener);
+    graph.getView().addListener(mxEvent.UNDO, listener);
+
     mxEdgeStyle.ComponentEdge = (state, source, target, points, result) => {
       const { view } = state;
       if (source != null && target != null) {
@@ -477,22 +484,31 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     mxEvent.addListener(document, 'paste', function (evt) {
       if (currentPagePositionRef.current === 'block') return;
 
-      if(evt.target.nodeName !== "PRE") return;
+      if(evt.target.nodeName === "PRE" || evt.target.nodeName === "BODY") {
+        message.warning("粘贴");
+        Action_PasteCell(graph, {
+          mxClipboard,
+          graphDataMapRef,
+          setGraphDataMap,
+        });
+      }else{
+        return;
+      }
 
-      Action_PasteCell(graph, {
-        mxClipboard,
-        graphDataMapRef,
-        setGraphDataMap,
-      });
+
     });
 
     mxEvent.addListener(document, 'copy', function (evt) {
       if (currentPagePositionRef.current === 'block') return;
 
-      if(evt.target.nodeName !== "PRE") return;
+      if(evt.target.nodeName === "PRE" || evt.target.nodeName === "BODY") {
+        message.warning("复制");
+        Action_CopyCell(graph, { mxClipboard, changeSavingModuleData });
+      }else{
+        return;
+      }
 
-      message.warning("复制");
-      Action_CopyCell(graph, { mxClipboard, changeSavingModuleData });
+
     });
 
     // 连线事件
@@ -621,6 +637,11 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
       // console.clear();
+      if(evt.properties.changes[0]){
+        console.log(evt.properties.changes[0].constructor.name)
+        if(evt.properties.changes[0].constructor.name==="mxRootChange" || evt.properties.changes[0].constructor.name==="mxStyleChange" ) return;
+      }
+
       console.log('MxGraph发生了变动', sender, evt);
       // const codec = new MxCodec();
       // const node = codec.encode(sender);

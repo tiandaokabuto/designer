@@ -407,14 +407,14 @@ export default memo(
             setVisible('newprocess');
           },
         },
-        {
-          description: '撤销',
-          iconImg: true,
-          type: UndoPNG,
-          onClick: () => {
-            event.emit('undo');
-          },
-        },
+        // {
+        //   description: '撤销',
+        //   iconImg: true,
+        //   type: UndoPNG,
+        //   onClick: () => {
+        //     event.emit('undo');
+        //   },
+        // },
         // {
         //   description: '恢复',
         //   iconImg: true,
