@@ -229,6 +229,8 @@ const BasicStatement = useInjectContext(props => {
       } catch (e) {
         console.log(e);
       }
+    } else {
+      ipcRenderer.send('start_browser_server', id);
     }
 
     const handleUpdateXpath = (
