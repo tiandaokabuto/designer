@@ -133,6 +133,83 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   }, []);
 
   useEffect(() => {
+    // if (!graph) return;
+    graph.htmlLabels = true;
+
+    // 判断逻辑
+    graph.setMultigraph(false); //
+
+    // mxGraph.prototype.isConnectable = () => {
+
+    // };
+
+    // 取消设置连线选中时出现那个调整点
+    mxEdgeHandler.prototype.handleImage = new MxImage('', 0, 0);
+
+    // 启用连线功能
+    graph.setConnectable(true);
+    graph.connectionHandler.getConnectImage = function (state) {
+      return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
+    };
+
+    // 连线不允许悬空
+    graph.setAllowDanglingEdges(false);
+    // 允许子项内容超出父项
+    graph.constrainChildren = false;
+    // 允许子项改变宽度后，内容超出父项
+    graph.extendParents = false;
+    // 允许拖拽到另一个单元格中
+    graph.setDropEnabled(true);
+    //  启用画布平移
+    graph.setPanning(true);
+    // 开启右键菜单
+    graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
+      return createPopupMenu(
+        graph,
+        menu,
+        cell,
+        evt,
+        mxClipboard,
+        changeSavingModuleData,
+        graphDataMapRef,
+        setGraphDataMap
+      );
+    };
+
+    // 允许框线选择
+    new MxRubberband(graph);
+
+    // 启用辅助线
+    mxGraphHandler.prototype.guidesEnabled = true;
+    window.mxGraphHandler = mxGraphHandler;
+
+    // 设置连线样式
+    setDataMingEdgeStyle();
+    // 设置
+    configureStylesheet();
+    // 配置mxCell方法
+    configMxCell();
+    // 配置事件监听
+    configEventHandle();
+    // 配置连接约束点
+    setConnection();
+
+    // 添加数据
+    // const div = document.createElement('div');
+    // div.innerText =
+    //   '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="295" y="167" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="3" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="322" y="304" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="4" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>';
+    // const xml = mxUtils.getTextContent(div);
+    // const xmlDocument = mxUtils.parseXml(xml);
+    // const decoder = new MxCodec(xmlDocument);
+    // const node = xmlDocument.documentElement;
+    // decoder.decode(node, graph.getModel());
+
+    // loadGraph();
+
+    // parseJsonFile();
+  }, []);
+
+  useEffect(() => {
     if (!graph) return;
     graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
     // new Promise(resolve => {
@@ -140,10 +217,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     // }).then(() => {
     //   loadGraph(graphData);
     // });
-    setTimeout(() => {
-      loadGraph(graphData);
-    }, 0);
-  }, [currentCheckedTreeNodeRef.current, graph, resetTag]);
+    // setTimeout(() => {
+    loadGraph(graphData);
+    // }, 0);
+  }, [currentCheckedTreeNodeRef.current, resetTag]);
 
   // 有坑
   const resetGraph = (value, id) => {
@@ -588,48 +665,9 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     });
 
     graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
-      console.log('graph CELLS_ADDED的改变');
-      console.log(sender, evt);
-      const output = translateToGraphData(sender.model);
-      console.log(output);
-      if (output) {
-        updateGraphData(output);
-        synchroGraphDataToProcessTree();
-        // console.log(currentCheckedTreeNodeRef.current);
-        // changeModifyState(
-        //   processTreeRef.current,
-        //   currentCheckedTreeNodeRef.current,
-        //   true
-        // );
-        // 把graphData存入Redux
-        //changeMxGraphData(output);
-      }
-    });
-
-    graph.addListener(mxEvent.MOVE_CELLS, (sender, evt) => {
-      console.log(sender);
-      console.log('移动了cell');
-    });
-
-    // graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
-    //   console.log('graph CELLS_ADDED的改变');
-    // });
-
-    graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
-      // console.log('graph model的改变');
-      // console.clear();
-      // console.log('MxGraph发生了变动', sender, evt);
-
-      const changes = evt.getProperty('edit').changes;
-      // console.log(changes[0].constructor.name);
-
-      // if (evt.properties.changes[0])
-      // const codec = new MxCodec();
-      // const node = codec.encode(sender);
-      // const xml = mxUtils.getXml(node);
-
-      // TODO: 将Mxgraph的结构转换成我们原来的GgEditor结构
-      // const output = translateToGraphData(sender);
+      console.log('添加');
+      // console.log(sender, evt);
+      // const output = translateToGraphData(sender.model);
       // console.log(output);
       // if (output) {
       // updateGraphData(output);
@@ -644,84 +682,60 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       //changeMxGraphData(output);
       // }
     });
+
+    graph.addListener(mxEvent.MOVE_CELLS, (sender, evt) => {
+      // console.log(sender);
+      console.log('移动');
+      // const output = translateToGraphData(sender.model);
+      // if (output) {
+      //   updateGraphData(output);
+      //   synchroGraphDataToProcessTree();
+      // }
+    });
+
+    graph.addListener(mxEvent.REMOVE_CELLS_FROM_PARENT, (sender, evt) => {
+      console.log('删除');
+      // const output = translateToGraphData(sender.model);
+      // if (output) {
+      //   updateGraphData(output);
+      //   synchroGraphDataToProcessTree();
+      // }
+    });
+
+    // graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+    //   console.log('graph CELLS_ADDED的改变');
+    // });
+
+    graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
+      // console.log('graph model的改变');
+      // console.clear();
+      // console.log('MxGraph发生了变动', sender, evt);
+
+      // const changes = evt.getProperty('edit').changes;
+      // console.log(changes[0].constructor.name);
+
+      // if (evt.properties.changes[0])
+      // const codec = new MxCodec();
+      // const node = codec.encode(sender);
+      // const xml = mxUtils.getXml(node);
+
+      // TODO: 将Mxgraph的结构转换成我们原来的GgEditor结构
+      const output = translateToGraphData(sender);
+      console.log(output);
+      if (output) {
+        updateGraphData(output);
+        synchroGraphDataToProcessTree();
+        // console.log(currentCheckedTreeNodeRef.current);
+        // changeModifyState(
+        //   processTreeRef.current,
+        //   currentCheckedTreeNodeRef.current,
+        //   true
+        // );
+        // 把graphData存入Redux
+        //changeMxGraphData(output);
+      }
+    });
   };
-
-  useEffect(() => {
-    if (!graph) return;
-    graph.htmlLabels = true;
-
-    // 判断逻辑
-    graph.setMultigraph(false); //
-
-    // mxGraph.prototype.isConnectable = () => {
-
-    // };
-
-    // 取消设置连线选中时出现那个调整点
-    mxEdgeHandler.prototype.handleImage = new MxImage('', 0, 0);
-
-    // 启用连线功能
-    graph.setConnectable(true);
-    graph.connectionHandler.getConnectImage = function (state) {
-      return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
-    };
-
-    // 连线不允许悬空
-    graph.setAllowDanglingEdges(false);
-    // 允许子项内容超出父项
-    graph.constrainChildren = false;
-    // 允许子项改变宽度后，内容超出父项
-    graph.extendParents = false;
-    // 允许拖拽到另一个单元格中
-    graph.setDropEnabled(true);
-    //  启用画布平移
-    graph.setPanning(true);
-    // 开启右键菜单
-    graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
-      return createPopupMenu(
-        graph,
-        menu,
-        cell,
-        evt,
-        mxClipboard,
-        changeSavingModuleData,
-        graphDataMapRef,
-        setGraphDataMap
-      );
-    };
-
-    // 允许框线选择
-    new MxRubberband(graph);
-
-    // 启用辅助线
-    mxGraphHandler.prototype.guidesEnabled = true;
-    window.mxGraphHandler = mxGraphHandler;
-
-    // 设置连线样式
-    setDataMingEdgeStyle();
-    // 设置
-    configureStylesheet();
-    // 配置mxCell方法
-    configMxCell();
-    // 配置事件监听
-    configEventHandle();
-    // 配置连接约束点
-    setConnection();
-
-    // 添加数据
-    // const div = document.createElement('div');
-    // div.innerText =
-    //   '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="295" y="167" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="3" value="&lt;div class=&quot;compoent-content&quot;&gt;&lt;label class=&quot;component-icon&quot;&gt;&lt;/label&gt;&lt;span class=&quot;component-name&quot; title=&quot;process&quot;&gt;流程块&lt;/span&gt;&lt;/div&gt;" style="label;whiteSpace=wrap;html=1;;resizable=0;image=../../../../images/icon.jpg" vertex="1" parent="1"><mxGeometry x="322" y="304" width="186" height="55" as="geometry"/><Array as="properties"><Object cnName="标签名称" enName="label" value="流程块" default=""/><Object cnName="输入参数" enName="param" default=""><Array as="value"/></Object><Object cnName="流程块返回" enName="output" default=""><Array as="value"/></Object></Array><Array as="variable"/></mxCell><mxCell id="4" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>';
-    // const xml = mxUtils.getTextContent(div);
-    // const xmlDocument = mxUtils.parseXml(xml);
-    // const decoder = new MxCodec(xmlDocument);
-    // const node = xmlDocument.documentElement;
-    // decoder.decode(node, graph.getModel());
-
-    // loadGraph();
-
-    // parseJsonFile();
-  }, [graph]);
 
   const loadGraph = graphData => {
     // const jsonFile = fs.readFileSync('D:/临时文件存放/test.json');
