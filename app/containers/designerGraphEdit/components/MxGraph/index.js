@@ -175,8 +175,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
   // 有坑
   const resetGraph = (value, id) => {
     console.log(graph);
-    // const cell = graph.getSelectionCell();
-    const cell = graph.getModel().getCell(id);
+    const cell = graph.getSelectionCell();
+    // const cell = graph.getModel().getCell(id);
     console.log('当前选中--修改前', cell);
     graph.getModel().beginUpdate();
     try {
