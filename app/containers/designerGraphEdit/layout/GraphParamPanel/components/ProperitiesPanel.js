@@ -110,38 +110,38 @@ const FormItem = ({
 
     node.label = labelValue;
 
-    // event.emit('resetGraph', labelValue, checkedGraphBlockId);
-
-    // setTimeout(() => {
-    //   updateGraphData(graphData);
-    //   synchroGraphDataToProcessTree();
-    // }, 0);
-  }, 333);
-
-  const handleBlur = e => {
-    // console.log(e.target.value);
-    event.emit('resetGraph', e.target.value, checkedGraphBlockId);
+    event.emit('resetGraph', labelValue, checkedGraphBlockId);
 
     setTimeout(() => {
       updateGraphData(graphData);
       synchroGraphDataToProcessTree();
     }, 0);
-  };
+  }, 333);
 
-  useEffect(() => {
-    mxEvent.addListener(
-      document.getElementById('input-value'),
-      'blur',
-      handleBlur
-    );
-    return () => {
-      mxEvent.removeListener(
-        document.getElementById('input-value'),
-        'blur',
-        handleBlur
-      );
-    };
-  }, []);
+  // const handleBlur = e => {
+  //   // console.log(e.target.value);
+  //   event.emit('resetGraph', e.target.value, checkedGraphBlockId);
+
+  //   setTimeout(() => {
+  //     updateGraphData(graphData);
+  //     synchroGraphDataToProcessTree();
+  //   }, 0);
+  // };
+
+  // useEffect(() => {
+  //   mxEvent.addListener(
+  //     document.getElementById('input-value'),
+  //     'blur',
+  //     handleBlur
+  //   );
+  //   return () => {
+  //     mxEvent.removeListener(
+  //       document.getElementById('input-value'),
+  //       'blur',
+  //       handleBlur
+  //     );
+  //   };
+  // }, []);
 
   return (
     <div
