@@ -277,7 +277,6 @@ const MxGraphHeader = ({ graph, container }) => {
               if (select[0]) {
                 // select[0].id = `mx_${uniqueId()}`;
                 select[0].id = getMxId();
-                console.log(select[0].id);
                 if (select[0].value.indexOf("class='compoent-content'") > -1) {
                   setGraphDataMap(select[0].id, {
                     shape: 'processblock',
