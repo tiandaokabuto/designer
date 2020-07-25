@@ -415,14 +415,14 @@ export default memo(
             event.emit('undo');
           },
         },
-        {
-          description: '恢复',
-          iconImg: true,
-          type: RedoPNG,
-          onClick: () => {
-            event.emit('redo');
-          },
-        },
+        // {
+        //   description: '恢复',
+        //   iconImg: true,
+        //   type: RedoPNG,
+        //   onClick: () => {
+        //     event.emit('redo');
+        //   },
+        // },
         {
           description: '运行',
           type: 'code',

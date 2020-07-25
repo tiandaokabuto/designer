@@ -23,3 +23,12 @@ export const START_POINT = /** 定点执行                                */ Sy
 export const STOP_RUNNING = /** 暂停                                   */ Symbol(
   'stop_running'
 );
+
+
+export const UNDO = /** 暂停                                   */ Symbol(
+  'mxUndoManager_undo'
+);
+
+export const REDO = /** 暂停                                   */ Symbol(
+  'mxUndoManager_redo'
+);

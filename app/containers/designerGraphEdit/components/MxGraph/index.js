@@ -47,6 +47,7 @@ import { message } from 'antd';
 const fs = require('fs');
 const checkPng = require('./images/check.png');
 let graph = null;
+let undoMng = null;
 
 const x2js = new X2JS();
 
@@ -119,16 +120,41 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     // 剪切板
     mxClipboard,
+    // 撤销重做
+    mxUndoManager,
   } = mxgraph;
+
+  const handleUndo = () => {
+    //message.info("un");
+
+    undoMng.undo();
+  };
+
+  const handleRedo = () => {
+    //message.info("redo");
+
+    undoMng.redo();
+  };
+
 
   useEffect(() => {
     const container = graphContainer.current;
     // setGraph(new mxGraph(container));
     graphRef.current = new mxGraph(container);
     graph = graphRef.current;
-    event.addListener('resetGraph', resetGraph);
+    event.addListener("resetGraph", resetGraph);
+
+    undoMng = new mxUndoManager();
+
+    event.addListener("undo", handleUndo);
+    event.addListener("redo", handleRedo);
     return () => {
-      event.removeListener('resetGraph', resetGraph);
+      event.removeListener("undo", handleUndo);
+      event.removeListener("redo", handleRedo);
+    };
+
+    return () => {
+      event.removeListener("resetGraph", resetGraph);
     };
   }, []);
 
@@ -142,6 +168,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     // });
     setTimeout(() => {
       loadGraph(graphData);
+      undoMng.clear();
     }, 0);
   }, [currentCheckedTreeNodeRef.current, graph, resetTag]);
 
