@@ -182,22 +182,32 @@ export default memo(
       // 格式匹配
       if (reg.test(version)) {
         setVersionTipVisible(false);
-        const originVersionArray = originVersion.split('.');
-        const currentVersionArray = version.split('.');
-        const minLength =
-          originVersionArray.length > currentVersionArray.length
-            ? currentVersionArray.length
-            : originVersionArray.length;
-        let isVerisonSmallerThanOriginVerison = false;
-        // origin: 2.0 current: 1.0.1
-        for (let i = 0; i < minLength; i += 1) {
-          if (originVersionArray[i] > currentVersionArray[i]) {
-            isVerisonSmallerThanOriginVerison = true;
-            setVersionTipVisible2(true);
-            break;
-          }
-        }
-        if (!isVerisonSmallerThanOriginVerison) {
+        // const originVersionArray = originVersion.split('.');
+        // const currentVersionArray = version.split('.');
+
+        const originVersionNum = Number(originVersion.split('.').join(''));
+        const currentVersionNum = Number(version.split('.').join(''));
+
+        // const minLength =
+        //   originVersionArray.length > currentVersionArray.length
+        //     ? currentVersionArray.length
+        //     : originVersionArray.length;
+        // let isVerisonSmallerThanOriginVerison = false;
+        // // origin: 2.0 current: 1.0.1
+        // for (let i = 0; i < minLength; i += 1) {
+        //   if (originVersionArray[i] > currentVersionArray[i]) {
+        //     isVerisonSmallerThanOriginVerison = true;
+        //     setVersionTipVisible2(true);
+        //     break;
+        //   }
+        // }
+        // if (!isVerisonSmallerThanOriginVerison) {
+        //   setVersionTipVisible2(false);
+        // }
+
+        if (currentVersionNum <= originVersionNum) {
+          setVersionTipVisible2(true);
+        } else {
           setVersionTipVisible2(false);
         }
       } else {
