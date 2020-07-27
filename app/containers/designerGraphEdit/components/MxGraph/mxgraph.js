@@ -5,8 +5,7 @@ const mxgraph = mx({
   mxBasePath: './constants',
 });
 
-mxgraph.mxUtils.alert = () =>{};
-
+mxgraph.mxUtils.alert = () => {};
 
 // decode bug https://github.com/jgraph/mxgraph/issues/49
 window.mxGraph = mxgraph.mxGraph;
@@ -20,6 +19,5 @@ window.mxDefaultToolbar = mxgraph.mxDefaultToolbar;
 
 // mx剪切板
 window.mxClipboard = mxgraph.mxClipboard;
-
 
 export default mxgraph;

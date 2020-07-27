@@ -1,8 +1,9 @@
-import React from "react";
-import { message } from "antd";
-import store from "../../../../../store";
-import cloneDeep from "lodash/cloneDeep";
-import useMxId from "../methods/useMxId";
+import React from 'react';
+import { message } from 'antd';
+import store from '../../../../../store';
+import cloneDeep from 'lodash/cloneDeep';
+import useMxId from '../methods/useMxId';
+import { updateGraphDataAction } from '../mxgraphAction';
 
 // 复制Cell
 export function Action_CopyCell(graph, option = {}, callback = {}) {
@@ -20,11 +21,11 @@ export function Action_CopyCell(graph, option = {}, callback = {}) {
   let temp = [];
   let errorFlag = false;
   // 只复制cell当中不是线的元素
-  cells.forEach((item) => {
+  cells.forEach(item => {
     console.log(`将要复制 `, item, item.id, item.isVertex());
-    if(item.value === "开始" || item.value === "结束") {
+    if (item.value === '开始' || item.value === '结束') {
       errorFlag = true;
-      return message.info({content: "开始、结束不能复制", key: "copy"});
+      return message.info({ content: '开始、结束不能复制', key: 'copy' });
     }
     if (item.isVertex()) {
       //temp.set(item.id, copyModule(item.id));
@@ -32,7 +33,7 @@ export function Action_CopyCell(graph, option = {}, callback = {}) {
     }
   });
 
-  if(errorFlag) return lock = true;
+  if (errorFlag) return (lock = true);
 
   // console.log(temp);
   // // 写入 俊杰的剪切板
@@ -46,12 +47,7 @@ let lock = false;
 export function Action_PasteCell(graph, option, callback = {}) {
   if (lock) return;
   lock = true;
-  const {
-    mxClipboard,
-    graphDataMapRef,
-    setGraphDataMap,
-    changeCheckedGraphBlockId,
-  } = option;
+  const { mxClipboard, setGraphDataMap, changeCheckedGraphBlockId } = option;
   const {
     grapheditor: {
       savingModuleData, // 俊杰的剪切板
@@ -62,9 +58,9 @@ export function Action_PasteCell(graph, option, callback = {}) {
 
   const getMxId = useMxId();
 
-  //console.clear();
+  console.log(getMxId());
 
-  let cell_Id = "";
+  //console.clear();
   console.log(graph.selectionModel.cells);
 
   graph.selectionModel.cells.forEach((item, index) => {
@@ -76,8 +72,8 @@ export function Action_PasteCell(graph, option, callback = {}) {
         let tempId = getMxId();
         item.setId(tempId);
         setGraphDataMap(tempId, savingModuleData[index]);
-        cell_Id = item.getId();
         changeCheckedGraphBlockId(tempId);
+        updateGraphDataAction(graph);
       } catch (e) {
         console.log(e);
       }
@@ -87,7 +83,7 @@ export function Action_PasteCell(graph, option, callback = {}) {
   //lock = false;
 }
 
-const copyModule = (id) => {
+const copyModule = id => {
   const {
     grapheditor: {
       graphDataMap, // 数据map

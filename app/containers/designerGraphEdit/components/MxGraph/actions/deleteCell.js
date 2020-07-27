@@ -1,8 +1,6 @@
 import React from 'react';
 
-import mxgraph from '../mxgraph';
-
-const { mxEventObject } = mxgraph;
+import { deleteCellAction } from '../mxgraphAction';
 
 // 删除cell
 export function Action_DeleteCell(graph, opt = {}, callback = {}) {
@@ -18,5 +16,5 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
     console.log(item.id);
   });
 
-  graph.fireEvent(new mxEventObject('delete_cells'));
+  deleteCellAction(graph);
 }

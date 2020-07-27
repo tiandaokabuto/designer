@@ -29,6 +29,7 @@ import {
 } from './CellProperties';
 import { POINT_POSITION_EXIT, POINT_POSITION_ENTRY } from './PointPosition';
 import event from '../../../designerGraphBlock/layout/eventCenter';
+import { updateGraphDataAction, deleteCellAction } from './mxgraphAction';
 
 import './index.scss';
 
@@ -235,6 +236,13 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     // loadGraph();
 
     // parseJsonFile();
+
+    console.log('重新配置graph');
+
+    return () => {
+      console.log('移除监听');
+      mxEvent.removeAllListeners(document);
+    };
   }, []);
 
   useEffect(() => {
@@ -250,23 +258,15 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     console.log(graph);
     const cell = graph.getSelectionCell();
     // const cell = graph.getModel().getCell(id);
-    console.log('当前选中--修改前', cell);
     graph.getModel().beginUpdate();
     try {
       if (cell.value.indexOf("class='compoent-content'") > -1) {
         cell.value = PROCESS_NODE.getLabel(value);
       }
-      // new mxEventObject('cellsInserted', 'cells', cell);
     } finally {
       graph.getModel().endUpdate();
     }
-    // new mxEventObject('change');
-    // graph.container.setAttribute('tabindex', '-1');
     graph.refresh();
-    // graph.container.focus();
-    // graph.getSelectionCell(cell);
-
-    console.log('当前选中--修改后', cell);
   };
 
   const configMxCell = () => {
@@ -387,8 +387,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       'remove',
       (sender, evt) => {
         const { cell } = evt.properties.state;
-
-        console.log('选中REMOVE', cell);
         if (cell.vertex === false || graph.isSwimlane(cell))
           return cell.vertex && !graph.isSwimlane(cell);
 
@@ -399,15 +397,11 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       'add',
       (sender, evt) => {
         const { cell } = evt.properties.state;
-
-        console.log('当前sender', sender, evt, sender.graph.getModel());
-
         // graph.container.setAttribute('tabindex', '-1');
         // graph.container.focus();
         // graph.removeCellOverlays(cell);
 
         sender.reset();
-        console.log('选中ADD', cell);
         if (cell.vertex === false || graph.isSwimlane(cell))
           return cell.vertex && !graph.isSwimlane(cell);
         const colorKey = 'fillColor';
@@ -560,8 +554,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         message.warning('粘贴');
         Action_PasteCell(graph, {
           mxClipboard,
-          graphDataMapRef,
           setGraphDataMap,
+          changeCheckedGraphBlockId,
         });
       } else {
         return;
@@ -570,6 +564,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     mxEvent.addListener(document, 'copy', function (evt) {
       if (currentPagePositionRef.current === 'block') return;
+
+      console.log(evt);
 
       if (evt.target.nodeName === 'PRE' || evt.target.nodeName === 'BODY') {
         message.warning('复制');
@@ -595,13 +591,14 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         // TODO: 假如成功了，则同步更新到grapDataMap
 
         if (ans.rule === '判断') {
-          console.log(
-            `假如是判断，要触发判断逻辑，把连线改成是否`,
-            evt.properties.edge,
-            ans
-          );
+          // console.log(
+          //   `假如是判断，要触发判断逻辑，把连线改成是否`,
+          //   evt.properties.edge,
+          //   ans
+          // );
           evt.properties.edge.setValue(ans.type);
         }
+        updateGraphDataAction(graph);
       } else {
         return false;
       }
@@ -615,7 +612,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         if (cell.vertex) {
           // console.log(graphDataMapRef);
           // console.clear();
-          console.log('双击', cell);
+          // console.log('双击', cell);
           // 将这个节点对应的card等等数据同步到全局
 
           const cellId = cell.id;
@@ -704,7 +701,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     });
 
     graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
-      console.log('添加');
+      console.log('添加', sender);
+      // updateGraphDataAction(graph);
       changeModifyState(
         processTreeRef.current,
         currentCheckedTreeNodeRef.current,
@@ -713,7 +711,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     });
 
     graph.addListener(mxEvent.MOVE_CELLS, (sender, evt) => {
-      console.log('移动');
+      updateGraphDataAction(graph);
       changeModifyState(
         processTreeRef.current,
         currentCheckedTreeNodeRef.current,
@@ -722,7 +720,6 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     });
 
     graph.addListener('delete_cells', () => {
-      console.log('delete_cells');
       changeModifyState(
         processTreeRef.current,
         currentCheckedTreeNodeRef.current,
@@ -730,43 +727,55 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       );
     });
 
-    graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
-      // console.log('graph model的改变');
-      // console.clear();
-      // console.log('MxGraph发生了变动', sender, evt);
-
-      // const changes = evt.getProperty('edit').changes;
-      // console.log(changes[0].constructor.name);
-
-      // if (evt.properties.changes[0])
-      // const codec = new MxCodec();
-      // const node = codec.encode(sender);
-      // const xml = mxUtils.getXml(node);
-
-      // TODO: 将Mxgraph的结构转换成我们原来的GgEditor结构
-      const output = translateToGraphData(sender);
-      console.log(output);
+    graph.addListener('update_graphData', () => {
+      const output = translateToGraphData(graph.getModel());
       if (output) {
         updateGraphData(output);
         synchroGraphDataToProcessTree();
-        // 把graphData存入Redux
-        //changeMxGraphData(output);
       }
     });
+
+    // graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
+    // console.log('变动', sender);
+    // console.log('graph model的改变');
+    // console.clear();
+    // console.log('MxGraph发生了变动', sender, evt);
+
+    // const changes = evt.getProperty('edit').changes;
+    // console.log(changes[0].constructor.name);
+
+    // if (evt.properties.changes[0])
+    // const codec = new MxCodec();
+    // const node = codec.encode(sender);
+    // const xml = mxUtils.getXml(node);
+
+    // TODO: 将Mxgraph的结构转换成我们原来的GgEditor结构
+    // const output = translateToGraphData(sender);
+    // if (output) {
+    //   updateGraphData(output);
+    //   synchroGraphDataToProcessTree();
+    // }
+    // });
   };
 
   const loadGraph = graphData => {
     // const jsonFile = fs.readFileSync('D:/临时文件存放/test.json');
     // 获得流程
     // const graphData = jsonFile ? JSON.parse(jsonFile).graphData : {};
+    console.clear();
 
     const codec = new MxCodec();
-    const node = codec.encode(graph.getModel());
 
+    // 获得当前graph的XmlDom
+    const node = codec.encode(graph.getModel());
+    console.log(node);
+
+    // XmlDom转换成字符串
     // const xml = mxUtils.getXml(node);
 
-    // xml转换的json结构
+    // xmlDom转换的json结构
     const json = x2js.dom2js(node);
+    console.log(json);
 
     const nodes = graphData.nodes ? graphData.nodes : [];
     const edges = graphData.edges ? graphData.edges : [];
@@ -877,12 +886,11 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
         default:
           break;
       }
-      console.log(point);
       obj._style = point;
       return obj;
     });
 
-    json.root.mxCell = json.root.mxCell.concat(newNodes).concat(newEdges);
+    json.root.mxCell = [...json.root.mxCell].concat(newNodes).concat(newEdges);
 
     const newJson = {};
     newJson.mxGraphModel = {};

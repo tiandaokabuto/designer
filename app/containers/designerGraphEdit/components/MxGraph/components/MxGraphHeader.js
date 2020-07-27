@@ -13,6 +13,7 @@ import mxgraph from '../mxgraph';
 import './MxGraphHeader.scss';
 
 import { Action_findNode } from '../actions/findNode';
+import { updateGraphDataAction } from '../mxgraphAction';
 
 const {
   mxCell: MxCell,
@@ -187,7 +188,7 @@ const MxGraphHeader = ({ graph, container }) => {
         const importableCells = graph.getImportableCells(cells);
 
         // 拦截，只能有一个开始和结束
-        console.log(`ok`, importableCells[0], graphDataRef.current);
+        // console.log(`ok`, importableCells[0], graphDataRef.current);
         if (
           importableCells[0].value === '开始' &&
           Action_findNode('nodes.label', '开始', graphDataRef.current)
@@ -274,6 +275,7 @@ const MxGraphHeader = ({ graph, container }) => {
               // this.editorUi.handleError(e);
             } finally {
               graph.model.endUpdate();
+              console.log('endUpdate, 开始修改id并设置graphDataMap');
               if (select[0]) {
                 // select[0].id = `mx_${uniqueId()}`;
                 select[0].id = getMxId();
@@ -336,6 +338,8 @@ const MxGraphHeader = ({ graph, container }) => {
                   });
                 }
               }
+              console.log('修改结束');
+              updateGraphDataAction(graph);
             }
 
             if (select !== null && select.length > 0) {
