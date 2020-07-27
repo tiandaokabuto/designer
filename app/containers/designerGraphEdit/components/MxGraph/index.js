@@ -249,7 +249,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     if (!graph) return;
     graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
 
-    loadGraph(graphData);
+    loadGraph(graphDataRef.current);
     undoMng.clear();
   }, [currentCheckedTreeNodeRef.current, resetTag]);
 
@@ -579,7 +579,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     graph.addListener(mxEvent.CELL_CONNECTED, (sender, evt) => {
       if (!evt.getProperty('source')) {
         if (!graphDataRef.current) return; //假如graphData还没更新，则不做校验，（因为连线会触发3次）
-        message.info('校验连线');
+        // message.info('校验连线');
         // 假如验证不通过，则不允许这条连线出现，直接删除
         const ans = Rule_checkConnection(graph, {
           evt,
@@ -764,10 +764,10 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     // const graphData = jsonFile ? JSON.parse(jsonFile).graphData : {};
     console.clear();
 
-    const codec = new MxCodec();
+    const readCodec = new MxCodec();
 
     // 获得当前graph的XmlDom
-    const node = codec.encode(graph.getModel());
+    const node = readCodec.encode(graph.getModel());
     console.log(node);
 
     // XmlDom转换成字符串
@@ -777,120 +777,133 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     const json = x2js.dom2js(node);
     console.log(json);
 
-    const nodes = graphData.nodes ? graphData.nodes : [];
-    const edges = graphData.edges ? graphData.edges : [];
+    let nodes = [];
+    let edges = [];
 
-    // console.log(edges);
-    // console.log(x2js.dom2js(node));
+    // TODO: 加入try catch
+    try {
+      nodes = graphData.nodes ? graphData.nodes : [];
+      edges = graphData.edges ? graphData.edges : [];
 
-    const newNodes = nodes.map(item => {
-      const obj = {};
-      if (item.shape === 'processblock') {
-        const labelStr = PROCESS_NODE.label;
+      // console.log(edges);
+      // console.log(x2js.dom2js(node));
+
+      const newNodes = nodes.map(item => {
+        const obj = {};
+        if (item.shape === 'processblock') {
+          const labelStr = PROCESS_NODE.label;
+          obj._id = item.id;
+          obj._parent = '1';
+          obj._style = PROCESS_NODE.style;
+          // obj._value = labelStr.replace('流程块', item.label);
+          // obj._value = item.version
+          //   ? item.label
+          //   : labelStr.replace('流程块', item.label);
+          obj._value = PROCESS_NODE.getLabel(item.label);
+          obj._vertex = '1';
+          obj.mxGeometry = {};
+          obj.mxGeometry._x = String(item.x);
+          obj.mxGeometry._y = String(item.y);
+          obj.mxGeometry._width = String(PROCESS_NODE.width);
+          obj.mxGeometry._height = String(PROCESS_NODE.height);
+          obj.mxGeometry._as = 'geometry';
+        } else if (item.shape === 'rhombus-node') {
+          obj._id = item.id;
+          obj._parent = '1';
+          obj._style = CONDITION_NODE.style;
+          obj._value = CONDITION_NODE.getLabel(item.label);
+          obj._vertex = '1';
+          obj.mxGeometry = {};
+          obj.mxGeometry._x = String(item.x);
+          obj.mxGeometry._y = String(item.y);
+          obj.mxGeometry._width = String(CONDITION_NODE.width);
+          obj.mxGeometry._height = String(CONDITION_NODE.height);
+          obj.mxGeometry._as = 'geometry';
+        } else if (item.shape === 'start-node') {
+          obj._id = item.id;
+          obj._parent = '1';
+          obj._style = START_NODE.style;
+          obj._value = START_NODE.label;
+          obj._vertex = '1';
+          obj.mxGeometry = {};
+          obj.mxGeometry._x = String(item.x);
+          obj.mxGeometry._y = String(item.y);
+          obj.mxGeometry._width = String(START_NODE.width);
+          obj.mxGeometry._height = String(START_NODE.height);
+          obj.mxGeometry._as = 'geometry';
+        } else if (item.shape === 'end-node') {
+          obj._id = item.id;
+          obj._parent = '1';
+          obj._style = END_NODE.style;
+          obj._value = END_NODE.label;
+          obj._vertex = '1';
+          obj.mxGeometry = {};
+          obj.mxGeometry._x = String(item.x);
+          obj.mxGeometry._y = String(item.y);
+          obj.mxGeometry._width = String(END_NODE.width);
+          obj.mxGeometry._height = String(END_NODE.height);
+          obj.mxGeometry._as = 'geometry';
+        }
+        return obj;
+      });
+
+      const newEdges = edges.map(item => {
+        const obj = {};
+        let point = '';
         obj._id = item.id;
         obj._parent = '1';
-        obj._style = PROCESS_NODE.style;
-        // obj._value = labelStr.replace('流程块', item.label);
-        // obj._value = item.version
-        //   ? item.label
-        //   : labelStr.replace('流程块', item.label);
-        obj._value = PROCESS_NODE.getLabel(item.label);
-        obj._vertex = '1';
+        obj._edge = '1';
+        obj._source = item.source;
+        obj._target = item.target;
+        obj._value = item.label ? item.label : '';
         obj.mxGeometry = {};
-        obj.mxGeometry._x = String(item.x);
-        obj.mxGeometry._y = String(item.y);
-        obj.mxGeometry._width = String(PROCESS_NODE.width);
-        obj.mxGeometry._height = String(PROCESS_NODE.height);
         obj.mxGeometry._as = 'geometry';
-      } else if (item.shape === 'rhombus-node') {
-        obj._id = item.id;
-        obj._parent = '1';
-        obj._style = CONDITION_NODE.style;
-        obj._value = CONDITION_NODE.getLabel(item.label);
-        obj._vertex = '1';
-        obj.mxGeometry = {};
-        obj.mxGeometry._x = String(item.x);
-        obj.mxGeometry._y = String(item.y);
-        obj.mxGeometry._width = String(CONDITION_NODE.width);
-        obj.mxGeometry._height = String(CONDITION_NODE.height);
-        obj.mxGeometry._as = 'geometry';
-      } else if (item.shape === 'start-node') {
-        obj._id = item.id;
-        obj._parent = '1';
-        obj._style = START_NODE.style;
-        obj._value = START_NODE.label;
-        obj._vertex = '1';
-        obj.mxGeometry = {};
-        obj.mxGeometry._x = String(item.x);
-        obj.mxGeometry._y = String(item.y);
-        obj.mxGeometry._width = String(START_NODE.width);
-        obj.mxGeometry._height = String(START_NODE.height);
-        obj.mxGeometry._as = 'geometry';
-      } else if (item.shape === 'end-node') {
-        obj._id = item.id;
-        obj._parent = '1';
-        obj._style = END_NODE.style;
-        obj._value = END_NODE.label;
-        obj._vertex = '1';
-        obj.mxGeometry = {};
-        obj.mxGeometry._x = String(item.x);
-        obj.mxGeometry._y = String(item.y);
-        obj.mxGeometry._width = String(END_NODE.width);
-        obj.mxGeometry._height = String(END_NODE.height);
-        obj.mxGeometry._as = 'geometry';
-      }
-      return obj;
-    });
+        obj.mxGeometry._relative = '1';
+        switch (item.sourceAnchor) {
+          case 0:
+            point += POINT_POSITION_EXIT.TOP + POINT_POSITION_EXIT.NORMAL;
+            break;
+          case 1:
+            point += POINT_POSITION_EXIT.BOTTOM + POINT_POSITION_EXIT.NORMAL;
+            break;
+          case 2:
+            point += POINT_POSITION_EXIT.LEFT + POINT_POSITION_EXIT.NORMAL;
+            break;
+          case 3:
+            point += POINT_POSITION_EXIT.RIGHT + POINT_POSITION_EXIT.NORMAL;
+            break;
+          default:
+            break;
+        }
+        switch (item.targetAnchor) {
+          case 0:
+            point += POINT_POSITION_ENTRY.TOP + POINT_POSITION_ENTRY.NORMAL;
+            break;
+          case 1:
+            point += POINT_POSITION_ENTRY.BOTTOM + POINT_POSITION_ENTRY.NORMAL;
+            break;
+          case 2:
+            point += POINT_POSITION_ENTRY.LEFT + POINT_POSITION_ENTRY.NORMAL;
+            break;
+          case 3:
+            point += POINT_POSITION_ENTRY.RIGHT + POINT_POSITION_ENTRY.NORMAL;
+            break;
+          default:
+            break;
+        }
+        obj._style = point;
+        return obj;
+      });
 
-    const newEdges = edges.map(item => {
-      const obj = {};
-      let point = '';
-      obj._id = item.id;
-      obj._parent = '1';
-      obj._edge = '1';
-      obj._source = item.source;
-      obj._target = item.target;
-      obj._value = item.label ? item.label : '';
-      obj.mxGeometry = {};
-      obj.mxGeometry._as = 'geometry';
-      obj.mxGeometry._relative = '1';
-      switch (item.sourceAnchor) {
-        case 0:
-          point += POINT_POSITION_EXIT.TOP + POINT_POSITION_EXIT.NORMAL;
-          break;
-        case 1:
-          point += POINT_POSITION_EXIT.BOTTOM + POINT_POSITION_EXIT.NORMAL;
-          break;
-        case 2:
-          point += POINT_POSITION_EXIT.LEFT + POINT_POSITION_EXIT.NORMAL;
-          break;
-        case 3:
-          point += POINT_POSITION_EXIT.RIGHT + POINT_POSITION_EXIT.NORMAL;
-          break;
-        default:
-          break;
-      }
-      switch (item.targetAnchor) {
-        case 0:
-          point += POINT_POSITION_ENTRY.TOP + POINT_POSITION_ENTRY.NORMAL;
-          break;
-        case 1:
-          point += POINT_POSITION_ENTRY.BOTTOM + POINT_POSITION_ENTRY.NORMAL;
-          break;
-        case 2:
-          point += POINT_POSITION_ENTRY.LEFT + POINT_POSITION_ENTRY.NORMAL;
-          break;
-        case 3:
-          point += POINT_POSITION_ENTRY.RIGHT + POINT_POSITION_ENTRY.NORMAL;
-          break;
-        default:
-          break;
-      }
-      obj._style = point;
-      return obj;
-    });
+      json.root.mxCell = [...json.root.mxCell]
+        .concat(newNodes)
+        .concat(newEdges);
+    } catch (e) {
+      message.error('图转换出错');
+      console.log(e);
+    }
 
-    json.root.mxCell = [...json.root.mxCell].concat(newNodes).concat(newEdges);
+    //TODO: try catch到此处
 
     const newJson = {};
     newJson.mxGraphModel = {};
@@ -901,8 +914,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
 
     // console.log(xml);
     const xmlDoc = mxUtils.parseXml(xml);
-    const codec02 = new MxCodec(xmlDoc);
-    codec02.decode(xmlDoc.documentElement, graph.getModel());
+    const writeCodec = new MxCodec(xmlDoc);
+    writeCodec.decode(xmlDoc.documentElement, graph.getModel());
   };
 
   // const loadGraph = () => {
