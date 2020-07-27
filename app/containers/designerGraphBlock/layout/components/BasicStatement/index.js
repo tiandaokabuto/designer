@@ -229,7 +229,7 @@ const BasicStatement = useInjectContext(props => {
       } catch (e) {
         console.log(e);
       }
-    } else {
+    } else if (card.pkg === 'Browser') {
       ipcRenderer.send('start_browser_server', id);
     }
 
