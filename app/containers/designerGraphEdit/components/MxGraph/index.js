@@ -721,13 +721,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
       );
     });
 
-    // graph.addListener(mxEvent.REMOVE_CELLS_FROM_PARENT, (sender, evt) => {
-    //   console.log('删除');
-
-    // });
-
-    graph.addListener(mxEvent.CELLS_REMOVED, (sender, evt) => {
-      console.log('删除');
+    graph.addListener('delete_cells', () => {
+      console.log('delete_cells');
       changeModifyState(
         processTreeRef.current,
         currentCheckedTreeNodeRef.current,
