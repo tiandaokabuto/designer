@@ -6,7 +6,10 @@ import { message } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 
 import useMxId from '../methods/useMxId';
-import { setGraphDataMap } from '../../../../reduxActions';
+import {
+  setGraphDataMap,
+  changeCheckedGraphBlockId,
+} from '../../../../reduxActions';
 import mxgraph from '../mxgraph';
 // import FlowItemPanel from '../../../layout/GraphContainer/components/FlowItemPanel';
 
@@ -340,6 +343,7 @@ const MxGraphHeader = ({ graph, container }) => {
               }
               console.log('修改结束');
               updateGraphDataAction(graph);
+              changeCheckedGraphBlockId(select[0].id);
             }
 
             if (select !== null && select.length > 0) {
