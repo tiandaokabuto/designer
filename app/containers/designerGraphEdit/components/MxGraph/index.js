@@ -209,7 +209,8 @@ const MxgraphContainer = useInjectContext(
           setGraphDataMap,
 
           deleteGraphDataMap,
-          changeCheckedGraphBlockId
+          changeCheckedGraphBlockId,
+          graphDataRef.current
         );
       };
 
@@ -255,11 +256,7 @@ const MxgraphContainer = useInjectContext(
 
     useEffect(() => {
       if (!graph) return;
-      console.log('parent', graph.getDefaultParent());
-      console.log(
-        'childVertices',
-        graph.getChildVertices(graph.getDefaultParent())
-      );
+
       graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
 
       loadGraph(graphDataRef.current);
@@ -275,6 +272,8 @@ const MxgraphContainer = useInjectContext(
       try {
         if (cell.value.indexOf("class='compoent-content'") > -1) {
           cell.value = PROCESS_NODE.getLabel(value);
+        } else if (cell.value.indexOf("class='rcomponent-content'") > -1) {
+          cell.value = CONDITION_NODE.getLabel(value);
         }
       } finally {
         graph.getModel().endUpdate();
@@ -1214,7 +1213,7 @@ const MxgraphContainer = useInjectContext(
                 console.log('endUpdate, 开始修改id并设置graphDataMap');
                 if (select[0]) {
                   // select[0].id = `mx_${uniqueId()}`;
-                  select[0].id = getMxId();
+                  select[0].id = getMxId(graphDataRef.current);
                   if (
                     select[0].value.indexOf("class='compoent-content'") > -1
                   ) {

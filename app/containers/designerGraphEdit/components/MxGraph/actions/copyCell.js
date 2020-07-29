@@ -47,7 +47,12 @@ let lock = false;
 export function Action_PasteCell(graph, option, callback = {}) {
   if (lock) return;
   lock = true;
-  const { mxClipboard, setGraphDataMap, changeCheckedGraphBlockId } = option;
+  const {
+    mxClipboard,
+    setGraphDataMap,
+    changeCheckedGraphBlockId,
+    graphData,
+  } = option;
   const {
     grapheditor: {
       savingModuleData, // 俊杰的剪切板
@@ -69,7 +74,7 @@ export function Action_PasteCell(graph, option, callback = {}) {
       try {
         console.log(savingModuleData[index]);
         //newMap.set(item.getId(), savingModuleData[index]);
-        let tempId = getMxId();
+        let tempId = getMxId(graphData);
         item.setId(tempId);
         setGraphDataMap(tempId, savingModuleData[index]);
         changeCheckedGraphBlockId(tempId);
