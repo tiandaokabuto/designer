@@ -730,7 +730,8 @@ export const addToReuse = () => {
   if (
     checkNode.shape === 'start-node' ||
     checkNode.shape === 'rhombus-node' ||
-    checkNode.shape === 'end-node'
+    checkNode.shape === 'end-node' ||
+    checkNode.shape === 'group'
   ) {
     // console.log(checkNode);
     message.warning('不能复用此节点');
@@ -764,6 +765,7 @@ export const addToReuse = () => {
     });
     changeModuleTree(newModuleTree);
     persistentManifest(newModuleTree, currentProject, 'moduleTree');
+    event.emit('create_module_drag');
     // persistentModuleStorage(newModuleTree, currentProject);
   } else {
     message.info('已存在同名的流程块');
