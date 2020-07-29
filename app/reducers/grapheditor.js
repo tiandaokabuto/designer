@@ -38,6 +38,11 @@ const defaultState = {
   savingModuleData: undefined,
   movingModuleNode: undefined,
   movingModuleNodeData: undefined,
+
+  undoAndRedo:{ // 第一层撤销重做
+    undoSteps:[], // 可以用来重做的步骤
+    redoSteps:[]  // 可以用来
+  }
 };
 
 const objChangeMap = obj => {

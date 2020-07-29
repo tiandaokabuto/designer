@@ -151,9 +151,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     return () => {
       event.removeListener('undo', handleUndo);
       event.removeListener('redo', handleRedo);
-    };
 
-    return () => {
       event.removeListener('resetGraph', resetGraph);
     };
   }, []);
@@ -253,7 +251,7 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     undoMng.clear();
   }, [currentCheckedTreeNodeRef.current, resetTag]);
 
-  // 有坑
+  // 更新界面显示
   const resetGraph = (value, id) => {
     console.log(graph);
     const cell = graph.getSelectionCell();
@@ -701,7 +699,8 @@ const MxgraphContainer = useInjectContext(({ updateGraphData, history }) => {
     });
 
     graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
-      console.log('添加', sender);
+      console.clear()
+      console.log('添加', sender, evt);
       // updateGraphDataAction(graph);
       changeModifyState(
         processTreeRef.current,
