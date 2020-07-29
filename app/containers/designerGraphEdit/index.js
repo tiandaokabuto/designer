@@ -35,15 +35,17 @@ export default () => {
           <p>正在加载流程...</p>
         </div>
       </div>
-      <GGEditor className="designergraph editor">
+      <MxGraph setShowLoadingLayer={setShowLoadingLayer} />
+
+      {/* <GGEditor className="designergraph editor">
         <GraphItem setShowLoadingLayer={setShowLoadingLayer} />
         {
-          // <GraphContainer history={history} />
-          <MxGraph />
+          <GraphContainer history={history} />
+          
         }
         <GraphParamPanel />
         <FlowContextMenu />
-      </GGEditor>
+      </GGEditor> */}
     </Fragment>
   );
 };

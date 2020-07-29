@@ -1,5 +1,9 @@
 import { Action_DeleteCell } from '../actions/deleteCell';
 import { Action_CopyCell, Action_PasteCell } from '../actions/copyCell';
+import event, {
+  START_POINT,
+} from '../../../../designerGraphBlock/layout/eventCenter';
+import { addToReuse, exportCustomProcessBlock } from '../../../../common/utils';
 
 export default (
   graph,
@@ -10,7 +14,6 @@ export default (
   changeSavingModuleData,
   graphDataMapRef,
   setGraphDataMap,
-
   deleteGraphDataMap,
   changeCheckedGraphBlockId
 ) => {
@@ -24,10 +27,18 @@ export default (
         changeCheckedGraphBlockId,
       });
     };
-    const clickMenuAddToReuse = () => {};
-    const clickMenuExport = () => {};
-    const clickMenuExecuteBefore = () => {};
-    const clickMenuExecuteAfter = () => {};
+    const clickMenuAddToReuse = () => {
+      addToReuse();
+    };
+    const clickMenuExport = () => {
+      exportCustomProcessBlock();
+    };
+    const clickMenuExecuteBefore = () => {
+      event.emit(START_POINT, 'to');
+    };
+    const clickMenuExecuteAfter = () => {
+      event.emit(START_POINT, 'from');
+    };
 
     const menuItems = [
       {

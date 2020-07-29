@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import NewProject from './NewProject';
 import api from '../../../api';
 import { getModifiedNodes } from '../utils';
+import { changeTreeTab } from '../../reduxActions/index';
 import HelpModel from './HelpModel';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
 import SaveConfirmModel from '../../designerGraphEdit/layout/GraphItem/components/SaveConfirmModel';
@@ -74,6 +75,7 @@ export default memo(({ history, tag }) => {
         } else {
           jumpToProject();
         }
+        changeTreeTab('process');
       },
     },
     {
