@@ -211,7 +211,8 @@ const MxgraphContainer = useInjectContext(
           setGraphDataMap,
 
           deleteGraphDataMap,
-          changeCheckedGraphBlockId
+          changeCheckedGraphBlockId,
+          graphDataRef.current
         );
       };
 
@@ -247,6 +248,12 @@ const MxgraphContainer = useInjectContext(
 
       // parseJsonFile();
 
+      if (checkedGraphBlockId) {
+        const id = checkedGraphBlockId;
+        changeCheckedGraphBlockId(undefined);
+        changeCheckedGraphBlockId(id);
+      }
+
       console.log('重新配置graph');
 
       return () => {
@@ -257,11 +264,7 @@ const MxgraphContainer = useInjectContext(
 
     useEffect(() => {
       if (!graph) return;
-      console.log('parent', graph.getDefaultParent());
-      console.log(
-        'childVertices',
-        graph.getChildVertices(graph.getDefaultParent())
-      );
+
       graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
 
       loadGraph(graphDataRef.current);
@@ -284,6 +287,8 @@ const MxgraphContainer = useInjectContext(
       try {
         if (cell.value.indexOf("class='compoent-content'") > -1) {
           cell.value = PROCESS_NODE.getLabel(value);
+        } else if (cell.value.indexOf("class='rcomponent-content'") > -1) {
+          cell.value = CONDITION_NODE.getLabel(value);
         }
       } finally {
         graph.getModel().endUpdate();
@@ -931,17 +936,17 @@ const MxgraphContainer = useInjectContext(
 
       // 获得当前graph的XmlDom
       const node = readCodec.encode(graph.getModel());
-      console.log(node);
 
       // XmlDom转换成字符串
       // const xml = mxUtils.getXml(node);
 
       // xmlDom转换的json结构
       const json = x2js.dom2js(node);
-      console.log(json);
 
       let nodes = [];
       let edges = [];
+      let newNodes = [];
+      let newEdges = [];
 
       // TODO: 加入try catch
       try {
@@ -951,7 +956,7 @@ const MxgraphContainer = useInjectContext(
         // console.log(edges);
         // console.log(x2js.dom2js(node));
 
-        const newNodes = nodes.map(item => {
+        newNodes = nodes.map(item => {
           const obj = {};
           if (item.shape === 'processblock') {
             const labelStr = PROCESS_NODE.label;
@@ -1010,7 +1015,7 @@ const MxgraphContainer = useInjectContext(
           return obj;
         });
 
-        const newEdges = edges.map(item => {
+        newEdges = edges.map(item => {
           const obj = {};
           let point = '';
           obj._id = item.id;
@@ -1059,9 +1064,9 @@ const MxgraphContainer = useInjectContext(
           return obj;
         });
 
-        json.root.mxCell = [...json.root.mxCell]
-          .concat(newNodes)
-          .concat(newEdges);
+        // json.root.mxCell = [...json.root.mxCell]
+        //   .concat(newNodes)
+        //   .concat(newEdges);
       } catch (e) {
         message.error('图转换出错');
         console.log(e);
@@ -1071,7 +1076,20 @@ const MxgraphContainer = useInjectContext(
 
       const newJson = {};
       newJson.mxGraphModel = {};
-      newJson.mxGraphModel.root = json.root;
+      // newJson.mxGraphModel.root = json.root;
+      newJson.mxGraphModel.root = {};
+
+      const basicArr = [
+        {
+          _id: '0',
+        },
+        {
+          _id: '1',
+          _parent: '0',
+        },
+      ];
+
+      newJson.mxGraphModel.root.mxCell = basicArr.concat(newNodes, newEdges);
 
       const xml = x2js.js2xml(newJson);
       // const xml = mxUtils.getTextContent(div);
@@ -1341,7 +1359,7 @@ const MxgraphContainer = useInjectContext(
                 console.log('endUpdate, 开始修改id并设置graphDataMap');
                 if (select[0]) {
                   // select[0].id = `mx_${uniqueId()}`;
-                  select[0].id = getMxId();
+                  select[0].id = getMxId(graphDataRef.current);
                   if (
                     select[0].value.indexOf("class='compoent-content'") > -1
                   ) {

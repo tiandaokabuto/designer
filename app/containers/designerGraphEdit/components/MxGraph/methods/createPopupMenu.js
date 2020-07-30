@@ -15,7 +15,8 @@ export default (
   graphDataMapRef,
   setGraphDataMap,
   deleteGraphDataMap,
-  changeCheckedGraphBlockId
+  changeCheckedGraphBlockId,
+  graphData
 ) => {
   if (cell != null) {
     const clickMenuCopy = () => {
@@ -76,6 +77,7 @@ export default (
         mxClipboard,
         setGraphDataMap,
         changeCheckedGraphBlockId,
+        graphData,
       });
     };
 

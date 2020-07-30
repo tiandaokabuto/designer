@@ -6,15 +6,19 @@ import { deleteCellAction } from '../mxgraphAction';
 export function Action_DeleteCell(graph, opt = {}, callback = {}) {
   const { deleteGraphDataMap, changeCheckedGraphBlockId } = opt;
 
-  var cells = graph.getSelectionCells();
-  graph.removeCells(cells);
+  const cells = graph.getSelectionCells();
+  graph.removeCells(cells, true);
 
-  cells.forEach(item => {
-    changeCheckedGraphBlockId('');
-    //deleteGraphDataMap(item.id);
-
-    console.log(item.id);
+  cells.forEach(cell => {
+    for (const [key, item] of Object.entries(graph.getModel().cells)) {
+      if (cell.id === item.id) {
+        deleteGraphDataMap(item.id);
+        delete graph.getModel().cells[key];
+      }
+    }
   });
+
+  changeCheckedGraphBlockId('');
 
   deleteCellAction(graph);
 }

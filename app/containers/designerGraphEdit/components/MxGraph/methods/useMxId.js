@@ -1,13 +1,13 @@
 import uniqueId from 'lodash/uniqueId';
-import store from "../../../../../store";
+import store from '../../../../../store';
 
 export default () => {
   //const graphData = useSelector(state => state.grapheditor.graphData);
-  const {
-    grapheditor: {
-      graphData, // 数据map
-    },
-  } = store.getState();
+  // const {
+  //   grapheditor: {
+  //     graphData, // 数据map
+  //   },
+  // } = store.getState();
 
   const isDuplicat = (arr, key) => {
     const length = arr.length;
@@ -18,7 +18,7 @@ export default () => {
     }
     return false;
   };
-  return () => {
+  return graphData => {
     const nodes = graphData ? graphData.nodes : [];
     let id = uniqueId('mx_');
 
