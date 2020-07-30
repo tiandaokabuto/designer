@@ -587,6 +587,13 @@ const MxgraphContainer = useInjectContext(
           //undoAndRedoRef.current.undoSteps.pop()
           //console.log("粘贴undoAndRedoRefCurrent.undoSteps",undoAndRedoRef.current.undoSteps)
           //undoAndRedoRefCurrent.undoSteps.pop();
+
+          changeUndoAndRedo({
+            // 第一层撤销重做
+            undoSteps: [], // 可以用来重做的步骤
+            redoSteps: [], // 可以用来
+            counter: 0,
+          });
         } else {
           return;
         }
