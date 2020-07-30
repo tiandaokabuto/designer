@@ -18,6 +18,8 @@ import {
   CHANGE_MOVING_MODULE_NODE,
   CHANGE_MOVING_MODULE_NODE_DATA,
   CHANGE_MXGRAPH_DATA,
+
+  CHANGE_UNDO_AND_REDO,
 } from '../../actions/grapheditor';
 import {
   SYNCHRO_CODEBLOCK,
@@ -282,6 +284,16 @@ export const resetGraphEditData = () => {
 export const changeMxGraphData = data => {
   dispatch({
     type: CHANGE_MXGRAPH_DATA,
+    payload: data,
+  });
+};
+
+
+
+// 第一层撤销重做
+export const changeUndoAndRedo = data => {
+  dispatch({
+    type: CHANGE_UNDO_AND_REDO,
     payload: data,
   });
 };

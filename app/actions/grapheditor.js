@@ -19,3 +19,7 @@ export const CHANGE_SAVING_MODULE_DATA = 'change_saving_module_data';
 export const CHANGE_MOVING_MODULE_NODE = 'moving_module_node';
 export const CHANGE_MOVING_MODULE_NODE_DATA = 'moving_module_node_data';
 export const CHANGE_MXGRAPH_DATA = 'change_mxgraph_data';
+
+
+// 第一层撤销重做
+export const CHANGE_UNDO_AND_REDO = 'change_undo_and_redo';

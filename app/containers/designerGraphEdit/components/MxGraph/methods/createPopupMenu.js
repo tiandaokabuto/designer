@@ -84,10 +84,10 @@ export default (
         name: '取消',
         handle: clickMenuUndo,
       },
-      {
-        name: '重做',
-        handle: clickMenuRedo,
-      },
+      // {
+      //   name: '重做',
+      //   handle: clickMenuRedo,
+      // },
       {
         name: '粘贴到此处',
         handle: clickMenuPasteHere,

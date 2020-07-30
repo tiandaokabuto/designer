@@ -11,7 +11,7 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
 
   cells.forEach(item => {
     changeCheckedGraphBlockId('');
-    deleteGraphDataMap(item.id);
+    //deleteGraphDataMap(item.id);
 
     console.log(item.id);
   });
