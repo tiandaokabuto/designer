@@ -246,6 +246,12 @@ const MxgraphContainer = useInjectContext(
 
       // parseJsonFile();
 
+      if (checkedGraphBlockId) {
+        const id = checkedGraphBlockId;
+        changeCheckedGraphBlockId(undefined);
+        changeCheckedGraphBlockId(id);
+      }
+
       console.log('重新配置graph');
 
       return () => {

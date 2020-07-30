@@ -6,8 +6,6 @@ import { deleteCellAction } from '../mxgraphAction';
 export function Action_DeleteCell(graph, opt = {}, callback = {}) {
   const { deleteGraphDataMap, changeCheckedGraphBlockId } = opt;
 
-  console.log('前', graph.getModel());
-
   const cells = graph.getSelectionCells();
   graph.removeCells(cells, true);
 
@@ -19,8 +17,6 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
       }
     }
   });
-
-  console.log('后', graph.getModel());
 
   changeCheckedGraphBlockId('');
 
