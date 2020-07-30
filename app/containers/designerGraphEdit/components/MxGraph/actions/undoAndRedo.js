@@ -221,7 +221,7 @@ export const goHandleRedo = (
           redoStep.change.style,
           false
         );
-        //undo_s.pop();
+        undo_s.pop();
       } else {
         graph.insertEdge(
           graph.getDefaultParent(),
