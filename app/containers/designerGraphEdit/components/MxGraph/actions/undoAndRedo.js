@@ -3,6 +3,7 @@ export const goHandleUndo = (
   undoAndRedoRefCurrent,
   updateGraphDataAction
 ) => {
+  graph.refresh();
   const undo_s = undoAndRedoRefCurrent.undoSteps;
   const redo_s = undoAndRedoRefCurrent.redoSteps;
 
@@ -22,15 +23,15 @@ export const goHandleUndo = (
       [...undo_s[undo_s.length - 2]][0].type === 'cellsAdded'
     ) {
       // 1. 把 move 中的id取出来
-      let temp = undoStepArray.map(cell=>cell.change.id);
+      //let temp = undoStepArray.map(cell=>cell.change.id);
       // 2. 移除 move
       undo_s.pop();
       // 3. 更新 当前操作的步骤
       undoStepArray = [...undo_s[undo_s.length - 1]];
       // 4. 把temp中的id全部替换到当前对应位置
-      temp.forEach((id, index)=>{
-        undoStepArray[index].change.id = id
-      })
+      // temp.forEach((id, index)=>{
+      //   undoStepArray[index].change.id = id
+      // })
     }
   }
 
@@ -102,9 +103,13 @@ export const goHandleUndo = (
       undoStep.type === 'cellsAdded'
       // || undoStep.type === 'cellsAdded_By_redo'
     ) {
-      console.log('cellsAdded',"要被删了",undoStep)
-      const needDelete = graph.getModel().getCell(undoStep.change.id);
-      if (!needDelete) return;
+      if (!undoStep.change.vertex) return;
+      let needDelete = graph.getModel().getCell(undoStep.change.id);
+      console.log('cellsAdded',"要被删了",undoStep,needDelete)
+      if (!needDelete){
+        needDelete = undoStep.change.cell;
+        if(!needDelete) return;
+      }
       graph.removeCells([needDelete]);
       undo_s.pop();
       needPush = true;
@@ -199,7 +204,7 @@ export const goHandleRedo = (
             redoStep.change.style,
             false
           );
-          //undo_s.pop();
+          undo_s.pop();
         }
         return;
       }

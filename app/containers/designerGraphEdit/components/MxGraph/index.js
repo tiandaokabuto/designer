@@ -758,6 +758,7 @@ const MxgraphContainer = useInjectContext(
         console.log('添加', sender, evt);
 
         let temp = undoAndRedoRef.current;
+        setTimeout(()=>{
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
             return {
@@ -778,12 +779,13 @@ const MxgraphContainer = useInjectContext(
                 target_id: cell.target ? cell.target.id : null,
                 value: cell.value,
 
+                cell: cell,
                 // deepCopy一下当时的dataGraph
               },
             };
           })
         );
-
+        },0)
         undoAndRedoRef.current.counter += 1;
 
         // updateGraphDataAction(graph);
@@ -810,26 +812,29 @@ const MxgraphContainer = useInjectContext(
 
         let temp = undoAndRedoRef.current;
 
-        console.log(`【移动】纯移动`, sender, evt, undoAndRedoRef.current);
-        temp.undoSteps.push(
-          evt.properties.cells.map(cell => {
-            return {
-              type: 'move',
-              counter: undoAndRedoRef.current.counter,
-              change: {
+        setTimeout(()=>{
+          console.log(`【移动】纯移动`, sender, evt, undoAndRedoRef.current);
+          temp.undoSteps.push(
+            evt.properties.cells.map(cell => {
+              return {
+                type: 'move',
                 counter: undoAndRedoRef.current.counter,
-                id: cell.id,
-                cell: graph.getModel().getCell(cell.id),
-                geometry: {
-                  x: cell.geometry.x,
-                  y: cell.geometry.y,
-                  dx: evt.properties.dx,
-                  dy: evt.properties.dy,
+                change: {
+                  counter: undoAndRedoRef.current.counter,
+                  id: cell.id,
+                  cell: graph.getModel().getCell(cell.id),
+                  geometry: {
+                    x: cell.geometry.x,
+                    y: cell.geometry.y,
+                    dx: evt.properties.dx,
+                    dy: evt.properties.dy,
+                  },
                 },
-              },
-            };
-          })
-        );
+              };
+            })
+          );
+        },0)
+
 
         undoAndRedoRef.current.counter += 1;
       });
