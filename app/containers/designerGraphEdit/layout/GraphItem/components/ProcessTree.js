@@ -26,13 +26,16 @@ import {
   findNodeByKey,
   getDecryptOrNormal,
 } from '../../../../common/utils';
+import event from '../../../../designerGraphBlock/layout/eventCenter';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
-import event from '../../../../designerGraphBlock/layout/eventCenter';
 import SaveConfirmModel from './SaveConfirmModel';
 import { info } from 'electron-log';
+import mxgraph from '../../../components/MxGraph/mxgraph';
 
 const { ipcRenderer } = require('electron');
+
+const { mxCell: MxCell, mxGeometry: MxGeometry } = mxgraph;
 
 const TreeNodeTitle = ({
   title,
@@ -41,10 +44,13 @@ const TreeNodeTitle = ({
   node,
   type,
   currentProject,
+  dragModule,
 }) => {
   return (
     <div
-      className="treenode-title"
+      className={`${
+        dragModule ? 'treenode-title process-module-drag' : 'treenode-title'
+      }`}
       style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -102,7 +108,8 @@ const transformTreeTitle = (
   processTree,
   type,
   currentProject,
-  blockTreeTab
+  blockTreeTab,
+  createItem
 ) => {
   const result = cloneDeep(processTree);
   function recurise(tree) {
@@ -112,33 +119,15 @@ const transformTreeTitle = (
         // child.hasModified = false;
         if (type === 'processModule') {
           child.title = (
-            <div draggable={false}>
-              <ItemPanel>
-                <Item
-                  type="node"
-                  size="184*56"
-                  shape="processblock"
-                  icon="http://bpic.588ku.com/element_origin_min_pic/00/92/88/9056f24073c4c87.jpg"
-                  model={{
-                    color: '#1890FF',
-                    label: child.title,
-                    style: {
-                      stroke: 'rgba(61, 109, 204, 1)',
-                      fill: '#ecf5f6',
-                    },
-                  }}
-                >
-                  <TreeNodeTitle
-                    node={child}
-                    title={child.title}
-                    hasModified={child.hasModified}
-                    iconType="cluster"
-                    type={blockTreeTab}
-                    currentProject={currentProject}
-                  />
-                </Item>
-              </ItemPanel>
-            </div>
+            <TreeNodeTitle
+              node={child}
+              title={child.title}
+              hasModified={child.hasModified}
+              iconType="cluster"
+              type={blockTreeTab}
+              currentProject={currentProject}
+              dragModule={true}
+            />
           );
         } else {
           child.title = (
@@ -171,6 +160,7 @@ const transformTreeTitle = (
     }
   }
   recurise(result);
+
   return result;
 };
 
@@ -193,7 +183,7 @@ const menu = (
   </Menu>
 );
 
-export default ({ type, setShowLoadingLayer }) => {
+export default ({ type, setShowLoadingLayer, createItem }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedKey, setSelectedKey] = useState('');
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -424,11 +414,78 @@ export default ({ type, setShowLoadingLayer }) => {
     }
   };
 
+  const handleCreate = () => {
+    if (createItem) {
+      console.log('配置单个新添加的可拖拽');
+      const toolCells = document.querySelectorAll('.process-module-drag');
+      const elt = toolCells[toolCells.length - 1];
+      const cell = new MxCell(
+        `<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>${cell.innerText}</span></div>`,
+        new MxGeometry(0, 0, parseInt(186, 10), parseInt(50, 10)),
+        'label;whiteSpace=wrap;html=1;;resizable=0;'
+      );
+      cell.vertex = true;
+      createItem(
+        [cell],
+        186,
+        55,
+        // cell.geometry.width,
+        // cell.geometry.height,
+        'Shape Group',
+        null,
+        elt
+      );
+    }
+  };
+
   const refreshGraph = key => {
     // resetGraphEditData();
     showTreeData([key]);
     // changeCheckedTreeNode(key);
   };
+
+  useEffect(() => {
+    if (type === 'processModule') {
+      event.addListener('create_module_drag', handleCreate);
+      console.log('监听');
+    }
+
+    return () => {
+      if (type === 'processModule') {
+        console.log('移除监听');
+        event.removeListener('create_module_drag', handleCreate);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (createItem && type === 'processModule') {
+      console.log('配置左侧可拖拽');
+      let cell = null;
+      const toolCells = document.querySelectorAll('.process-module-drag');
+      for (let i = 0; i < toolCells.length; i += 1) {
+        const elt = toolCells[i];
+        // const { label, style, width, height } = elt.dataset;
+        cell = new MxCell(
+          `<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>${elt.innerText}</span></div>`,
+          new MxGeometry(0, 0, parseInt(186, 10), parseInt(50, 10)),
+          'label;whiteSpace=wrap;html=1;;resizable=0;'
+        );
+        cell.vertex = true;
+
+        createItem(
+          [cell],
+          186,
+          55,
+          // cell.geometry.width,
+          // cell.geometry.height,
+          'Shape Group',
+          null,
+          elt
+        );
+      }
+    }
+  }, [type]);
 
   const showTreeData = selectedKey => {
     const node = findNodeByKey(processTree, selectedKey[0]);
@@ -500,13 +557,15 @@ export default ({ type, setShowLoadingLayer }) => {
                   processTree,
                   type,
                   currentProject,
-                  blockTreeTab
+                  blockTreeTab,
+                  createItem
                 )
               : transformTreeTitle(
                   moduleTree,
                   type,
                   currentProject,
-                  blockTreeTab
+                  blockTreeTab,
+                  createItem
                 )
           }
           selectedKeys={

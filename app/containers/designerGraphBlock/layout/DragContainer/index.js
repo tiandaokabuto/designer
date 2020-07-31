@@ -49,7 +49,9 @@ const DragContainer = () => {
       >
         <Icon type="double-left" />
       </div>
-      <div className="dragger-editor-title">{nodesLabel.label}</div>
+      <div className="dragger-editor-title">
+        {nodesLabel ? nodesLabel.label : ''}
+      </div>
       <div className="dragger-editor-container-codeblock">
         <Tabs
           defaultActiveKey="codeblock"

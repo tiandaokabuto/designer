@@ -13,7 +13,7 @@ let isMouseDown = false;
 let startOffset = 0;
 
 const { TabPane } = Tabs;
-export default ({ setShowLoadingLayer }) => {
+export default ({ setShowLoadingLayer, createItem }) => {
   const currentProject = useSelector(state => state.grapheditor.currentProject);
   const treeTab = useSelector(state => state.grapheditor.treeTab);
   const changeProjectName = useChangeProjectName();
@@ -116,12 +116,14 @@ export default ({ setShowLoadingLayer }) => {
               <ProcessTree
                 type="process"
                 setShowLoadingLayer={setShowLoadingLayer}
+                createItem={createItem}
               />
             </TabPane>
             <TabPane tab="流程块" key="processModule">
               <ProcessTree
                 type="processModule"
                 setShowLoadingLayer={setShowLoadingLayer}
+                createItem={createItem}
               />
             </TabPane>
           </Tabs>
