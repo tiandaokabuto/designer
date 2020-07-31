@@ -16,7 +16,8 @@ export default (
   setGraphDataMap,
   deleteGraphDataMap,
   changeCheckedGraphBlockId,
-  graphData
+  graphData,
+  undoAndRedoRef
 ) => {
   if (cell != null) {
     const clickMenuCopy = () => {
@@ -78,6 +79,7 @@ export default (
         setGraphDataMap,
         changeCheckedGraphBlockId,
         graphData,
+        undoAndRedoRef
       });
     };
 
