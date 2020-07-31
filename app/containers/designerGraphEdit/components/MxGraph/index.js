@@ -212,7 +212,8 @@ const MxgraphContainer = useInjectContext(
 
           deleteGraphDataMap,
           changeCheckedGraphBlockId,
-          graphDataRef.current
+          graphDataRef.current,
+          undoAndRedoRef
         );
       };
 
@@ -578,22 +579,28 @@ const MxgraphContainer = useInjectContext(
         if (currentPagePositionRef.current === 'block') return;
 
         if (evt.target.nodeName === 'PRE' || evt.target.nodeName === 'BODY') {
-          message.warning('粘贴');
+          //message.warning('粘贴');
           Action_PasteCell(graph, {
             mxClipboard,
             setGraphDataMap,
             changeCheckedGraphBlockId,
+            graphData: graphDataRef.current,
+            undoAndRedoRef
           });
           //undoAndRedoRef.current.undoSteps.pop()
           //console.log("粘贴undoAndRedoRefCurrent.undoSteps",undoAndRedoRef.current.undoSteps)
           //undoAndRedoRefCurrent.undoSteps.pop();
+          // console.clear();
+          // console.log(evt, mxClipboard);
+          // setTimeout(() => {
+          //   changeUndoAndRedo({
+          //     // 第一层撤销重做
+          //     undoSteps: [], // 可以用来重做的步骤
+          //     redoSteps: [], // 可以用来
+          //     counter: 0,
+          //   });
+          // }, 0);
 
-          changeUndoAndRedo({
-            // 第一层撤销重做
-            undoSteps: [], // 可以用来重做的步骤
-            redoSteps: [], // 可以用来
-            counter: 0,
-          });
         } else {
           return;
         }
@@ -605,7 +612,7 @@ const MxgraphContainer = useInjectContext(
         console.log(evt);
 
         if (evt.target.nodeName === 'PRE' || evt.target.nodeName === 'BODY') {
-          message.warning('复制');
+          //message.warning('复制');
           Action_CopyCell(graph, { mxClipboard, changeSavingModuleData });
         } else {
           return;
@@ -803,8 +810,8 @@ const MxgraphContainer = useInjectContext(
       //   );
       // });
 
-      // 移动 CELLS_MOVED MOVE
-      graph.addListener(mxEvent.MOVE_CELLS, (sender, evt) => {
+      // 移动 CELLS_MOVED MOVE_CELLS
+      graph.addListener(mxEvent.CELLS_MOVED, (sender, evt) => {
         updateGraphDataAction(graph);
         console.log('\n\n\n\n 更新啊啊啊啊啊啊 \n\n\n');
 
@@ -828,13 +835,13 @@ const MxgraphContainer = useInjectContext(
               counter: undoAndRedoRef.current.counter,
               change: {
                 counter: undoAndRedoRef.current.counter,
-                id: cell.id,
-                cell: graph.getModel().getCell(cell.id),
+                id: cell ? cell.id : 'xxx',
+                cell: cell ? cell : undefined,
                 geometry: {
-                  x: cell.geometry.x,
-                  y: cell.geometry.y,
-                  dx: evt.properties.dx,
-                  dy: evt.properties.dy,
+                  x: cell ? cell.geometry.x : 'xxx',
+                  y: cell ? cell.geometry.y : 'xxx',
+                  dx: cell ? evt.properties.dx : 'xxx',
+                  dy: cell ? evt.properties.dy : 'xxx',
                 },
               },
             };
@@ -1440,15 +1447,24 @@ const MxgraphContainer = useInjectContext(
                 console.log('修改结束');
                 updateGraphDataAction(graph);
 
-
-                setTimeout(()=>{
-                  console.log("我看看",graph,graph.getSelectionCell(), evt, target, x, y, force)
+                setTimeout(() => {
+                  console.log(
+                    '我看看',
+                    graph,
+                    graph.getSelectionCell(),
+                    evt,
+                    target,
+                    x,
+                    y,
+                    force
+                  );
                   let cell = graph.getSelectionCell();
                   let temp = undoAndRedoRef.current;
                   temp.undoSteps.push(
                     // evt.properties.cells.map(cell => {
                     //   return {
-                      [{
+                    [
+                      {
                         type: 'cellsAdded',
                         counter: undoAndRedoRef.current.counter,
                         change: {
@@ -1469,11 +1485,11 @@ const MxgraphContainer = useInjectContext(
                           cell: cell,
                           // deepCopy一下当时的dataGraph
                         },
-                      }
+                      },
                     ]
                     //})
                   );
-                },0)
+                }, 0);
 
                 undoAndRedoRef.current.counter += 1;
 

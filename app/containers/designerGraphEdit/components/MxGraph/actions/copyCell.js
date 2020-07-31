@@ -14,6 +14,9 @@ export function Action_CopyCell(graph, option = {}, callback = {}) {
   let cells = new Array();
   cells = graph.getSelectionCells();
 
+  if (cells.length > 1) return message.info('只能复制单个流程块');
+  if (!cells[0].isVertex()) return message.info('线条不能复制');
+
   mxClipboard.copy(graph, cells);
 
   //console.clear();
@@ -52,6 +55,7 @@ export function Action_PasteCell(graph, option, callback = {}) {
     setGraphDataMap,
     changeCheckedGraphBlockId,
     graphData,
+    undoAndRedoRef,
   } = option;
   const {
     grapheditor: {
@@ -85,6 +89,24 @@ export function Action_PasteCell(graph, option, callback = {}) {
     }
   });
 
+  setTimeout(() => {
+    if (undoAndRedoRef.current.undoSteps.length > 0) {
+      let nowAction =
+        undoAndRedoRef.current.undoSteps[
+          undoAndRedoRef.current.undoSteps.length - 1
+        ][0];
+      nowAction.type = 'cellsAdded_By_redo';
+      //undoAndRedoRef.current.undoSteps[undoAndRedoRef.current.undoSteps.length -1][0].type="cellsAdded_By_redo"
+      nowAction.counter = undoAndRedoRef.current.counter;
+      nowAction.id = nowAction.change.cell.id;
+      nowAction.change.id = nowAction.change.cell.id;
+      nowAction.change.vertex = true;
+      nowAction.change.style = nowAction.change.cell.style;
+      nowAction.change.value = nowAction.change.cell.value;
+      nowAction.change.geometry = nowAction.change.cell.geometry;
+    }
+    undoAndRedoRef.current.counter = undoAndRedoRef.current.counter + 1;
+  }, 0);
   //lock = false;
 }
 
