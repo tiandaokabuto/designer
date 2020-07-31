@@ -10,7 +10,7 @@ export default param => {
       .get(api('getControllerParam'))
       .then(res => res.data)
       .then(json => {
-        if (~json.code) {
+        if (json.data.length > 0) {
           setMissionDataSource((json.data || []).map(item => item.name));
         }
         return true;
