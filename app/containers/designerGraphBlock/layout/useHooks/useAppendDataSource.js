@@ -24,7 +24,8 @@ export default param => {
         return res ? res.data : { code: -1 };
       })
       .then(json => {
-        if (~json.code) {
+        // if (~json.code) {
+        if (json.code === 0 && json.data.length > 0) {
           setMissionDataSource(json.data || []);
           return true;
         }
