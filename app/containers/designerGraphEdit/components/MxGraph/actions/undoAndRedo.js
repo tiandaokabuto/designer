@@ -112,7 +112,7 @@ function goHandleUndo_real(
         //   height,
         //   style,
         //   relative	)
-        setTimeout(()=>{
+        setTimeout(() => {
           graph.insertVertex(
             graph.getDefaultParent(),
             undoStep.change.id,
@@ -124,26 +124,38 @@ function goHandleUndo_real(
             undoStep.change.style,
             false
           );
-        },0)
-
+        }, 0);
       } else {
-        setTimeout(()=>{
+        setTimeout(() => {
+          console.clear();
+          //console.log( graph.getModel(),undoStep,graph.getCells())
+          // 得救了
+          const model = graph.getModel();
+          const find_id = (id, model) => {
+            return model.cells.filter(irem => {
+              item.id === id;
+            })[0];
+          };
+
+          //undoStep.change.source_id
+
           graph.insertEdge(
             graph.getDefaultParent(),
             undoStep.change.id,
             undoStep.change.value,
-            graph.getModel().getCell(undoStep.change.source_id)
-              ? graph.getModel().getCell(undoStep.change.source_id)
-              : undoStep.change.cell,
-            graph.getModel().getCell(undoStep.change.target_id)
-              ? graph.getModel().getCell(undoStep.change.target_id)
-              : undoStep.change.cell,
+            find_id(undoStep.change.source_id, model),
+            find_id(undoStep.change.target_id, model),
+
+            // graph.getModel().getCell()
+            //   ? graph.getModel().getCell(undoStep.change.source_id)
+            //   : undoStep.change.cell,
+            // graph.getModel().getCell(undoStep.change.target_id)
+            //   ? graph.getModel().getCell(undoStep.change.target_id)
+            //   : undoStep.change.cell,
             ''
           );
           undo_s.pop();
-        },0)
-
-
+        }, 0);
       }
       needPush = true;
       updateGraphDataAction(graph);
@@ -246,8 +258,7 @@ function goHandleRedo_real(
     if (redoStep.type === 'connectLine') {
       //parent画板父层，线条id,value连线值，source起点，target重点，style样式
 
-
-      setTimeout(()=>{
+      setTimeout(() => {
         console.clear();
         console.log(
           redoStep,
@@ -255,31 +266,47 @@ function goHandleRedo_real(
           graph.getModel().getCell(redoStep.change.target_id)
         );
 
+        const model = graph.getModel();
+
+        //const [key, item] of Object.entries(model)
+
+        console.log(model);
+        const find_id = (id, model) => {
+          let temp = {};
+          for( const [key, item] of Object.entries(model.cells) ){
+            if(item.id === id){
+              temp = item;
+            }
+          }
+          console.log(temp);
+          return temp;
+
+        };
+
         graph.insertEdge(
           graph.getDefaultParent(),
           redoStep.change.line_id,
           redoStep.change.value,
-          graph.getModel().getCell(redoStep.change.source_id),
-          graph.getModel().getCell(redoStep.change.target_id),
-
+          find_id(redoStep.change.source_id, model),
+          find_id(redoStep.change.target_id, model),
 
           // graph.getModel().getCell(redoStep.change.source_id),
           //graph.getModel().getCell(redoStep.change.source_id)
-            //? graph.getModel().getCell(redoStep.change.source_id)
-            //:
-            //redoStep.change.source_cell,
+          //? graph.getModel().getCell(redoStep.change.source_id)
+          //:
+          //redoStep.change.source_cell,
           // graph.getModel().getCell(redoStep.change.target_id),
-         // graph.getModel().getCell(redoStep.change.source_id)
-            //? graph.getModel().getCell(redoStep.change.target_id)
-            //:
-            //redoStep.change.target_cell,
+          // graph.getModel().getCell(redoStep.change.source_id)
+          //? graph.getModel().getCell(redoStep.change.target_id)
+          //:
+          //redoStep.change.target_cell,
           //redoStep.change.source_cell,
           //redoStep.change.target_cell,
           ''
         );
 
         graph.refresh();
-      },0)
+      }, 0);
 
       updateGraphDataAction(graph);
     }
