@@ -154,13 +154,13 @@ export default ({ current }) => {
               handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
             />
           </TabPane>
-          <TabPane tab="流程图" key="3">
+          {/* <TabPane tab="流程图" key="3">
             <GGEditor>
               <div style={{ height: 'calc(100vh - 116px)' }}>
                 <GraphContainer showHead />
               </div>
             </GGEditor>
-          </TabPane>
+          </TabPane> */}
         </Tabs>
       </div>
     </div>
