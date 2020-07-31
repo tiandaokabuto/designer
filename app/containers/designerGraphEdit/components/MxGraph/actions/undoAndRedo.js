@@ -1,8 +1,24 @@
+import { message } from 'antd';
+
 export const goHandleUndo = (
   graph,
   undoAndRedoRefCurrent,
   updateGraphDataAction
 ) => {
+  setTimeout(
+    goHandleUndo_real,
+    20,
+    graph,
+    undoAndRedoRefCurrent,
+    updateGraphDataAction
+  );
+};
+
+function goHandleUndo_real(
+  graph,
+  undoAndRedoRefCurrent,
+  updateGraphDataAction
+) {
   graph.refresh();
   const undo_s = undoAndRedoRefCurrent.undoSteps;
   const redo_s = undoAndRedoRefCurrent.redoSteps;
@@ -14,6 +30,12 @@ export const goHandleUndo = (
   let undoStepArray = [...undo_s[undo_s.length - 1]];
   let needPush = false;
   let goBackTimeMachine = []; // 时光倒流操作集
+
+  // if (redo_s.length > 0) {
+  //   if (undoAndRedoRefCurrent.counter > redo_s[redo_s.length - 1][0].counter) {
+  //     undoAndRedoRefCurrent.redoSteps = [];
+  //   }
+  // }
 
   // 假如是插入元素，则插入之后会触发一次移动，所以要把那个操作去掉,并把对应的数据搬过去
   if (undo_s.length >= 2) {
@@ -43,12 +65,16 @@ export const goHandleUndo = (
     // 假如是 移动操作
     if (undoStep.type === 'move') {
       graph.moveCells(
-        [graph.getModel().getCell(undoStep.change.id) ? graph.getModel().getCell(undoStep.change.id) : undoStep.change.cell],
+        [
+          graph.getModel().getCell(undoStep.change.id)
+            ? graph.getModel().getCell(undoStep.change.id)
+            : undoStep.change.cell,
+        ],
         -undoStep.change.geometry.dx,
         -undoStep.change.geometry.dy
       );
 
-      console.log(graph.getModel().getCell(undoStep.change.id))
+      //console.log(graph.getModel().getCell(undoStep.change.id))
       undo_s.pop(); // 移除掉移动引发的撤销新增
       needPush = true;
 
@@ -102,8 +128,12 @@ export const goHandleUndo = (
           graph.getDefaultParent(),
           undoStep.change.id,
           undoStep.change.value,
-          graph.getModel().getCell(undoStep.change.source_id),
-          graph.getModel().getCell(undoStep.change.target_id),
+          graph.getModel().getCell(undoStep.change.source_id)
+            ? graph.getModel().getCell(undoStep.change.source_id)
+            : undoStep.change.cell,
+          graph.getModel().getCell(undoStep.change.target_id)
+            ? graph.getModel().getCell(undoStep.change.target_id)
+            : undoStep.change.cell,
           ''
         );
         undo_s.pop();
@@ -116,7 +146,11 @@ export const goHandleUndo = (
       undoStep.type === 'cellsAdded' ||
       undoStep.type === 'cellsAdded_By_redo'
     ) {
-      if (!undoStep.change.vertex) return;
+      needPush = true;
+      //if (!undoStep.change.vertex) return;
+      updateGraphDataAction(graph);
+      graph.refresh();
+
       let needDelete = graph.getModel().getCell(undoStep.change.id);
       console.log('cellsAdded', '要被删了', undoStep, needDelete);
       if (!needDelete) {
@@ -125,10 +159,9 @@ export const goHandleUndo = (
       }
       graph.removeCells([needDelete]);
       // 更名为redo
-      undoStepArray[index].type = 'cellsAdded_By_redo';
+      // if(undoStep.type === 'cellsAdded')
       undo_s.pop();
-      needPush = true;
-      updateGraphDataAction(graph);
+      undoStepArray[index].type = 'cellsAdded_By_redo';
     }
   });
 
@@ -141,13 +174,27 @@ export const goHandleUndo = (
   if (needPush) redo_s.push(undoStepArray);
 
   console.log('撤销后的', undo_s, redo_s, undoAndRedoRefCurrent.counter);
-};
+}
 
 export const goHandleRedo = (
   graph,
   undoAndRedoRefCurrent,
   updateGraphDataAction
 ) => {
+  setTimeout(
+    goHandleRedo_real,
+    20,
+    graph,
+    undoAndRedoRefCurrent,
+    updateGraphDataAction
+  );
+};
+
+function goHandleRedo_real(
+  graph,
+  undoAndRedoRefCurrent,
+  updateGraphDataAction
+) {
   console.log(undoAndRedoRefCurrent);
   const undo_s = undoAndRedoRefCurrent.undoSteps;
   const redo_s = undoAndRedoRefCurrent.redoSteps;
@@ -157,17 +204,22 @@ export const goHandleRedo = (
   let redoStepArray = redo_s[redo_s.length - 1];
   let needPush = false;
   if (undoAndRedoRefCurrent.counter > redoStepArray.counter) {
+    message.error('做了新动作后不能恢复');
     return (undoAndRedoRefCurrent.redoSteps = []);
   }
 
-  if (redoStepArray.length === 0) return undo_s.pop();
+  if (redoStepArray.length === 0) return redo_s.pop();
   // 假如恢复了，则放入撤销池
 
   redoStepArray.forEach((redoStep, index) => {
     if (redoStep.type === 'move') {
       graph.moveCells(
         //[redoStep.change.cell],
-        [graph.getModel().getCell(redoStep.change.id) ? graph.getModel().getCell(redoStep.change.id) : redoStep.change.cell],
+        [
+          graph.getModel().getCell(redoStep.change.id)
+            ? graph.getModel().getCell(redoStep.change.id)
+            : redoStep.change.cell,
+        ],
         redoStep.change.geometry.dx,
         redoStep.change.geometry.dy
       );
@@ -186,51 +238,74 @@ export const goHandleRedo = (
 
     if (redoStep.type === 'connectLine') {
       //parent画板父层，线条id,value连线值，source起点，target重点，style样式
+      console.clear();
+      console.log(
+        redoStep,
+        graph.getModel().getCell(redoStep.change.source_id),
+        graph.getModel().getCell(redoStep.change.target_id)
+      );
+
       graph.insertEdge(
         graph.getDefaultParent(),
         redoStep.change.line_id,
         redoStep.change.value,
-        redoStep.change.source_cell,
-        redoStep.change.target_cell,
+        // graph.getModel().getCell(redoStep.change.source_id),
+        graph.getModel().getCell(redoStep.change.source_id)
+          ? graph.getModel().getCell(redoStep.change.source_id)
+          : redoStep.change.cell,
+        // graph.getModel().getCell(redoStep.change.target_id),
+        graph.getModel().getCell(redoStep.change.source_id)
+          ? graph.getModel().getCell(redoStep.change.target_id)
+          : redoStep.change.cell,
+        //redoStep.change.source_cell,
+        //redoStep.change.target_cell,
         ''
       );
       updateGraphDataAction(graph);
     }
 
     if (redoStep.type === 'remove') {
-      const needDelete = graph.getModel().getCell(redoStep.change.id);
-      if (!needDelete) return;
-      graph.removeCells([needDelete]);
-      undo_s.pop();
       needPush = true;
+      const needDelete = graph.getModel().getCell(redoStep.change.id);
+      if (!needDelete) {
+        try {
+          graph.removeCells([redoStep.change.cell]);
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        graph.removeCells([needDelete]);
+      }
+
+      undo_s.pop();
       updateGraphDataAction(graph);
     }
 
     if (
-      redoStep.type === 'cellsAdded' ||
+      //redoStep.type === 'cellsAdded' ||
       redoStep.type === 'cellsAdded_By_redo'
     ) {
       //redoStepArray[index].type = 'cellsAdded_By_redo'
       console.log('我开始恢复了！', redoStep);
-
-      if (redoStepArray.length !== 1) {
-        console.log('\n\n\n细致研究这里面的过程', redoStep);
-        if (redoStep.change.vertex) {
-          graph.insertVertex(
-            graph.getDefaultParent(),
-            redoStep.change.id,
-            redoStep.change.value,
-            redoStep.change.geometry.x,
-            redoStep.change.geometry.y,
-            redoStep.change.geometry.width,
-            redoStep.change.geometry.height,
-            redoStep.change.style,
-            false
-          );
-          undo_s.pop();
-        }
-        return;
-      }
+      needPush = true;
+      // if (redoStepArray.length !== 1) {
+      //   console.log('\n\n\n细致研究这里面的过程', redoStep);
+      //   if (redoStep.change.vertex) {
+      //     graph.insertVertex(
+      //       graph.getDefaultParent(),
+      //       redoStep.change.id,
+      //       redoStep.change.value,
+      //       redoStep.change.geometry.x,
+      //       redoStep.change.geometry.y,
+      //       redoStep.change.geometry.width,
+      //       redoStep.change.geometry.height,
+      //       redoStep.change.style,
+      //       false
+      //     );
+      //     //undo_s.pop();
+      //   }
+      //   //return;
+      // }
 
       if (redoStep.change.vertex) {
         graph.insertVertex(
@@ -244,19 +319,20 @@ export const goHandleRedo = (
           redoStep.change.style,
           false
         );
-        undo_s.pop();
-      } else {
-        graph.insertEdge(
-          graph.getDefaultParent(),
-          redoStep.change.id,
-          redoStep.change.value,
-          graph.getModel().getCell(redoStep.change.source_id),
-          graph.getModel().getCell(redoStep.change.target_id),
-          ''
-        );
-        undo_s.pop();
+        //undo_s.pop();
       }
-      needPush = true;
+      // else {
+      //   graph.insertEdge(
+      //     graph.getDefaultParent(),
+      //     redoStep.change.id,
+      //     redoStep.change.value,
+      //     graph.getModel().getCell(redoStep.change.source_id),
+      //     graph.getModel().getCell(redoStep.change.target_id),
+      //     ''
+      //   );
+      //   //undo_s.pop();
+      // }
+      // /needPush = true;
       updateGraphDataAction(graph);
     }
   });
@@ -271,4 +347,4 @@ export const goHandleRedo = (
   }
 
   console.log('恢复后的', undo_s, redo_s, undoAndRedoRefCurrent.counter);
-};
+}
