@@ -631,7 +631,16 @@ const MxgraphContainer = useInjectContext(
           });
 
           // 验证不通过，删除连线
-          if (!ans) return graph.removeCells([evt.properties.edge]);
+          if (!ans) {
+            setTimeout(()=>{
+              graph.removeCells([evt.properties.edge]);
+              undoAndRedoRef.current.undoSteps.pop();
+              graph.refresh()
+              updateGraphDataAction(graph);
+            })
+
+            return;
+          }
 
           // TODO: 假如成功了，则同步更新到grapDataMap
           if (ans.rule === '判断') {
@@ -659,7 +668,7 @@ const MxgraphContainer = useInjectContext(
               },
             },
           ]);
-          undoAndRedoRef.current.counter += 1;
+          //undoAndRedoRef.current.counter += 1;
 
           // 更新graphData数据
           updateGraphDataAction(graph);

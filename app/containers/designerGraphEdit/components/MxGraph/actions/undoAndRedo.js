@@ -112,31 +112,38 @@ function goHandleUndo_real(
         //   height,
         //   style,
         //   relative	)
-        graph.insertVertex(
-          graph.getDefaultParent(),
-          undoStep.change.id,
-          undoStep.change.value,
-          undoStep.change.geometry.x,
-          undoStep.change.geometry.y,
-          undoStep.change.geometry.width,
-          undoStep.change.geometry.height,
-          undoStep.change.style,
-          false
-        );
+        setTimeout(()=>{
+          graph.insertVertex(
+            graph.getDefaultParent(),
+            undoStep.change.id,
+            undoStep.change.value,
+            undoStep.change.geometry.x,
+            undoStep.change.geometry.y,
+            undoStep.change.geometry.width,
+            undoStep.change.geometry.height,
+            undoStep.change.style,
+            false
+          );
+        },0)
+
       } else {
-        graph.insertEdge(
-          graph.getDefaultParent(),
-          undoStep.change.id,
-          undoStep.change.value,
-          graph.getModel().getCell(undoStep.change.source_id)
-            ? graph.getModel().getCell(undoStep.change.source_id)
-            : undoStep.change.cell,
-          graph.getModel().getCell(undoStep.change.target_id)
-            ? graph.getModel().getCell(undoStep.change.target_id)
-            : undoStep.change.cell,
-          ''
-        );
-        undo_s.pop();
+        setTimeout(()=>{
+          graph.insertEdge(
+            graph.getDefaultParent(),
+            undoStep.change.id,
+            undoStep.change.value,
+            graph.getModel().getCell(undoStep.change.source_id)
+              ? graph.getModel().getCell(undoStep.change.source_id)
+              : undoStep.change.cell,
+            graph.getModel().getCell(undoStep.change.target_id)
+              ? graph.getModel().getCell(undoStep.change.target_id)
+              : undoStep.change.cell,
+            ''
+          );
+          undo_s.pop();
+        },0)
+
+
       }
       needPush = true;
       updateGraphDataAction(graph);
@@ -238,29 +245,42 @@ function goHandleRedo_real(
 
     if (redoStep.type === 'connectLine') {
       //parent画板父层，线条id,value连线值，source起点，target重点，style样式
-      console.clear();
-      console.log(
-        redoStep,
-        graph.getModel().getCell(redoStep.change.source_id),
-        graph.getModel().getCell(redoStep.change.target_id)
-      );
 
-      graph.insertEdge(
-        graph.getDefaultParent(),
-        redoStep.change.line_id,
-        redoStep.change.value,
-        // graph.getModel().getCell(redoStep.change.source_id),
-        graph.getModel().getCell(redoStep.change.source_id)
-          ? graph.getModel().getCell(redoStep.change.source_id)
-          : redoStep.change.cell,
-        // graph.getModel().getCell(redoStep.change.target_id),
-        graph.getModel().getCell(redoStep.change.source_id)
-          ? graph.getModel().getCell(redoStep.change.target_id)
-          : redoStep.change.cell,
-        //redoStep.change.source_cell,
-        //redoStep.change.target_cell,
-        ''
-      );
+
+      setTimeout(()=>{
+        console.clear();
+        console.log(
+          redoStep,
+          graph.getModel().getCell(redoStep.change.source_id),
+          graph.getModel().getCell(redoStep.change.target_id)
+        );
+
+        graph.insertEdge(
+          graph.getDefaultParent(),
+          redoStep.change.line_id,
+          redoStep.change.value,
+          graph.getModel().getCell(redoStep.change.source_id),
+          graph.getModel().getCell(redoStep.change.target_id),
+
+
+          // graph.getModel().getCell(redoStep.change.source_id),
+          //graph.getModel().getCell(redoStep.change.source_id)
+            //? graph.getModel().getCell(redoStep.change.source_id)
+            //:
+            //redoStep.change.source_cell,
+          // graph.getModel().getCell(redoStep.change.target_id),
+         // graph.getModel().getCell(redoStep.change.source_id)
+            //? graph.getModel().getCell(redoStep.change.target_id)
+            //:
+            //redoStep.change.target_cell,
+          //redoStep.change.source_cell,
+          //redoStep.change.target_cell,
+          ''
+        );
+
+        graph.refresh();
+      },0)
+
       updateGraphDataAction(graph);
     }
 
