@@ -63,7 +63,7 @@ export function Action_PasteCell(graph, option, callback = {}) {
 
   const getMxId = useMxId();
 
-  console.log(getMxId());
+  //console.log(getMxId());
 
   //console.clear();
   console.log(graph.selectionModel.cells);

@@ -760,48 +760,48 @@ const MxgraphContainer = useInjectContext(
       });
 
       // 添加
-      graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
-        updateGraphDataAction(graph);
-        console.log('添加', sender, evt);
+      // graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+      //   updateGraphDataAction(graph);
+      //   console.log('添加', sender, evt);
 
-        let temp = undoAndRedoRef.current;
-        setTimeout(()=>{
-        temp.undoSteps.push(
-          evt.properties.cells.map(cell => {
-            return {
-              type: 'cellsAdded',
-              counter: undoAndRedoRef.current.counter,
-              change: {
-                counter: undoAndRedoRef.current.counter,
-                vertex: cell.isVertex(),
+      //   let temp = undoAndRedoRef.current;
+      //   //setTimeout(()=>{
+      //   // temp.undoSteps.push(
+      //   //   evt.properties.cells.map(cell => {
+      //   //     return {
+      //   //       type: 'cellsAdded',
+      //   //       counter: undoAndRedoRef.current.counter,
+      //   //       change: {
+      //   //         counter: undoAndRedoRef.current.counter,
+      //   //         vertex: cell.isVertex(),
 
-                // 恢复块所需要的数据
-                geometry: cell.geometry,
-                id: cell.id,
-                style: cell.style,
-                value: cell.value,
+      //   //         // 恢复块所需要的数据
+      //   //         geometry: cell.geometry,
+      //   //         id: cell.id,
+      //   //         style: cell.style,
+      //   //         value: cell.value,
 
-                // 恢复线所需要的数据
-                source_id: cell.source ? cell.source.id : null,
-                target_id: cell.target ? cell.target.id : null,
-                value: cell.value,
+      //   //         // 恢复线所需要的数据
+      //   //         source_id: cell.source ? cell.source.id : null,
+      //   //         target_id: cell.target ? cell.target.id : null,
+      //   //         value: cell.value,
 
-                cell: cell,
-                // deepCopy一下当时的dataGraph
-              },
-            };
-          })
-        );
-        },0)
-        undoAndRedoRef.current.counter += 1;
+      //   //         cell: cell,
+      //   //         // deepCopy一下当时的dataGraph
+      //   //       },
+      //   //     };
+      //   //   })
+      //   // );
+      //   //},0)
+      //   undoAndRedoRef.current.counter += 1;
 
-        // updateGraphDataAction(graph);
-        changeModifyState(
-          processTreeRef.current,
-          currentCheckedTreeNodeRef.current,
-          true
-        );
-      });
+      //   // updateGraphDataAction(graph);
+      //   changeModifyState(
+      //     processTreeRef.current,
+      //     currentCheckedTreeNodeRef.current,
+      //     true
+      //   );
+      // });
 
       // 移动 CELLS_MOVED MOVE
       graph.addListener(mxEvent.MOVE_CELLS, (sender, evt) => {
@@ -819,29 +819,28 @@ const MxgraphContainer = useInjectContext(
 
         let temp = undoAndRedoRef.current;
 
-        setTimeout(()=>{
-          console.log(`【移动】纯移动`, sender, evt, undoAndRedoRef.current);
-          temp.undoSteps.push(
-            evt.properties.cells.map(cell => {
-              return {
-                type: 'move',
+        //setTimeout(()=>{
+        console.log(`【移动】纯移动`, sender, evt, undoAndRedoRef.current);
+        temp.undoSteps.push(
+          evt.properties.cells.map(cell => {
+            return {
+              type: 'move',
+              counter: undoAndRedoRef.current.counter,
+              change: {
                 counter: undoAndRedoRef.current.counter,
-                change: {
-                  counter: undoAndRedoRef.current.counter,
-                  id: cell.id,
-                  cell: graph.getModel().getCell(cell.id),
-                  geometry: {
-                    x: cell.geometry.x,
-                    y: cell.geometry.y,
-                    dx: evt.properties.dx,
-                    dy: evt.properties.dy,
-                  },
+                id: cell.id,
+                cell: graph.getModel().getCell(cell.id),
+                geometry: {
+                  x: cell.geometry.x,
+                  y: cell.geometry.y,
+                  dx: evt.properties.dx,
+                  dy: evt.properties.dy,
                 },
-              };
-            })
-          );
-        },0)
-
+              },
+            };
+          })
+        );
+        //},0)
 
         undoAndRedoRef.current.counter += 1;
       });
@@ -1440,6 +1439,44 @@ const MxgraphContainer = useInjectContext(
                 }
                 console.log('修改结束');
                 updateGraphDataAction(graph);
+
+
+                setTimeout(()=>{
+                  console.log("我看看",graph,graph.getSelectionCell(), evt, target, x, y, force)
+                  let cell = graph.getSelectionCell();
+                  let temp = undoAndRedoRef.current;
+                  temp.undoSteps.push(
+                    // evt.properties.cells.map(cell => {
+                    //   return {
+                      [{
+                        type: 'cellsAdded',
+                        counter: undoAndRedoRef.current.counter,
+                        change: {
+                          counter: undoAndRedoRef.current.counter,
+                          vertex: cell.vertex,
+
+                          // 恢复块所需要的数据
+                          geometry: cell.geometry,
+                          id: cell.id,
+                          style: cell.style,
+                          value: cell.value,
+
+                          // 恢复线所需要的数据
+                          source_id: cell.source ? cell.source.id : null,
+                          target_id: cell.target ? cell.target.id : null,
+                          value: cell.value,
+
+                          cell: cell,
+                          // deepCopy一下当时的dataGraph
+                        },
+                      }
+                    ]
+                    //})
+                  );
+                },0)
+
+                undoAndRedoRef.current.counter += 1;
+
                 changeCheckedGraphBlockId(select[0].id);
               }
 
