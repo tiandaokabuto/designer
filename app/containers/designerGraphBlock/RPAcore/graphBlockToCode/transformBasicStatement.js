@@ -354,7 +354,6 @@ const transformBasicStatement = (
   });
   dataStructure.properties.optional &&
     dataStructure.properties.optional.forEach((item, index) => {
-      if (item.value === '') return;
       if (item.componentType === 2 && item.tag === 2) {
         if (params) params += ', ';
         params += `${item.enName} = ${
@@ -363,6 +362,7 @@ const transformBasicStatement = (
             : `"${item.valueList[0].value}${item.valueList[1].value}"`
         }`;
       } else {
+        if (item.value === '') return;
         switch (item.enName) {
           case 'outPut':
             handleStatementOutput(item.value, '', result);
