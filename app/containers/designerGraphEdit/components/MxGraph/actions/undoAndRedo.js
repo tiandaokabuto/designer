@@ -258,7 +258,7 @@ function goHandleRedo_real(
     if (redoStep.type === 'remove') {
       needPush = true;
       graph.removeCells([find_id(redoStep.change.id, graph)]);
-      deleteFromMxModel();
+      deleteFromMxModel(redoStep.change.id, graph);
       undo_s.pop(redoStep.change.id, graph);
       updateGraphDataAction(graph);
     }
