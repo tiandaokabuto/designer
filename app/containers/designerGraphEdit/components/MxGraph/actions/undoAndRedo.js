@@ -1,13 +1,12 @@
 import { message } from 'antd';
 
 // 从mxGraph里面强制删除元素
-const deleteFromMxModel = (id, graph) =>{
+const deleteFromMxModel = (id, graph) => {
   Object.keys(graph.model.cells).forEach(mxIndex => {
-    console.log(graph.model.cells[mxIndex].id)
-    if (graph.model.cells[mxIndex].id === id)
-      delete graph.model.cells[mxIndex];
+    console.log(graph.model.cells[mxIndex].id);
+    if (graph.model.cells[mxIndex].id === id) delete graph.model.cells[mxIndex];
   });
-}
+};
 
 // 用我们的id找到那个cell
 const find_id = (id, graph) => {
@@ -71,7 +70,7 @@ function goHandleUndo_real(
       //delete undo_s[undo_s.length - 2];
       undo_s[undo_s.length - 2] = undo_s[undo_s.length - 1];
       // 2. 移除 move
-      undo_s.pop();
+      //undo_s.pop();
       // 3. 更新 当前操作的步骤
       undoStepArray = [...undo_s[undo_s.length - 1]];
       // 4. 把temp中的id全部替换到当前对应位置
@@ -156,21 +155,28 @@ function goHandleUndo_real(
       updateGraphDataAction(graph);
     }
 
-    if (
-      undoStep.type === 'cellsAdded' ||
-      undoStep.type === 'cellsAdded_By_redo'
-    ) {
+    if (undoStep.type === 'cellsAdded') {
       needPush = true;
 
       undo_s.pop();
       setTimeout(() => {
         graph.removeCells([find_id(undoStep.change.id, graph)]);
         deleteFromMxModel(undoStep.change.id, graph); //从mxGraph的Model里面删掉
-        undo_s.pop()
+        undo_s.pop();
         updateGraphDataAction(graph);
       }, 0);
 
       undoStepArray[index].type = 'cellsAdded_By_redo';
+    }
+
+    if (undoStep.type === 'cellsAdded_By_redo') {
+      needPush = true;
+      setTimeout(() => {
+        graph.removeCells([find_id(undoStep.change.id, graph)]);
+        deleteFromMxModel(undoStep.change.id, graph); //从mxGraph的Model里面删掉
+        undo_s.pop();
+        updateGraphDataAction(graph);
+      }, 0);
     }
   });
 
@@ -252,7 +258,7 @@ function goHandleRedo_real(
     if (redoStep.type === 'remove') {
       needPush = true;
       graph.removeCells([find_id(redoStep.change.id, graph)]);
-      deleteFromMxModel()
+      deleteFromMxModel();
       undo_s.pop(redoStep.change.id, graph);
       updateGraphDataAction(graph);
     }
