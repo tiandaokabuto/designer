@@ -902,14 +902,6 @@ const MxgraphContainer = useInjectContext(
             };
           })
         );
-
-        undoAndRedoRef.current.counter += 1;
-        // updateGraphDataAction(graph);
-        // changeModifyState(
-        //   processTreeRef.current,
-        //   currentCheckedTreeNodeRef.current,
-        //   true
-        // );
       });
 
       // 删除
