@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
-import LoopPanelParam from '../../app/containers/designerGraphBlock/layout/DragParamPanel/ParamPanel/LoopPanelParam';
+import LoopPanelParam from '../../app/containers/designerGraphBlock/DragParamPanel/ParamPanel/LoopPanelParam';
 
 Enzyme.configure({ adapter: new Adapter() });
 const setFlag = jest.fn(() => {});

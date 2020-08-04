@@ -1,0 +1,119 @@
+.interactive {
+  display: flex;
+  background: aliceblue;
+  height: 100%;
+  &-item {
+    flex-basis: 220px;
+    .interactive-control {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 43px;
+      border-radius: 3px;
+      border: 1px solid rgba(238, 238, 238, 1);
+      margin-bottom: 8px;
+      user-select: none;
+      cursor: pointer;
+      &:hover {
+        border-color: #32a68d;
+      }
+    }
+    .interactive-collapse {
+      height: 100%;
+      overflow-y: auto;
+    }
+  }
+  &-container {
+    flex: 1;
+    &-layout {
+      height: 100%;
+      .layout {
+        height: 100% !important;
+        overflow: auto;
+        overflow-x: hidden;
+      }
+    }
+    .interactive-wrapper-preview {
+      &:hover {
+        .interactive-wrapper-operation {
+          visibility: visible;
+        }
+      }
+    }
+    .interactive-wrapper {
+      position: relative;
+      .interactive-placeholder {
+        position: absolute;
+        border: 1px dashed #32a67f;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        color: rgba(74, 192, 159, 1);
+        align-items: center;
+      }
+      &-operation {
+        visibility: hidden;
+        > .anticon {
+          margin-right: 12px;
+          cursor: pointer;
+        }
+        position: absolute;
+        right: 0;
+        top: -16px;
+      }
+    }
+    .interactive-handler {
+      cursor: pointer;
+    }
+    .interactive-input {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      input {
+        flex: 1;
+        margin-left: 12px;
+      }
+      .ant-input-password {
+        flex: 1;
+        margin-left: 12px;
+      }
+    }
+    .interactive-image {
+      width: 100%;
+      height: 100%;
+      background-image: url('../../../../../images/pvc_placeholer.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    .interactive-images {
+      width: 100%;
+      height: 100%;
+      background-image: url('../../../../../images/pvc_most.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+  }
+
+  &-parampanel {
+    flex-basis: 220px;
+    background: rgba(255, 255, 255, 1);
+    &-title {
+      height: 40px;
+      line-height: 40px;
+      padding-left: 35px;
+
+      box-shadow: 0px 1px 0px 0px rgba(238, 238, 238, 1);
+    }
+    .parampanel-item {
+      display: flex;
+      margin: 8px 0 8px 8px;
+      input {
+        flex: 1;
+        margin-left: 12px;
+      }
+    }
+  }
+}

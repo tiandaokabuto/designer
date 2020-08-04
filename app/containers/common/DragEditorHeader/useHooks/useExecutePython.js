@@ -2,7 +2,7 @@ import { message } from 'antd';
 
 import event, {
   PYTHON_OUTPUT,
-} from '../../../designerGraphBlock/layout/eventCenter';
+} from '../../../designerGraphBlock/eventCenter';
 import PATH_CONFIG from '@/constants/localFilePath.js';
 const { exec, spawn } = require('child_process');
 const iconv = require('iconv-lite');

@@ -4,7 +4,7 @@ import {
   insertAfter,
   isChildrenNode,
   findNodeById,
-} from '../../../../../app/containers/designerGraphBlock/layout/shared/utils';
+} from '../../../../../app/containers/designerGraphBlock/shared/utils';
 
 let cards = null;
 

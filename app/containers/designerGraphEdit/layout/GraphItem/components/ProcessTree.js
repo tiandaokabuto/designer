@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
 import { ItemPanel, Item } from 'gg-editor';
 
-import DragCard from '../../../../designerGraphBlock/layout/DragItem/components/DragCard';
+import DragCard from '../../../../designerGraphBlock/DragItem/components/DragCard';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
@@ -26,7 +26,7 @@ import {
   findNodeByKey,
   getDecryptOrNormal,
 } from '_utils/utils';
-import event from '../../../../designerGraphBlock/layout/eventCenter';
+import event from '../../../../designerGraphBlock/eventCenter';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
 import SaveConfirmModel from './SaveConfirmModel';

@@ -17,14 +17,14 @@ import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 import event, {
   STOP_RUNNING,
   START_POINT,
-} from '../../designerGraphBlock/layout/eventCenter';
+} from '../../designerGraphBlock/eventCenter';
 import {
   UNDO_CARDSDATA,
   REDO_CARDSDATA,
   RESET_PENDING_QUEUE,
   CHANGE_FORCEUPDATE_TAG,
 } from '../../../constants/actions/codeblock';
-import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
+import { usePublishProcessZip } from '../../designerGraphBlock/useHooks';
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
 import IconFont from '../../components/IconFont/index';
 import usePersistentStorage from './useHooks/usePersistentStorage';

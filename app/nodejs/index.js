@@ -2,7 +2,7 @@ import { message } from 'antd';
 import { issueProcess } from './utils';
 import event, {
   PYTHON_OUTPUT,
-} from '../containers/designerGraphBlock/layout/eventCenter';
+} from '../containers/designerGraphBlock/eventCenter';
 
 const fs = require('fs');
 const process = require('process');

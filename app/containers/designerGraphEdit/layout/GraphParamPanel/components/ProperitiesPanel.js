@@ -5,8 +5,8 @@ import useDebounce from 'react-hook-easier/lib/useDebounce';
 
 import mxgraph from '../../../../designerGraphEdit/components/MxGraph/mxgraph';
 import VariablePanel from './VariablePanel';
-import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
-import event from '../../../../designerGraphBlock/layout/eventCenter';
+import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/useHooks';
+import event from '../../../../designerGraphBlock/eventCenter';
 
 import {
   updateGraphData,

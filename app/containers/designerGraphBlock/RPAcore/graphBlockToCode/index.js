@@ -20,7 +20,7 @@ import {
   VariableDeclareTag,
   CustomCodeBlockTag,
   ModuleBlockTag,
-} from '../../layout/statementTags';
+} from '../../statementTags';
 import { isArray } from '../../../../utils/designerGraphBlock/isArray';
 
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';

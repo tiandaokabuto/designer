@@ -5,7 +5,7 @@ import uniqueId from 'lodash/uniqueId';
 import cloneDeep from 'lodash/cloneDeep';
 import moment from 'moment';
 import useGetDownloadPath from '../containers/common/DragEditorHeader/useHooks/useGetDownloadPath';
-// import useTransformToPython from '../designerGraphBlock/layout/useHooks/useTransformToPython';
+// import useTransformToPython from '../designerGraphBlock/useHooks/useTransformToPython';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
@@ -16,7 +16,7 @@ import {
 } from '../containers/reduxActions';
 import store from '../store';
 import { readDir } from '../nodejs';
-import event from '../containers/designerGraphBlock/layout/eventCenter';
+import event from '../containers/designerGraphBlock/eventCenter';
 import PATH_CONFIG from '../constants/localFilePath'; // '@/constants/localFilePath';
 import { encrypt } from '../login/utils'; // '@/login/utils';
 import RenameInput from '../containers/components/RenameInput';

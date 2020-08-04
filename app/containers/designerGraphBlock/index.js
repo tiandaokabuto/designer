@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
-import DragContainer from './layout/DragContainer';
-import DragItem from './layout/DragItem';
-import DragParamPanel from './layout/DragParamPanel';
-import SyncAutomicList from './layout/DragItem/components/SyncAutomicList';
+import DragContainer from './DragContainer';
+import DragItem from './DragItem';
+import DragParamPanel from './DragParamPanel';
+import SyncAutomicList from './DragItem/components/SyncAutomicList';
 
 import { writeFile } from '../../nodejs';
 
