@@ -5,10 +5,10 @@ import useDebounce from 'react-hook-easier/lib/useDebounce';
 import { useSelector, useDispatch } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
 
-import BasicStatement from '../MiddleCard/BasicStatement';
-import LoopStatement from '../MiddleCard/LoopStatement';
-import ConditionalStatement from '../MiddleCard/ConditionalStatement';
-import Interactive from '../MiddleCard/BasicStatement/components/Interactive';
+import BasicStatement from '../DragCardStatement/BasicStatement';
+import LoopStatement from '../DragCardStatement/LoopStatement';
+import ConditionalStatement from '../DragCardStatement/ConditionalStatement';
+import Interactive from '../DragCardStatement/BasicStatement/components/Interactive';
 import {
   BasicStatementTag,
   LoopStatementTag,
