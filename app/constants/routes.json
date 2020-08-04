@@ -1,8 +1,8 @@
 {
-  "RecentOpenProject": "/",
+  "RECENTOPENPROJECT": "/",
   "DESIGNGRAPHEDIT": "/designGraph/edit",
   "COUNTER": "/counter",
-  "DesignerGraphBlock": "/designGraph/block",
+  "DESIGNERGRAPHBLOCK": "/designGraph/block",
   "LOGIN": "/login",
   "DESIGNGRAPH": "/designGraph"
 }

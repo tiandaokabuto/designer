@@ -31,7 +31,7 @@ export default () => (
         <Switch>
           <Route
             exact
-            path={routes.RecentOpenProject}
+            path={routes.RECENTOPENPROJECT}
             component={RecentOpenProject}
           />
           <Route path={routes.DESIGNGRAPH} component={DesignerGraph} />

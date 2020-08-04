@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "../",
+    "paths": {
+      "_utils/*": ["app/utils/*"],
+      "@/*": ["app/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["app"]
+}
