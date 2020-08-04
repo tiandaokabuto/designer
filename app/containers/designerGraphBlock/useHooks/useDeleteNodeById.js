@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { findNodeLevelById } from '../shared/utils';
+import { findNodeLevelById } from '../../../utils/designerGraphBlock/utils';
 
 import useNoticyBlockCodeChange from './useNoticyBlockCodeChange';
 import { CHANGE_CARDDATA } from '../../../constants/actions/codeblock';

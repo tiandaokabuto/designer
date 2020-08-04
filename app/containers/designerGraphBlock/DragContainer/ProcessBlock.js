@@ -5,10 +5,10 @@ import useDebounce from 'react-hook-easier/lib/useDebounce';
 import { useSelector, useDispatch } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
 
-import BasicStatement from '../components/BasicStatement';
-import LoopStatement from '../components/LoopStatement';
-import ConditionalStatement from '../components/ConditionalStatement';
-import Interactive from '../components/BasicStatement/components/Interactive';
+import BasicStatement from '../MiddleCard/BasicStatement';
+import LoopStatement from '../MiddleCard/LoopStatement';
+import ConditionalStatement from '../MiddleCard/ConditionalStatement';
+import Interactive from '../MiddleCard/BasicStatement/components/Interactive';
 import {
   BasicStatementTag,
   LoopStatementTag,
@@ -28,7 +28,7 @@ import {
   isTailStatement,
   isMainProcessPlaceholder,
   isConditionalStatementPlaceholder,
-} from '../shared/utils';
+} from '../../../utils/designerGraphBlock/utils';
 import { changeAIHintList, setNodeIgnore } from './utils';
 
 import {

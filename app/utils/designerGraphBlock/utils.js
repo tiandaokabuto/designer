@@ -1,8 +1,8 @@
-import { LoopStatementTag, ConditionalStatementTag } from '../statementTags';
+import { LoopStatementTag, ConditionalStatementTag } from '../../containers/designerGraphBlock/statementTags';
 import {
   PLACEHOLDER_MAINPROCESS,
   PLACEHOLDER_CONDITIONALSTATEMENT,
-} from '../statementTypes';
+} from '../../containers/designerGraphBlock/statementTypes';
 import cloneDeep from 'lodash/cloneDeep';
 
 /**

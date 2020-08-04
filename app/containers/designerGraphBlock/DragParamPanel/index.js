@@ -6,7 +6,7 @@ import useThrottle from 'react-hook-easier/lib/useThrottle';
 
 import { useTransformToPython } from '../useHooks';
 import ParamPanel from './ParamPanel';
-import { findNodeById } from '../shared/utils';
+import { findNodeById } from '../../../utils/designerGraphBlock/utils';
 import GraphContainer from '../../designerGraphEdit/layout/GraphContainer';
 import VariablePanel from '../../designerGraphEdit/layout/GraphParamPanel/components/VariablePanel';
 const { TabPane } = Tabs;
