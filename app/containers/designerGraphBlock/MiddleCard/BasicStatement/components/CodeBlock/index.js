@@ -3,7 +3,7 @@ import { Modal } from 'antd';
 import { useSelector } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 
-import CodeMirrorEditor from '../../../../DragContainer/components/CodeMirrorEditor';
+import CodeMirrorEditor from '../../../../DragContainer/CodeMirrorEditor';
 import {
   useNoticyBlockCodeChange,
   useTransformToPython,

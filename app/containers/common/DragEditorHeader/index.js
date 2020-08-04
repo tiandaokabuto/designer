@@ -14,10 +14,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
-import event, {
-  STOP_RUNNING,
-  START_POINT,
-} from '../../designerGraphBlock/eventCenter';
+import event, { STOP_RUNNING, START_POINT } from '@/containers/eventCenter';
 import {
   UNDO_CARDSDATA,
   REDO_CARDSDATA,

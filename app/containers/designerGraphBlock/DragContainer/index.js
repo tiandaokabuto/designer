@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 import ProcessBlock from './ProcessBlock';
 import CodeEditing from './CodeEditing';
-import OutputPanel from './OutputPanel';
+import OutputPanel from '@/containers/components/OutputPanel/OutputPanel';
 
 import './index.scss';
 

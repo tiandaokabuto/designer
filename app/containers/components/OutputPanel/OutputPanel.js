@@ -4,10 +4,10 @@ import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import { Icon, Input, Dropdown, Menu } from 'antd';
 
-import event, { PYTHON_OUTPUT } from '../eventCenter';
-import FilterToolbar from './components/FilterToolbar';
-import Tags from './components/Tags';
-import ZoomToolBar from './components/ZoomToolBar';
+import event, { PYTHON_OUTPUT } from '@/containers/eventCenter';
+import FilterToolbar from './FilterToolbar';
+import Tags from './Tags';
+import ZoomToolBar from './ZoomToolBar';
 import useGetDownloadPath from '../../common/DragEditorHeader/useHooks/useGetDownloadPath';
 
 const fs = require('fs');

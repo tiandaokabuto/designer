@@ -1,8 +1,6 @@
 import { Action_DeleteCell } from '../actions/deleteCell';
 import { Action_CopyCell, Action_PasteCell } from '../actions/copyCell';
-import event, {
-  START_POINT,
-} from '../../../designerGraphBlock/eventCenter';
+import event, { START_POINT } from '@/containers/eventCenter';
 import { addToReuse, exportCustomProcessBlock } from '_utils/utils';
 
 export default (

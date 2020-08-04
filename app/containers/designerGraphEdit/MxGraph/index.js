@@ -9,7 +9,7 @@ import mxgraph from './mxgraph';
 import GraphItem from '../GraphItem';
 import GraphParamPanel from '../GraphParamPanel';
 import MxGraphHeader from './components/MxGraphHeader';
-import OutputPanel from '../../designerGraphBlock/DragContainer/OutputPanel';
+import OutputPanel from '@/containers/components/OutputPanel/OutputPanel';
 import { isDirNode, changeModifyState } from '_utils/utils';
 // import useSaveAsXML from '../../../common/DragEditorHeader/useHooks/useSaveAsXML';
 import {
@@ -34,7 +34,7 @@ import {
   END_NODE,
 } from './CellProperties';
 import { POINT_POSITION_EXIT, POINT_POSITION_ENTRY } from './PointPosition';
-import event from '../../designerGraphBlock/eventCenter';
+import event from '@/containers/eventCenter';
 import { updateGraphDataAction, deleteCellAction } from './mxgraphAction';
 
 import './index.scss';

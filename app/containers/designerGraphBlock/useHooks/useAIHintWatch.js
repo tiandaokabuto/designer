@@ -1,7 +1,7 @@
 import { useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import event from '../eventCenter';
+import event from '@/containers/eventCenter';
 
 // Number（数字）
 // String（字符串）

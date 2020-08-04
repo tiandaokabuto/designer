@@ -5,7 +5,7 @@ import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
 import { useNoticyBlockCodeChange } from '../../../designerGraphBlock/useHooks';
 import { synchroGraphDataToProcessTree } from '../../../reduxActions';
-import event from '../../../designerGraphBlock/eventCenter';
+import event from '@/containers/eventCenter';
 
 import './VariablePanel.scss';
 

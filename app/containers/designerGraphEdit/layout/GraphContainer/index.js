@@ -23,7 +23,7 @@ import WhileJPG from '@/containers/images/while.jpg';
 import DoWhileJPG from '@/containers/images/doWhile.jpg';
 import ForEachJPG from '@/containers/images/forEach.jpg';
 
-import OutputPanel from '../../../designerGraphBlock/DragContainer/OutputPanel';
+import OutputPanel from '@containers/common/OutputPanel';
 
 import EditorChange, {
   registerDataChange,

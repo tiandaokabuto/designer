@@ -1,4 +1,4 @@
 import useEventEmitter from 'react-hook-easier/lib/useEventEmitter';
 
-export * from '../../constants/designerGraphBlock/eventTags';
+export * from './eventTags';
 export default useEventEmitter();

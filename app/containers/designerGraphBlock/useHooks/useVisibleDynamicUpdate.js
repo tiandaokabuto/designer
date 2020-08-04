@@ -2,8 +2,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
-import { findNodeLevelById, findNodeById } from '../../../utils/designerGraphBlock/utils';
-import event from '../eventCenter';
+import {
+  findNodeLevelById,
+  findNodeById,
+} from '../../../utils/designerGraphBlock/utils';
+import event from '@/containers/eventCenter';
 import useTransformToPython from './useTransformToPython';
 
 export default (id, visibleTemplate) => {

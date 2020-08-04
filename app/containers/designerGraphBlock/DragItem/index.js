@@ -10,7 +10,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import DragCard from './components/DragCard';
 import ContextMenu from './components/ContextMenu';
 import ProcessTree from '../../designerGraphEdit/GraphItem/components/ProcessTree';
-import event from '../eventCenter';
+import event from '@/containers/eventCenter';
 import {
   BasicStatementTag,
   LoopStatementTag,

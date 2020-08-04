@@ -26,7 +26,7 @@ import {
   findNodeByKey,
   getDecryptOrNormal,
 } from '_utils/utils';
-import event from '../../../designerGraphBlock/eventCenter';
+import event from '@/containers/eventCenter';
 import usePersistentStorage from '../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 import usePersistentModuleStorage from '../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
 import SaveConfirmModel from './SaveConfirmModel';

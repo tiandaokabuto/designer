@@ -12,7 +12,7 @@ import { Input, Select, Tooltip, Button, Modal } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 
-import event from '../../eventCenter';
+import event from '@/containers/eventCenter';
 import { CHANGE_FORCEUPDATE_TAG } from '../../../../constants/actions/codeblock';
 import {
   useAIHintWatch,
@@ -22,7 +22,7 @@ import {
 import ConditionParam from './ConditionParam';
 import LoopPanelParam from './LoopPanelParam';
 import XPathParam from './components/XPathParam';
-import OutputPanel from './OutputParam';
+import OutputParam from './OutputParam';
 import FileParam from './FileParam';
 import DirectoryParam from './DirectoryParam';
 import TaskDataParam from './TaskDataParam';
@@ -681,7 +681,7 @@ export default ({ checkedBlock, cards, handleEmitCodeTransform }) => {
             {(checkedBlock.properties.required || []).map((param, index) => {
               if (param.enName === 'return_string') {
                 return (
-                  <OutputPanel
+                  <OutputParam
                     key={checkedBlock.id + index}
                     output={param.value}
                     handleEmitCodeTransform={() => {

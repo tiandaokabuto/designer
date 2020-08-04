@@ -16,7 +16,7 @@ import {
 } from '../containers/reduxActions';
 import store from '../store';
 import { readDir } from '../nodejs';
-import event from '../containers/designerGraphBlock/eventCenter';
+import event from '@/containers/eventCenter';
 import PATH_CONFIG from '../constants/localFilePath'; // '@/constants/localFilePath';
 import { encrypt } from '../login/utils'; // '@/login/utils';
 import RenameInput from '../containers/components/RenameInput';

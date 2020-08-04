@@ -10,7 +10,7 @@ import { traverseTree, getDecryptOrNormal } from '_utils/utils';
 import { updateAutomicList } from '../../../reduxActions';
 import api from '../../../../api';
 import store from '../../../../store';
-import event from '../../eventCenter';
+import event from '@/containers/eventCenter';
 import { encrypt, writeFileRecursive } from '../../../../login/utils';
 import defaultConfig from '@/constants/default.txt';
 
