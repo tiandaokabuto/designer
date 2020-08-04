@@ -4,15 +4,12 @@ import { Button } from 'antd';
 
 import GraphBlockHeader from '../common/GraphBlockHeader';
 import DragEditorHeader from '../common/DragEditorHeader';
-import FlowContextMenu from './layout/GraphContainer/components/EditorContextMenu/FlowContextMenu';
-import ReuseCommand from './layout/GraphContainer/components/EditorContextMenu/ReuseCommand';
 
-import GraphContainer from './layout/GraphContainer';
-import GraphItem from './layout/GraphItem';
-import GraphParamPanel from './layout/GraphParamPanel';
-import Loading from '../../containers/images/loading.gif';
+import GraphItem from './GraphItem';
+import GraphParamPanel from './GraphParamPanel';
+import Loading from '../../containers/assets/images/loading.gif';
 import { history } from '../../store/configureStore';
-import MxGraph from './components/MxGraph';
+import MxGraph from './MxGraph';
 
 import './index.scss';
 

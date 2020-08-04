@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { Switch, Route } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 
-import Loading from './containers/images/loading.gif';
+import Loading from './containers/assets/images/loading.gif';
 import routes from '../app/constants/routes.json';
 import App from './containers/App';
 
@@ -31,7 +31,7 @@ export default () => (
         <Switch>
           <Route
             exact
-            path={routes.RecentOpenProject}
+            path={routes.RECENTOPENPROJECT}
             component={RecentOpenProject}
           />
           <Route path={routes.DESIGNGRAPH} component={DesignerGraph} />

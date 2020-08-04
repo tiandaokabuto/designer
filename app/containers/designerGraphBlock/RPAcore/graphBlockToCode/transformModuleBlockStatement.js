@@ -1,6 +1,6 @@
 import React from 'react';
 
-import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
+import { transformVariable } from '_utils/RPACoreUtils/GraphEdit/utils';
 import { uuid } from '_utils/utils';
 
 const transformModuleBlockStatement = (

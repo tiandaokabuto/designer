@@ -23,7 +23,7 @@
   }
   &-rightcontent {
     flex-basis: 50%;
-    background-image: url('../images/recent.png');
+    background-image: url('../assets/images/recent.png');
     background-size: cover;
     &-close {
       position: absolute;
@@ -32,7 +32,7 @@
       width: 90px;
       background-size: cover;
       cursor: pointer;
-      background-image: url('../images/recent-close.png');
+      background-image: url('../assets/images/recent-close.png');
     }
   }
 }

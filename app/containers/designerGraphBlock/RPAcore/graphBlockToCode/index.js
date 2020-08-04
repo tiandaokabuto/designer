@@ -23,8 +23,6 @@ import {
 } from '../../statementTags';
 import { isArray } from '../../../../utils/designerGraphBlock/isArray';
 
-import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
-
 const paddingStart = length => '    '.repeat(length);
 
 const result = {

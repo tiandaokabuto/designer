@@ -7,8 +7,8 @@ import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useTransformToPython } from '../useHooks';
 import ParamPanel from './ParamPanel';
 import { findNodeById } from '../../../utils/designerGraphBlock/utils';
-import GraphContainer from '../../designerGraphEdit/layout/GraphContainer';
-import VariablePanel from '../../designerGraphEdit/layout/GraphParamPanel/components/VariablePanel';
+import VariablePanel from '../../designerGraphEdit/GraphParamPanel/components/VariablePanel';
+
 const { TabPane } = Tabs;
 let isMouseDown = false;
 let startOffset = 0;

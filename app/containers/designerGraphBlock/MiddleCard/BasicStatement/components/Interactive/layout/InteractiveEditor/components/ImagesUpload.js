@@ -1,7 +1,7 @@
 import React from 'react';
 import { Skeleton } from 'antd';
 
-import Placeholder from '../../../../../../../../images/pvc_most.png';
+import Placeholder from '../../../../../../../../assets/images/pvc_most.png';
 
 export default ({ desc, i }) => {
   return (

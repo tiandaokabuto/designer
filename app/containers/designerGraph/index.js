@@ -14,7 +14,7 @@ export default useInjectContext(({ history }) => {
       <GraphBlockHeader history={history} />
       <DragEditorHeader />
       <Route path={routes.DESIGNGRAPHEDIT} component={DesignerGraphEdit} />
-      <Route path={routes.DesignerGraphBlock} component={DesignerGraphBlock} />
+      <Route path={routes.DESIGNERGRAPHBLOCK} component={DesignerGraphBlock} />
     </Fragment>
   );
 });
