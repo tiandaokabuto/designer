@@ -10,7 +10,7 @@ import {
   findCommonTarget,
   hasTwoEntryPoint,
   hasTwoEntryPortInProcessBlock,
-} from './utils';
+} from '_utils/RPACoreUtils/GraphEdit/utils';
 
 import { writeFileRecursive } from '../../../nodejs';
 
