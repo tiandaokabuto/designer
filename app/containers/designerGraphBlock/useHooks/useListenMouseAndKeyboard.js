@@ -10,7 +10,7 @@ import {
   updateCardData,
 } from '../../reduxActions';
 import { insertAfter } from '../../../utils/designerGraphBlock/utils';
-import { PREFIX_ID } from '../statementTypes';
+import { PREFIX_ID } from '../constants/statementTypes';
 const remote = require('electron').remote;
 const { clipboard } = require('electron');
 const electronLocalshortcut = require('electron-localshortcut');

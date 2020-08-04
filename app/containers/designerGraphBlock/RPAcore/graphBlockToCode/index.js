@@ -20,7 +20,7 @@ import {
   VariableDeclareTag,
   CustomCodeBlockTag,
   ModuleBlockTag,
-} from '../../statementTags';
+} from '../../constants/statementTags';
 import { isArray } from '../../../../utils/designerGraphBlock/isArray';
 
 const paddingStart = length => '    '.repeat(length);

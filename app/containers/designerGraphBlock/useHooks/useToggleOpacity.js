@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { PLACEHOLDER_STATEMENT } from '../statementTypes';
+import { PLACEHOLDER_STATEMENT } from '../constants/statementTypes';
 
 export default ({ isDraggingNode, id, index }) => {
   const [opacity, setOpacity] = useState(1);

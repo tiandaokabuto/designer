@@ -15,7 +15,7 @@ import {
   BasicStatementTag,
   LoopStatementTag,
   ConditionalStatementTag,
-} from '../statementTags';
+} from '../constants/statementTags';
 import { traverseTree, findNodeByKey } from '_utils/utils';
 import { changeBlockTreeTab } from '../../reduxActions';
 

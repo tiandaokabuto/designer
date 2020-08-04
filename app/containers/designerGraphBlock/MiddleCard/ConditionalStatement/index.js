@@ -15,7 +15,7 @@ import {
 } from '../../useHooks';
 import { propagateIgnoreChange } from '../../DragContainer/utils';
 
-import ItemTypes from '../../statementTypes';
+import ItemTypes from '../../constants/statementTypes';
 
 import './index.scss';
 
@@ -29,7 +29,7 @@ const style = {
   marginRight: '8px',
 };
 
-const ConditionalStatement = useInjectContext((props) => {
+const ConditionalStatement = useInjectContext(props => {
   const {
     id,
     text,
@@ -50,7 +50,7 @@ const ConditionalStatement = useInjectContext((props) => {
 
   const [isFold, setFold] = useState(false);
 
-  const cards = useSelector((state) => state.blockcode.cards);
+  const cards = useSelector(state => state.blockcode.cards);
 
   const [backgroundColor, isIgnore, setIsIgnore] = useChangeCheckedBlockColor(
     id,
@@ -128,16 +128,16 @@ const ConditionalStatement = useInjectContext((props) => {
           <span
             key={uniqueId('visible_')}
             data-id={id}
-            onClick={(e) => {
+            onClick={e => {
               const anchor = e.target.dataset.anchor;
               changeToEditableTemplate(anchor);
               // 触发变量的修改
             }}
-            onDragStart={(e) => {
+            onDragStart={e => {
               e.preventDefault();
             }}
             onBlur={save}
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               if (e.keyCode === 13) {
                 save(e);
               }

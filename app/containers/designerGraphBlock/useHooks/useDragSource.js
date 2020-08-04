@@ -4,7 +4,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { useDispatch, useSelector } from 'react-redux';
 
 import useLockContextMenu from './useLockContextMenu';
-import ItemTypes from '../statementTypes';
+import ItemTypes from '../constants/statementTypes';
 import { CHANGE_CARDDATA } from '../../../constants/actions/codeblock';
 
 export default ({

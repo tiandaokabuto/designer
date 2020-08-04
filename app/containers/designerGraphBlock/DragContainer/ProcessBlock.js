@@ -13,11 +13,11 @@ import {
   BasicStatementTag,
   LoopStatementTag,
   ConditionalStatementTag,
-} from '../statementTags';
+} from '../constants/statementTags';
 import {
   PLACEHOLDER_STATEMENT,
   PLACEHOLDER_MAINPROCESS,
-} from '../statementTypes';
+} from '../constants/statementTypes';
 import {
   trimId,
   useNode,

@@ -2,7 +2,10 @@ import { useRef } from 'react';
 import { useDrop } from 'react-dnd';
 import uniqueId from 'lodash/uniqueId';
 
-import ItemTypes, { PLACEHOLDER_STATEMENT, PREFIX_ID } from '../statementTypes';
+import ItemTypes, {
+  PLACEHOLDER_STATEMENT,
+  PREFIX_ID,
+} from '../constants/statementTypes';
 
 const useDropTarget = ({
   setClassName,

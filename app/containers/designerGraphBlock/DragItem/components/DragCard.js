@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Tooltip } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
-import ItemTypes from '../../statementTypes';
+import ItemTypes from '../../constants/statementTypes';
 import { CHANGE_CARDDATA } from '../../../../constants/actions/codeblock';
 import { encrypt } from '@/login/utils';
 import PATH_CONFIG from '@/constants/localFilePath';

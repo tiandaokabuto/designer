@@ -27,11 +27,11 @@ import {
   useChangeCompatable,
 } from '../../useHooks';
 
-import { BasicStatementTag } from '../../statementTags';
+import { BasicStatementTag } from '../../constants/statementTags';
 import Interactive from './components/Interactive';
 import CodeBlock from './components/CodeBlock';
 import MaskLayer from './components/MaskLayer';
-import ItemTypes from '../../statementTypes';
+import ItemTypes from '../../constants/statementTypes';
 
 import './index.scss';
 
