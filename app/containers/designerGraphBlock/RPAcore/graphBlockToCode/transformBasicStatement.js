@@ -359,7 +359,7 @@ const transformBasicStatement = (
         params += `${item.enName} = ${
           !Array.isArray(item.valueList)
             ? 'None'
-            : `"${item.valueList[0].value}${item.valueList[1].value}"`
+            : `${item.valueList[0].value} + ${item.valueList[1].value}`
         }`;
       } else {
         if (item.value === '') return;
