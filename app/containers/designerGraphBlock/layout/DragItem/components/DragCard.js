@@ -3,10 +3,10 @@ import { Tooltip } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import ItemTypes from '../../statementTypes';
-import { CHANGE_CARDDATA } from '../../../../../actions/codeblock';
+import { CHANGE_CARDDATA } from '../../../../../constants/actions/codeblock';
 import { encrypt } from '@/login/utils';
 import PATH_CONFIG from '@/constants/localFilePath';
-import { getDecryptOrNormal } from '../../../../common/utils';
+import { getDecryptOrNormal } from '_utils/utils';
 
 const fs = require('fs');
 

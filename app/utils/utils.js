@@ -4,7 +4,7 @@ import { Input, message, Icon } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import cloneDeep from 'lodash/cloneDeep';
 import moment from 'moment';
-import useGetDownloadPath from './DragEditorHeader/useHooks/useGetDownloadPath';
+import useGetDownloadPath from '../containers/common/DragEditorHeader/useHooks/useGetDownloadPath';
 // import useTransformToPython from '../designerGraphBlock/layout/useHooks/useTransformToPython';
 import {
   changeProcessTree,
@@ -13,15 +13,15 @@ import {
   changeCheckedModuleTreeNode,
   clearGrapheditorData,
   changeSavingModuleData,
-} from '../reduxActions';
-import store from '../../store';
-import { readDir } from '../../nodejs';
-import event from '../designerGraphBlock/layout/eventCenter';
-import PATH_CONFIG from '../../constants/localFilePath'; // '@/constants/localFilePath';
-import { encrypt } from '../../login/utils'; // '@/login/utils';
-import RenameInput from './components/RenameInput';
-import transformEditorGraphData from '../designerGraphEdit/RPAcore';
-import { designerVersion } from '../common/GraphBlockHeader/HelpModel/version';
+} from '../containers/reduxActions';
+import store from '../store';
+import { readDir } from '../nodejs';
+import event from '../containers/designerGraphBlock/layout/eventCenter';
+import PATH_CONFIG from '../constants/localFilePath'; // '@/constants/localFilePath';
+import { encrypt } from '../login/utils'; // '@/login/utils';
+import RenameInput from '../containers/components/RenameInput';
+import transformEditorGraphData from '../containers/designerGraphEdit/RPAcore';
+import { designerVersion } from '../containers/common/GraphBlockHeader/HelpModel/version';
 
 const fs = require('fs');
 const process = require('process');

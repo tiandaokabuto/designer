@@ -14,7 +14,7 @@ import {
 import PATH_CONFIG from '@/constants/localFilePath.js';
 import event from '../../../designerGraphBlock/layout/eventCenter';
 
-import { changeModifyState, getDecryptOrNormal } from '../../../common/utils';
+import { changeModifyState, getDecryptOrNormal } from '_utils/utils';
 
 import store from '../../../../store';
 

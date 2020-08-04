@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { CHANGE_CHECKEDID } from '../../../../actions/codeblock';
+import { CHANGE_CHECKEDID } from '../../../../constants/actions/codeblock';
 import { keyDownMap } from './useListenMouseAndKeyboard';
 
 const prevChecked = {

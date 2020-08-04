@@ -1,9 +1,9 @@
 import React from 'react';
 import { Input, message } from 'antd';
 
-import { changeProcessTree, changeModuleTree } from '../../reduxActions';
-import PATH_CONFIG from '../../../constants/localFilePath';
-import { encrypt } from '../../../login/utils';
+import { changeProcessTree, changeModuleTree } from '../reduxActions';
+import PATH_CONFIG from '../../constants/localFilePath';
+import { encrypt } from '../../login/utils';
 
 const fs = require('fs');
 

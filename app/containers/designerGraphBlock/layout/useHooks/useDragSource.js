@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import useLockContextMenu from './useLockContextMenu';
 import ItemTypes from '../statementTypes';
-import { CHANGE_CARDDATA } from '../../../../actions/codeblock';
+import { CHANGE_CARDDATA } from '../../../../constants/actions/codeblock';
 
 export default ({
   setIsDraggingNode,

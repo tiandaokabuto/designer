@@ -13,7 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 
 import event from '../../eventCenter';
-import { CHANGE_FORCEUPDATE_TAG } from '../../../../../actions/codeblock';
+import { CHANGE_FORCEUPDATE_TAG } from '../../../../../constants/actions/codeblock';
 import {
   useAIHintWatch,
   useAppendDataSource,

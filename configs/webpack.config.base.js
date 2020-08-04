@@ -69,6 +69,8 @@ module.exports = exports = {
     modules: [path.join(__dirname, '..', 'app'), 'node_modules'],
     alias: {
       '@': path.join(__dirname, '..', 'app'),
+      _utils: path.resolve(__dirname, '../app/utils'),
+      // _utils: path.join(__dirname, '..', 'app/utils'),
       // '@ant-design/icons/lib/dist$': path.resolve(__dirname, './src/icons.js'),
     },
   },

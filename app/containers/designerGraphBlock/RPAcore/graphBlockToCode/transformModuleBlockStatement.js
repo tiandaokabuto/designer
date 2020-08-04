@@ -1,7 +1,7 @@
 import React from 'react';
 
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
-import { uuid } from '../../../common/utils';
+import { uuid } from '_utils/utils';
 
 const transformModuleBlockStatement = (
   padding,

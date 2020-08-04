@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 import NewProject from './NewProject';
 import api from '../../../api';
-import { getModifiedNodes } from '../utils';
+import { getModifiedNodes } from '_utils/utils';
 import { changeTreeTab } from '../../reduxActions/index';
 import HelpModel from './HelpModel';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';

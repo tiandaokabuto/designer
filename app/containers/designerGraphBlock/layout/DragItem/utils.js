@@ -1,4 +1,4 @@
-import { traverseTree } from '../../../common/utils';
+import { traverseTree } from '_utils/utils';
 import { writeGlobalConfig } from './components/SyncAutomicList';
 
 export const findNodeByKey = (tree, key) => {

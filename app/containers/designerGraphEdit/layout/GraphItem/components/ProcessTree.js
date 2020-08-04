@@ -25,7 +25,7 @@ import {
   getProjectTreeData,
   findNodeByKey,
   getDecryptOrNormal,
-} from '../../../../common/utils';
+} from '_utils/utils';
 import event from '../../../../designerGraphBlock/layout/eventCenter';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';

@@ -6,7 +6,7 @@ import { Icon, message } from 'antd';
 import axios from 'axios';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { traverseTree, getDecryptOrNormal } from '../../../../common/utils';
+import { traverseTree, getDecryptOrNormal } from '_utils/utils';
 import { updateAutomicList } from '../../../../reduxActions';
 import api from '../../../../../api';
 import store from '../../../../../store';
@@ -260,7 +260,7 @@ const readGlobalConfig = (callback, flag = false) => {
 export const writeGlobalConfig = content => {
   const path = `${currPath}/globalconfig/config.json`;
   return new Promise((resolve, reject) =>
-    fs.readFile(path, function(err, data) {
+    fs.readFile(path, function (err, data) {
       if (!err) {
         fs.writeFile(
           path,

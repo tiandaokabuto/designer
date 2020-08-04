@@ -3,7 +3,7 @@ import { Action_CopyCell, Action_PasteCell } from '../actions/copyCell';
 import event, {
   START_POINT,
 } from '../../../../designerGraphBlock/layout/eventCenter';
-import { addToReuse, exportCustomProcessBlock } from '../../../../common/utils';
+import { addToReuse, exportCustomProcessBlock } from '_utils/utils';
 
 export default (
   graph,
@@ -79,7 +79,7 @@ export default (
         setGraphDataMap,
         changeCheckedGraphBlockId,
         graphData,
-        undoAndRedoRef
+        undoAndRedoRef,
       });
     };
 
