@@ -21,7 +21,7 @@ import {
   CustomCodeBlockTag,
   ModuleBlockTag,
 } from '../../layout/statementTags';
-import { isArray } from './utils';
+import { isArray } from '../../../../utils/designerGraphBlock/isArray';
 
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
 

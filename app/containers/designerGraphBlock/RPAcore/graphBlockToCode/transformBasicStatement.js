@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { isArray } from './utils';
+import { isArray } from '../../../../utils/designerGraphBlock/isArray';
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
 import { uuid } from '../../../common/utils';
 import memoize from './reselect';
