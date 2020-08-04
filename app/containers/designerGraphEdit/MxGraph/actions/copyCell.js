@@ -1,6 +1,6 @@
 import React from 'react';
 import { message } from 'antd';
-import store from '../../../../../store';
+import store from '../../../../store';
 import cloneDeep from 'lodash/cloneDeep';
 import useMxId from '../methods/useMxId';
 import { updateGraphDataAction } from '../mxgraphAction';

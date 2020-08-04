@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
-import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
+import usePersistentStorage from '../../../common/DragEditorHeader/useHooks/usePersistentStorage';
+import usePersistentModuleStorage from '../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
 
 import './ContextMenu.scss';
 

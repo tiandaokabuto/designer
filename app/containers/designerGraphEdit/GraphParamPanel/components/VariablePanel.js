@@ -3,9 +3,9 @@ import { Icon, Input } from 'antd';
 import uniqueId from 'lodash/uniqueId';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
-import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
-import { synchroGraphDataToProcessTree } from '../../../../reduxActions';
-import event from '../../../../designerGraphBlock/layout/eventCenter';
+import { useNoticyBlockCodeChange } from '../../../designerGraphBlock/layout/useHooks';
+import { synchroGraphDataToProcessTree } from '../../../reduxActions';
+import event from '../../../designerGraphBlock/layout/eventCenter';
 
 import './VariablePanel.scss';
 

@@ -6,10 +6,10 @@ import X2JS from 'x2js';
 // import { useSelector } from 'react-redux';
 
 import mxgraph from './mxgraph';
-import GraphItem from '../../layout/GraphItem';
-import GraphParamPanel from '../../layout/GraphParamPanel';
+import GraphItem from '../GraphItem';
+import GraphParamPanel from '../GraphParamPanel';
 import MxGraphHeader from './components/MxGraphHeader';
-import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
+import OutputPanel from '../../designerGraphBlock/layout/DragContainer/OutputPanel';
 import { isDirNode, changeModifyState } from '_utils/utils';
 // import useSaveAsXML from '../../../common/DragEditorHeader/useHooks/useSaveAsXML';
 import {
@@ -22,7 +22,9 @@ import {
   changeSavingModuleData,
   deleteGraphDataMap,
   changeUndoAndRedo,
-} from '../../../reduxActions';
+  updateCurrentPagePosition,
+  changeBlockTreeTab,
+} from '../../reduxActions';
 import { setConnection, createPopupMenu } from './methods';
 import useMxId from './methods/useMxId';
 import {
@@ -32,16 +34,12 @@ import {
   END_NODE,
 } from './CellProperties';
 import { POINT_POSITION_EXIT, POINT_POSITION_ENTRY } from './PointPosition';
-import event from '../../../designerGraphBlock/layout/eventCenter';
+import event from '../../designerGraphBlock/layout/eventCenter';
 import { updateGraphDataAction, deleteCellAction } from './mxgraphAction';
 
 import './index.scss';
 
 // liuqi
-import {
-  updateCurrentPagePosition,
-  changeBlockTreeTab,
-} from '../../../reduxActions';
 import { Action_DeleteCell } from './actions/deleteCell';
 import { Action_CopyCell, Action_PasteCell } from './actions/copyCell';
 import { Action_findNode } from './actions/findNode';

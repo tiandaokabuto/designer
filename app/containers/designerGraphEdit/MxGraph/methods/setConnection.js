@@ -16,7 +16,7 @@ const {
   mxEllipse,
 } = mxgraph;
 
-const pointGif = require('../../../../images/point.gif');
+const pointGif = require('../../../images/point.gif');
 
 export default () => {
   // 创建连接点图像

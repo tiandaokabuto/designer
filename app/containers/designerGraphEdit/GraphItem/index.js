@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 
 import ProcessTree from './components/ProcessTree';
-import { useChangeProjectName } from '../../useHooks';
-import { changeTreeTab } from '../../../reduxActions';
+import { useChangeProjectName } from '../useHooks';
+import { changeTreeTab } from '../../reduxActions';
 
 import './GraphContainer.scss';
 

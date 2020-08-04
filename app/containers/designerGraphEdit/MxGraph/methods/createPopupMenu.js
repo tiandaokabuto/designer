@@ -2,7 +2,7 @@ import { Action_DeleteCell } from '../actions/deleteCell';
 import { Action_CopyCell, Action_PasteCell } from '../actions/copyCell';
 import event, {
   START_POINT,
-} from '../../../../designerGraphBlock/layout/eventCenter';
+} from '../../../designerGraphBlock/layout/eventCenter';
 import { addToReuse, exportCustomProcessBlock } from '_utils/utils';
 
 export default (

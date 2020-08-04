@@ -9,7 +9,7 @@ import useMxId from '../methods/useMxId';
 import {
   setGraphDataMap,
   changeCheckedGraphBlockId,
-} from '../../../../reduxActions';
+} from '../../../reduxActions';
 import mxgraph from '../mxgraph';
 // import FlowItemPanel from '../../../layout/GraphContainer/components/FlowItemPanel';
 

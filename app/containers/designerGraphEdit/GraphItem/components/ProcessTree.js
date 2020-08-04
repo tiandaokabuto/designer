@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
 import { ItemPanel, Item } from 'gg-editor';
 
-import DragCard from '../../../../designerGraphBlock/layout/DragItem/components/DragCard';
+import DragCard from '../../../designerGraphBlock/layout/DragItem/components/DragCard';
 import {
   changeProcessTree,
   changeCheckedTreeNode,
@@ -12,7 +12,7 @@ import {
   changeCheckedModuleTreeNode,
   resetGraphEditData,
   changeMovingModuleNode,
-} from '../../../../reduxActions';
+} from '../../../reduxActions';
 
 import Switcher from './Switcher';
 import ContextMenu from './ContextMenu';
@@ -26,12 +26,12 @@ import {
   findNodeByKey,
   getDecryptOrNormal,
 } from '_utils/utils';
-import event from '../../../../designerGraphBlock/layout/eventCenter';
-import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
-import usePersistentModuleStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
+import event from '../../../designerGraphBlock/layout/eventCenter';
+import usePersistentStorage from '../../../common/DragEditorHeader/useHooks/usePersistentStorage';
+import usePersistentModuleStorage from '../../../common/DragEditorHeader/useHooks/usePersistentModuleStorage';
 import SaveConfirmModel from './SaveConfirmModel';
 import { info } from 'electron-log';
-import mxgraph from '../../../components/MxGraph/mxgraph';
+import mxgraph from '../../MxGraph/mxgraph';
 
 const { ipcRenderer } = require('electron');
 

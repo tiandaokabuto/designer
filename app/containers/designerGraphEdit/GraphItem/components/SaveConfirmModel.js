@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { ConfirmModal } from '../../../../components';
-import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
+import { ConfirmModal } from '../../../components';
+import usePersistentStorage from '../../../common/DragEditorHeader/useHooks/usePersistentStorage';
 import { changeModifyState, setAllModifiedState } from '_utils/utils';
 
 export default function SaveConfirmModel({

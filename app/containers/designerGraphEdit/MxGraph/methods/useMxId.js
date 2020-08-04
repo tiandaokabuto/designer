@@ -1,5 +1,4 @@
 import uniqueId from 'lodash/uniqueId';
-import store from '../../../../../store';
 
 export default () => {
   //const graphData = useSelector(state => state.grapheditor.graphData);

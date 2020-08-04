@@ -3,16 +3,16 @@ import { Input, Radio, Select, Icon } from 'antd';
 import { withPropsAPI } from 'gg-editor';
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 
-import mxgraph from '../../../../designerGraphEdit/components/MxGraph/mxgraph';
+import mxgraph from '../../../designerGraphEdit/MxGraph/mxgraph';
 import VariablePanel from './VariablePanel';
-import { useNoticyBlockCodeChange } from '../../../../designerGraphBlock/layout/useHooks';
-import event from '../../../../designerGraphBlock/layout/eventCenter';
+import { useNoticyBlockCodeChange } from '../../../designerGraphBlock/layout/useHooks';
+import event from '../../../designerGraphBlock/layout/eventCenter';
 
 import {
   updateGraphData,
   synchroGraphDataToProcessTree,
   changeCheckedGraphBlockId,
-} from '../../../../reduxActions';
+} from '../../../reduxActions';
 
 const { Option } = Select;
 
