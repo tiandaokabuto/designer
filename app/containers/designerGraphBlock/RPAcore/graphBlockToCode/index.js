@@ -21,9 +21,12 @@ import {
   CustomCodeBlockTag,
   ModuleBlockTag,
 } from '../../constants/statementTags';
-import { isArray } from '../../../../utils/designerGraphBlock/isArray';
 
 const paddingStart = length => '    '.repeat(length);
+
+const isArray = arr => {
+  return arr && Array.isArray(arr);
+};
 
 const result = {
   output: '',

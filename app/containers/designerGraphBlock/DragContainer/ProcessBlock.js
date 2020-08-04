@@ -28,7 +28,7 @@ import {
   isTailStatement,
   isMainProcessPlaceholder,
   isConditionalStatementPlaceholder,
-} from '../../../utils/designerGraphBlock/utils';
+} from '../../../utils/GraphBlockUtils/utils';
 import { changeAIHintList, setNodeIgnore } from './utils';
 
 import {

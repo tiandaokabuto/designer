@@ -5,7 +5,7 @@ import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 import {
   findNodeLevelById,
   findNodeById,
-} from '../../../utils/designerGraphBlock/utils';
+} from '../../../utils/GraphBlockUtils/utils';
 import event from '@/containers/eventCenter';
 import useTransformToPython from './useTransformToPython';
 

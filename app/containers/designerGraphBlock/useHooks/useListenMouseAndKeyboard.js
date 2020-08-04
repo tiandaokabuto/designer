@@ -9,7 +9,7 @@ import {
   updateClipBoardData,
   updateCardData,
 } from '../../reduxActions';
-import { insertAfter } from '../../../utils/designerGraphBlock/utils';
+import { insertAfter } from '../../../utils/GraphBlockUtils/utils';
 import { PREFIX_ID } from '../constants/statementTypes';
 const remote = require('electron').remote;
 const { clipboard } = require('electron');

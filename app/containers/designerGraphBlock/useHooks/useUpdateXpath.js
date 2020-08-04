@@ -1,5 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { findNodeLevelById, findNodeById } from '../../../utils/designerGraphBlock/utils';
+import {
+  findNodeLevelById,
+  findNodeById,
+} from '../../../utils/GraphBlockUtils/utils';
 import { CHANGE_CARDDATA } from '../../../constants/actions/codeblock';
 
 export default () => {

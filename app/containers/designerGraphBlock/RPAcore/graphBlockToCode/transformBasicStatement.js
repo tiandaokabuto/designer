@@ -1,11 +1,14 @@
 import moment from 'moment';
-import { isArray } from '../../../../utils/designerGraphBlock/isArray';
 import { uuid } from '_utils/utils';
 import memoize from './reselect';
 
 const fs = require('fs');
 
 const paddingStart = length => '    '.repeat(length);
+
+const isArray = arr => {
+  return arr && Array.isArray(arr);
+};
 
 const handleModuleImport = (dataStructure, result, moduleMap) => {
   if (dataStructure.module) {
