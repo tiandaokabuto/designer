@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-import ArrowUpPNG from '@/containers/images/arrow-up.png';
-import ArrowDownPNG from '@/containers/images/arrow-down.png';
+import ArrowUpPNG from '@/containers/assets/images/arrow-up.png';
+import ArrowDownPNG from '@/containers/assets/images/arrow-down.png';
 
 let isMouseDown = false;
 let pageX = 0;

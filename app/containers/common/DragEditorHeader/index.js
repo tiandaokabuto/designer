@@ -48,8 +48,8 @@ import {
 } from '../../reduxActions';
 import api from '../../../api';
 import PATH_CONFIG from '@/constants/localFilePath.js';
-import RedoPNG from '@/containers/images/redo.png';
-import UndoPNG from '@/containers/images/undo.png';
+import RedoPNG from '@/containers/assets/images/redo.png';
+import UndoPNG from '@/containers/assets/images/undo.png';
 import { designerVersion } from '../GraphBlockHeader/HelpModel/version';
 
 import NewProcess from './NewProcess';

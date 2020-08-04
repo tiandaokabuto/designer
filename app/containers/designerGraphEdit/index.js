@@ -7,7 +7,7 @@ import DragEditorHeader from '../common/DragEditorHeader';
 
 import GraphItem from './GraphItem';
 import GraphParamPanel from './GraphParamPanel';
-import Loading from '../../containers/images/loading.gif';
+import Loading from '../../containers/assets/images/loading.gif';
 import { history } from '../../store/configureStore';
 import MxGraph from './MxGraph';
 

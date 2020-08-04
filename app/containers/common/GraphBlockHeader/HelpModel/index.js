@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'antd';
 
 import { designerVersion } from './version';
-import SdIcon from '@/containers/images/sdIcon.png';
+import SdIcon from '@/containers/assets/images/sdIcon.png';
 import './index.scss';
 
 /* const fs = require('fs'); */
