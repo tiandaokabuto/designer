@@ -1,12 +1,9 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { ConfirmModal } from '../../../../common/components';
+import { ConfirmModal } from '../../../../components';
 import usePersistentStorage from '../../../../common/DragEditorHeader/useHooks/usePersistentStorage';
-import {
-  changeModifyState,
-  setAllModifiedState,
-} from '../../../../common/utils';
+import { changeModifyState, setAllModifiedState } from '_utils/utils';
 
 export default function SaveConfirmModel({
   modalVisible,

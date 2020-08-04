@@ -1,7 +1,7 @@
 import useDebounce from 'react-hook-easier/lib/useDebounce';
 import { message } from 'antd';
 
-import { readAllFileName } from '../../common/utils';
+import { readAllFileName } from '_utils/utils';
 import { changeCurrentProject } from '../../reduxActions';
 
 import PATH_CONFIG from '@/constants/localFilePath.js';
@@ -30,13 +30,13 @@ export default () => {
     fs.rename(
       PATH_CONFIG('project', current),
       PATH_CONFIG('project', change),
-      function(err) {
+      function (err) {
         if (!err) {
           changeCurrentProject(change);
           fs.rename(
             PATH_CONFIG('project', `${change}/${current}_module`),
             PATH_CONFIG('project', `${change}/${change}_module`),
-            function(err) {
+            function (err) {
               if (!err) {
                 console.log('更改module文件夹');
               } else {

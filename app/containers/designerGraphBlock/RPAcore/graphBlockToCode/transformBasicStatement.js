@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { isArray } from './utils';
 import transformVariable from '../../../designerGraphEdit/RPAcore/transformVariable';
-import { uuid } from '../../../common/utils';
+import { uuid } from '_utils/utils';
 import memoize from './reselect';
 
 const fs = require('fs');

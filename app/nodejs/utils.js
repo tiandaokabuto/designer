@@ -2,7 +2,7 @@ import axios from 'axios';
 import { message } from 'antd';
 import store from '../store';
 
-import { findNodeByKey } from '../containers/common/utils';
+import { findNodeByKey } from '_utils/utils';
 import api from '../api';
 
 const { remote } = require('electron');

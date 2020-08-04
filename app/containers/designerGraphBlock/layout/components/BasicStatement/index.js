@@ -14,7 +14,7 @@ import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
 import PATH_CONFIG from '@/constants/localFilePath.js';
-import { CHANGE_CHECKEDID } from '../../../../../actions/codeblock';
+import { CHANGE_CHECKEDID } from '../../../../../constants/actions/codeblock';
 import {
   useDropTarget,
   useHasLookTarget,

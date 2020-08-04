@@ -5,8 +5,12 @@ import {
   InjectProvider,
 } from 'react-hook-easier/lib/useInjectContext';
 
-import { exportCustomProcessBlock } from '@/containers/common/utils';
+import { exportCustomProcessBlock } from '_utils/utils';
 
+const path = require('path');
+console.log(__dirname);
+console.log(path.join(__dirname, '..', 'app'));
+console.log(path.resolve(__dirname, '../utils'));
 class CustomCommand extends React.Component {
   render() {
     const { propsAPI, history } = this.props;

@@ -30,7 +30,7 @@ import EditorChange, {
 } from '../../useHooks/useEditorChange';
 import { synchroGraphDataToProcessTree } from '../../../reduxActions';
 
-import { findNodeByKey, copyModule } from '../../../common/utils';
+import { findNodeByKey, copyModule } from '_utils/utils';
 
 let isUnSelected = false;
 

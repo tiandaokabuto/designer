@@ -6,8 +6,8 @@ import { transformBlockToCode } from '../../RPAcore';
 import {
   CHANGE_PYTHONCODE,
   CHANGE_PENDING_QUEUE,
-} from '../../../../actions/codeblock';
-import { changeModifyState } from '../../../common/utils';
+} from '../../../../constants/actions/codeblock';
+import { changeModifyState } from '_utils/utils';
 
 let transformCount = 0;
 

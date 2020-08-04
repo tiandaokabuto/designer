@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { findNodeLevelById } from '../shared/utils';
 
 import useNoticyBlockCodeChange from './useNoticyBlockCodeChange';
-import { CHANGE_CARDDATA } from '../../../../actions/codeblock';
+import { CHANGE_CARDDATA } from '../../../../constants/actions/codeblock';
 
 export default id => {
   const cards = useSelector(state => state.blockcode.cards);

@@ -9,7 +9,7 @@ import {
   findNodeByKey,
   changeModifyState,
   getDecryptOrNormal,
-} from '../../utils';
+} from '_utils/utils';
 import { setGraphDataMap } from '../../../reduxActions';
 
 const fs = require('fs');

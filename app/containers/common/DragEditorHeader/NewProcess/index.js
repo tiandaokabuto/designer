@@ -8,7 +8,7 @@ import {
   isNameExist,
   isDirNameExist,
   persistentManifest,
-} from '../../utils';
+} from '_utils/utils';
 
 const FormItem = Form.Item;
 const { Option } = Select;

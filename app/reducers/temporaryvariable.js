@@ -1,7 +1,7 @@
 import {
   UPDATE_EXECUTEOUTPUT,
   UPDATE_CURRENTPAGEPOSITION,
-} from '../actions/temporaryvariable';
+} from '../constants/actions/temporaryvariable';
 
 const defaultState = {
   executeOutput: [], // 当前流程的日志输出

@@ -3,7 +3,7 @@ import { Card } from 'antd';
 import { ItemPanel, Item } from 'gg-editor';
 import { useSelector } from 'react-redux';
 
-import { isDirNode } from '../../../../common/utils';
+import { isDirNode } from '_utils/utils';
 
 const FlowItemPanel = () => {
   const currentCheckedTreeNode = useSelector(

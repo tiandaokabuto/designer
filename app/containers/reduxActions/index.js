@@ -18,9 +18,8 @@ import {
   CHANGE_MOVING_MODULE_NODE,
   CHANGE_MOVING_MODULE_NODE_DATA,
   CHANGE_MXGRAPH_DATA,
-
   CHANGE_UNDO_AND_REDO,
-} from '../../actions/grapheditor';
+} from '../../constants/actions/grapheditor';
 import {
   SYNCHRO_CODEBLOCK,
   CHANGE_AUTOMICLIST,
@@ -29,11 +28,11 @@ import {
   CHANGE_BLOCK_TREE_TAB,
   CHANGE_CLIPBOARDDATA,
   CHANGE_CARDDATA,
-} from '../../actions/codeblock';
+} from '../../constants/actions/codeblock';
 import {
   UPDATE_EXECUTEOUTPUT,
   UPDATE_CURRENTPAGEPOSITION,
-} from '../../actions/temporaryvariable';
+} from '../../constants/actions/temporaryvariable';
 import store from '../../store';
 
 const { dispatch } = store || { dispatch: () => {} };
@@ -163,14 +162,13 @@ export const deleteGraphDataMap = (key, value = {}) => {
   dispatch({
     type: DELETE_GRAPHDATAMAP,
     payload: {
-      key
+      key,
     },
   });
   setTimeout(() => {
     synchroGraphDataToProcessTree();
   }, 333);
 };
-
 
 /**
  * 修改当前正处于点击状态的流程图的流程块的id
@@ -287,8 +285,6 @@ export const changeMxGraphData = data => {
     payload: data,
   });
 };
-
-
 
 // 第一层撤销重做
 export const changeUndoAndRedo = data => {

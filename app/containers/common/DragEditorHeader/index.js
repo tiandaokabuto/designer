@@ -23,10 +23,10 @@ import {
   REDO_CARDSDATA,
   RESET_PENDING_QUEUE,
   CHANGE_FORCEUPDATE_TAG,
-} from '../../../actions/codeblock';
+} from '../../../constants/actions/codeblock';
 import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
-import IconFont from '../IconFont/index';
+import IconFont from '../../components/IconFont/index';
 import usePersistentStorage from './useHooks/usePersistentStorage';
 import useExecutePython from './useHooks/useExecutePython';
 import useGetDownloadPath from './useHooks/useGetDownloadPath';
@@ -41,7 +41,7 @@ import {
   getChooseFilePath,
   transformPythonWithPoint,
   deleteFolderRecursive,
-} from '../utils';
+} from '_utils/utils';
 import {
   updateCurrentPagePosition,
   changeBlockTreeTab,

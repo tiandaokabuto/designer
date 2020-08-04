@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import useUpdateEffect from 'react-hook-easier/lib/useUpdateEffect';
 
-import { changeModifyState } from '../../../common/utils';
+import { changeModifyState } from '_utils/utils';
 import store from '../../../../store';
 
 export default cards => {

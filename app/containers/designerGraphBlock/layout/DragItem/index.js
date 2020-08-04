@@ -16,7 +16,7 @@ import {
   LoopStatementTag,
   ConditionalStatementTag,
 } from '../statementTags';
-import { traverseTree, findNodeByKey } from '../../../common/utils';
+import { traverseTree, findNodeByKey } from '_utils/utils';
 import { changeBlockTreeTab } from '../../../reduxActions';
 
 import { query } from './PinYin';

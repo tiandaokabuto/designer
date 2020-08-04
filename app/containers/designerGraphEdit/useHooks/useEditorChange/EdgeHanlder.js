@@ -5,7 +5,7 @@ import {
 } from '../../../reduxActions';
 import { message } from 'antd';
 
-import { changeModifyState } from '../../../common/utils';
+import { changeModifyState } from '_utils/utils';
 import store from '../../../../store';
 
 const canLink = () => {};
@@ -15,7 +15,7 @@ class EdgeHandler {
     this.propsAPI = propsAPI;
   }
 
-  handleEdgeChange = (description) => {
+  handleEdgeChange = description => {
     const { getSelected, executeCommand, update, save } = this.propsAPI;
     if (description.action === 'add') {
       // 连线操作
@@ -26,11 +26,11 @@ class EdgeHandler {
       const { shape } = dataMap[source];
       // 条件连线限制
       const rhombusNode = nodes.find(
-        (item) => item.id === source && item.shape === 'rhombus-node'
+        item => item.id === source && item.shape === 'rhombus-node'
       );
       if (rhombusNode) {
         const edgeChangeItem = description.item;
-        const arr = edges.filter((item) => item.source === rhombusNode.id);
+        const arr = edges.filter(item => item.source === rhombusNode.id);
         if (arr.length === 1) {
           executeCommand(() => {
             update(edgeChangeItem, {
@@ -61,7 +61,7 @@ class EdgeHandler {
         const tipText = `${
           shape === 'start-node' ? '开始' : '流程块'
         }节点输出连线不能多于两条`;
-        const edge = dataMapArray.filter((item) => item.source === source);
+        const edge = dataMapArray.filter(item => item.source === source);
         if (edge.length > 1) {
           this.apiAction('undo');
           message.info(tipText);
@@ -79,7 +79,7 @@ class EdgeHandler {
     changeModifyState(processTree, currentCheckedTreeNode, true);
   };
 
-  apiAction = (command) => {
+  apiAction = command => {
     setTimeout(() => {
       this.propsAPI.executeCommand(command);
     }, 0);
