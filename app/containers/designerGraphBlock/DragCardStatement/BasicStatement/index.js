@@ -363,7 +363,7 @@ const BasicStatement = useInjectContext(props => {
                   <Icon
                     type="play-circle"
                     onClick={() => {
-                      console.log(cards,"单步传送的内容",cards.outPut,handleEmitCodeTransform(cards));
+                      console.log(id,cards,"单步传送的内容",cards.outPut,handleEmitCodeTransform(cards.filter(item=>item.id === id)));
                     }}
                   />
                   <Icon

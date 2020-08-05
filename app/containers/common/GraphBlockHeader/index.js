@@ -176,12 +176,12 @@ export default memo(({ history, tag }) => {
       case '连接':
         return setPyDebugServerState({
           type: 'Debug已连接',
-          tagColor: 'orange',
+          tagColor: 'green',
         });
       case '终止':
         return setPyDebugServerState({
           type: 'Debug已终止',
-          tagColor: 'red',
+          tagColor: 'orange',
         });
     }
   };
