@@ -2,6 +2,7 @@ import transformBasicStatement from './transformBasicStatement';
 import transformPrintStatement from './transformPrintStatement';
 import transformLoopStatement from './transformLoopStatement';
 import transformConditionalStatement from './transformConditionalStatement';
+import transformCatchStatement from './transformCatchStatement';
 import transformReturnStatement from './transformReturnStatement';
 import transformBreakStatement from './transformBreakStatement';
 import transformContinueStatement from './transformContinueStatement';
@@ -42,6 +43,7 @@ const transformBlockToCodeImpl = (
 ) => {
   if (!dataStructure) return;
   const padding = paddingStart(depth);
+  let ignore = '';
   dataStructure.forEach((statement, index) => {
     switch (statement.$$typeof) {
       case 1: // 基础语句
@@ -233,9 +235,9 @@ const transformBlockToCodeImpl = (
         //   ignore: options.ignore || statement.ignore,
         // });
         break;
-      case 4:
+      case 4: // if else
         transformConditionalStatement(padding, statement, result);
-        const ignore = statement.ignore ? '# ' : '';
+        ignore = statement.ignore ? '# ' : '';
         if (!statement.ifChildren.length) {
           result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
         } else {
@@ -267,6 +269,61 @@ const transformBlockToCodeImpl = (
             item => item.ignore
           );
           if (elseChildrenIgnoreFlag) {
+            result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
+          }
+        }
+      case 7: // try catch
+        transformCatchStatement(padding, statement, result);
+        ignore = statement.ignore ? '#' : '';
+        if (!statement.tryChildren.length) {
+          result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
+        } else {
+          transformBlockToCodeImpl(
+            statement.tryChildren,
+            depth + 1,
+            blockNode,
+            options
+          );
+          const tryChildrenIgnoreFlag = statement.tryChildren.every(
+            item => item.ignore
+          );
+          if (tryChildrenIgnoreFlag) {
+            result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
+          }
+        }
+
+        result.output += `${padding}${ignore}except Exception as error:\n`;
+        if (!statement.catchChildren.length) {
+          result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
+        } else {
+          transformBlockToCodeImpl(
+            statement.catchChildren,
+            depth + 1,
+            blockNode,
+            options
+          );
+          const catchChildrenIgnoreFlag = statement.catchChildren.every(
+            item => item.ignore
+          );
+          if (catchChildrenIgnoreFlag) {
+            result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
+          }
+        }
+
+        result.output += `${padding}${ignore}finally:\n`;
+        if (!statement.finallyChildren.length) {
+          result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
+        } else {
+          transformBlockToCodeImpl(
+            statement.finallyChildren,
+            depth + 1,
+            blockNode,
+            options
+          );
+          const finallyChildrenIgnoreFlag = statement.finallyChildren.every(
+            item => item.ignore
+          );
+          if (finallyChildrenIgnoreFlag) {
             result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
           }
         }

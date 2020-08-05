@@ -1,6 +1,7 @@
 import {
   LoopStatementTag,
   ConditionalStatementTag,
+  CatchStatementTag,
 } from '../../containers/designerGraphBlock/constants/statementTags';
 import {
   PLACEHOLDER_MAINPROCESS,
@@ -36,6 +37,18 @@ export const findNodeLevelById = (cards, id, isTail) => {
       flag = findNodeLevelById(cards[i].elseChildren, id, isTail);
       if (flag) return flag;
     }
+    if (cards[i].tryChildren) {
+      flag = findNodeLevelById(cards[i].tryChildren, id, isTail);
+      if (flag) return flag;
+    }
+    if (cards[i].catchChildren) {
+      flag = findNodeLevelById(cards[i].catchChildren, id, isTail);
+      if (flag) return flag;
+    }
+    if (cards[i].finallyChildren) {
+      flag = findNodeLevelById(cards[i].finallyChildren, id, isTail);
+      if (flag) return flag;
+    }
   }
   return undefined;
 };
@@ -63,6 +76,18 @@ export const findIFNodeLevelById = (cards, id, layer) => {
     }
     if (cards[i].elseChildren) {
       flag = findIFNodeLevelById(cards[i].elseChildren, id, layer);
+      if (flag) return flag;
+    }
+    if (cards[i].tryChildren) {
+      flag = findIFNodeLevelById(cards[i].tryChildren, id, isTail);
+      if (flag) return flag;
+    }
+    if (cards[i].catchChildren) {
+      flag = findIFNodeLevelById(cards[i].catchChildren, id, isTail);
+      if (flag) return flag;
+    }
+    if (cards[i].finallyChildren) {
+      flag = findIFNodeLevelById(cards[i].finallyChildren, id, isTail);
       if (flag) return flag;
     }
   }
@@ -118,7 +143,10 @@ export const isChildrenNode = (parent, child) => {
     findNodeLevelById(parent.children || [], id) ||
     id === parent.id ||
     findNodeLevelById(parent.ifChildren || [], id) ||
-    findNodeLevelById(parent.elseChildren || [], id)
+    findNodeLevelById(parent.elseChildren || [], id) ||
+    findNodeLevelById(parent.tryChildren || [], id) ||
+    findNodeLevelById(parent.catchChildren || [], id) ||
+    findNodeLevelById(parent.finallyChildren || [], id)
   );
 };
 
@@ -130,11 +158,18 @@ export const useNode = (node, id) => {
   delete node['effectTag'];
   delete node['type'];
   delete node['index'];
-  if (node.$$typeof & LoopStatementTag) {
+  if (node.$$typeof === LoopStatementTag) {
+    // node.$$typeof & LoopStatementTag
     node.children = [];
-  } else if (node.$$typeof & ConditionalStatementTag) {
+  } else if (node.$$typeof === ConditionalStatementTag) {
+    // node.$$typeof & ConditionalStatementTag
     node.ifChildren = [];
     node.elseChildren = [];
+  } else if (node.$$typeof === CatchStatementTag) {
+    // node.$$typeof & CatchStatementTag
+    node.tryChildren = [];
+    node.catchChildren = [];
+    node.finallyChildren = [];
   }
   node.id = id;
   return cloneDeep(node);

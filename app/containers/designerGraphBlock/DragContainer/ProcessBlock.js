@@ -8,11 +8,13 @@ import cloneDeep from 'lodash/cloneDeep';
 import BasicStatement from '../DragCardStatement/BasicStatement';
 import LoopStatement from '../DragCardStatement/LoopStatement';
 import ConditionalStatement from '../DragCardStatement/ConditionalStatement';
+import CatchStatement from '../DragCardStatement/CatchStatement';
 import Interactive from '../DragCardStatement/BasicStatement/components/Interactive';
 import {
   BasicStatementTag,
   LoopStatementTag,
   ConditionalStatementTag,
+  CatchStatementTag,
 } from '../constants/statementTags';
 import {
   PLACEHOLDER_STATEMENT,
@@ -298,6 +300,16 @@ export default memo(({ readOnly = false }) => {
       case ConditionalStatementTag:
         return (
           <ConditionalStatement
+            key={card.id}
+            id={card.id}
+            index={index}
+            card={card}
+            readOnly={readOnly}
+          />
+        );
+      case CatchStatementTag:
+        return (
+          <CatchStatement
             key={card.id}
             id={card.id}
             index={index}

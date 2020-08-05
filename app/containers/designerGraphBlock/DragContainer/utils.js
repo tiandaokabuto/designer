@@ -7,6 +7,10 @@ export const traverseCards = (cards, callback) => {
     } else if (child.ifChildren) {
       traverseCards(child.ifChildren, callback);
       traverseCards(child.elseChildren, callback);
+    } else if (child.tryChildren) {
+      traverseCards(child.tryChildren, callback);
+      traverseCards(child.catchChildren, callback);
+      traverseCards(child.finallyChildren, callback);
     } else {
       callback && callback(child);
     }
@@ -22,6 +26,10 @@ export const traverseAllCards = (cards, callback) => {
       callback && callback(child);
       traverseAllCards(child.ifChildren, callback);
       traverseAllCards(child.elseChildren, callback);
+    } else if (child.tryChildren) {
+      traverseAllCards(child.tryChildren, callback);
+      traverseAllCards(child.catchChildren, callback);
+      traverseAllCards(child.finallyChildren, callback);
     } else {
       callback && callback(child);
     }
@@ -110,6 +118,28 @@ export const setNodeIgnore = (cards, id) => {
           item.ignore = child.ignore;
         } else {
           setNodeIgnore(child.elseChildren, id);
+        }
+      });
+    } else if (child.tryChildren) {
+      child.tryChildren.forEach(item => {
+        if (item.id === id) {
+          item.ignore = child.ignore;
+        } else {
+          setNodeIgnore(child.tryChildren, id);
+        }
+      });
+      child.catchChildren.forEach(item => {
+        if (item.id === id) {
+          item.ignore = child.ignore;
+        } else {
+          setNodeIgnore(child.catchChildren, id);
+        }
+      });
+      child.finallyChildren.forEach(item => {
+        if (item.id === id) {
+          item.ignore = child.ignore;
+        } else {
+          setNodeIgnore(child.finallyChildren, id);
         }
       });
     }

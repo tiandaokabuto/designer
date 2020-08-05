@@ -42,6 +42,11 @@ const traverseAllCards = (cards, callback) => {
       callback && callback(child);
       traverseAllCards(child.ifChildren, callback);
       traverseAllCards(child.elseChildren, callback);
+    } else if (child.tryChildren) {
+      callback && callback(child);
+      traverseAllCards(child.tryChildren, callback);
+      traverseAllCards(child.catchChildren, callback);
+      traverseAllCards(child.finallyChildren, callback);
     } else {
       callback && callback(child);
     }
@@ -58,6 +63,13 @@ const extractTraverse = async (cards, callback, parent = cards) => {
       !isExact && extractTraverse(child.ifChildren, callback, child.ifChildren);
       !isExact &&
         extractTraverse(child.elseChildren, callback, child.elseChildren);
+    } else if (child.tryChildren) {
+      !isExact &&
+        extractTraverse(child.tryChildren, callback, child.tryChildren);
+      !isExact &&
+        extractTraverse(child.catchChildren, callback, child.catchChildren);
+      !isExact &&
+        extractTraverse(child.finallyChildren, callback, child.finallyChildren);
     } else {
       callback && callback(child, parent);
     }
@@ -73,6 +85,11 @@ const deleteTraverse = (cards, callback, parent = cards) => {
       callback(child, parent);
       deleteTraverse(child.ifChildren, callback, child.ifChildren);
       deleteTraverse(child.elseChildren, callback, child.elseChildren);
+    } else if (child.tryChildren) {
+      callback(child, parent);
+      deleteTraverse(child.tryChildren, callback, child.tryChildren);
+      deleteTraverse(child.catchChildren, callback, child.catchChildren);
+      deleteTraverse(child.finallyChildren, callback, child.finallyChildren);
     } else {
       callback(child, parent);
     }
