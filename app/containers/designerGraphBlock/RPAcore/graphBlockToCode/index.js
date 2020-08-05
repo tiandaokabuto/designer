@@ -272,6 +272,7 @@ const transformBlockToCodeImpl = (
             result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
           }
         }
+        break;
       case 7: // try catch
         transformCatchStatement(padding, statement, result);
         ignore = statement.ignore ? '#' : '';
@@ -327,6 +328,7 @@ const transformBlockToCodeImpl = (
             result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
           }
         }
+        break;
       default:
       // do nothing
     }
