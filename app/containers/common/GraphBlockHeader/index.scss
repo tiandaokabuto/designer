@@ -14,6 +14,31 @@
       &:hover {
         background: #2e9975;
       }
+
+
+    }
+    .debug-btn{
+      user-select: none;
+
+      position: absolute;
+      left: 340px;
+      top: 0;
+      z-index: 999;
+
+      .debug-btn-inner{
+        margin:0 4px;
+      }
+
+      .debug-btn-inner:hover{
+        box-shadow: 0px 0px 3px #fff;
+        opacity: 1;
+        //border:1px solid rgba(51,165,138,0.6);
+        background: #fff !important;
+        //color: rgb(51,165,138);
+      }
+      // .debug-btn-inner{
+      //   color: #fff !important;
+      // }
     }
 
     .item-disabled {

@@ -1,6 +1,6 @@
 import './index.scss';
-import React, { useState, Fragment, useRef, memo } from 'react';
-import { Icon, Dropdown, Menu } from 'antd';
+import React, { useState, Fragment, useRef, memo, useEffect } from 'react';
+import { Icon, Dropdown, Menu, Tag, message } from 'antd';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
@@ -11,6 +11,14 @@ import { changeTreeTab } from '../../reduxActions/index';
 import HelpModel from './HelpModel';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
 import SaveConfirmModel from '../../designerGraphEdit/GraphItem/components/SaveConfirmModel';
+
+//liuqi
+import event, { PYTHOH_DEBUG_SERVER_START } from '../../eventCenter';
+import {
+  runDebugServer,
+  testRunOneLine,
+  killTask,
+} from '../../../utils/DebugUtils/runDebugServer';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -157,6 +165,41 @@ export default memo(({ history, tag }) => {
     }
   };
 
+  // 用来管理pythonDebug的状态
+  const [pyDebugServerState, setPyDebugServerState] = useState({
+    type: '启动debug模式',
+    tagColor: 'cyan',
+  });
+
+  const handleRunPythonDebugServerStart = msg => {
+    switch (msg) {
+      case '连接':
+        return setPyDebugServerState({
+          type: 'Debug已连接',
+          tagColor: 'orange',
+        });
+      case '终止':
+        return setPyDebugServerState({
+          type: 'Debug已终止',
+          tagColor: 'red',
+        });
+    }
+  };
+
+  useEffect(() => {
+    event.addListener(
+      PYTHOH_DEBUG_SERVER_START,
+      handleRunPythonDebugServerStart
+    );
+    return () => {
+      event.removeListener(
+        PYTHOH_DEBUG_SERVER_START,
+        handleRunPythonDebugServerStart
+      );
+      killTask();
+    };
+  }, []);
+
   return (
     <div
       className="graphblock-header"
@@ -206,6 +249,47 @@ export default memo(({ history, tag }) => {
           }
           return <span key={index}>{tool}</span>;
         })}
+        <div
+          className="debug-btn"
+          style={{ WebkitAppRegion: 'no-drag', display: 'block' }}
+        >
+          <Tag
+            color={pyDebugServerState.tagColor}
+            className="debug-btn-inner"
+            onClick={() => {
+              if (pyDebugServerState.type === 'Debug已连接')
+                return message.info('Debug已连接');
+              runDebugServer();
+            }}
+          >
+            {pyDebugServerState.type}
+          </Tag>
+          {pyDebugServerState.type === 'Debug已连接' ? (
+            <span>
+              <Tag
+                color="cyan"
+                className="debug-btn-inner"
+                onClick={() => {
+                  testRunOneLine();
+                }}
+              >
+                <Icon type="play-circle" />
+              </Tag>
+              <Tag color="cyan" className="debug-btn-inner">
+                <Icon type="pause-circle" />
+              </Tag>
+              <Tag
+                color="cyan"
+                className="debug-btn-inner"
+                onClick={() => killTask()}
+              >
+                <Icon type="stop" />
+              </Tag>
+            </span>
+          ) : (
+            ''
+          )}
+        </div>
       </div>
       <div
         className="graphblock-header-title"
