@@ -1,0 +1,70 @@
+.CatchItem {
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    height: 28px;
+    line-height: 28px;
+    color: rgba(255, 255, 255, 1);
+    &__else {
+      padding-left: 8px;
+    }
+    &-operation {
+      > * {
+        margin-right: 16px;
+      }
+    }
+    &-title {
+      padding-left: 8px;
+      flex: 1;
+      .template_span {
+        max-width: 100px;
+        overflow: hidden;
+        background: #eeeeee;
+        border-radius: 2px;
+        height: 24px;
+        padding: 2px 4px;
+        min-width: 40px;
+        font-size: 14px;
+        color: #9c9c9c;
+        pointer-events: auto;
+        margin: 0 4px;
+        display: inline-flex;
+        vertical-align: middle;
+        &__empty {
+          border: 1px solid red;
+        }
+        &:empty {
+          &::before {
+            content: '_';
+            visibility: hidden;
+          }
+        }
+      }
+      .template_input {
+        pointer-events: auto;
+        max-width: 100px;
+        color: #9c9c9c;
+        margin: 0 4px;
+        height: 24px;
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+  }
+  &-try {
+    border: 1px solid rgba(50, 166, 127, 1);
+  }
+  &-catch {
+    border: 1px solid rgba(184, 230, 214, 1);
+  }
+  &-finally {
+    border: 1px solid rgba(184, 230, 214, 1);
+  }
+  &-content {
+    overflow: hidden;
+    .CatchItem-try {
+      padding-left: 24px;
+    }
+  }
+}
