@@ -18,7 +18,7 @@ const { ipcRenderer, remote } = require('electron');
 
 let userDay = getUserDay();
 console.log(encrypt.argEncryptByDES('2020-12-31'));
-console.log(encrypt.argDecryptByDES('M9XUD7OFORwK0IYcjoxebQ=='));
+console.log(encrypt.argDecryptByDES('XvxqlGS8x335hlSs++CpuA=='));
 
 const Login = () => {
   const [userName, setUserName] = useState('');
@@ -240,7 +240,7 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    document.onkeydown = function(e) {
+    document.onkeydown = function (e) {
       if (e.keyCode === 13) {
         handleClickSignIn();
       }

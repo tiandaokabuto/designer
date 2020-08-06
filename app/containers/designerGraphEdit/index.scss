@@ -219,9 +219,7 @@
   &-parampanel {
     min-width: 239px;
     max-width: 239px;
-    // min-width: 120px;
-    // max-width: 500px;
-    // flex-basis: 239px;
+    border-left: 1px solid #eeeeee;
     position: relative;
     pointer-events: none;
     &::before {

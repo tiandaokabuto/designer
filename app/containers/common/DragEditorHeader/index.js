@@ -14,23 +14,21 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
-import event, {
-  STOP_RUNNING,
-  START_POINT,
-} from '../../designerGraphBlock/layout/eventCenter';
+import event, { STOP_RUNNING, START_POINT } from '@/containers/eventCenter';
 import {
   UNDO_CARDSDATA,
   REDO_CARDSDATA,
   RESET_PENDING_QUEUE,
   CHANGE_FORCEUPDATE_TAG,
-} from '../../../actions/codeblock';
-import { usePublishProcessZip } from '../../designerGraphBlock/layout/useHooks';
+} from '../../../constants/actions/codeblock';
+import { usePublishProcessZip } from '../../designerGraphBlock/useHooks';
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
-import IconFont from '../IconFont/index';
+import IconFont from '../../components/IconFont/index';
 import usePersistentStorage from './useHooks/usePersistentStorage';
 import useExecutePython from './useHooks/useExecutePython';
 import useGetDownloadPath from './useHooks/useGetDownloadPath';
 import useVerifyCompatibility from './useHooks/useVerifyCompatibility';
+import useSaveAsXML from './useHooks/useSaveAsXML';
 import useGetProcessName, {
   isEffectProcess,
 } from './useHooks/useGetProcessName';
@@ -40,15 +38,15 @@ import {
   getChooseFilePath,
   transformPythonWithPoint,
   deleteFolderRecursive,
-} from '../utils';
+} from '_utils/utils';
 import {
   updateCurrentPagePosition,
   changeBlockTreeTab,
 } from '../../reduxActions';
 import api from '../../../api';
 import PATH_CONFIG from '@/constants/localFilePath.js';
-import RedoPNG from '@/containers/images/redo.png';
-import UndoPNG from '@/containers/images/undo.png';
+import RedoPNG from '@/containers/assets/images/redo.png';
+import UndoPNG from '@/containers/assets/images/undo.png';
 import { designerVersion } from '../GraphBlockHeader/HelpModel/version';
 
 import NewProcess from './NewProcess';
@@ -116,6 +114,8 @@ export default memo(
     const [tools, setTools] = useState([]);
 
     const uuidRef = useRef(null);
+
+    const saveAsXML = useSaveAsXML();
 
     const persistentStorage = usePersistentStorage();
 
@@ -460,6 +460,7 @@ export default memo(
             );
             persistentStorage();
             message.success('保存成功');
+            // saveAsXML();
           },
         },
         {

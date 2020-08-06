@@ -8,8 +8,8 @@ import {
 import event, {
   STOP_RUNNING,
   START_POINT,
-} from '../../../../../designerGraphBlock/layout/eventCenter';
-import { transformPythonWithPoint } from '@/containers/common/utils';
+} from '../../../../../designerGraphBlock/eventCenter';
+import { transformPythonWithPoint } from '_utils/utils';
 
 class RunToHereCommand extends React.Component {
   render() {

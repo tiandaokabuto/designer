@@ -9,7 +9,7 @@ import {
   findNodeByKey,
   changeModifyState,
   getDecryptOrNormal,
-} from '../../utils';
+} from '_utils/utils';
 import { setGraphDataMap } from '../../../reduxActions';
 
 const fs = require('fs');
@@ -42,6 +42,11 @@ const traverseAllCards = (cards, callback) => {
       callback && callback(child);
       traverseAllCards(child.ifChildren, callback);
       traverseAllCards(child.elseChildren, callback);
+    } else if (child.tryChildren) {
+      callback && callback(child);
+      traverseAllCards(child.tryChildren, callback);
+      traverseAllCards(child.catchChildren, callback);
+      traverseAllCards(child.finallyChildren, callback);
     } else {
       callback && callback(child);
     }

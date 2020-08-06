@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { persistentModuleStorage, persistentManifest } from '../../utils';
+import { persistentModuleStorage, persistentManifest } from '_utils/utils';
 
 import store from '../../../../store';
 
