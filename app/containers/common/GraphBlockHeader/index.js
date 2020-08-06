@@ -173,6 +173,11 @@ export default memo(({ history, tag }) => {
 
   const handleRunPythonDebugServerStart = msg => {
     switch (msg) {
+      case '准备':
+        return setPyDebugServerState({
+          type: '启动debug模式',
+          tagColor: 'cyan',
+        });
       case '连接':
         return setPyDebugServerState({
           type: 'Debug已连接',
@@ -196,6 +201,8 @@ export default memo(({ history, tag }) => {
         PYTHOH_DEBUG_SERVER_START,
         handleRunPythonDebugServerStart
       );
+      localStorage.setItem('debug', '关闭');
+      // 当返回时，自动杀死debug进程
       killTask();
     };
   }, []);

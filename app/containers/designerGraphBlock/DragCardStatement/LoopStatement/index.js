@@ -19,6 +19,8 @@ import ItemTypes from '../../constants/statementTypes';
 
 import './index.scss';
 
+import { clickOneStepRun } from '../../../../utils/DebugUtils/clickOneStepRun';
+
 const style = {
   borderTop: '4px solid transparent',
   borderBottom: '4px solid transparent',
@@ -155,6 +157,12 @@ const LoopStatement = useInjectContext(props => {
         </div>
         {!readOnly && (
           <div className="loopstatement-header-operation">
+            <Icon
+              type="play-circle"
+              onClick={() => {
+                clickOneStepRun(cards, id);
+              }}
+            />
             <Icon
               type={isIgnore ? 'eye-invisible' : 'eye'}
               onClick={() => {

@@ -20,6 +20,7 @@ export const runDebugServer = async () => {
 
   socket = new net.Socket();
   socket.connect(port, hostname, function() {
+    localStorage.setItem('debug', '运行中');
     event.emit(PYTHOH_DEBUG_SERVER_START, '连接');
   });
 
@@ -27,7 +28,13 @@ export const runDebugServer = async () => {
     console.log(err);
   });
 
+  socket.on('data', msg => {
+    console.log('[收到soket—data]',msg);
+  });
+
+  // python的情况
   worker.stderr.on('exit', code => {
+    localStorage.setItem('debug', '关闭');
     event.emit(PYTHOH_DEBUG_SERVER_START, '退出');
   });
 
@@ -57,7 +64,8 @@ export const sendPythonCodeByLine = sendMsg => {
   const { varNames, output } = sendMsg;
   const jsonObj = {
     method_name: "RPA_test",
-    source: [output],
+    //source: ["import GUI\nresult = GUI.showDialog(title = \"\", msg = \"\", dialogType = \"showinfo\")\n\n\npass\n"],
+    source:[output],
     var_data: [
       {
         var_name: varNames,
@@ -66,15 +74,20 @@ export const sendPythonCodeByLine = sendMsg => {
     ],
   };
   const sendText = JSON.stringify(jsonObj)//.replace(/'/g, '"')
-  console.log(sendText);
+  console.log(`【实际发送到socket的字符串】\n`,sendText);
   socket.write(sendText);
+  //socket.write('{"method_name":"RPA_test","source":["from sendiRPA import Browser\n\n\nhWeb = Browser.openBrowser(browserType = \"chrome\", _url = \"www.baidu.com\", useragent = \"\", blocked_urls = \"\")\n\npass\n"],"var_data":[{"var_name":"hWeb","var_value":""}]}');
 };
 
 export const killTask = () => {
   try {
-    worker.kill();
+    socket.write('exit()')
+    setTimeout(()=>worker.kill(),3000)
+    localStorage.setItem('debug', '关闭');
     event.emit(PYTHOH_DEBUG_SERVER_START, '终止');
+    setTimeout(()=> event.emit(PYTHOH_DEBUG_SERVER_START, '准备'),3000)
   } catch (e) {
     console.log('终止debug', e);
   }
+
 };
