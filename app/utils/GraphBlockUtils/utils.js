@@ -79,15 +79,15 @@ export const findIFNodeLevelById = (cards, id, layer) => {
       if (flag) return flag;
     }
     if (cards[i].tryChildren) {
-      flag = findIFNodeLevelById(cards[i].tryChildren, id, isTail);
+      flag = findIFNodeLevelById(cards[i].tryChildren, id, layer);
       if (flag) return flag;
     }
     if (cards[i].catchChildren) {
-      flag = findIFNodeLevelById(cards[i].catchChildren, id, isTail);
+      flag = findIFNodeLevelById(cards[i].catchChildren, id, layer);
       if (flag) return flag;
     }
     if (cards[i].finallyChildren) {
-      flag = findIFNodeLevelById(cards[i].finallyChildren, id, isTail);
+      flag = findIFNodeLevelById(cards[i].finallyChildren, id, layer);
       if (flag) return flag;
     }
   }

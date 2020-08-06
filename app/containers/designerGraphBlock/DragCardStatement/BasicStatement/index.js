@@ -184,7 +184,7 @@ const BasicStatement = useInjectContext(props => {
       payload: id,
     });
     ipcRenderer.send('min');
-    ipcRenderer.send('start_server', id);
+
     const xpathCmdNameArrForWindows = [
       '鼠标-点击目标',
       '鼠标-移动',
@@ -197,38 +197,45 @@ const BasicStatement = useInjectContext(props => {
     const xpathCmdNameForBrowser = '点击元素';
     const mouseCmdName = '鼠标-获取光标位置';
     const windowsCmdNameArr = ['设置窗口状态', '关闭软件窗口'];
-    const clickImage = '点击图片';
+    const clickImage = ['点击图片', '判断截屏区域是否存在'];
 
     if (xpathCmdNameArrForWindows.includes(card.cmdName)) {
+      ipcRenderer.send('start_server', id);
       try {
         const worker = exec(PATH_CONFIG('windowHook'));
       } catch (e) {
         console.log(e);
       }
     } else if (mouseCmdName === card.cmdName) {
+      ipcRenderer.send('start_server', id);
       try {
         const mouseWorker = exec(`${PATH_CONFIG('WinRun')} -p`);
       } catch (err) {
         console.log(err);
       }
     } else if (windowsCmdNameArr.includes(card.cmdName)) {
+      ipcRenderer.send('start_server', id);
       try {
         const windowsWorker = exec(`${PATH_CONFIG('WinRun')} -w`);
       } catch (e) {
         console.log(e);
       }
     } else if (xpathCmdNameForBrowser === card.cmdName) {
+      ipcRenderer.send('start_browser_server', id);
       try {
         const browserXpathWorker = exec(`${PATH_CONFIG('getBrowserXpath')}`);
       } catch (e) {
         console.log(e);
       }
-    } else if (clickImage === card.cmdName) {
+    } else if (clickImage.includes(card.cmdName)) {
+      ipcRenderer.send('start_server', id);
       try {
         const clickImageWorker = exec(`${PATH_CONFIG('CaptureAreaScreen')}`);
       } catch (e) {
         console.log(e);
       }
+    } else if (card.pkg === 'Browser') {
+      ipcRenderer.send('start_browser_server', id);
     }
 
     const handleUpdateXpath = (
@@ -310,6 +317,7 @@ const BasicStatement = useInjectContext(props => {
     } else {
       return '查找目标';
     }
+    // 同时需要设置useHasLookTarget
   };
 
   // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);

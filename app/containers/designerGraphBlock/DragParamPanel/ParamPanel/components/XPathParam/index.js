@@ -27,16 +27,18 @@ export default memo(
     // 是否显示xpath弹窗
     const [visible, setVisible] = useState(false);
     // iframe表格数据
-    const [iframeData, setIframeData] = useState(
-      iframe.map((xpath, index) => {
-        return {
-          key: index + 1,
-          xpath,
-          desc: '',
-        };
-      })
-    );
-    const [count, setCount] = useState(iframe.length ? iframe.length : 1);
+    const [iframeData, setIframeData] = useState(() => {
+      return iframe
+        ? iframe.map((xpath, index) => {
+            return {
+              key: index + 1,
+              xpath,
+              desc: '',
+            };
+          })
+        : [];
+    });
+    const [count, setCount] = useState(iframe ? iframe.length : 1);
     // xpath表格数据
     const [data, setData] = useState({
       xpathData: XPath,
@@ -55,7 +57,7 @@ export default memo(
     if (find) {
       value = JSON.stringify({
         [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: find.xpath,
-        iframe: iframe || [],
+        iframe: iframe ? iframe : [],
       });
     }
     // 3个表格数据整合后的xpath值
@@ -92,7 +94,7 @@ export default memo(
           [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: find
             ? find.xpath
             : '',
-          iframe: iframes || [],
+          iframe: iframe ? iframe : [],
         });
         if (value !== xpath) {
           setXpath(value);
@@ -257,7 +259,7 @@ export default memo(
           desc: '',
         }))
       );
-      setCount(iframe.length ? iframe.length : 1);
+      setCount(iframe ? iframe.length : 1);
       const newData = {
         xpathData: XPath,
         JSpathData: JSpath,

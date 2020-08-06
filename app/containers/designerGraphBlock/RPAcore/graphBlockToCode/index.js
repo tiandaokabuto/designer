@@ -363,8 +363,8 @@ export default (dataStructure, depth = 0, blockNode) => {
   moduleMap.clear();
   transformBlockToCodeImpl(dataStructure, depth, blockNode, {});
   transformModuleImport(result, moduleMap, depth);
+  result.output += `\n` + paddingStart(depth) + 'pass\n';
   if (result.output === '\n' || result.output == '\n\n') {
-    result.output = paddingStart(depth) + 'pass\n';
   }
   return result;
 };
