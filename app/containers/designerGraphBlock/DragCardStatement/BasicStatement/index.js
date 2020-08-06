@@ -35,6 +35,10 @@ import ItemTypes from '../../constants/statementTypes';
 
 import './index.scss';
 
+//
+import { transformBlockToCode } from '../../RPAcore';
+import { sendPythonCodeByLine } from '../../../../utils/DebugUtils/runDebugServer';
+
 const { ipcRenderer, remote } = require('electron');
 
 const style = {
@@ -308,6 +312,15 @@ const BasicStatement = useInjectContext(props => {
     }
   };
 
+  // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+  // const graphDataMapRef = useRef({});
+  // graphDataMapRef.current = graphDataMap;
+  const checkedGraphBlockId = useSelector(
+    state => state.grapheditor.checkedGraphBlockId
+  );
+  const checkedGraphBlockIdRef = useRef({});
+  checkedGraphBlockIdRef.current = checkedGraphBlockId;
+
   return (
     <div
       ref={readOnly ? null : ref}
@@ -363,7 +376,45 @@ const BasicStatement = useInjectContext(props => {
                   <Icon
                     type="play-circle"
                     onClick={() => {
-                      console.log(id,cards,"单步传送的内容",cards.outPut,handleEmitCodeTransform(cards.filter(item=>item.id === id)));
+                      // console.log(
+                      //   id,
+                      //   cards,
+                      //   '单步传送的内容',
+                      //   cards[0].outPut,
+                      //   cards.filter(item => item.id === id),
+                      //   transformBlockToCode(
+                      //     cards.filter(item => item.id === id),
+                      //     0,
+                      //     false // 块级元素
+                      //   )
+                      // );
+                      // console.log(
+                      //   `当前的block`,
+                      //   graphDataMapRef.current
+                      //   .filter(
+                      //     item => item.key === checkedGraphBlockIdRef.current
+                      //   )
+                      // );
+                      console.log(checkedGraphBlockIdRef.current)
+
+                      const result = transformBlockToCode(
+                        cards.filter(item => item.id === id),
+                        0,
+                        false // 块级元素
+                      );
+                      const varNames = cards.filter(item => item.id === id)[0]
+                        .outPut;
+                      console.log(cards.filter(item => item.id === id));
+                      let line = result.output.replace(/\n/g, '\\n');
+                      line = line.replace(/\"/, `"`);
+                      line = line.replace(/"/g, `\\"`);
+                      // .replace(/"/g, `\"`)
+                      // .replace(/'/g, `\'`);
+                      console.log(`实际发送到socket的`, line);
+                      sendPythonCodeByLine({
+                        varNames: varNames ? varNames : '',
+                        output: line,
+                      });
                     }}
                   />
                   <Icon

@@ -23,9 +23,8 @@ export const runDebugServer = async () => {
     event.emit(PYTHOH_DEBUG_SERVER_START, '连接');
   });
 
-  socket.on("error", function (err) {
-    console.log(err)
-
+  socket.on('error', function(err) {
+    console.log(err);
   });
 
   worker.stderr.on('exit', code => {
@@ -39,28 +38,43 @@ export const runDebugServer = async () => {
   });
 };
 
-export const testRunOneLine = () => {
+// export const testRunOneLine = () => {
+//   const jsonObj = {
+//     method_name: 'RPA_6f0d05fa',
+//     source: ['from sendiRPA import WindowsAuto,ImageMatch'],
+//     var_data: [
+//       {
+//         var_name: '',
+//         var_value: '',
+//       },
+//     ],
+//   };
+//   console.log(JSON.stringify(jsonObj));
+//   socket.write(JSON.stringify(jsonObj));
+// };
+
+export const sendPythonCodeByLine = sendMsg => {
+  const { varNames, output } = sendMsg;
   const jsonObj = {
-    method_name: 'RPA_6f0d05fa',
-    source: ['from sendiRPA import WindowsAuto,ImageMatch'],
+    method_name: "RPA_test",
+    source: [output],
     var_data: [
       {
-        var_name: '',
-        var_value: '',
+        var_name: varNames,
+        var_value: "",
       },
     ],
   };
-  console.log(JSON.stringify(jsonObj));
-  socket.write(JSON.stringify(jsonObj));
+  const sendText = JSON.stringify(jsonObj)//.replace(/'/g, '"')
+  console.log(sendText);
+  socket.write(sendText);
 };
 
 export const killTask = () => {
-  try{
+  try {
     worker.kill();
     event.emit(PYTHOH_DEBUG_SERVER_START, '终止');
-  }catch(e){
-    console.log("终止debug",e)
+  } catch (e) {
+    console.log('终止debug', e);
   }
-
 };
-
