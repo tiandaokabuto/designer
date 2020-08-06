@@ -18,11 +18,15 @@ import {
   CHANGE_SAVING_MODULE_DATA,
   CHANGE_MOVING_MODULE_NODE,
   CHANGE_MOVING_MODULE_NODE_DATA,
-} from '../actions/grapheditor';
+  CHANGE_MXGRAPH_DATA,
+  // 第一层撤销重做
+  CHANGE_UNDO_AND_REDO,
+} from '../constants/actions/grapheditor';
 
-import { isDirNode, findNodeByKey } from '../containers/common/utils';
+import { isDirNode, findNodeByKey } from '_utils/utils';
 
 const defaultState = {
+  mxgraphData: {},
   graphData: {},
   graphDataMap: new Map(), // 保存针对每个流程图的数据结构
   checkedGraphBlockId: undefined,
@@ -36,9 +40,16 @@ const defaultState = {
   savingModuleData: undefined,
   movingModuleNode: undefined,
   movingModuleNodeData: undefined,
+
+  undoAndRedo: {
+    // 第一层撤销重做
+    undoSteps: [], // 可以用来重做的步骤
+    redoSteps: [], // 可以用来
+    counter: 0,
+  },
 };
 
-const objChangeMap = (obj) => {
+const objChangeMap = obj => {
   let map = new Map();
   for (let key in obj) {
     map.set(key, obj[key]);
@@ -46,15 +57,15 @@ const objChangeMap = (obj) => {
   return map;
 };
 
-const mapChangeObj = (map) => {
+const mapChangeObj = map => {
   let obj = {};
   for (let [k, v] of map) {
     obj[k] = v;
   }
   return obj;
 };
-const mapChangeJson = (map) => JSON.stringify(mapChangeObj(map));
-const jsonChangeMap = (json) => objChangeMap(JSON.parse(json));
+const mapChangeJson = map => JSON.stringify(mapChangeObj(map));
+const jsonChangeMap = json => objChangeMap(JSON.parse(json));
 
 const updateGraphData = (state, currentCheckedTreeNode) => {
   // 判断是否为目录结点不做任务操作
@@ -71,7 +82,7 @@ const updateGraphData = (state, currentCheckedTreeNode) => {
   }
 };
 
-const updateProcessTree = (state) => {
+const updateProcessTree = state => {
   const { processTree, graphDataMap, graphData } = state;
   const node = findNodeByKey(processTree, state.currentCheckedTreeNode);
   if (!node) return processTree;
@@ -97,6 +108,11 @@ export default (state = defaultState, action) => {
         currentCheckedModuleTreeNode: undefined, // 当前选中的复用块
         currentCheckedTreeNode: undefined,
       };
+    case CHANGE_MXGRAPH_DATA:
+      return {
+        ...state,
+        mxgraphData: action.payload,
+      };
     case CHANGE_GRAPHDATA:
       return {
         ...state,
@@ -112,10 +128,19 @@ export default (state = defaultState, action) => {
         }),
       };
     case DELETE_GRAPHDATAMAP:
+      // 再读取文件时，再把这个map中的undefined清空掉
+      // console.clear();
+      console.log(action.payload.key);
       return {
         ...state,
-        graphDataMap: state.graphDataMap.delete(payload.key),
+        graphDataMap: state.graphDataMap.set(action.payload.key, undefined),
       };
+    // return {
+    //   ...state,
+    //   graphDataMap:
+    //     //state.graphDataMap.set(action.payload.key, undefined),
+    //     state.graphDataMap.delete(action.payload.key),
+    // };
     case CLEAR_GRAPHDATAMAP:
       return {
         ...state,
@@ -198,6 +223,12 @@ export default (state = defaultState, action) => {
         currentCheckedTreeNode: undefined,
         graphData: {},
         graphDataMap: new Map(),
+      };
+    // 第一层撤销重做
+    case CHANGE_UNDO_AND_REDO:
+      return {
+        ...state,
+        undoAndRedo: action.payload,
       };
     default:
       return state;

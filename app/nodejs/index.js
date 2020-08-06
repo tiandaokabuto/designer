@@ -1,8 +1,6 @@
 import { message } from 'antd';
 import { issueProcess } from './utils';
-import event, {
-  PYTHON_OUTPUT,
-} from '../containers/designerGraphBlock/layout/eventCenter';
+import event, { PYTHON_OUTPUT } from '@/containers/eventCenter';
 
 const fs = require('fs');
 const process = require('process');
@@ -12,11 +10,11 @@ const JSZIP = require('jszip');
 
 const zip = new JSZIP();
 
-export const writeFileRecursive = function(path, buffer, callback) {
+export const writeFileRecursive = function (path, buffer, callback) {
   const lastPath = path.substring(0, path.lastIndexOf('/'));
   fs.mkdir(lastPath, { recursive: true }, err => {
     if (err) return callback(err);
-    fs.writeFile(path, buffer, { flag: 'w' }, function(err) {
+    fs.writeFile(path, buffer, { flag: 'w' }, function (err) {
       if (err) return callback(err);
       return callback(null);
     });
@@ -25,7 +23,7 @@ export const writeFileRecursive = function(path, buffer, callback) {
 
 export function readDir(obj, nowPath) {
   const files = fs.readdirSync(nowPath); // 读取目录中的所有文件及文件夹（同步操作）
-  files.forEach(function(fileName, index) {
+  files.forEach(function (fileName, index) {
     // 遍历检测目录中的文件
 
     const fillPath = `${nowPath}/${fileName}`;
@@ -54,7 +52,7 @@ export const startZIP = (descText, versionText) => {
         level: 9,
       },
     })
-    .then(function(content) {
+    .then(function (content) {
       issueProcess(content, descText, versionText);
     });
 };

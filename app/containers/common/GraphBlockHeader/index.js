@@ -6,10 +6,11 @@ import { useSelector } from 'react-redux';
 
 import NewProject from './NewProject';
 import api from '../../../api';
-import { getModifiedNodes } from '../utils';
+import { getModifiedNodes } from '_utils/utils';
+import { changeTreeTab } from '../../reduxActions/index';
 import HelpModel from './HelpModel';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
-import SaveConfirmModel from '../../designerGraphEdit/layout/GraphItem/components/SaveConfirmModel';
+import SaveConfirmModel from '../../designerGraphEdit/GraphItem/components/SaveConfirmModel';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -74,6 +75,7 @@ export default memo(({ history, tag }) => {
         } else {
           jumpToProject();
         }
+        changeTreeTab('process');
       },
     },
     {

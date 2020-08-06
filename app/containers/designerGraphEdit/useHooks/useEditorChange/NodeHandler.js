@@ -12,9 +12,9 @@ import {
   changeMovingModuleNode,
 } from '../../../reduxActions';
 import PATH_CONFIG from '@/constants/localFilePath.js';
-import event from '../../../designerGraphBlock/layout/eventCenter';
+import event from '../../../designerGraphBlock/eventCenter';
 
-import { changeModifyState, getDecryptOrNormal } from '../../../common/utils';
+import { changeModifyState, getDecryptOrNormal } from '_utils/utils';
 
 import store from '../../../../store';
 

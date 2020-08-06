@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme, { mount, shallow, render } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import ConditionParam from '../../../../../../app/containers/designerGraphBlock/layout/DragParamPanel/ParamPanel/ConditionParam';
+import ConditionParam from '../../../../../../app/containers/designerGraphBlock/DragParamPanel/ParamPanel/ConditionParam';
 
 Enzyme.configure({ adapter: new Adapter() });
 

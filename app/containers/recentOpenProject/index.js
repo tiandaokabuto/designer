@@ -6,10 +6,10 @@ import { Table, Button, Input, Popconfirm, message, Modal } from 'antd';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 
 import GraphBlockHeader from '../common/GraphBlockHeader';
-import { SDIcon } from '../common/components';
-import RecentBackImg from '../images/recent_back.png';
-import DiffImg from '../images/diff.png';
-import CloseImg from '../images/close.png';
+import { SDIcon } from '../components';
+import RecentBackImg from '../assets/images/recent_back.png';
+import DiffImg from '../assets/images/diff.png';
+import CloseImg from '../assets/images/close.png';
 
 import PATH_CONFIG from '@/constants/localFilePath.js';
 
@@ -20,7 +20,7 @@ import {
   formatDateTime as FormatDateTime,
   deleteFolderRecursive,
   checkProjectExist,
-} from '../common/utils';
+} from '_utils/utils';
 import {
   changeCurrentProject,
   clearGrapheditorData,

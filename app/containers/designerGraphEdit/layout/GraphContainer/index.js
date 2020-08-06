@@ -7,7 +7,7 @@ import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import event, {
   CANVAS_ZOOM_OUT,
   CANVAS_ZOOM_IN,
-} from '../../../designerGraphBlock/layout/eventCenter';
+} from '../../../designerGraphBlock/eventCenter';
 import FlowItemPanel from './components/FlowItemPanel';
 import AreaNode from '../RegisterNode/AreaNode';
 import ProcessBlockNode from '../RegisterNode/ProcessBlockNode';
@@ -23,14 +23,14 @@ import WhileJPG from '@/containers/images/while.jpg';
 import DoWhileJPG from '@/containers/images/doWhile.jpg';
 import ForEachJPG from '@/containers/images/forEach.jpg';
 
-import OutputPanel from '../../../designerGraphBlock/layout/DragContainer/OutputPanel';
+import OutputPanel from '@containers/common/OutputPanel';
 
 import EditorChange, {
   registerDataChange,
 } from '../../useHooks/useEditorChange';
 import { synchroGraphDataToProcessTree } from '../../../reduxActions';
 
-import { findNodeByKey, copyModule } from '../../../common/utils';
+import { findNodeByKey, copyModule } from '_utils/utils';
 
 let isUnSelected = false;
 

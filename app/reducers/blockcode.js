@@ -17,7 +17,7 @@ import {
   CHANGE_FORCEUPDATE_TAG,
   RESET_PENDING_QUEUE,
   REDO_CARDSDATA,
-} from '../actions/codeblock';
+} from '../constants/actions/codeblock';
 
 import { synchroGraphDataMap } from '../containers/reduxActions';
 
