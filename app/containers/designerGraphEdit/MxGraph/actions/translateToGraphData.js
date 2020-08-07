@@ -15,7 +15,7 @@ export function translateToGraphData(sender) {
   Object.keys(cells).map((key, index) => {
     if (index < 2) return;
     if (cells[key].isVertex()) {
-      const { style, value, geometry, mxObjectId, id } = cells[key];
+      const { style, value, geometry, id, parent } = cells[key];
       // 根据style和value判断这个cell是什么类型的
       const shape = getShape(style, value);
 
@@ -42,6 +42,7 @@ export function translateToGraphData(sender) {
       //console.log(cells[key].geometry);
 
       output.nodes.push({
+        parent: parent.id,
         type: 'node',
         size:
           shape === 'start' || shape === 'end'
@@ -56,14 +57,12 @@ export function translateToGraphData(sender) {
         label, // 队value进行处理
         x: geometry.x,
         y: geometry.y,
-
-        // id: mxObjectId,
         id,
         index: id,
         version: 'mxgraph',
       });
     } else {
-      const { style, value, source, target, mxObjectId, id } = cells[key];
+      const { style, value, source, target, id } = cells[key];
 
       // 由于监听会触发两次，只有后面那次有target，所以假如没有target则还没生成连线，不写入数组
       if (!target) return;
@@ -74,7 +73,6 @@ export function translateToGraphData(sender) {
         style: style, // 新增 出入点位置
         target: target.id,
         //targetAnchor: 3,
-        // id: mxObjectId,
         id,
         label: value,
         index: id,
@@ -95,6 +93,9 @@ function getShape(style, value) {
 
   if (value === '开始') return 'start';
   if (value === '结束') return 'end';
+  if (value === 'try') return 'try';
+  if (value === 'catch') return 'catch';
+  if (value === 'finally') return 'finally';
 
   typeList.forEach(shape => {
     if (style.indexOf(`${shape}`) !== -1) {
@@ -117,5 +118,11 @@ function getMeanShape(name) {
       return 'rhombus-node';
     case 'group':
       return 'group';
+    case 'try':
+      return 'try';
+    case 'catch':
+      return 'catch';
+    case 'finally':
+      return 'finally';
   }
 }

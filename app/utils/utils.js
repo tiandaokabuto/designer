@@ -52,6 +52,7 @@ const defaultGraphData = {
       id: 'mx_start',
       index: 'mx_start',
       label: '开始',
+      parent: '1',
       newStyle:
         'shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;align=center;fillColor=#edf6f7;',
       shape: 'start-node',
