@@ -13,10 +13,11 @@ import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStor
 import SaveConfirmModel from '../../designerGraphEdit/GraphItem/components/SaveConfirmModel';
 
 //liuqi
+import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
 import event, { PYTHOH_DEBUG_SERVER_START } from '../../eventCenter';
 import {
   runDebugServer,
-  testRunOneLine,
+  runAllStepByStepAuto,
   killTask,
 } from '../../../utils/DebugUtils/runDebugServer';
 
@@ -181,7 +182,7 @@ export default memo(({ history, tag }) => {
       case '连接':
         return setPyDebugServerState({
           type: 'Debug已连接',
-          tagColor: 'green',
+          tagColor: '',
         });
       case '终止':
         return setPyDebugServerState({
@@ -190,6 +191,15 @@ export default memo(({ history, tag }) => {
         });
     }
   };
+
+  // 逐步调试按钮
+  const [pauseState, setPauseState] = useState({
+    running: false,
+    pause: false,
+  });
+
+  // 流程快代码转义
+  const transformProcessToPython = useTransformProcessToPython();
 
   useEffect(() => {
     event.addListener(
@@ -272,27 +282,63 @@ export default memo(({ history, tag }) => {
             {pyDebugServerState.type}
           </Tag>
           {pyDebugServerState.type === 'Debug已连接' ? (
-            <span>
+            <>
+              {pauseState.running === false ? (
+                <Tag
+                  color="lime"
+                  className="debug-btn-inner"
+                  onClick={() => {
+                    //testRunOneLine();
+                    setPauseState({ running: true, pause: false });
+                    console.clear();
+                    console.log(transformProcessToPython());
+                  }}
+                >
+                  <Icon type="play-circle" /> 按序调试
+                </Tag>
+              ) : (
+                ''
+              )}
+
+              {pauseState.running === true ? (
+                pauseState.pause === true ? (
+                  <Tag
+                    color="gold"
+                    className="debug-btn-inner"
+                    onClick={() => {
+                      //testRunOneLine();
+                      setPauseState({ ...pauseState, pause: false });
+                    }}
+                  >
+                  <Icon type="play-circle" /> 继续
+                  </Tag>
+                ) : (
+                  <Tag
+                    color="purple"
+                    className="debug-btn-inner"
+                    onClick={() => {
+                      //testRunOneLine();
+                      setPauseState({ ...pauseState, pause: true });
+                    }}
+                  >
+                  <Icon type="pause-circle" />暂停
+                  </Tag>
+                )
+              ) : (
+                ''
+              )}
+
               <Tag
-                color="cyan"
+                color="volcano"
                 className="debug-btn-inner"
                 onClick={() => {
-                  testRunOneLine();
+                  setPauseState({ running:false, pause: false });
+                  killTask()
                 }}
               >
-                <Icon type="play-circle" />
+                <Icon type="stop" /> 终止
               </Tag>
-              <Tag color="cyan" className="debug-btn-inner">
-                <Icon type="pause-circle" />
-              </Tag>
-              <Tag
-                color="cyan"
-                className="debug-btn-inner"
-                onClick={() => killTask()}
-              >
-                <Icon type="stop" />
-              </Tag>
-            </span>
+            </>
           ) : (
             ''
           )}

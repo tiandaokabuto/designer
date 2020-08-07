@@ -53,6 +53,9 @@ import NewProcess from './NewProcess';
 
 import './index.scss';
 
+// liuqi
+import { getTempCenter } from '../../designerGraphEdit/RPAcore';
+
 const { remote, ipcRenderer } = require('electron');
 const { exec } = require('child_process');
 const process = require('process');
@@ -221,7 +224,9 @@ export default memo(
         const uuid = new Date().getTime().toString(16);
         uuidRef.current = uuid;
         if (fromOrTo === undefined) {
-          transformProcessToPython();
+          console.log(transformProcessToPython());
+          // 实验-liuqi
+          console.log(getTempCenter());
         } else {
           transformPythonWithPoint(fromOrTo);
         }

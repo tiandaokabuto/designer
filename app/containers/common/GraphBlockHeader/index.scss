@@ -17,6 +17,7 @@
 
 
     }
+    // 调试按钮组
     .debug-btn{
       user-select: none;
 
@@ -26,7 +27,7 @@
       z-index: 999;
 
       .debug-btn-inner{
-        margin:0 4px;
+        margin:0 3px 0 3px;
       }
 
       .debug-btn-inner:hover{

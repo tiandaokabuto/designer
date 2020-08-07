@@ -16,7 +16,20 @@ export const runDebugServer = async () => {
     `${process.cwd()}/../Python/python3_lib/debug/DebugServer.py`,
   ]);
 
-  console.log(worker);
+  // python的情况
+  worker.stderr.on('exit', code => {
+    localStorage.setItem('debug', '关闭');
+    event.emit(PYTHOH_DEBUG_SERVER_START, '退出');
+  });
+
+  worker.stderr.on('data', stdout => {
+    const log = getUTF8(stdout);
+    // 输出python日志
+    console.log(`stdout: ${log}`);
+  });
+
+
+
 
   socket = new net.Socket();
   socket.connect(port, hostname, function() {
@@ -32,33 +45,25 @@ export const runDebugServer = async () => {
     console.log('[收到soket—data]',msg);
   });
 
-  // python的情况
-  worker.stderr.on('exit', code => {
-    localStorage.setItem('debug', '关闭');
-    event.emit(PYTHOH_DEBUG_SERVER_START, '退出');
-  });
 
-  worker.stderr.on('data', stdout => {
-    const log = getUTF8(stdout);
-
-    console.log(`stdout: ${log}`);
-  });
 };
 
-// export const testRunOneLine = () => {
-//   const jsonObj = {
-//     method_name: 'RPA_6f0d05fa',
-//     source: ['from sendiRPA import WindowsAuto,ImageMatch'],
-//     var_data: [
-//       {
-//         var_name: '',
-//         var_value: '',
-//       },
-//     ],
-//   };
-//   console.log(JSON.stringify(jsonObj));
-//   socket.write(JSON.stringify(jsonObj));
-// };
+export const runAllStepByStepAuto = (cards=[], level="block" /** editor第一层 block第二层 */) => {
+  // TODO 按照顺序一个一个块发送执行
+
+  // const jsonObj = {
+  //   method_name: 'RPA_6f0d05fa',
+  //   source: ['from sendiRPA import WindowsAuto,ImageMatch'],
+  //   var_data: [
+  //     {
+  //       var_name: '',
+  //       var_value: '',
+  //     },
+  //   ],
+  // };
+  // console.log(JSON.stringify(jsonObj));
+  // socket.write(JSON.stringify(jsonObj));
+};
 
 export const sendPythonCodeByLine = sendMsg => {
   const { varNames, output } = sendMsg;
