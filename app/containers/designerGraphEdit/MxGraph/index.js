@@ -32,6 +32,8 @@ import {
   CONDITION_NODE,
   START_NODE,
   END_NODE,
+  GROUP_NODE,
+  TRY_NODE,
 } from './CellProperties';
 import { POINT_POSITION_EXIT, POINT_POSITION_ENTRY } from './PointPosition';
 import event from '@/containers/eventCenter';
@@ -47,11 +49,12 @@ import { translateToGraphData } from './actions/translateToGraphData';
 import { Rule_checkConnection } from './rules/checkRules';
 import { goHandleUndo, goHandleRedo } from './actions/undoAndRedo.js';
 import { message } from 'antd';
+import { cloneDeep } from 'lodash';
 
 const fs = require('fs');
 const checkPng = require('./images/check.png');
 let graph = null;
-//let undoMng = null;
+let undoMng = null;
 
 const x2js = new X2JS();
 
@@ -137,7 +140,7 @@ const MxgraphContainer = useInjectContext(
       // 剪切板
       mxClipboard,
       // 撤销重做
-      //mxUndoManager,
+      mxUndoManager,
     } = mxgraph;
 
     const handleUndo = () => {
@@ -155,7 +158,7 @@ const MxgraphContainer = useInjectContext(
       graph = graphRef.current;
       event.addListener('resetGraph', resetGraph);
 
-      //undoMng = new mxUndoManager();
+      undoMng = new mxUndoManager();
 
       event.addListener('undo', handleUndo);
       event.addListener('redo', handleRedo);
@@ -266,6 +269,10 @@ const MxgraphContainer = useInjectContext(
 
       graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
 
+      // setTimeout(() => {
+
+      //   graph.refresh();
+      // }, 0);
       loadGraph(graphDataRef.current);
       //undoMng.clear();
       // TODO: 清空撤销恢复池
@@ -506,11 +513,12 @@ const MxgraphContainer = useInjectContext(
      * 设置连线样式
      */
     const setDataMingEdgeStyle = () => {
-      // const listener = function (sender, evt) {
-      //   undoMng.undoableEditHappened(evt.getProperty('edit'));
-      // };
-      // graph.getModel().addListener(mxEvent.UNDO, listener);
-      // graph.getView().addListener(mxEvent.UNDO, listener);
+      //
+      const listener = function (sender, evt) {
+        undoMng.undoableEditHappened(evt.getProperty('edit'));
+      };
+      graph.getModel().addListener(mxEvent.UNDO, listener);
+      graph.getView().addListener(mxEvent.UNDO, listener);
 
       mxEdgeStyle.ComponentEdge = (state, source, target, points, result) => {
         const { view } = state;
@@ -727,6 +735,8 @@ const MxgraphContainer = useInjectContext(
         if (cell != null) {
           if (!cell.vertex) return;
 
+          console.log(cell);
+
           const overlays = graph.getCellOverlays(cell);
           // 排除连接点和连接线
           const isPort = graph.isPort(cell);
@@ -819,7 +829,8 @@ const MxgraphContainer = useInjectContext(
       // 移动 CELLS_MOVED MOVE_CELLS
       graph.addListener(mxEvent.CELLS_MOVED, (sender, evt) => {
         updateGraphDataAction(graph);
-        console.log('\n\n\n\n 更新啊啊啊啊啊啊 \n\n\n');
+        // console.log('\n\n\n\n 更新啊啊啊啊啊啊 \n\n\n');
+        console.log(undoMng);
 
         // 要区别2种move，假如没有target，则是正常move
         // 有target，则是新增
@@ -912,6 +923,7 @@ const MxgraphContainer = useInjectContext(
 
       // 更新
       graph.addListener('update_graphData', () => {
+        console.log('转换');
         const output = translateToGraphData(graph.getModel());
         if (output) {
           updateGraphData(output);
@@ -977,7 +989,7 @@ const MxgraphContainer = useInjectContext(
           if (item.shape === 'processblock') {
             const labelStr = PROCESS_NODE.label;
             obj._id = item.id;
-            obj._parent = '1';
+            obj._parent = item.parent;
             obj._style = PROCESS_NODE.style;
             // obj._value = labelStr.replace('流程块', item.label);
             // obj._value = item.version
@@ -993,7 +1005,7 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._as = 'geometry';
           } else if (item.shape === 'rhombus-node') {
             obj._id = item.id;
-            obj._parent = '1';
+            obj._parent = item.parent;
             obj._style = CONDITION_NODE.style;
             obj._value = CONDITION_NODE.getLabel(item.label);
             obj._vertex = '1';
@@ -1005,7 +1017,7 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._as = 'geometry';
           } else if (item.shape === 'start-node') {
             obj._id = item.id;
-            obj._parent = '1';
+            obj._parent = item.parent;
             obj._style = START_NODE.style;
             obj._value = START_NODE.label;
             obj._vertex = '1';
@@ -1017,7 +1029,7 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._as = 'geometry';
           } else if (item.shape === 'end-node') {
             obj._id = item.id;
-            obj._parent = '1';
+            obj._parent = item.parent;
             obj._style = END_NODE.style;
             obj._value = END_NODE.label;
             obj._vertex = '1';
@@ -1026,6 +1038,69 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._y = String(item.y);
             obj.mxGeometry._width = String(END_NODE.width);
             obj.mxGeometry._height = String(END_NODE.height);
+            obj.mxGeometry._as = 'geometry';
+          } else if (item.shape === 'group') {
+            obj._id = item.id;
+            obj._parent = item.parent;
+            obj._style = GROUP_NODE.style;
+            obj._value = GROUP_NODE.label;
+            obj._vertex = '1';
+            obj.mxGeometry = {};
+            obj.mxGeometry._x = String(item.x);
+            obj.mxGeometry._y = String(item.y);
+            obj.mxGeometry._width = String(GROUP_NODE.width);
+            obj.mxGeometry._height = String(GROUP_NODE.height);
+            obj.mxGeometry._as = 'geometry';
+          } else if (item.shape === 'group') {
+            obj._id = item.id;
+            obj._parent = item.parent;
+            obj._style = GROUP_NODE.style;
+            obj._value = GROUP_NODE.label;
+            obj._vertex = '1';
+            obj.mxGeometry = {};
+            obj.mxGeometry._x = String(item.x);
+            obj.mxGeometry._y = String(item.y);
+            obj.mxGeometry._width = String(GROUP_NODE.width);
+            obj.mxGeometry._height = String(GROUP_NODE.height);
+            obj.mxGeometry._as = 'geometry';
+          } else if (item.shape === 'try') {
+            const sizes = item.size.split('*');
+            obj._id = item.id;
+            obj._parent = item.parent;
+            obj._style = GROUP_NODE.style;
+            obj._value = 'try';
+            obj._vertex = '1';
+            obj.mxGeometry = {};
+            obj.mxGeometry._x = String(item.x);
+            obj.mxGeometry._y = String(item.y);
+            obj.mxGeometry._width = String(sizes[0]);
+            obj.mxGeometry._height = String(sizes[1]);
+            obj.mxGeometry._as = 'geometry';
+          } else if (item.shape === 'catch') {
+            const sizes = item.size.split('*');
+            obj._id = item.id;
+            obj._parent = item.parent;
+            obj._style = GROUP_NODE.style;
+            obj._value = 'catch';
+            obj._vertex = '1';
+            obj.mxGeometry = {};
+            obj.mxGeometry._x = String(item.x);
+            obj.mxGeometry._y = String(item.y);
+            obj.mxGeometry._width = String(sizes[0]);
+            obj.mxGeometry._height = String(sizes[1]);
+            obj.mxGeometry._as = 'geometry';
+          } else if (item.shape === 'finally') {
+            const sizes = item.size.split('*');
+            obj._id = item.id;
+            obj._parent = item.parent;
+            obj._style = GROUP_NODE.style;
+            obj._value = 'finally';
+            obj._vertex = '1';
+            obj.mxGeometry = {};
+            obj.mxGeometry._x = String(item.x);
+            obj.mxGeometry._y = String(item.y);
+            obj.mxGeometry._width = String(sizes[0]);
+            obj.mxGeometry._height = String(sizes[1]);
             obj.mxGeometry._as = 'geometry';
           }
           return obj;
@@ -1303,6 +1378,18 @@ const MxgraphContainer = useInjectContext(
           )
             return message.info('结束块只能有一个');
 
+          // if (importableCells[0].value === 'contain') {
+          //   console.log('拖动的是容器');
+          //   const tryCell = cloneDeep(importableCells[0]);
+          //   const finalCell = cloneDeep(importableCells[0]);
+          //   tryCell.value = 'try';
+          //   finalCell.value = 'finally';
+          //   tryCell.geometry.height = 100;
+          //   finalCell.geometry.height = 100;
+          //   importableCells.push(tryCell);
+          //   importableCells.push(finalCell);
+          // }
+
           if (importableCells.length > 0) {
             graph.stopEditing();
 
@@ -1346,7 +1433,22 @@ const MxgraphContainer = useInjectContext(
                   );
                   select = clones;
                 } else if (importableCells.length > 0) {
-                  select = graph.importCells(importableCells, x, y, target);
+                  if (importableCells[0].value === 'try') {
+                    select = graph.importCells(importableCells, x, y, target);
+                    const tryCells = cloneDeep(importableCells);
+                    tryCells[0].value = 'catch';
+                    tryCells[0].geometry.height = 100;
+                    const finalCells = cloneDeep(importableCells);
+                    finalCells[0].value = 'finally';
+                    finalCells[0].geometry.height = 100;
+                    select = select.concat(
+                      graph.importCells(tryCells, x, y, target),
+                      graph.importCells(finalCells, x, y, target)
+                    );
+                    console.log(select);
+                  } else {
+                    select = graph.importCells(importableCells, x, y, target);
+                  }
                 }
 
                 // Executes parent layout hooks for position/order
@@ -1377,79 +1479,87 @@ const MxgraphContainer = useInjectContext(
                 // this.editorUi.handleError(e);
               } finally {
                 graph.model.endUpdate();
-                console.log('endUpdate, 开始修改id并设置graphDataMap');
-                if (select[0]) {
-                  // select[0].id = `mx_${uniqueId()}`;
-                  select[0].id = getMxId(graphDataRef.current);
-                  if (
-                    select[0].value.indexOf("class='compoent-content'") > -1
-                  ) {
-                    setGraphDataMap(select[0].id, {
-                      shape: 'processblock',
-                      properties: [
-                        {
-                          cnName: '标签名称',
-                          enName: 'label',
-                          value: select[0].value
-                            .replace(
-                              "<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>",
-                              ''
-                            )
-                            .replace('</span></div>', ''),
-                          default: '',
-                        },
-                        {
-                          cnName: '输入参数',
-                          enName: 'param',
-                          value: [],
-                          default: '',
-                        },
-                        {
-                          cnName: '流程块返回',
-                          enName: 'output',
-                          value: [],
-                          default: '',
-                        },
-                      ],
-                      variable: [],
-                    });
-                  } else if (
-                    select[0].value.indexOf("class='rcomponent-content'") > -1
-                  ) {
-                    setGraphDataMap(select[0].id, {
-                      shape: 'rhombus-node',
-                      properties: [
-                        {
-                          cnName: '标签名称',
-                          enName: 'label',
-                          value: '判断',
-                          default: '',
-                        },
-                        {
-                          cnName: '分支条件',
-                          enName: 'condition',
-                          value: '',
-                          default: '',
-                          valueMapping: [
-                            { name: '等于', value: '==' },
-                            { name: '不等于', value: '!=' },
-                            { name: '大于', value: '>' },
-                            { name: '小于', value: '<' },
-                            { name: '大于等于', value: '>=' },
-                            { name: '小于等于', value: '<=' },
-                            { name: '空', value: 'is None' },
-                            { name: '非空', value: 'not None' },
-                          ],
-                          tag: 1,
-                          valueList: [],
-                        },
-                      ],
-                    });
-                  }
+                if (select.length !== 0) {
+                  select.forEach((item, index) => {
+                    item.id = getMxId(graphDataRef.current);
+                    if (item.value.indexOf("class='compoent-content'") > -1) {
+                      setGraphDataMap(item.id, {
+                        shape: 'processblock',
+                        properties: [
+                          {
+                            cnName: '标签名称',
+                            enName: 'label',
+                            value: item.value
+                              .replace(
+                                "<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>",
+                                ''
+                              )
+                              .replace('</span></div>', ''),
+                            default: '',
+                          },
+                          {
+                            cnName: '输入参数',
+                            enName: 'param',
+                            value: [],
+                            default: '',
+                          },
+                          {
+                            cnName: '流程块返回',
+                            enName: 'output',
+                            value: [],
+                            default: '',
+                          },
+                        ],
+                        variable: [],
+                      });
+                    } else if (
+                      item.value.indexOf("class='rcomponent-content'") > -1
+                    ) {
+                      setGraphDataMap(item.id, {
+                        shape: 'rhombus-node',
+                        properties: [
+                          {
+                            cnName: '标签名称',
+                            enName: 'label',
+                            value: '判断',
+                            default: '',
+                          },
+                          {
+                            cnName: '分支条件',
+                            enName: 'condition',
+                            value: '',
+                            default: '',
+                            valueMapping: [
+                              { name: '等于', value: '==' },
+                              { name: '不等于', value: '!=' },
+                              { name: '大于', value: '>' },
+                              { name: '小于', value: '<' },
+                              { name: '大于等于', value: '>=' },
+                              { name: '小于等于', value: '<=' },
+                              { name: '空', value: 'is None' },
+                              { name: '非空', value: 'not None' },
+                            ],
+                            tag: 1,
+                            valueList: [],
+                          },
+                        ],
+                      });
+                    } else if (item.value === 'catch') {
+                      item.geometry.x = 0;
+                      item.geometry.y = 100;
+                      select[0].insert(item);
+                      // item.parent = select[0];
+                    } else if (item.value === 'finally') {
+                      // item.parent = select[0];
+                      item.geometry.x = 0;
+                      item.geometry.y = 200;
+                      select[0].insert(item);
+                    }
+                  });
                 }
                 console.log('修改结束');
                 updateGraphDataAction(graph);
-
+                graph.refresh();
                 setTimeout(() => {
                   console.log(
                     '我看看',

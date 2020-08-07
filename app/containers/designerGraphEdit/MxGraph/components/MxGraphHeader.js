@@ -136,8 +136,18 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
 
         <div
           className="mxgraph-cell designergraph-container-header-tool-ground"
-          data-width="186"
-          data-height="55"
+          data-width="286"
+          data-height="400"
+          data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;"
+          data-label="try"
+        >
+          异常捕获
+        </div>
+
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-ground"
+          data-width="286"
+          data-height="400"
           data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;"
           data-label="contain"
         >
