@@ -41,8 +41,7 @@ export const clickOneStepRun = (cards, id) => {
           ></textarea>
         </div>
       ),
-      duration: 3,
-      key: 'codeMsg',
+      duration: 2,
       icon: <span></span>,
 
     });
