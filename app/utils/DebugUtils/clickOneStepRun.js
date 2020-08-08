@@ -11,12 +11,15 @@ export const clickOneStepRun = (cards, id) => {
   //console.log(`//${id}//`, fetchCard(cards, id)); //cards.filter(item => item.id === id))
   const varNames = fetchCard(cards, id).output;
   //console.log(cards.filter(item => item.id === id));
-  let line = result.output; //.replace(/\n/g, '\\n');
-  line = line.replace(/\"/, `"`);
-  line = line.replace(/"/g, `\"`);
+  let line = result.output//.replace(/\n/g, '\\n');
+  //line = line.replace(/\"/, `"`);
+  //line = line.replace(/"/g, `\"`);
   // .replace(/"/g, `\"`)
   // .replace(/'/g, `\'`);
   console.log(`【\n=>\\n 且 " => \" 后的python代码】\n`, line);
+
+
+  //line = 'import GUI'
 
   if (localStorage.getItem('debug') === '关闭') {
     return message.warning('未打开debug模式');

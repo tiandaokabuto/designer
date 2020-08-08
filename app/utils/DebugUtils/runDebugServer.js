@@ -42,7 +42,8 @@ export const runDebugServer = async () => {
   });
 
   socket.on('data', msg => {
-    console.log('[收到soket—data]',msg);
+    const log = getUTF8(msg);
+    console.log('[收到soket—data]',log);
   });
 
 
