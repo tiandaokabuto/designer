@@ -12,9 +12,9 @@ const transformCustomCodeStatement = (padding, dataStructure, result) => {
       .split('\n')
       .map(item => padding + item)
       .join('\n');
-    result.output += `${ignore}\n`;
+    result.output += `${padding}${ignore}\n`;
     result.output += buf;
-    result.output += `\n${ignore}`;
+    result.output += `\n${padding}${ignore}`;
   }
   return result.output;
 };

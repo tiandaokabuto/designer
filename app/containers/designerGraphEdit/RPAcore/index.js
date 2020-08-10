@@ -21,6 +21,18 @@ import { updateEditorBlockPythonCode } from '../../reduxActions';
 
 const padding = length => '    '.repeat(length);
 
+let tempCenter = [];
+
+// 清空代码分段缓存区
+export const claerTempCenter = () => {
+  tempCenter = [];
+};
+
+// 获取代码分段缓存区的内容
+export const getTempCenter = () => {
+  return tempCenter;
+};
+
 /**
  *
  * @param {*} graphData ggeditor下的包含结点和边的集合的对象
@@ -54,6 +66,7 @@ export const transformEditorProcess = (
       const variable = blockData.variable || [];
       // 在文件顶部添加该流程的函数模块, 并调用该函数。
       const funcName = `RPA_${currentId}`; //uniqueId('RPA_');
+
       result.output =
         `def ${funcName}(${params
           .filter(item => item.name)
@@ -61,7 +74,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-          '\n'
+            '\n'
         }` + result.output;
       // 判断一下当前的流程块结点是否有两个入点，那么就是循环相关 就需要包括在 while True: 的循环结构下边。
       // 同时解析的深度要 +1
@@ -85,6 +98,43 @@ export const transformEditorProcess = (
         .filter(item => item.name)
         .map(item => item.name + ' = ' + item.value)
         .join(',')})\n`;
+
+      /**
+       * 实验田
+       *
+       *
+       */
+
+      tempCenter.push({
+        currentId: currentId,
+        pythonCode: `def ${funcName}(${params
+          .filter(item => item.name)
+          .map(item => item.name)
+          .join(',')}):\n${
+          // 调用转译流程块结点的函数
+          transformBlockToCode(blockData.cards || [], 1, blockData).output ||
+            '\n'
+        }`,
+        funcName: funcName,
+        params: params,
+        //`${padding(depth)}
+        __main__: `${
+          return_string ? return_string + ' = ' : ''
+        }${funcName}(${params
+          .filter(item => item.name)
+          .map(item => item.name + ' = ' + item.value)
+          .join(',')})\n`,
+        cards: blockData.cards || [],
+        blockData: blockData,
+      });
+      console.log(`tempCenter`, tempCenter);
+
+      /**
+       * 实验田
+       *
+       *
+       */
+
       // 寻找下一个要解析的结点
       const next = findTargetIdBySourceId(graphData.edges, currentId);
       // 解析下一个结点，这里要把breakPoint结点透传
@@ -473,7 +523,7 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
     writeFileRecursive(
       `${process.cwd()}/python/temp.py`,
       result.output,
-      function () {
+      function() {
         // console.log('保存成功');
       }
     );

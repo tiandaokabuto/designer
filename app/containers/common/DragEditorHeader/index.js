@@ -53,6 +53,9 @@ import NewProcess from './NewProcess';
 
 import './index.scss';
 
+// liuqi
+import { getTempCenter } from '../../designerGraphEdit/RPAcore';
+
 const { remote, ipcRenderer } = require('electron');
 const { exec } = require('child_process');
 const process = require('process');
@@ -182,22 +185,32 @@ export default memo(
       // 格式匹配
       if (reg.test(version)) {
         setVersionTipVisible(false);
-        const originVersionArray = originVersion.split('.');
-        const currentVersionArray = version.split('.');
-        const minLength =
-          originVersionArray.length > currentVersionArray.length
-            ? currentVersionArray.length
-            : originVersionArray.length;
-        let isVerisonSmallerThanOriginVerison = false;
-        // origin: 2.0 current: 1.0.1
-        for (let i = 0; i < minLength; i += 1) {
-          if (originVersionArray[i] > currentVersionArray[i]) {
-            isVerisonSmallerThanOriginVerison = true;
-            setVersionTipVisible2(true);
-            break;
-          }
-        }
-        if (!isVerisonSmallerThanOriginVerison) {
+        // const originVersionArray = originVersion.split('.');
+        // const currentVersionArray = version.split('.');
+
+        const originVersionNum = Number(originVersion.split('.').join(''));
+        const currentVersionNum = Number(version.split('.').join(''));
+
+        // const minLength =
+        //   originVersionArray.length > currentVersionArray.length
+        //     ? currentVersionArray.length
+        //     : originVersionArray.length;
+        // let isVerisonSmallerThanOriginVerison = false;
+        // // origin: 2.0 current: 1.0.1
+        // for (let i = 0; i < minLength; i += 1) {
+        //   if (originVersionArray[i] > currentVersionArray[i]) {
+        //     isVerisonSmallerThanOriginVerison = true;
+        //     setVersionTipVisible2(true);
+        //     break;
+        //   }
+        // }
+        // if (!isVerisonSmallerThanOriginVerison) {
+        //   setVersionTipVisible2(false);
+        // }
+
+        if (currentVersionNum <= originVersionNum) {
+          setVersionTipVisible2(true);
+        } else {
           setVersionTipVisible2(false);
         }
       } else {
@@ -211,7 +224,12 @@ export default memo(
         const uuid = new Date().getTime().toString(16);
         uuidRef.current = uuid;
         if (fromOrTo === undefined) {
-          transformProcessToPython();
+          console.log(transformProcessToPython());
+
+          // 实验-liuqi
+          //console.log(getTempCenter());
+
+
         } else {
           transformPythonWithPoint(fromOrTo);
         }

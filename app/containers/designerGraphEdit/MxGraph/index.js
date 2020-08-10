@@ -487,16 +487,22 @@ const MxgraphContainer = useInjectContext(
     const configContainerStyleSheet = () => {
       const style = {};
       style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_SWIMLANE;
-      style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
+      //style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
       style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
-      style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
-      style[mxConstants.STYLE_FILLCOLOR] = '#33a58a';
-      style[mxConstants.STYLE_STROKECOLOR] = '#33a58a';
-      style[mxConstants.STYLE_FONTCOLOR] = '#fff';
-      style[mxConstants.STYLE_ROUNDED] = true;
+      style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_CENTER;
+
+      //style[mxConstants.STYLE_VERTICAL_LABEL_POSITION] = "middle";
+      style[mxConstants.STYLE_FONTSTYLE] = 0;
+
+      style[mxConstants.STYLE_FILLCOLOR] = '#f4f8f9';
+      style[mxConstants.STYLE_STROKECOLOR] = '#4f9982';
+      style[mxConstants.STYLE_FONTCOLOR] = '#000';
+      style[mxConstants.STYLE_SWIMLANE_FILLCOLOR] = "#fff";
+      style[mxConstants.STYLE_DASHED] = true;
+      style[mxConstants.STYLE_ROUNDED] = false;
       style[mxConstants.STYLE_STARTSIZE] = '30';
       style[mxConstants.STYLE_FONTSIZE] = '16';
-      style[mxConstants.STYLE_FONTSTYLE] = 1;
+      //style[mxConstants.STYLE_FONTSTYLE] = 1;
       graph.getStylesheet().putCellStyle('group', style);
     };
 
@@ -1084,6 +1090,19 @@ const MxgraphContainer = useInjectContext(
             obj._parent = item.parent;
             obj._style = GROUP_NODE.style;
             obj._value = 'finally';
+            obj._vertex = '1';
+            obj.mxGeometry = {};
+            obj.mxGeometry._x = String(item.x);
+            obj.mxGeometry._y = String(item.y);
+            obj.mxGeometry._width = String(sizes[0]);
+            obj.mxGeometry._height = String(sizes[1]);
+            obj.mxGeometry._as = 'geometry';
+          } else if (item.shape === '循环') {
+            const sizes = item.size.split('*');
+            obj._id = item.id;
+            obj._parent = item.parent;
+            obj._style = GROUP_NODE.style;
+            obj._value = '循环';
             obj._vertex = '1';
             obj.mxGeometry = {};
             obj.mxGeometry._x = String(item.x);

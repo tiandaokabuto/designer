@@ -151,7 +151,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;"
           data-label="contain"
         >
-          容器
+          循环容器
         </div>
 
         <div

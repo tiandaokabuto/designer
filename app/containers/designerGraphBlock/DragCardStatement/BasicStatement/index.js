@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector, useDispatch } from 'react-redux';
-import { Icon } from 'antd';
+import { Icon, message } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
@@ -25,6 +25,9 @@ import {
   useTransformToPython,
   useChangeCheckedBlockColor,
   useChangeCompatable,
+
+  // 打断点
+  useChangeBreakPoint,
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../constants/statementTags';
@@ -34,6 +37,8 @@ import MaskLayer from './components/MaskLayer';
 import ItemTypes from '../../constants/statementTypes';
 
 import './index.scss';
+
+import { clickOneStepRun } from '../../../../utils/DebugUtils/clickOneStepRun';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -69,10 +74,13 @@ const BasicStatement = useInjectContext(props => {
     setIsDraggingNode,
     setInteractiveCard,
     setVisible,
+    //断点
+    breakPoint,
   } = props;
 
   const dispatch = useDispatch();
 
+  // 当前卡片信息
   const cards = useSelector(state => state.blockcode.cards);
 
   const hasLookTarget = useHasLookTarget(card);
@@ -92,6 +100,9 @@ const BasicStatement = useInjectContext(props => {
     id,
     card
   );
+
+  // 打调试断点
+  const [isBreakPoint, setIsBreakPoint] = useChangeBreakPoint(id, card);
 
   const handleEmitCodeTransform = useTransformToPython();
 
@@ -307,6 +318,17 @@ const BasicStatement = useInjectContext(props => {
     }
   };
 
+  // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+  // const graphDataMapRef = useRef({});
+  // graphDataMapRef.current = graphDataMap;
+  const checkedGraphBlockId = useSelector(
+    state => state.grapheditor.checkedGraphBlockId
+  );
+  const checkedGraphBlockIdRef = useRef({});
+  checkedGraphBlockIdRef.current = checkedGraphBlockId;
+
+  console.log(`!`,card,card.breakPoint)
+
   return (
     <div
       ref={readOnly ? null : ref}
@@ -320,6 +342,9 @@ const BasicStatement = useInjectContext(props => {
       <div
         className={isTail ? 'card-content card-content__tail' : 'card-content'}
         data-id={isTail ? '' : id}
+        style={{
+          borderLeft: isTail ? '' : isBreakPoint === true ? '8px solid orangered' : '',
+        }}
       >
         {isTail ? (
           <div>{text}</div>
@@ -360,9 +385,17 @@ const BasicStatement = useInjectContext(props => {
               <Fragment>
                 <div className="card-content-operation">
                   <Icon
+                    type="bug"
+                    onClick={() => {
+                      // console.log(card);
+                      setIsBreakPoint(id, card);
+                      card.breakPoint = !card.breakPoint;
+                    }}
+                  />
+                  <Icon
                     type="play-circle"
                     onClick={() => {
-                      console.log('kkk');
+                      clickOneStepRun(cards, id);
                     }}
                   />
                   <Icon

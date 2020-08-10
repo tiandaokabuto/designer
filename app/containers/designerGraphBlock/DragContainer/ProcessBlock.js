@@ -284,6 +284,8 @@ export default memo(({ readOnly = false }) => {
             readOnly={readOnly}
             setInteractiveCard={setInteractiveCard}
             setVisible={setVisible}
+            // 新增一个断点信息
+            beakPoint={card.breakPoint}
           />
         );
       case LoopStatementTag:

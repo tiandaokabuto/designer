@@ -9,8 +9,9 @@
       padding-left: 8px;
     }
     &-operation {
+      margin-right: 16px;
       > * {
-        margin-right: 16px;
+        margin-left: 10px;
       }
     }
     &-title {
