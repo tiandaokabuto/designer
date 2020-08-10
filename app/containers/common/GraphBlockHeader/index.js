@@ -20,6 +20,7 @@ import {
   runAllStepByStepAuto,
   killTask,
 } from '../../../utils/DebugUtils/runDebugServer';
+import { getTempCenter } from '../../designerGraphEdit/RPAcore';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -292,6 +293,7 @@ export default memo(({ history, tag }) => {
                     setPauseState({ running: true, pause: false });
                     console.clear();
                     console.log(transformProcessToPython());
+                    console.log(getTempCenter());
                   }}
                 >
                   <Icon type="play-circle" /> 按序调试

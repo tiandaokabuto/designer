@@ -225,8 +225,11 @@ export default memo(
         uuidRef.current = uuid;
         if (fromOrTo === undefined) {
           console.log(transformProcessToPython());
+
           // 实验-liuqi
-          console.log(getTempCenter());
+          //console.log(getTempCenter());
+
+
         } else {
           transformPythonWithPoint(fromOrTo);
         }

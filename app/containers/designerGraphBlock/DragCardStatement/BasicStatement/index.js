@@ -25,6 +25,9 @@ import {
   useTransformToPython,
   useChangeCheckedBlockColor,
   useChangeCompatable,
+
+  // 打断点
+  useChangeBreakPoint,
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../constants/statementTags';
@@ -34,7 +37,6 @@ import MaskLayer from './components/MaskLayer';
 import ItemTypes from '../../constants/statementTypes';
 
 import './index.scss';
-
 
 import { clickOneStepRun } from '../../../../utils/DebugUtils/clickOneStepRun';
 
@@ -72,6 +74,8 @@ const BasicStatement = useInjectContext(props => {
     setIsDraggingNode,
     setInteractiveCard,
     setVisible,
+    //断点
+    breakPoint,
   } = props;
 
   const dispatch = useDispatch();
@@ -96,6 +100,9 @@ const BasicStatement = useInjectContext(props => {
     id,
     card
   );
+
+  // 打调试断点
+  const [isBreakPoint, setIsBreakPoint] = useChangeBreakPoint(id, card);
 
   const handleEmitCodeTransform = useTransformToPython();
 
@@ -320,6 +327,8 @@ const BasicStatement = useInjectContext(props => {
   const checkedGraphBlockIdRef = useRef({});
   checkedGraphBlockIdRef.current = checkedGraphBlockId;
 
+  console.log(`!`,card,card.breakPoint)
+
   return (
     <div
       ref={readOnly ? null : ref}
@@ -333,6 +342,9 @@ const BasicStatement = useInjectContext(props => {
       <div
         className={isTail ? 'card-content card-content__tail' : 'card-content'}
         data-id={isTail ? '' : id}
+        style={{
+          borderLeft: isTail ? '' : isBreakPoint === true ? '8px solid orangered' : '',
+        }}
       >
         {isTail ? (
           <div>{text}</div>
@@ -372,6 +384,14 @@ const BasicStatement = useInjectContext(props => {
             {!readOnly ? (
               <Fragment>
                 <div className="card-content-operation">
+                  <Icon
+                    type="bug"
+                    onClick={() => {
+                      // console.log(card);
+                      setIsBreakPoint(id, card);
+                      card.breakPoint = !card.breakPoint;
+                    }}
+                  />
                   <Icon
                     type="play-circle"
                     onClick={() => {

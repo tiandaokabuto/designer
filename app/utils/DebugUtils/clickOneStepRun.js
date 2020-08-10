@@ -2,14 +2,16 @@ import React from 'react';
 import { message } from 'antd';
 
 import { transformBlockToCode } from '../../containers/designerGraphBlock/RPAcore';
-import { fetchCard } from './fetchCard';
+import { fetchCard, resetTemp } from './fetchCard';
 import { sendPythonCodeByLine } from './runDebugServer';
 
 export const clickOneStepRun = (cards, id) => {
   const result = transformBlockToCode([fetchCard(cards, id)], 0, false);
 
   //console.log(`//${id}//`, fetchCard(cards, id)); //cards.filter(item => item.id === id))
-  const varNames = fetchCard(cards, id).output;
+  resetTemp()
+  const varNames = fetchCard(cards, id);
+  console.log(cards,id,varNames)
   //console.log(cards.filter(item => item.id === id));
   let line = result.output//.replace(/\n/g, '\\n');
   //line = line.replace(/\"/, `"`);
@@ -27,14 +29,14 @@ export const clickOneStepRun = (cards, id) => {
 
   try {
     sendPythonCodeByLine({
-      varNames: varNames ? varNames : '',
+      varNames: varNames.outPut ? varNames.outPut : '',
       output: line,
     });
 
     message.info({
       content: (
         <div style={{ textAlign: 'left', fontSize: 12}}>
-          <h3>【代码已发送】 3秒后 窗口自动关闭</h3>
+          <h3>【代码已发送】 2秒后 窗口自动关闭</h3>
           <textarea
             style={{ minWidth: '80vw', minHeight: '120px' }}
             defaultValue={line}

@@ -17,3 +17,5 @@ export { default as useAppendDataSource } from './useAppendDataSource';
 export { default as useVerifyInput } from './useVerifyInput';
 export { default as useListenMouseAndKeyboard } from './useListenMouseAndKeyboard';
 export { default as useChangeCompatable } from './useChangeCompatable';
+// 打断点
+export { default as useChangeBreakPoint } from './useChangeBreakPoint';

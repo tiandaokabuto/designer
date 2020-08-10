@@ -2,6 +2,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  padding: 1px 8px;
+  left:1px;
+
   .card-content-description {
     flex: 1;
     white-space: nowrap;

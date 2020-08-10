@@ -15,6 +15,7 @@ const port = 3001;
 const hostname = '127.0.0.1';
 let socket;
 let worker;
+let tempLength = 0;
 
 export const runDebugServer = async () => {
   // 打开python Debug服务器
@@ -48,17 +49,38 @@ export const runDebugServer = async () => {
     const log = getUTF8(msg);
     console.log('[收到soket—data]', log);
     event.emit(PYTHON_OUTPUT, log);
-
+    event.emit(PYTHON_GO_NEXT_STEP, "block");
     try {
+      // fs.open(
+      //   `${process.cwd()}/../python/python3_lib/debug/logfile_fromDesigner.log`,
+      //   'r',
+      //   function(err, fd) {
+      //     if (err) {
+      //       console.error(err);
+      //       return;
+      //     }
+
+      //     let buffer = new Buffer(8000);
+      //     let readfile = fs.readSync(fd, buffer);
+
+      //     console.log(`读出`,readfile);
+      //   }
+      // );
+      //const file =  fs.readSync(fd, buffer, offset, length, position)
+
       const file = fs.readFileSync(
         `${process.cwd()}/../python/python3_lib/debug/logfile_fromDesigner.log`,
         {
           encoding: 'binary',
         }
       );
-      event.emit(PYTHON_OUTPUT, getUTF8(file));
+
+      const output = getUTF8(file).substr(tempLength);
+      tempLength = output.length;
+
+      event.emit(PYTHON_OUTPUT, output);
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   });
 };
