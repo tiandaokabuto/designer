@@ -755,6 +755,7 @@ const MxgraphContainer = useInjectContext(
 
           if (
             // node.item &&
+            data &&
             ['processblock', 'rhombus-node'].includes(data.shape)
           ) {
             changeCheckedGraphBlockId(cellId);
@@ -989,7 +990,7 @@ const MxgraphContainer = useInjectContext(
           if (item.shape === 'processblock') {
             const labelStr = PROCESS_NODE.label;
             obj._id = item.id;
-            obj._parent = item.parent;
+            obj._parent = item.parent ? item.parent : '1';
             obj._style = PROCESS_NODE.style;
             // obj._value = labelStr.replace('流程块', item.label);
             // obj._value = item.version
@@ -1005,7 +1006,7 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._as = 'geometry';
           } else if (item.shape === 'rhombus-node') {
             obj._id = item.id;
-            obj._parent = item.parent;
+            obj._parent = item.parent ? item.parent : '1';
             obj._style = CONDITION_NODE.style;
             obj._value = CONDITION_NODE.getLabel(item.label);
             obj._vertex = '1';
@@ -1017,7 +1018,7 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._as = 'geometry';
           } else if (item.shape === 'start-node') {
             obj._id = item.id;
-            obj._parent = item.parent;
+            obj._parent = item.parent ? item.parent : '1';
             obj._style = START_NODE.style;
             obj._value = START_NODE.label;
             obj._vertex = '1';
@@ -1029,7 +1030,7 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._as = 'geometry';
           } else if (item.shape === 'end-node') {
             obj._id = item.id;
-            obj._parent = item.parent;
+            obj._parent = item.parent ? item.parent : '1';
             obj._style = END_NODE.style;
             obj._value = END_NODE.label;
             obj._vertex = '1';
@@ -1041,19 +1042,7 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._as = 'geometry';
           } else if (item.shape === 'group') {
             obj._id = item.id;
-            obj._parent = item.parent;
-            obj._style = GROUP_NODE.style;
-            obj._value = GROUP_NODE.label;
-            obj._vertex = '1';
-            obj.mxGeometry = {};
-            obj.mxGeometry._x = String(item.x);
-            obj.mxGeometry._y = String(item.y);
-            obj.mxGeometry._width = String(GROUP_NODE.width);
-            obj.mxGeometry._height = String(GROUP_NODE.height);
-            obj.mxGeometry._as = 'geometry';
-          } else if (item.shape === 'group') {
-            obj._id = item.id;
-            obj._parent = item.parent;
+            obj._parent = item.parent ? item.parent : '1';
             obj._style = GROUP_NODE.style;
             obj._value = GROUP_NODE.label;
             obj._vertex = '1';

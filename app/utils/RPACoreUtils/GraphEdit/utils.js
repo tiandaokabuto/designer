@@ -96,3 +96,61 @@ export const transformVariable = (variable, depth = 1) => {
       .join('\n') + '\n'
   );
 };
+
+export const findStartProcessBlockInContain = (nodes, edges, id, typeTag) => {
+  console.log(nodes, edges, id);
+  let childrens = [];
+
+  let type = [];
+  if (typeTag === 'try') {
+    type = ['catch', 'finally'];
+  } else if (typeTag === 'catch') {
+    type = ['try', 'finally'];
+  } else {
+    type = ['try', 'catch'];
+  }
+  childrens = nodes.filter(
+    item => item.parent === id && !type.includes(item.shape)
+  );
+  let startNodeEdge = undefined;
+
+  // 从try的流程块里找一个起始点
+  if (childrens.length === 1) {
+    // 1. try里面只有一个流程块，直接返回id
+    return childrens[0].id;
+  } else if (childrens.length > 1) {
+    // 2. try里面有其他流程块，起始点应该只有出的线，没有入的线，返回这条边
+    for (let i = 1; i < childrens.length; i++) {
+      startNodeEdge = edges.filter(
+        edge =>
+          edge.source === childrens[i].id || edge.target === childrens[i].id
+      );
+      if (startNodeEdge.length === 1) {
+        return startNodeEdge[0];
+      } else {
+        startNodeEdge = undefined;
+      }
+    }
+    // childrens.forEach(item => {
+    // if (!startNodeEdge) {
+    //   startNodeEdge = edges.filter(edge => edge.target === item.id);
+    // }
+    // startNodeEdge = edge.filter(edge => edge.source === item.id)
+    // if(startNodeEdge.length !== 1) {
+
+    // }
+    // });
+  } else {
+    // 3. try里面没有流程块的情况
+    return startNodeEdge;
+  }
+
+  // const find = edges.filter(edge => edge.)
+};
+
+export const findCatchFinallyNode = (nodes, edges, id) => {
+  const childrens = nodes.filter(
+    item => item.parent === id && ['catch', 'finally'].includes(item.shape)
+  );
+  return childrens;
+};

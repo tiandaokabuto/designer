@@ -10,6 +10,8 @@ import {
   findCommonTarget,
   hasTwoEntryPoint,
   hasTwoEntryPortInProcessBlock,
+  findStartProcessBlockInContain,
+  findCatchFinallyNode,
 } from '_utils/RPACoreUtils/GraphEdit/utils';
 
 import { writeFileRecursive } from '../../../nodejs';
@@ -260,6 +262,143 @@ export const transformEditorProcess = (
           );
       }
 
+      break;
+    case 'try':
+      const tryStartNodeEdge = findStartProcessBlockInContain(
+        graphData.nodes,
+        graphData.edges,
+        currentId,
+        'try'
+      );
+      const catchAndFinally = findCatchFinallyNode(
+        graphData.nodes,
+        graphData.edges,
+        currentId
+      );
+      console.log(catchAndFinally);
+      console.log('tryStartNodeEdge', tryStartNodeEdge);
+      result.output += `${padding(depth)}try:\n`;
+      if (tryStartNodeEdge) {
+        if (tryStartNodeEdge.constructor === String) {
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            tryStartNodeEdge,
+            result,
+            depth + 1,
+            breakPoint,
+            false
+          );
+        } else {
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            tryStartNodeEdge.source,
+            result,
+            depth + 1,
+            breakPoint,
+            false
+          );
+          console.log('对象');
+        }
+      }
+      result.output += `${padding(depth + 1)}pass\n`;
+      if (catchAndFinally.length !== 0) {
+        const catchNode = catchAndFinally.find(item => item.shape === 'catch');
+        const finallyNode = catchAndFinally.find(
+          item => item.shape === 'finally'
+        );
+        catchNode &&
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            catchNode.id,
+            result,
+            depth,
+            breakPoint,
+            false
+          );
+        finallyNode &&
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            finallyNode.id,
+            result,
+            depth,
+            breakPoint,
+            false
+          );
+      }
+      break;
+    case 'catch':
+      const catchStartNodeEdge = findStartProcessBlockInContain(
+        graphData.nodes,
+        graphData.edges,
+        currentId,
+        'catch'
+      );
+      console.log('catchStartNodeEdge', catchStartNodeEdge);
+      result.output += `${padding(depth)}except Exception as error:\n`;
+      if (catchStartNodeEdge) {
+        if (catchStartNodeEdge.constructor === String) {
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            catchStartNodeEdge,
+            result,
+            depth + 1,
+            breakPoint,
+            false
+          );
+        } else {
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            catchStartNodeEdge.source,
+            result,
+            depth + 1,
+            breakPoint,
+            false
+          );
+          console.log('对象');
+        }
+      }
+      result.output += `${padding(depth + 1)}pass\n`;
+      break;
+    case 'finally':
+      const finallyStartNodeEdge = findStartProcessBlockInContain(
+        graphData.nodes,
+        graphData.edges,
+        currentId,
+        'finally'
+      );
+      console.log('finallyStartNodeEdge', finallyStartNodeEdge);
+      result.output += `${padding(depth)}finally:\n`;
+      if (finallyStartNodeEdge) {
+        if (finallyStartNodeEdge.constructor === String) {
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            finallyStartNodeEdge,
+            result,
+            depth + 1,
+            breakPoint,
+            false
+          );
+        } else {
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            finallyStartNodeEdge.source,
+            result,
+            depth + 1,
+            breakPoint,
+            false
+          );
+          console.log('对象');
+        }
+      }
+      result.output += `${padding(depth + 1)}pass\n`;
       break;
     case 'end-node':
       // 停止解析

@@ -221,6 +221,7 @@ export default memo(
         message.loading({ content: '程序运行中', duration: 0, key });
       } catch (e) {
         setIsRunCode(false);
+        console.log(e);
         message.error('代码转换出错，请检查流程图');
       }
     };
