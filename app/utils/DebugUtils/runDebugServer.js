@@ -4,7 +4,6 @@ import event, {
 } from '../../containers/eventCenter';
 
 import { getUTF8 } from './getUTF8';
-import { file } from '../../../../../Users/鲸/AppData/Local/Microsoft/TypeScript/3.9/node_modules/@babel/types/lib/index';
 const net = require('net');
 const path = require('path');
 const process = require('process');
@@ -36,12 +35,12 @@ export const runDebugServer = async () => {
   });
 
   socket = new net.Socket();
-  socket.connect(port, hostname, function() {
+  socket.connect(port, hostname, function () {
     localStorage.setItem('debug', '运行中');
     event.emit(PYTHOH_DEBUG_SERVER_START, '连接');
   });
 
-  socket.on('error', function(err) {
+  socket.on('error', function (err) {
     console.log(err);
   });
 
@@ -49,7 +48,7 @@ export const runDebugServer = async () => {
     const log = getUTF8(msg);
     console.log('[收到soket—data]', log);
     event.emit(PYTHON_OUTPUT, log);
-    event.emit(PYTHON_GO_NEXT_STEP, "block");
+    event.emit(PYTHON_GO_NEXT_STEP, 'block');
     try {
       // fs.open(
       //   `${process.cwd()}/../python/python3_lib/debug/logfile_fromDesigner.log`,
