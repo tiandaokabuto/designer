@@ -42,3 +42,7 @@ export const PYTHOH_DEBUG_SERVER_START = /** debug服务器启动！ */ Symbol(
 export const PYTHON_GO_NEXT_STEP = /** 回显python代码执行后的结果             */ Symbol(
   'python_goNextStep'
 );
+
+export const PYTHOH_DEBUG_BLOCK_ALL_RUN = /** DEBUG 第一层 整块传送 */ Symbol(
+  'python_debug_block_all_run'
+);

@@ -19,18 +19,36 @@ import { writeFileRecursive } from '../../../nodejs';
 import { transformBlockToCode } from '../../designerGraphBlock/RPAcore';
 import { updateEditorBlockPythonCode } from '../../reduxActions';
 
+// liuqi
+import { sendPythonCodeByLine } from '../../../utils/DebugUtils/runDebugServer';
+
 const padding = length => '    '.repeat(length);
 
 let tempCenter = [];
+let nowIndex = 0;
 
 // 清空代码分段缓存区
 export const claerTempCenter = () => {
   tempCenter = [];
+  nowIndex = 0;
 };
 
 // 获取代码分段缓存区的内容
 export const getTempCenter = () => {
   return tempCenter;
+};
+
+// 开始第一层块级，逐步发送
+export const handleDebugBlockAllRun = () => {
+  if (tempCenter.length < 1) {
+    return message.warning('已运行完调试的流程代码');
+  }
+
+  console.clear();
+  console.log('开始自动单步调试！第一层级别');
+  console.log(tempCenter);
+  const running = tempCenter[nowIndex];
+  message.info(`当前运行${nowIndex}/${tempCenter.length}`);
 };
 
 /**
