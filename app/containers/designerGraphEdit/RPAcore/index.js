@@ -133,6 +133,7 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
     return message.warning('无代码块可以运行');
   }
   if (nowIndexCards >= needRunBlock.length) {
+    nowIndexCards = 0;
     event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
     return message.success('流程块已完成');
   }
