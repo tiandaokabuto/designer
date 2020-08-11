@@ -1,6 +1,7 @@
 import event, {
   PYTHOH_DEBUG_SERVER_START,
   PYTHON_OUTPUT,
+  PYTHON_GO_NEXT_STEP,
 } from '../../containers/eventCenter';
 
 import { getUTF8 } from './getUTF8';
@@ -35,16 +36,17 @@ export const runDebugServer = async () => {
   });
 
   socket = new net.Socket();
-  socket.connect(port, hostname, function () {
+  socket.connect(port, hostname, function() {
     localStorage.setItem('debug', '运行中');
     event.emit(PYTHOH_DEBUG_SERVER_START, '连接');
   });
 
-  socket.on('error', function (err) {
+  socket.on('error', function(err) {
     console.log(err);
   });
 
   socket.on('data', msg => {
+    console.log(msg)
     const log = getUTF8(msg);
     console.log('[收到soket—data]', log);
     event.emit(PYTHON_OUTPUT, log);
@@ -66,18 +68,41 @@ export const runDebugServer = async () => {
       //   }
       // );
       //const file =  fs.readSync(fd, buffer, offset, length, position)
+      setTimeout(()=>{
+        const file = fs.readFileSync(
+          `${process.cwd()}/../python/python3_lib/debug/logfile_fromDesigner.log`,
+          {
+            encoding: 'binary',
+          }
+        );
 
-      const file = fs.readFileSync(
-        `${process.cwd()}/../python/python3_lib/debug/logfile_fromDesigner.log`,
-        {
-          encoding: 'binary',
-        }
-      );
+        const output = getUTF8(file).substr(tempLength);
+        tempLength = output.length;
 
-      const output = getUTF8(file).substr(tempLength);
-      tempLength = output.length;
+        event.emit(PYTHON_OUTPUT, output);
+      },2000)
 
-      event.emit(PYTHON_OUTPUT, output);
+      // var buf = new Buffer.alloc(1024);
+
+      // fs.open(
+      //   `${process.cwd()}/../python/python3_lib/debug/logfile_fromDesigner.log`,
+      //   'r',
+      //   function(err, fd) {
+      //     if (err) throw err;
+      //     console.log('打开文件成功！');
+      //     fs.read(fd, buf, 0, buf.length, tempLength, (err, bytes)=> {
+      //       if (err) throw err;
+      //       console.log(bytes + '  字节被读取');
+      //       // 仅输出读取的字节
+      //       if (bytes > 0) {
+      //         console.log('文件内容是：' + getUTF8(buf));// buf.slice(0, bytes).toString());
+      //       }
+      //       tempLength = bytes;
+      //     });
+
+
+      //   }
+      // );
     } catch (e) {
       console.log(e);
     }

@@ -6,10 +6,12 @@ import { fetchCard, resetTemp } from './fetchCard';
 import { sendPythonCodeByLine } from './runDebugServer';
 
 export const clickOneStepRun = (cards, id) => {
+  resetTemp();
+
   const result = transformBlockToCode([fetchCard(cards, id)], 0, false);
 
   //console.log(`//${id}//`, fetchCard(cards, id)); //cards.filter(item => item.id === id))
-  resetTemp()
+
   const varNames = fetchCard(cards, id);
   console.log(cards,id,varNames)
   //console.log(cards.filter(item => item.id === id));

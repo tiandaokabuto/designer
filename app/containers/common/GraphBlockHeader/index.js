@@ -291,7 +291,7 @@ export default memo(({ history, tag }) => {
                   onClick={() => {
                     //testRunOneLine();
                     setPauseState({ running: true, pause: false });
-                    console.clear();
+                    //console.clear();
                     console.log(transformProcessToPython());
                     console.log(getTempCenter());
                   }}
