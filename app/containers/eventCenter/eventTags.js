@@ -32,3 +32,13 @@ export const UNDO = /** 暂停                                   */ Symbol(
 export const REDO = /** 暂停                                   */ Symbol(
   'mxUndoManager_redo'
 );
+
+
+export const PYTHOH_DEBUG_SERVER_START = /** debug服务器启动！ */ Symbol(
+  'python_debug_server_start'
+);
+
+
+export const PYTHON_GO_NEXT_STEP = /** 回显python代码执行后的结果             */ Symbol(
+  'python_goNextStep'
+);

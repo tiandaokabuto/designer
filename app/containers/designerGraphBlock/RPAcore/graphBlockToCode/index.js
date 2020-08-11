@@ -355,6 +355,7 @@ const transformModuleVariable = (result, depth, variable) => {
 };
 
 export default (dataStructure, depth = 0, blockNode) => {
+  console.log(blockNode);
   result.output = '';
   if (blockNode) {
     transformModuleVariable(result, depth, blockNode.variable || []);

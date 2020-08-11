@@ -1,6 +1,6 @@
 import './index.scss';
-import React, { useState, Fragment, useRef, memo } from 'react';
-import { Icon, Dropdown, Menu } from 'antd';
+import React, { useState, Fragment, useRef, memo, useEffect } from 'react';
+import { Icon, Dropdown, Menu, Tag, message } from 'antd';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
@@ -11,6 +11,16 @@ import { changeTreeTab } from '../../reduxActions/index';
 import HelpModel from './HelpModel';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
 import SaveConfirmModel from '../../designerGraphEdit/GraphItem/components/SaveConfirmModel';
+
+//liuqi
+import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
+import event, { PYTHOH_DEBUG_SERVER_START } from '../../eventCenter';
+import {
+  runDebugServer,
+  runAllStepByStepAuto,
+  killTask,
+} from '../../../utils/DebugUtils/runDebugServer';
+import { getTempCenter } from '../../designerGraphEdit/RPAcore';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -157,6 +167,57 @@ export default memo(({ history, tag }) => {
     }
   };
 
+  // 用来管理pythonDebug的状态
+  const [pyDebugServerState, setPyDebugServerState] = useState({
+    type: '启动debug模式',
+    tagColor: 'cyan',
+  });
+
+  const handleRunPythonDebugServerStart = msg => {
+    switch (msg) {
+      case '准备':
+        return setPyDebugServerState({
+          type: '启动debug模式',
+          tagColor: 'cyan',
+        });
+      case '连接':
+        return setPyDebugServerState({
+          type: 'Debug已连接',
+          tagColor: '',
+        });
+      case '终止':
+        return setPyDebugServerState({
+          type: 'Debug已终止',
+          tagColor: 'orange',
+        });
+    }
+  };
+
+  // 逐步调试按钮
+  const [pauseState, setPauseState] = useState({
+    running: false,
+    pause: false,
+  });
+
+  // 流程快代码转义
+  const transformProcessToPython = useTransformProcessToPython();
+
+  useEffect(() => {
+    event.addListener(
+      PYTHOH_DEBUG_SERVER_START,
+      handleRunPythonDebugServerStart
+    );
+    return () => {
+      event.removeListener(
+        PYTHOH_DEBUG_SERVER_START,
+        handleRunPythonDebugServerStart
+      );
+      localStorage.setItem('debug', '关闭');
+      // 当返回时，自动杀死debug进程
+      killTask();
+    };
+  }, []);
+
   return (
     <div
       className="graphblock-header"
@@ -206,6 +267,84 @@ export default memo(({ history, tag }) => {
           }
           return <span key={index}>{tool}</span>;
         })}
+        <div
+          className="debug-btn"
+          style={{ WebkitAppRegion: 'no-drag', display: 'block' }}
+        >
+          <Tag
+            color={pyDebugServerState.tagColor}
+            className="debug-btn-inner"
+            onClick={() => {
+              if (pyDebugServerState.type === 'Debug已连接')
+                return message.info('Debug已连接');
+              runDebugServer();
+            }}
+          >
+            {pyDebugServerState.type}
+          </Tag>
+          {pyDebugServerState.type === 'Debug已连接' ? (
+            <>
+              {pauseState.running === false ? (
+                <Tag
+                  color="lime"
+                  className="debug-btn-inner"
+                  onClick={() => {
+                    //testRunOneLine();
+                    setPauseState({ running: true, pause: false });
+                    //console.clear();
+                    console.log(transformProcessToPython());
+                    console.log(getTempCenter());
+                  }}
+                >
+                  <Icon type="play-circle" /> 按序调试
+                </Tag>
+              ) : (
+                ''
+              )}
+
+              {pauseState.running === true ? (
+                pauseState.pause === true ? (
+                  <Tag
+                    color="gold"
+                    className="debug-btn-inner"
+                    onClick={() => {
+                      //testRunOneLine();
+                      setPauseState({ ...pauseState, pause: false });
+                    }}
+                  >
+                  <Icon type="play-circle" /> 继续
+                  </Tag>
+                ) : (
+                  <Tag
+                    color="purple"
+                    className="debug-btn-inner"
+                    onClick={() => {
+                      //testRunOneLine();
+                      setPauseState({ ...pauseState, pause: true });
+                    }}
+                  >
+                  <Icon type="pause-circle" />暂停
+                  </Tag>
+                )
+              ) : (
+                ''
+              )}
+
+              <Tag
+                color="volcano"
+                className="debug-btn-inner"
+                onClick={() => {
+                  setPauseState({ running:false, pause: false });
+                  killTask()
+                }}
+              >
+                <Icon type="stop" /> 终止
+              </Tag>
+            </>
+          ) : (
+            ''
+          )}
+        </div>
       </div>
       <div
         className="graphblock-header-title"

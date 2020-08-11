@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector, useDispatch } from 'react-redux';
-import { Icon } from 'antd';
+import { Icon, message } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqueId from 'lodash/uniqueId';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
@@ -25,6 +25,9 @@ import {
   useTransformToPython,
   useChangeCheckedBlockColor,
   useChangeCompatable,
+
+  // 打断点
+  useChangeBreakPoint,
 } from '../../useHooks';
 
 import { BasicStatementTag } from '../../constants/statementTags';
@@ -34,6 +37,8 @@ import MaskLayer from './components/MaskLayer';
 import ItemTypes from '../../constants/statementTypes';
 
 import './index.scss';
+
+import { clickOneStepRun } from '../../../../utils/DebugUtils/clickOneStepRun';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -69,10 +74,13 @@ const BasicStatement = useInjectContext(props => {
     setIsDraggingNode,
     setInteractiveCard,
     setVisible,
+    //断点
+    breakPoint,
   } = props;
 
   const dispatch = useDispatch();
 
+  // 当前卡片信息
   const cards = useSelector(state => state.blockcode.cards);
 
   const hasLookTarget = useHasLookTarget(card);
@@ -92,6 +100,9 @@ const BasicStatement = useInjectContext(props => {
     id,
     card
   );
+
+  // 打调试断点
+  const [isBreakPoint, setIsBreakPoint] = useChangeBreakPoint(id, card);
 
   const handleEmitCodeTransform = useTransformToPython();
 
@@ -179,7 +190,7 @@ const BasicStatement = useInjectContext(props => {
       payload: id,
     });
     ipcRenderer.send('min');
-
+    ipcRenderer.send('start_server', id);
     const xpathCmdNameArrForWindows = [
       '鼠标-点击目标',
       '鼠标-移动',
@@ -192,45 +203,38 @@ const BasicStatement = useInjectContext(props => {
     const xpathCmdNameForBrowser = '点击元素';
     const mouseCmdName = '鼠标-获取光标位置';
     const windowsCmdNameArr = ['设置窗口状态', '关闭软件窗口'];
-    const clickImage = ['点击图片', '判断截屏区域是否存在'];
+    const clickImage = '点击图片';
 
     if (xpathCmdNameArrForWindows.includes(card.cmdName)) {
-      ipcRenderer.send('start_server', id);
       try {
         const worker = exec(PATH_CONFIG('windowHook'));
       } catch (e) {
         console.log(e);
       }
     } else if (mouseCmdName === card.cmdName) {
-      ipcRenderer.send('start_server', id);
       try {
         const mouseWorker = exec(`${PATH_CONFIG('WinRun')} -p`);
       } catch (err) {
         console.log(err);
       }
     } else if (windowsCmdNameArr.includes(card.cmdName)) {
-      ipcRenderer.send('start_server', id);
       try {
         const windowsWorker = exec(`${PATH_CONFIG('WinRun')} -w`);
       } catch (e) {
         console.log(e);
       }
     } else if (xpathCmdNameForBrowser === card.cmdName) {
-      ipcRenderer.send('start_browser_server', id);
       try {
         const browserXpathWorker = exec(`${PATH_CONFIG('getBrowserXpath')}`);
       } catch (e) {
         console.log(e);
       }
-    } else if (clickImage.includes(card.cmdName)) {
-      ipcRenderer.send('start_server', id);
+    } else if (clickImage === card.cmdName) {
       try {
         const clickImageWorker = exec(`${PATH_CONFIG('CaptureAreaScreen')}`);
       } catch (e) {
         console.log(e);
       }
-    } else if (card.pkg === 'Browser') {
-      ipcRenderer.send('start_browser_server', id);
     }
 
     const handleUpdateXpath = (
@@ -312,8 +316,18 @@ const BasicStatement = useInjectContext(props => {
     } else {
       return '查找目标';
     }
-    // 同时需要设置useHasLookTarget
   };
+
+  // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+  // const graphDataMapRef = useRef({});
+  // graphDataMapRef.current = graphDataMap;
+  const checkedGraphBlockId = useSelector(
+    state => state.grapheditor.checkedGraphBlockId
+  );
+  const checkedGraphBlockIdRef = useRef({});
+  checkedGraphBlockIdRef.current = checkedGraphBlockId;
+
+  console.log(`!`,card,card.breakPoint)
 
   return (
     <div
@@ -328,6 +342,9 @@ const BasicStatement = useInjectContext(props => {
       <div
         className={isTail ? 'card-content card-content__tail' : 'card-content'}
         data-id={isTail ? '' : id}
+        style={{
+          borderLeft: isTail ? '' : isBreakPoint === true ? '8px solid orangered' : '',
+        }}
       >
         {isTail ? (
           <div>{text}</div>
@@ -368,9 +385,17 @@ const BasicStatement = useInjectContext(props => {
               <Fragment>
                 <div className="card-content-operation">
                   <Icon
+                    type="bug"
+                    onClick={() => {
+                      // console.log(card);
+                      setIsBreakPoint(id, card);
+                      card.breakPoint = !card.breakPoint;
+                    }}
+                  />
+                  <Icon
                     type="play-circle"
                     onClick={() => {
-                      console.log('kkk');
+                      clickOneStepRun(cards, id);
                     }}
                   />
                   <Icon
