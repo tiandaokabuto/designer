@@ -113,7 +113,7 @@ export const Rule_checkConnection = (graph, option = {}, callback) => {
 // 用id找对应的Cell
 export const getNodeInfo =  (id, graphData) => {
   const index = graphData.nodes.findIndex(
-    item => item.id === mxCell_mxObjectId
+    item => item.id === id
   );
   let edges = {
     input: [], // 输入线

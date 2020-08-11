@@ -14,7 +14,10 @@ import SaveConfirmModel from '../../designerGraphEdit/GraphItem/components/SaveC
 
 //liuqi
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
-import event, { PYTHOH_DEBUG_SERVER_START } from '../../eventCenter';
+import event, {
+  PYTHOH_DEBUG_SERVER_START,
+  PYTHOH_DEBUG_BLOCK_ALL_RUN,
+} from '../../eventCenter';
 import {
   runDebugServer,
   runAllStepByStepAuto,
@@ -277,6 +280,7 @@ export default memo(({ history, tag }) => {
             onClick={() => {
               if (pyDebugServerState.type === 'Debug已连接')
                 return message.info('Debug已连接');
+              event.emit('clear_output');
               runDebugServer();
             }}
           >
@@ -294,6 +298,7 @@ export default memo(({ history, tag }) => {
                     //console.clear();
                     console.log(transformProcessToPython());
                     console.log(getTempCenter());
+                    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
                   }}
                 >
                   <Icon type="play-circle" /> 按序调试
@@ -312,7 +317,7 @@ export default memo(({ history, tag }) => {
                       setPauseState({ ...pauseState, pause: false });
                     }}
                   >
-                  <Icon type="play-circle" /> 继续
+                    <Icon type="play-circle" /> 继续
                   </Tag>
                 ) : (
                   <Tag
@@ -323,7 +328,8 @@ export default memo(({ history, tag }) => {
                       setPauseState({ ...pauseState, pause: true });
                     }}
                   >
-                  <Icon type="pause-circle" />暂停
+                    <Icon type="pause-circle" />
+                    暂停
                   </Tag>
                 )
               ) : (
@@ -334,8 +340,8 @@ export default memo(({ history, tag }) => {
                 color="volcano"
                 className="debug-btn-inner"
                 onClick={() => {
-                  setPauseState({ running:false, pause: false });
-                  killTask()
+                  setPauseState({ running: false, pause: false });
+                  killTask();
                 }}
               >
                 <Icon type="stop" /> 终止
