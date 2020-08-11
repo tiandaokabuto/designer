@@ -7,13 +7,17 @@ import { Icon, Input, Dropdown, Menu, Tag } from 'antd';
 import event, {
   PYTHON_OUTPUT,
   PYTHOH_DEBUG_BLOCK_ALL_RUN,
+  PYTHOH_DEBUG_CARDS_ALL_RUN,
 } from '@/containers/eventCenter';
 import FilterToolbar from './FilterToolbar';
 import Tags from './Tags';
 import ZoomToolBar from './ZoomToolBar';
 import useGetDownloadPath from '../../common/DragEditorHeader/useHooks/useGetDownloadPath';
 
-import { handleDebugBlockAllRun } from  '../../designerGraphEdit/RPAcore'
+import {
+  handleDebugBlockAllRun,
+  handleDebugCardsAllRun,
+} from '../../designerGraphEdit/RPAcore';
 
 const fs = require('fs');
 
@@ -126,14 +130,31 @@ export default memo(
       event.addListener(PYTHON_OUTPUT, handlePythonOutput);
       event.addListener('clear_output', handleClearOutput);
 
-      event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN, handleDebugBlockAllRun);
+      // 第一层的全体调试
+      event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN, blockAllNext);
+      // 第二层的全体调试
+      event.addListener(PYTHOH_DEBUG_CARDS_ALL_RUN, cardsAllNext);
 
       return () => {
         event.removeListener(PYTHON_OUTPUT, handlePythonOutput);
         event.removeListener('clear_output', handleClearOutput);
-        event.removeListener(PYTHOH_DEBUG_BLOCK_ALL_RUN, handleDebugBlockAllRun);
+        event.removeListener(PYTHOH_DEBUG_BLOCK_ALL_RUN, blockAllNext);
+        event.removeListener(PYTHOH_DEBUG_CARDS_ALL_RUN, cardsAllNext);
       };
     }, []);
+
+    const checkedGraphBlockId = useSelector(
+      state => state.grapheditor.checkedGraphBlockId
+    );
+
+    // 处理第一层调试
+    const blockAllNext = () => {
+      handleDebugBlockAllRun();
+    };
+    // 处理第二层调试
+    const cardsAllNext = () => {
+      handleDebugCardsAllRun(checkedGraphBlockId);
+    };
 
     useEffect(() => {
       updateExecuteOutput(output);
@@ -305,7 +326,9 @@ export default memo(
             }
           >
             <span style={{ paddingRight: 20 }}>输出</span>{' '}
-            <Tag
+
+            {/*
+              <Tag
               color="green"
               className="debug-btn-inner"
               onClick={() => {
@@ -325,7 +348,10 @@ export default memo(
               <Icon type="play-circle" />
               运行至断点
             </Tag>
+            */}
           </span>
+
+
 
           <div
             className="dragger-editor-container-output-anchor"

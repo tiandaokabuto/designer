@@ -2,6 +2,8 @@ import event, {
   PYTHOH_DEBUG_SERVER_START,
   PYTHON_OUTPUT,
   PYTHON_GO_NEXT_STEP,
+  PYTHOH_DEBUG_BLOCK_ALL_RUN,
+  PYTHOH_DEBUG_CARDS_ALL_RUN
 } from '../../containers/eventCenter';
 
 import { getUTF8 } from './getUTF8';
@@ -48,9 +50,19 @@ export const runDebugServer = async () => {
   socket.on('data', msg => {
     console.log(msg)
     const log = getUTF8(msg);
-    console.log('[收到soket—data]', log);
+    console.log('[收到soket—data]', JSON.parse(log));
+
     event.emit(PYTHON_OUTPUT, log);
-    event.emit(PYTHON_GO_NEXT_STEP, 'block');
+    // event.emit(PYTHON_GO_NEXT_STEP, 'block');
+
+    // if 现在的运行模式是 第一层 自动单步
+    if(localStorage.getItem("running_mode") === "blockAll_running"){
+      event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
+    }else if(localStorage.getItem("running_mode") === "cardsAll_running"){
+      event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+    }
+
+
     try {
       // fs.open(
       //   `${process.cwd()}/../python/python3_lib/debug/logfile_fromDesigner.log`,
@@ -158,3 +170,5 @@ export const killTask = () => {
     console.log('终止debug', e);
   }
 };
+
+

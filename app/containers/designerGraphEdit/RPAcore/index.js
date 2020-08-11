@@ -21,16 +21,26 @@ import { updateEditorBlockPythonCode } from '../../reduxActions';
 
 // liuqi
 import { sendPythonCodeByLine } from '../../../utils/DebugUtils/runDebugServer';
+import event, {
+  PYTHOH_DEBUG_BLOCK_ALL_RUN_END,
+  PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE,
+} from '../../eventCenter';
+import { clickOneStepRun } from '../../../utils/DebugUtils/clickOneStepRun';
 
 const padding = length => '    '.repeat(length);
 
 let tempCenter = [];
 let nowIndex = 0;
+let nowIndexCards = 0;
+let pass = false;
+let isPause = false;
 
 // 清空代码分段缓存区
 export const claerTempCenter = () => {
   tempCenter = [];
   nowIndex = 0;
+  nowIndexCards = 0;
+  pass = false;
 };
 
 // 获取代码分段缓存区的内容
@@ -38,17 +48,120 @@ export const getTempCenter = () => {
   return tempCenter;
 };
 
-// 开始第一层块级，逐步发送
+export const setPause = () => {
+  isPause = true;
+  message.info('已下发暂停指令，请稍等一会');
+  return {
+    tempCenter,
+    nowIndex,
+    nowIndexCards,
+    pass,
+    isPause,
+  };
+};
+
+export const clearPause = () => {
+  isPause = false;
+  return {
+    tempCenter,
+    nowIndex,
+    nowIndexCards,
+    pass,
+    isPause,
+  };
+};
+
+// 【 editor的单步调试 - 01 】开始第一层块级，逐步发送
 export const handleDebugBlockAllRun = () => {
+  if (isPause) {
+    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
+    return message.info('进程被暂停');
+  }
   if (tempCenter.length < 1) {
-    return message.warning('已运行完调试的流程代码');
+    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
+    return message.warning('无流程块可以运行');
+  }
+  if (nowIndex >= tempCenter.length) {
+    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
+    return message.success('流程已完成');
   }
 
-  console.clear();
+  //console.clear();
   console.log('开始自动单步调试！第一层级别');
   console.log(tempCenter);
   const running = tempCenter[nowIndex];
-  message.info(`当前运行${nowIndex}/${tempCenter.length}`);
+
+  if (pass === true) {
+    // 执行
+    setTimeout(() => {
+      sendPythonCodeByLine({
+        varNames: running.return_string,
+        output: running.__main__,
+      });
+      nowIndex += 1;
+      message.info(`当前运行${nowIndex} of ${tempCenter.length}`);
+    }, 300);
+    return (pass = false);
+  } else {
+    setTimeout(() => {
+      sendPythonCodeByLine({
+        varNames: '', //running.return_string,
+        output: running.pythonCode,
+      });
+    }, 300);
+    return (pass = true);
+  }
+};
+
+export const handleDebugCardsAllRun = checkedGraphBlockId => {
+  if (isPause) {
+    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
+    return message.info('进程被暂停');
+  }
+  const cardsIndex = tempCenter.findIndex(block => {
+    return block.currentId === checkedGraphBlockId;
+  });
+  if (cardsIndex === -1) {
+    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
+    return message.warning('这个流程块没有被正确连线到流程中，请检查连线关系');
+  }
+
+  const needRunBlock = tempCenter[cardsIndex].cards;
+
+  if (tempCenter.length < 1) {
+    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
+    return message.warning('无代码块可以运行');
+  }
+  if (nowIndexCards >= needRunBlock.length) {
+    nowIndexCards = 0;
+    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
+    return message.success('流程块已完成');
+  }
+
+  // 断点检查
+  if (nowIndexCards === 0) {
+    if (needRunBlock[nowIndexCards].breakPoint === true) {
+      message.info('流程块第1条遇到断点');
+      setPause();
+      needRunBlock[nowIndexCards].breakPoint = false;
+      return event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
+      //needRunBlock[cardsIndex].breakPoint === false;
+    }
+  } else if (nowIndexCards + 1 < needRunBlock.length) {
+    // 他有下一条存在
+    if (needRunBlock[nowIndexCards + 1].breakPoint === true) {
+      message.info('发现了1个断点');
+      setPause();
+    }
+  }
+
+  setTimeout(() => {
+    console.clear();
+    console.log(needRunBlock);
+    clickOneStepRun(needRunBlock, needRunBlock[nowIndexCards].id);
+    nowIndexCards += 1;
+    message.info(`当前运行${nowIndexCards} of ${needRunBlock.length}`);
+  }, 300);
 };
 
 /**
@@ -135,6 +248,7 @@ export const transformEditorProcess = (
         }`,
         funcName: funcName,
         params: params,
+        return_string: return_string ? return_string : '',
         //`${padding(depth)}
         __main__: `${
           return_string ? return_string + ' = ' : ''
@@ -142,7 +256,7 @@ export const transformEditorProcess = (
           .filter(item => item.name)
           .map(item => item.name + ' = ' + item.value)
           .join(',')})\n`,
-        cards: blockData.cards || [],
+        cards: cloneDeep(blockData.cards) || [],
         blockData: blockData,
       });
       console.log(`tempCenter`, tempCenter);
