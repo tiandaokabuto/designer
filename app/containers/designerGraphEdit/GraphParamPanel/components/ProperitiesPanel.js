@@ -34,21 +34,21 @@ const FormItem = ({
 }) => {
   const [translateTag, setTranslateTag] = useState(0);
   const blockData = graphDataMap.get(checkedGraphBlockId);
-  // useEffect(() => {
-  //   if (blockData.shape === 'group') {
-  //     const labelValue = translateGroup(blockData);
-  //     const node = graphData.nodes.find(
-  //       item => item.id === checkedGraphBlockId
-  //     );
-  //     node.label = labelValue;
-  //     blockData['properties'][0]['value'] = labelValue;
-  //     event.emit('resetGraph', labelValue, checkedGraphBlockId);
-  //     setTimeout(() => {
-  //       updateGraphData(graphData);
-  //       synchroGraphDataToProcessTree();
-  //     }, 0);
-  //   }
-  // }, [translateTag]);
+  useEffect(() => {
+    if (blockData.shape === 'group') {
+      const labelValue = translateGroup(blockData);
+      const node = graphData.nodes.find(
+        item => item.id === checkedGraphBlockId
+      );
+      node.label = labelValue;
+      blockData['properties'][0]['value'] = labelValue;
+      event.emit('resetGraph', labelValue, checkedGraphBlockId);
+      setTimeout(() => {
+        updateGraphData(graphData);
+        synchroGraphDataToProcessTree();
+      }, 0);
+    }
+  }, [translateTag]);
 
   // const [tag, setTag] = useState(ifItem.tag);
 
