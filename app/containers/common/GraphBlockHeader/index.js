@@ -245,6 +245,29 @@ export default memo(({ history, tag }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if(!pauseState.running) return;
+    resetPythonCode();
+    message.info("由于切换了层级，已重新生成当前页的代码,并将指针指向第一条","resetPythonCode")
+  },[currentPagePosition]);
+
+  const resetPythonCode = () =>{
+    if (currentPagePosition === 'editor') {
+      //setPauseState({ running: true, pause: false });
+      console.log(transformProcessToPython());
+      console.log(getTempCenter());
+      localStorage.setItem('running_mode', 'blockAll_running');
+      //event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
+    } else if (currentPagePosition === 'block') {
+      //setPauseState({ running: true, pause: false });
+      console.log(transformProcessToPython());
+      console.log(getTempCenter());
+      localStorage.setItem('running_mode', 'cardsAll_running');
+      //event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+    }
+    message.info("已重新生成当前页的代码,并将指针指向第一条","resetPythonCode")
+  }
+
   const setContinueBtn = () => {
     setPauseState({ running: true, pause: true });
   };
@@ -338,7 +361,8 @@ export default memo(({ history, tag }) => {
                     }
                   }}
                 >
-                  <Icon type="play-circle" /> 按序调试
+                  <Icon type="play-circle" />
+                  {` `}按序调试
                 </Tag>
               ) : (
                 ''
@@ -367,7 +391,8 @@ export default memo(({ history, tag }) => {
                         setPauseState({ running: true, pause: false });
                       }}
                     >
-                      <Icon type="play-circle" /> 继续
+                      <Icon type="play-circle" />
+                      {` `}继续
                     </Tag>
                     <Tag
                       color="green"
@@ -390,7 +415,18 @@ export default memo(({ history, tag }) => {
                       }}
                     >
                       <Icon type="play-circle" />
-                      下一步
+                      {` `}下一步
+                    </Tag>
+                    <Tag
+                      color="blue"
+                      className="debug-btn-inner"
+                      onClick={() => {
+                        resetPythonCode()
+                      }}
+                    >
+                      <Icon type="issues-close" />
+                      {` `}
+                      重新生成代码
                     </Tag>
                   </>
                 ) : (

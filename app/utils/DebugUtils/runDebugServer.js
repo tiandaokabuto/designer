@@ -58,9 +58,26 @@ export const runDebugServer = async () => {
   socket.on('data', msg => {
     console.log(msg);
     const log = getUTF8(msg);
-    console.log('[收到soket—data]', JSON.parse(log));
+    try {
+      const getLogToJSON = JSON.parse(log);
+      console.log('[收到soket—data]', getLogToJSON);
+      let temp = '';
+      Object.keys(getLogToJSON).forEach(array => {
+        console.log(array)
+        // array.forEach(item =>{
+        //   if(item.source.length > 0){
+        //     temp += `发送的代码：\n` + item.source[0
+        //     ]
+        //   }
+        // })
+        //temp = `发送的代码：\n` + array.sources[0];
+      });
+      event.emit(PYTHON_OUTPUT, log);
+    } catch (e) {
+      console.clear();
+      console.log(e);
+    }
 
-    event.emit(PYTHON_OUTPUT, log);
     // event.emit(PYTHON_GO_NEXT_STEP, 'block');
 
     // if 现在的运行模式是 第一层 自动单步
@@ -166,6 +183,7 @@ export const sendPythonCodeByLine = sendMsg => {
 };
 
 export const killTask = () => {
+  tempLength = 0;
   try {
     socket.write('exit()');
     setTimeout(() => worker.kill(), 3000);

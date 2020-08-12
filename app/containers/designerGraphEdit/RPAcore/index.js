@@ -41,6 +41,7 @@ export const claerTempCenter = () => {
   nowIndex = 0;
   nowIndexCards = 0;
   pass = false;
+  let isPause = false;
 };
 
 // 获取代码分段缓存区的内容
@@ -149,7 +150,8 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
       return event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
       //needRunBlock[cardsIndex].breakPoint === false;
     }
-  } else if (nowIndexCards + 1 < needRunBlock.length) {
+  }
+  if (nowIndexCards + 1 < needRunBlock.length) {
     // 他有下一条存在
     if (needRunBlock[nowIndexCards + 1].breakPoint === true) {
       message.info('发现了1个断点');
@@ -167,12 +169,12 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
 };
 
 export const handleRunNextStep = () => {
-  if(localStorage.getItem("running_mode") === "blockAll_running"){
+  if (localStorage.getItem('running_mode') === 'blockAll_running') {
     // event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
     //message.info("暂不支持流程图的单步调试")
-    setPause()
-  }else if(localStorage.getItem("running_mode") === "cardsAll_running"){
-    setPause()
+    setPause();
+  } else if (localStorage.getItem('running_mode') === 'cardsAll_running') {
+    setPause();
     //event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
   }
 
@@ -192,9 +194,6 @@ export const handleRunNextStep = () => {
       setPause();
     }
   }
-
-
-
 };
 
 /**
