@@ -37,63 +37,64 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
   //     e.target.getAttribute('data-component-type')
   //   );
   // };
+  -(
+    // 添加点击事件处理函数--（待添加）
+    // const addClickHandler = (elt, ds, cells) => {
+    //   const oldMouseUp = ds.mouseUp;
+    //   let first = null;
 
-  // 添加点击事件处理函数--（待添加）
-  // const addClickHandler = (elt, ds, cells) => {
-  //   const oldMouseUp = ds.mouseUp;
-  //   let first = null;
+    //   ds.mouseUp = function (evt) {
+    //     try {
+    //       if (
+    //         !mxEvent.isPopupTrigger(evt) &&
+    //         this.currentGraph == null &&
+    //         this.dragElement !== null &&
+    //         this.dragElement.style.display === 'none'
+    //       ) {
+    //         // sb.itemClicked(cells, ds, evt, elt);
+    //       }
 
-  //   ds.mouseUp = function (evt) {
-  //     try {
-  //       if (
-  //         !mxEvent.isPopupTrigger(evt) &&
-  //         this.currentGraph == null &&
-  //         this.dragElement !== null &&
-  //         this.dragElement.style.display === 'none'
-  //       ) {
-  //         // sb.itemClicked(cells, ds, evt, elt);
-  //       }
+    //       oldMouseUp.apply(ds, arguments);
+    //       mxUtils.setOpacity(elt, 100);
+    //       first = null;
 
-  //       oldMouseUp.apply(ds, arguments);
-  //       mxUtils.setOpacity(elt, 100);
-  //       first = null;
+    //       // Blocks tooltips on this element after single click
+    //       // sb.currentElt = elt;
+    //     } catch (e) {
+    //       ds.reset();
+    //       // sb.editorUi.handleError(e);
+    //     }
+    //   };
+    // };
 
-  //       // Blocks tooltips on this element after single click
-  //       // sb.currentElt = elt;
-  //     } catch (e) {
-  //       ds.reset();
-  //       // sb.editorUi.handleError(e);
-  //     }
-  //   };
-  // };
+    // 处理工具栏上的组件，使其可拖拽生成对应单元
+    useEffect(() => {
+      if (graph) {
+        console.log('重新绑定工具栏');
+        let cell = null;
+        const toolCells = document.querySelectorAll('.mxgraph-cell');
+        for (let i = 0; i < toolCells.length; i += 1) {
+          const elt = toolCells[i];
+          const { label, style, width, height } = elt.dataset;
+          cell = new MxCell(
+            label,
+            new MxGeometry(0, 0, parseInt(width, 10), parseInt(height, 10)),
+            style
+          );
+          cell.vertex = true;
 
-  // 处理工具栏上的组件，使其可拖拽生成对应单元
-  useEffect(() => {
-    if (graph) {
-      console.log('重新绑定工具栏');
-      let cell = null;
-      const toolCells = document.querySelectorAll('.mxgraph-cell');
-      for (let i = 0; i < toolCells.length; i += 1) {
-        const elt = toolCells[i];
-        const { label, style, width, height } = elt.dataset;
-        cell = new MxCell(
-          label,
-          new MxGeometry(0, 0, parseInt(width, 10), parseInt(height, 10)),
-          style
-        );
-        cell.vertex = true;
-
-        createItem(
-          [cell],
-          cell.geometry.width,
-          cell.geometry.height,
-          'Shape Group',
-          null,
-          elt
-        );
+          createItem(
+            [cell],
+            cell.geometry.width,
+            cell.geometry.height,
+            'Shape Group',
+            null,
+            elt
+          );
+        }
       }
-    }
-  }, [graph]);
+    }, [graph])
+  );
 
   return (
     <div className="designergraph-container-header">
@@ -149,7 +150,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           data-width="286"
           data-height="400"
           data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;"
-          data-label="contain"
+          data-label="<span class='group-content'>for in</span>"
         >
           循环容器
         </div>

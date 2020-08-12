@@ -33,7 +33,8 @@ export const END_NODE = {
 };
 
 export const GROUP_NODE = {
-  label: 'contain',
+  getLabel: str => `<span class='group-content'>${str}</span>`,
+  label: "<span class='group-content'>for in</span>",
   style:
     'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0',
   width: 286,

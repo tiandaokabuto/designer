@@ -33,7 +33,13 @@ const handleStatementOutput = (output, value, result) => {
   result.output += `${output} = `;
 };
 
-const handleMainFnGeneration = (dataStructure, params, result, padding) => {
+const handleMainFnGeneration = (
+  dataStructure,
+  params,
+  result,
+  padding,
+  ignore
+) => {
   const isSubtype = dataStructure.subtype;
   result.output += `${isSubtype ? '' : `${dataStructure.pkg}.`}${
     dataStructure.main
@@ -46,7 +52,7 @@ const handleMainFnGeneration = (dataStructure, params, result, padding) => {
     const { selectedRows } = dataStructure.properties.required[1];
     selectedRows.map(item => {
       if (item.variableName !== '') {
-        result.output += `${padding}${item.variableName} = ${dataStructure.properties.required[0].value}['${item.headerName}']\n`;
+        result.output += `${padding}${ignore}${item.variableName} = ${dataStructure.properties.required[0].value}['${item.headerName}']\n`;
       }
       return item;
     });
@@ -375,7 +381,7 @@ const transformBasicStatement = (
         }
       }
     });
-  handleMainFnGeneration(dataStructure, params, result, padding);
+  handleMainFnGeneration(dataStructure, params, result, padding, ignore);
   return [result.output, new Map(moduleMap)];
 };
 

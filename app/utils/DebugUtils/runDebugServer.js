@@ -63,7 +63,7 @@ export const runDebugServer = async () => {
       console.log('[收到soket—data]', getLogToJSON);
       let temp = '';
       Object.keys(getLogToJSON).forEach(array => {
-        console.log(array)
+        console.log(array);
         // array.forEach(item =>{
         //   if(item.source.length > 0){
         //     temp += `发送的代码：\n` + item.source[0
@@ -80,11 +80,24 @@ export const runDebugServer = async () => {
 
     // event.emit(PYTHON_GO_NEXT_STEP, 'block');
 
+    const running = localStorage.getItem('running_mode');
     // if 现在的运行模式是 第一层 自动单步
-    if (localStorage.getItem('running_mode') === 'blockAll_running') {
+    if (running === 'blockAll_running') {
       event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
-    } else if (localStorage.getItem('running_mode') === 'cardsAll_running') {
+    } else if (running === 'cardsAll_running') {
       event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+    } else if (
+      running === 'started_one' ||
+      running === 'cardsAll_one' ||
+      running === 'blockAll_one'
+    ) {
+      event.emit('one_finished'); // 单步跑完，通知结束
+      if(running === 'cardsAll_one'){
+        localStorage.setItem('running_mode', 'cardsAll_pause');
+      }
+      if(running === 'blockAll_one'){
+        localStorage.setItem('running_mode', 'blockAll_pause');
+      }
     }
 
     try {

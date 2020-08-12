@@ -159,12 +159,12 @@ const MxgraphContainer = useInjectContext(
       // setGraph(new mxGraph(container));
       graphRef.current = new mxGraph(container);
       graph = graphRef.current;
-      event.addListener('resetGraph', resetGraph);
 
       undoMng = new mxUndoManager();
 
       event.addListener('undo', handleUndo);
       event.addListener('redo', handleRedo);
+      event.addListener('resetGraph', resetGraph);
       return () => {
         event.removeListener('undo', handleUndo);
         event.removeListener('redo', handleRedo);
@@ -188,7 +188,7 @@ const MxgraphContainer = useInjectContext(
 
       // 启用连线功能
       graph.setConnectable(true);
-      graph.connectionHandler.getConnectImage = function(state) {
+      graph.connectionHandler.getConnectImage = function (state) {
         return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
       };
 
@@ -203,7 +203,7 @@ const MxgraphContainer = useInjectContext(
       //  启用画布平移
       graph.setPanning(true);
       // 开启右键菜单
-      graph.popupMenuHandler.factoryMethod = function(menu, cell, evt) {
+      graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
         return createPopupMenu(
           graph,
           menu,
@@ -294,10 +294,14 @@ const MxgraphContainer = useInjectContext(
       // const cell = graph.getModel().getCell(id);
       graph.getModel().beginUpdate();
       try {
-        if (cell.value.indexOf("class='compoent-content'") > -1) {
-          cell.value = PROCESS_NODE.getLabel(value);
-        } else if (cell.value.indexOf("class='rcomponent-content'") > -1) {
-          cell.value = CONDITION_NODE.getLabel(value);
+        if (cell && cell.value && cell.id === id) {
+          if (cell.value.indexOf("class='compoent-content'") > -1) {
+            cell.value = PROCESS_NODE.getLabel(value);
+          } else if (cell.value.indexOf("class='rcomponent-content'") > -1) {
+            cell.value = CONDITION_NODE.getLabel(value);
+          } else if (cell.value.indexOf("class='group-content'") > -1) {
+            cell.value = GROUP_NODE.getLabel(value);
+          }
         }
       } finally {
         graph.getModel().endUpdate();
@@ -307,22 +311,22 @@ const MxgraphContainer = useInjectContext(
 
     const configMxCell = () => {
       // 禁用双击编辑
-      mxGraph.prototype.isCellEditable = function(cell) {
+      mxGraph.prototype.isCellEditable = function (cell) {
         //return !this.getModel().isEdge(cell)&&!this.getModel().isVertex(cell);
         return false;
       };
 
-      mxCell.prototype.setNodeType = function(nodetype) {
+      mxCell.prototype.setNodeType = function (nodetype) {
         this.nodetype = nodetype;
       };
-      mxCell.prototype.setComponentType = function(componentType) {
+      mxCell.prototype.setComponentType = function (componentType) {
         this.componentType = componentType;
       };
-      mxCell.prototype.setNodeId = function(nodeId) {
+      mxCell.prototype.setNodeId = function (nodeId) {
         this.nodeId = nodeId;
       };
       // 更新组件状态
-      mxCell.prototype.updateStatus = function(graph, status) {
+      mxCell.prototype.updateStatus = function (graph, status) {
         let html = this.getValue();
         const index = html.indexOf('class="status');
         if (index === -1) {
@@ -352,15 +356,15 @@ const MxgraphContainer = useInjectContext(
         this.setValue(html);
         graph.cellLabelChanged(this, html);
       };
-      mxCell.prototype.setPortIndex = function(portIndex) {
+      mxCell.prototype.setPortIndex = function (portIndex) {
         this.portIndex = portIndex;
       };
-      mxCell.prototype.setPortType = function(portType) {
+      mxCell.prototype.setPortType = function (portType) {
         this.portType = portType;
       };
 
       // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
-      mxGraph.prototype.isValidDropTarget = function(cell, cells, evt) {
+      mxGraph.prototype.isValidDropTarget = function (cell, cells, evt) {
         const style = this.getCellStyle(cell);
         const isContainer = style.container === 1;
 
@@ -376,7 +380,7 @@ const MxgraphContainer = useInjectContext(
       };
 
       // 判断是否是连线约束点
-      mxGraph.prototype.isPort = function(cell) {
+      mxGraph.prototype.isPort = function (cell) {
         const geo = this.getCellGeometry(cell);
 
         return geo != null ? geo.relative : false;
@@ -523,7 +527,7 @@ const MxgraphContainer = useInjectContext(
      */
     const setDataMingEdgeStyle = () => {
       //
-      const listener = function(sender, evt) {
+      const listener = function (sender, evt) {
         undoMng.undoableEditHappened(evt.getProperty('edit'));
       };
       graph.getModel().addListener(mxEvent.UNDO, listener);
@@ -573,7 +577,7 @@ const MxgraphContainer = useInjectContext(
 
     const configEventHandle = () => {
       // 监听 - 键盘事件, 删除，复制，粘贴
-      mxEvent.addListener(document, 'keydown', function(evt) {
+      mxEvent.addListener(document, 'keydown', function (evt) {
         if (currentPagePositionRef.current === 'block') return;
         // 删除
         if (evt.key === 'Delete') {
@@ -591,7 +595,7 @@ const MxgraphContainer = useInjectContext(
         // message.success({ content: `按键松了`, key: "keyboard", duration: 1 });
       });
 
-      mxEvent.addListener(document, 'paste', function(evt) {
+      mxEvent.addListener(document, 'paste', function (evt) {
         if (currentPagePositionRef.current === 'block') return;
 
         if (evt.target.nodeName === 'PRE' || evt.target.nodeName === 'BODY') {
@@ -621,7 +625,7 @@ const MxgraphContainer = useInjectContext(
         }
       });
 
-      mxEvent.addListener(document, 'copy', function(evt) {
+      mxEvent.addListener(document, 'copy', function (evt) {
         if (currentPagePositionRef.current === 'block') return;
 
         console.log(evt);
@@ -693,7 +697,9 @@ const MxgraphContainer = useInjectContext(
         return;
       });
 
-      //
+      graph.addListener(mxEvent.REMOVE_CELLS_FROM_PARENT, (sender, evt) => {
+        console.log('移出parent');
+      });
 
       // 监听 - 双击事件CLICK
       graph.addListener(mxEvent.DOUBLE_CLICK, (sender, evt) => {
@@ -766,7 +772,7 @@ const MxgraphContainer = useInjectContext(
           if (
             // node.item &&
             data &&
-            ['processblock', 'rhombus-node'].includes(data.shape)
+            ['processblock', 'rhombus-node', 'group'].includes(data.shape)
           ) {
             changeCheckedGraphBlockId(cellId);
             synchroCodeBlock(graphDataMapRef.current.get(cellId));
@@ -847,9 +853,10 @@ const MxgraphContainer = useInjectContext(
 
       // 移动 CELLS_MOVED MOVE_CELLS
       graph.addListener(mxEvent.CELLS_MOVED, (sender, evt) => {
-        updateGraphDataAction(graph);
+        setTimeout(() => {
+          updateGraphDataAction(graph);
+        }, 0);
         // console.log('\n\n\n\n 更新啊啊啊啊啊啊 \n\n\n');
-        console.log(undoMng);
 
         // 要区别2种move，假如没有target，则是正常move
         // 有target，则是新增
@@ -942,7 +949,6 @@ const MxgraphContainer = useInjectContext(
 
       // 更新
       graph.addListener('update_graphData', () => {
-        console.log('转换');
         const output = translateToGraphData(graph.getModel());
         if (output) {
           updateGraphData(output);
@@ -1058,18 +1064,6 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._width = String(END_NODE.width);
             obj.mxGeometry._height = String(END_NODE.height);
             obj.mxGeometry._as = 'geometry';
-          } else if (item.shape === 'group') {
-            obj._id = item.id;
-            obj._parent = item.parent ? item.parent : '1';
-            obj._style = GROUP_NODE.style;
-            obj._value = GROUP_NODE.label;
-            obj._vertex = '1';
-            obj.mxGeometry = {};
-            obj.mxGeometry._x = String(item.x);
-            obj.mxGeometry._y = String(item.y);
-            obj.mxGeometry._width = String(GROUP_NODE.width);
-            obj.mxGeometry._height = String(GROUP_NODE.height);
-            obj.mxGeometry._as = 'geometry';
           } else if (item.shape === 'try') {
             const sizes = item.size.split('*');
             obj._id = item.id;
@@ -1109,12 +1103,12 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._width = String(sizes[0]);
             obj.mxGeometry._height = String(sizes[1]);
             obj.mxGeometry._as = 'geometry';
-          } else if (item.shape === '循环') {
+          } else if (item.shape === 'group') {
             const sizes = item.size.split('*');
             obj._id = item.id;
-            obj._parent = item.parent;
+            obj._parent = item.parent ? item.parent : '1';
             obj._style = GROUP_NODE.style;
-            obj._value = '循环';
+            obj._value = GROUP_NODE.getLabel(item.label);
             obj._vertex = '1';
             obj.mxGeometry = {};
             obj.mxGeometry._x = String(item.x);
@@ -1256,7 +1250,7 @@ const MxgraphContainer = useInjectContext(
       }
 
       // 成功拖拽后的回调方法
-      const funt = mxUtils.bind(this, function(...args) {
+      const funt = mxUtils.bind(this, function (...args) {
         dropHandler.apply(this, args);
       });
 
@@ -1278,12 +1272,17 @@ const MxgraphContainer = useInjectContext(
         highlightDropTargets
       );
 
-      dragSource.dragOver = function(...args) {
+      dragSource.dragOver = function (...args) {
         mxDragSource.prototype.dragOver.apply(this, args);
       };
 
       // 仅当拖拽目标是一个合法根的时候可以拖进
-      dragSource.getDropTarget = mxUtils.bind(this, function(graph, x, y, evt) {
+      dragSource.getDropTarget = mxUtils.bind(this, function (
+        graph,
+        x,
+        y,
+        evt
+      ) {
         // Alt表示没有目标
         // 得到与x，y相交的底层单元格
         let cell =
@@ -1360,7 +1359,7 @@ const MxgraphContainer = useInjectContext(
         allowCellsInserted !== null ? allowCellsInserted : true;
 
       // 更新视图
-      return mxUtils.bind(this, function(graph, evt, target, x, y, force) {
+      return mxUtils.bind(this, function (graph, evt, target, x, y, force) {
         let elt = null;
         if (!force) {
           elt = mxEvent.isTouchEvent(evt) /* || mxEvent.isPenEvent(evt) */
@@ -1569,10 +1568,131 @@ const MxgraphContainer = useInjectContext(
                       item.geometry.x = 0;
                       item.geometry.y = 200;
                       select[0].insert(item);
+                    } else if (
+                      item.value.indexOf("class='group-content'") > -1
+                    ) {
+                      setGraphDataMap(item.id, {
+                        shape: 'group',
+                        properties: [
+                          {
+                            cnName: '标签名称',
+                            enName: 'label',
+                            value: 'for in',
+                            defaule: '',
+                          },
+                          {
+                            cnName: '循环类型',
+                            enName: 'looptype',
+                            value: '',
+                            default: 'for_list',
+                            valueMapping: [
+                              { name: '遍历数组', value: 'for_list' },
+                              { name: '遍历字典', value: 'for_dict' },
+                              { name: '计次循环', value: 'for_times' },
+                              { name: '条件循环', value: 'for_condition' },
+                            ],
+                          },
+                          {
+                            cnName: '循环条件',
+                            enName: 'loopcondition',
+                            value: '',
+                            default: '',
+                            tag: 1,
+                            valueList: [],
+                            valueMapping: [
+                              { name: '等于', value: '==' },
+                              { name: '不等于', value: '!=' },
+                              { name: '大于', value: '>' },
+                              { name: '小于', value: '<' },
+                              { name: '大于等于', value: '>=' },
+                              { name: '小于等于', value: '<=' },
+                              { name: '空', value: 'is None' },
+                              { name: '非空', value: 'not None' },
+                            ],
+                            for_list: [
+                              {
+                                id: 'listKeyword',
+                                enName: 'value',
+                                cnName: '值',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'listArray',
+                                enName: 'arrayRet',
+                                cnName: '数组',
+                                value: '',
+                                default: '',
+                                paramType: ['List'],
+                              },
+                            ],
+                            for_dict: [
+                              {
+                                id: 'dictKey',
+                                enName: 'key',
+                                cnName: '键',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'dictValue',
+                                enName: 'value',
+                                cnName: '值',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'dictVar',
+                                enName: 'dictVar',
+                                cnName: '字典',
+                                value: '',
+                                default: '',
+                                paramType: ['Dictionary'],
+                              },
+                            ],
+                            for_times: [
+                              {
+                                id: 'timeIndex',
+                                enName: 'index',
+                                cnName: '索引名称',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'timeStartIndex',
+                                enName: 'startIndex',
+                                cnName: '初始值',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'timeEndIndex',
+                                enName: 'endIndex',
+                                cnName: '结束值',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'timeStep',
+                                enName: 'step',
+                                cnName: '每次增加',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                            ],
+                          },
+                        ],
+                      });
                     }
                   });
                 }
-                console.log('修改结束');
                 updateGraphDataAction(graph);
                 graph.refresh();
                 setTimeout(() => {
@@ -1636,7 +1756,7 @@ const MxgraphContainer = useInjectContext(
                 select !== null &&
                 select.length === 1
               ) {
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                   graph.startEditing(select[0]);
                 }, 0);
               }

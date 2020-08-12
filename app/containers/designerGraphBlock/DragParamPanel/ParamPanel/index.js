@@ -208,6 +208,7 @@ const getComponentType = (
         keyFlag={keyFlag}
         handleEmitCodeTransform={emitCode}
         handleValidate={handleValidate}
+        markBlockIsUpdated={markBlockIsUpdated}
       />
     );
   } else if (param.enName === '_text') {
