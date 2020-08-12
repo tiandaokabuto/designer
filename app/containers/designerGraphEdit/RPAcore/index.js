@@ -82,6 +82,7 @@ export const handleDebugBlockAllRun = () => {
     return message.warning('无流程块可以运行');
   }
   if (nowIndex >= tempCenter.length) {
+    nowIndex = 0;
     event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
     return message.success('流程已完成');
   }
@@ -113,6 +114,7 @@ export const handleDebugBlockAllRun = () => {
   }
 };
 
+// 【 editor的单步调试 - 02 】开始第二层卡片级，逐步发送
 export const handleDebugCardsAllRun = checkedGraphBlockId => {
   if (isPause) {
     event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
@@ -162,6 +164,37 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
     nowIndexCards += 1;
     message.info(`当前运行${nowIndexCards} of ${needRunBlock.length}`);
   }, 300);
+};
+
+export const handleRunNextStep = () => {
+  if(localStorage.getItem("running_mode") === "blockAll_running"){
+    // event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
+    //message.info("暂不支持流程图的单步调试")
+    setPause()
+  }else if(localStorage.getItem("running_mode") === "cardsAll_running"){
+    setPause()
+    //event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+  }
+
+  // 断点检查
+  if (nowIndexCards === 0) {
+    if (needRunBlock[nowIndexCards].breakPoint === true) {
+      message.info('流程块第1条遇到断点');
+      setPause();
+      needRunBlock[nowIndexCards].breakPoint = false;
+      return event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
+      //needRunBlock[cardsIndex].breakPoint === false;
+    }
+  } else if (nowIndexCards + 1 < needRunBlock.length) {
+    // 他有下一条存在
+    if (needRunBlock[nowIndexCards + 1].breakPoint === true) {
+      message.info('发现了1个断点');
+      setPause();
+    }
+  }
+
+
+
 };
 
 /**
