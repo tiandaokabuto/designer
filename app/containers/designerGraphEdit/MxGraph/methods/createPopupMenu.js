@@ -25,6 +25,7 @@ export default (
       Action_DeleteCell(graph, {
         deleteGraphDataMap,
         changeCheckedGraphBlockId,
+        graphData,
       });
     };
     const clickMenuAddToReuse = () => {

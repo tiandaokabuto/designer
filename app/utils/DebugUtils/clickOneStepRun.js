@@ -6,10 +6,12 @@ import { fetchCard, resetTemp } from './fetchCard';
 import { sendPythonCodeByLine } from './runDebugServer';
 
 export const clickOneStepRun = (cards, id) => {
+  resetTemp();
+
   const result = transformBlockToCode([fetchCard(cards, id)], 0, false);
 
   //console.log(`//${id}//`, fetchCard(cards, id)); //cards.filter(item => item.id === id))
-  resetTemp()
+
   const varNames = fetchCard(cards, id);
   console.log(cards,id,varNames)
   //console.log(cards.filter(item => item.id === id));
@@ -33,20 +35,21 @@ export const clickOneStepRun = (cards, id) => {
       output: line,
     });
 
-    message.info({
-      content: (
-        <div style={{ textAlign: 'left', fontSize: 12}}>
-          <h3>【代码已发送】 2秒后 窗口自动关闭</h3>
-          <textarea
-            style={{ minWidth: '80vw', minHeight: '120px' }}
-            defaultValue={line}
-          ></textarea>
-        </div>
-      ),
-      duration: 2,
-      icon: <span></span>,
+    // message.loading({
+    //   content: (
+    //     <div style={{ textAlign: 'left', fontSize: 12}}>
+    //       <h3>【代码已发送】 2秒后 窗口自动关闭</h3>
+    //       <textarea
+    //         style={{ minWidth: '80vw', minHeight: '120px' }}
+    //         defaultValue={line}
+    //       ></textarea>
+    //     </div>
+    //   ),
+    //   key:"pythonCode",
+    //   duration: 2,
+    //   icon: <span></span>,
 
-    });
+    // });
   } catch (e) {
     console.log(e);
     message.error('debug端口未打开');

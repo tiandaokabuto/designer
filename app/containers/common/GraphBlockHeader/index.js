@@ -14,13 +14,23 @@ import SaveConfirmModel from '../../designerGraphEdit/GraphItem/components/SaveC
 
 //liuqi
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
-import event, { PYTHOH_DEBUG_SERVER_START } from '../../eventCenter';
+import event, {
+  PYTHOH_DEBUG_SERVER_START,
+  PYTHOH_DEBUG_BLOCK_ALL_RUN,
+  PYTHOH_DEBUG_BLOCK_ALL_RUN_END,
+  PYTHOH_DEBUG_CARDS_ALL_RUN,
+  PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE,
+} from '../../eventCenter';
 import {
   runDebugServer,
   runAllStepByStepAuto,
   killTask,
 } from '../../../utils/DebugUtils/runDebugServer';
-import { getTempCenter } from '../../designerGraphEdit/RPAcore';
+import {
+  getTempCenter,
+  setPause,
+  clearPause,
+} from '../../designerGraphEdit/RPAcore';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -167,6 +177,15 @@ export default memo(({ history, tag }) => {
     }
   };
 
+  /****
+   * DEBUG!!!
+   *
+   */
+
+  const currentPagePosition = useSelector(
+    state => state.temporaryvariable.currentPagePosition
+  );
+
   // 用来管理pythonDebug的状态
   const [pyDebugServerState, setPyDebugServerState] = useState({
     type: '启动debug模式',
@@ -207,6 +226,14 @@ export default memo(({ history, tag }) => {
       PYTHOH_DEBUG_SERVER_START,
       handleRunPythonDebugServerStart
     );
+
+    event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE, setContinueBtn);
+
+    event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_END, () => {
+      //alert(1);
+      setPauseState({ running: true, pause: true });
+    });
+
     return () => {
       event.removeListener(
         PYTHOH_DEBUG_SERVER_START,
@@ -217,6 +244,10 @@ export default memo(({ history, tag }) => {
       killTask();
     };
   }, []);
+
+  const setContinueBtn = () => {
+    setPauseState({ running: true, pause: true });
+  };
 
   return (
     <div
@@ -277,6 +308,9 @@ export default memo(({ history, tag }) => {
             onClick={() => {
               if (pyDebugServerState.type === 'Debug已连接')
                 return message.info('Debug已连接');
+              if (pyDebugServerState.type === 'Debug已终止')
+                return message.info('操作太快了，请稍等一会');
+              event.emit('clear_output');
               runDebugServer();
             }}
           >
@@ -289,11 +323,19 @@ export default memo(({ history, tag }) => {
                   color="lime"
                   className="debug-btn-inner"
                   onClick={() => {
-                    //testRunOneLine();
-                    setPauseState({ running: true, pause: false });
-                    console.clear();
-                    console.log(transformProcessToPython());
-                    console.log(getTempCenter());
+                    if (currentPagePosition === 'editor') {
+                      setPauseState({ running: true, pause: false });
+                      console.log(transformProcessToPython());
+                      console.log(getTempCenter());
+                      localStorage.setItem('running_mode', 'blockAll_running');
+                      event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
+                    } else if (currentPagePosition === 'block') {
+                      setPauseState({ running: true, pause: false });
+                      console.log(transformProcessToPython());
+                      console.log(getTempCenter());
+                      localStorage.setItem('running_mode', 'cardsAll_running');
+                      event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+                    }
                   }}
                 >
                   <Icon type="play-circle" /> 按序调试
@@ -304,26 +346,65 @@ export default memo(({ history, tag }) => {
 
               {pauseState.running === true ? (
                 pauseState.pause === true ? (
-                  <Tag
-                    color="gold"
-                    className="debug-btn-inner"
-                    onClick={() => {
-                      //testRunOneLine();
-                      setPauseState({ ...pauseState, pause: false });
-                    }}
-                  >
-                  <Icon type="play-circle" /> 继续
-                  </Tag>
+                  <>
+                    <Tag
+                      color="gold"
+                      className="debug-btn-inner"
+                      onClick={() => {
+                        //testRunOneLine();
+                        clearPause();
+                        if (
+                          localStorage.getItem('running_mode') ===
+                          'blockAll_running'
+                        ) {
+                          event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
+                        } else if (
+                          localStorage.getItem('running_mode') ===
+                          'cardsAll_running'
+                        ) {
+                          event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+                        }
+                        setPauseState({ running: true, pause: false });
+                      }}
+                    >
+                      <Icon type="play-circle" /> 继续
+                    </Tag>
+                    <Tag
+                      color="green"
+                      className="debug-btn-inner"
+                      onClick={() => {
+                        clearPause();
+                        if (
+                          localStorage.getItem('running_mode') ===
+                          'blockAll_running'
+                        ) {
+                          event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
+                        } else if (
+                          localStorage.getItem('running_mode') ===
+                          'cardsAll_running'
+                        ) {
+                          event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+                        }
+                        setPause();
+                        //event.emit('nextStep');
+                      }}
+                    >
+                      <Icon type="play-circle" />
+                      下一步
+                    </Tag>
+                  </>
                 ) : (
                   <Tag
                     color="purple"
                     className="debug-btn-inner"
                     onClick={() => {
                       //testRunOneLine();
-                      setPauseState({ ...pauseState, pause: true });
+                      console.log(setPause());
+                      //setPauseState({ ...pauseState, pause: true });
                     }}
                   >
-                  <Icon type="pause-circle" />暂停
+                    <Icon type="pause-circle" />
+                    暂停
                   </Tag>
                 )
               ) : (
@@ -334,8 +415,8 @@ export default memo(({ history, tag }) => {
                 color="volcano"
                 className="debug-btn-inner"
                 onClick={() => {
-                  setPauseState({ running:false, pause: false });
-                  killTask()
+                  setPauseState({ running: false, pause: false });
+                  killTask();
                 }}
               >
                 <Icon type="stop" /> 终止

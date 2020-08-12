@@ -2,13 +2,22 @@ import React, { useEffect, useState, memo, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
-import { Icon, Input, Dropdown, Menu } from 'antd';
+import { Icon, Input, Dropdown, Menu, Tag } from 'antd';
 
-import event, { PYTHON_OUTPUT } from '@/containers/eventCenter';
+import event, {
+  PYTHON_OUTPUT,
+  PYTHOH_DEBUG_BLOCK_ALL_RUN,
+  PYTHOH_DEBUG_CARDS_ALL_RUN,
+} from '@/containers/eventCenter';
 import FilterToolbar from './FilterToolbar';
 import Tags from './Tags';
 import ZoomToolBar from './ZoomToolBar';
 import useGetDownloadPath from '../../common/DragEditorHeader/useHooks/useGetDownloadPath';
+
+import {
+  handleDebugBlockAllRun,
+  handleDebugCardsAllRun,
+} from '../../designerGraphEdit/RPAcore';
 
 const fs = require('fs');
 
@@ -120,11 +129,32 @@ export default memo(
       };
       event.addListener(PYTHON_OUTPUT, handlePythonOutput);
       event.addListener('clear_output', handleClearOutput);
+
+      // 第一层的全体调试
+      event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN, blockAllNext);
+      // 第二层的全体调试
+      event.addListener(PYTHOH_DEBUG_CARDS_ALL_RUN, cardsAllNext);
+
       return () => {
         event.removeListener(PYTHON_OUTPUT, handlePythonOutput);
         event.removeListener('clear_output', handleClearOutput);
+        event.removeListener(PYTHOH_DEBUG_BLOCK_ALL_RUN, blockAllNext);
+        event.removeListener(PYTHOH_DEBUG_CARDS_ALL_RUN, cardsAllNext);
       };
     }, []);
+
+    const checkedGraphBlockId = useSelector(
+      state => state.grapheditor.checkedGraphBlockId
+    );
+
+    // 处理第一层调试
+    const blockAllNext = () => {
+      handleDebugBlockAllRun();
+    };
+    // 处理第二层调试
+    const cardsAllNext = () => {
+      handleDebugCardsAllRun(checkedGraphBlockId);
+    };
 
     useEffect(() => {
       updateExecuteOutput(output);
@@ -295,7 +325,30 @@ export default memo(
                 : 'normal-tip'
             }
           >
-            输出
+            <span style={{ paddingRight: 20 }}>输出</span>{' '}
+
+            {/*
+              <Tag
+              color="green"
+              className="debug-btn-inner"
+              onClick={() => {
+                event.emit('nextStep');
+              }}
+            >
+              <Icon type="play-circle" />
+              下一步
+            </Tag>
+            <Tag
+              color="green"
+              className="debug-btn-inner"
+              onClick={() => {
+                event.emit('nextPause');
+              }}
+            >
+              <Icon type="play-circle" />
+              运行至断点
+            </Tag>
+            */}
           </span>
 
           <div
