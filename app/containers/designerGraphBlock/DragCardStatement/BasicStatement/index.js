@@ -327,7 +327,7 @@ const BasicStatement = useInjectContext(props => {
   const checkedGraphBlockIdRef = useRef({});
   checkedGraphBlockIdRef.current = checkedGraphBlockId;
 
-  console.log(`!`,card,card.breakPoint)
+  console.log(`!`, card, card.breakPoint);
 
   return (
     <div
@@ -343,7 +343,11 @@ const BasicStatement = useInjectContext(props => {
         className={isTail ? 'card-content card-content__tail' : 'card-content'}
         data-id={isTail ? '' : id}
         style={{
-          borderLeft: isTail ? '' : isBreakPoint === true ? '8px solid orangered' : '',
+          borderLeft: isTail
+            ? ''
+            : isBreakPoint === true
+            ? '8px solid orangered'
+            : '',
         }}
       >
         {isTail ? (
