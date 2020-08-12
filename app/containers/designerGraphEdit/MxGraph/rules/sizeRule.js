@@ -1,3 +1,5 @@
+import { message } from 'antd';
+
 export const Rule_sizeRule = (graph, option = {}, callback) => {
   const { evt, graphData } = option;
 
@@ -6,11 +8,11 @@ export const Rule_sizeRule = (graph, option = {}, callback) => {
   const resizePrevious = evt.properties.previous;
 
   if (resizeBounds[0].width < 210) {
-    message.info('容器太小了' + resizeCells[0].id);
+    message.info('容器太小了')// + resizeCells[0].id);
     graph.resizeCells(resizeCells, resizePrevious);
-  } else{
+  } else {
     // 找到他的所有子元素
-
-
+    console.clear()
+    console.log(evt.properties.cells, graph, graphData);
   }
 };

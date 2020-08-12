@@ -200,6 +200,8 @@ export default memo(({ history, tag }) => {
           tagColor: 'cyan',
         });
       case '连接':
+        localStorage.setItem('running_mode', 'started');
+        setOnePause(false);
         return setPyDebugServerState({
           type: 'Debug已连接',
           tagColor: '',
@@ -217,6 +219,7 @@ export default memo(({ history, tag }) => {
     running: false,
     pause: false,
   });
+  const [onePause, setOnePause] = useState(false);
 
   // 流程快代码转义
   const transformProcessToPython = useTransformProcessToPython();
@@ -228,30 +231,50 @@ export default memo(({ history, tag }) => {
     );
 
     event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE, setContinueBtn);
-
-    event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_END, () => {
-      //alert(1);
-      setPauseState({ running: true, pause: true });
-    });
+    event.addListener(`one_started`, disabledBtn);
+    event.addListener(`one_finished`, abledBtn);
+    event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_END, setPuseBtn);
 
     return () => {
       event.removeListener(
         PYTHOH_DEBUG_SERVER_START,
         handleRunPythonDebugServerStart
       );
+      event.removeListener(`one_started`, disabledBtn);
+      event.removeListener(`one_finished`, abledBtn);
+      event.removeListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_END, setPuseBtn);
+
       localStorage.setItem('debug', '关闭');
       // 当返回时，自动杀死debug进程
       killTask();
     };
   }, []);
 
-  useEffect(() => {
-    if(!pauseState.running) return;
-    resetPythonCode();
-    message.info("由于切换了层级，已重新生成当前页的代码,并将指针指向第一条","resetPythonCode")
-  },[currentPagePosition]);
+  const setPuseBtn = () => {
+    setPauseState({
+      running: false,
+      pause: true,
+    });
+  };
 
-  const resetPythonCode = () =>{
+  const disabledBtn = () => {
+    setOnePause(true);
+  };
+
+  const abledBtn = () => {
+    setOnePause(false);
+  };
+
+  useEffect(() => {
+    if (!pauseState.running) return;
+    resetPythonCode();
+    message.info(
+      '由于切换了层级，已重新生成当前页的代码,并将指针指向第一条',
+      'resetPythonCode'
+    );
+  }, [currentPagePosition]);
+
+  const resetPythonCode = () => {
     if (currentPagePosition === 'editor') {
       //setPauseState({ running: true, pause: false });
       console.log(transformProcessToPython());
@@ -265,8 +288,11 @@ export default memo(({ history, tag }) => {
       localStorage.setItem('running_mode', 'cardsAll_running');
       //event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
     }
-    message.info("已重新生成当前页的代码,并将指针指向第一条","resetPythonCode")
-  }
+    message.info(
+      '已重新生成当前页的代码,并将指针指向第一条',
+      'resetPythonCode'
+    );
+  };
 
   const setContinueBtn = () => {
     setPauseState({ running: true, pause: true });
@@ -341,7 +367,7 @@ export default memo(({ history, tag }) => {
           </Tag>
           {pyDebugServerState.type === 'Debug已连接' ? (
             <>
-              {pauseState.running === false ? (
+              {pauseState.running === false && onePause === false ? (
                 <Tag
                   color="lime"
                   className="debug-btn-inner"
@@ -367,8 +393,11 @@ export default memo(({ history, tag }) => {
               ) : (
                 ''
               )}
-
-              {pauseState.running === true ? (
+              {onePause ? (
+                <Tag color="purple" className="debug-btn-inner">
+                  正在单步调试
+                </Tag>
+              ) : pauseState.running === true ? (
                 pauseState.pause === true ? (
                   <>
                     <Tag
@@ -377,15 +406,22 @@ export default memo(({ history, tag }) => {
                       onClick={() => {
                         //testRunOneLine();
                         clearPause();
-                        if (
-                          localStorage.getItem('running_mode') ===
-                          'blockAll_running'
-                        ) {
+                        const running = localStorage.getItem('running_mode');
+                        console.clear();
+                        console.log(running);
+                        if (running === 'blockAll_pasue') {
+                          localStorage.setItem(
+                            'running_mode',
+                            'blockAll_running'
+                          );
                           event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
-                        } else if (
-                          localStorage.getItem('running_mode') ===
-                          'cardsAll_running'
-                        ) {
+                        }
+                        if (running === 'cardsAll_pause') {
+                          console.log('!!!!');
+                          localStorage.setItem(
+                            'running_mode',
+                            'cardsAll_running'
+                          );
                           event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
                         }
                         setPauseState({ running: true, pause: false });
@@ -399,15 +435,10 @@ export default memo(({ history, tag }) => {
                       className="debug-btn-inner"
                       onClick={() => {
                         clearPause();
-                        if (
-                          localStorage.getItem('running_mode') ===
-                          'blockAll_running'
-                        ) {
+                        const running = localStorage.getItem('running_mode');
+                        if (running === 'blockAll_pause') {
                           event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
-                        } else if (
-                          localStorage.getItem('running_mode') ===
-                          'cardsAll_running'
-                        ) {
+                        } else if (running === 'cardsAll_pause') {
                           event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
                         }
                         setPause();
@@ -421,7 +452,7 @@ export default memo(({ history, tag }) => {
                       color="blue"
                       className="debug-btn-inner"
                       onClick={() => {
-                        resetPythonCode()
+                        resetPythonCode();
                       }}
                     >
                       <Icon type="issues-close" />

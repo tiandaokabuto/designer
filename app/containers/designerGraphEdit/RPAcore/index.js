@@ -42,7 +42,7 @@ export const claerTempCenter = () => {
   nowIndex = 0;
   nowIndexCards = 0;
   pass = false;
-  let isPause = false;
+  isPause = false;
 };
 
 // 获取代码分段缓存区的内容
@@ -77,6 +77,7 @@ export const clearPause = () => {
 export const handleDebugBlockAllRun = () => {
   if (isPause) {
     event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
+    localStorage.setItem("running_mode", "blockAll_pause");
     return message.info('进程被暂停');
   }
   if (tempCenter.length < 1) {
@@ -119,6 +120,7 @@ export const handleDebugBlockAllRun = () => {
 // 【 editor的单步调试 - 02 】开始第二层卡片级，逐步发送
 export const handleDebugCardsAllRun = checkedGraphBlockId => {
   if (isPause) {
+    localStorage.setItem("running_mode", "cardsAll_pause");
     event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
     return message.info('进程被暂停');
   }

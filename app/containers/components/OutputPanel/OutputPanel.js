@@ -135,6 +135,7 @@ export default memo(
       // 第二层的全体调试
       event.addListener(PYTHOH_DEBUG_CARDS_ALL_RUN, cardsAllNext);
 
+
       return () => {
         event.removeListener(PYTHON_OUTPUT, handlePythonOutput);
         event.removeListener('clear_output', handleClearOutput);
