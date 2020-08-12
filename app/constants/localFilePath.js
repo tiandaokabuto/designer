@@ -3,11 +3,11 @@
 const FILE_PATH = {
   current: `${process.cwd()}/`,
   project: `${process.cwd()}/project/`,
-  windowHook: `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/testHook.py`,
-  WinRun: `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/WinRun.py`,
+  windowHook: `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/PYDHandle.py testHook`,
+  WinRun: `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/PYDHandle.py WinRun`,
   getBrowserXpath: `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/ie_xpath_capture.py`,
   pythonExecute: `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/python/temp.py`,
-  CaptureAreaScreen: `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/CaptureAreaScreen.py`,
+  CaptureAreaScreen: `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/PYDHandle.py CaptureAreaScreen`,
   // pythonExecute: `python3 ${process.cwd()}/python/temp.py`,
 };
 

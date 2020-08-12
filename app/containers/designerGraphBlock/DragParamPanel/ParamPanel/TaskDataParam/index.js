@@ -139,6 +139,7 @@ export default function TaskDataName({
   keyFlag,
   handleEmitCodeTransform,
   handleValidate,
+  markBlockIsUpdated,
 }) {
   param.dataSource = param.dataSource || [];
   param.tableName = param.tableName || '';
@@ -169,6 +170,7 @@ export default function TaskDataName({
     onChange: (selectedRowKeys, selectedRows) => {
       param.selectedRowKeys = [...selectedRowKeys];
       param.selectedRows = [...selectedRows];
+      markBlockIsUpdated();
       setSelectedRowKeys(selectedRowKeys);
       handleEmitCodeTransform();
     },
