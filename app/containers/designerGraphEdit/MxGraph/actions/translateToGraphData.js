@@ -35,6 +35,10 @@ export function translateToGraphData(sender) {
             ''
           )
           .replace('</span></div>', '');
+      } else if (shape === 'group') {
+        label = value
+          .replace("<span class='group-content'>", '')
+          .replace('</span>', '');
       } else {
         label = value;
       }
@@ -96,6 +100,7 @@ function getShape(style, value) {
   if (value === 'try') return 'try';
   if (value === 'catch') return 'catch';
   if (value === 'finally') return 'finally';
+  if (value.indexOf('group-content') > -1) return 'group';
 
   typeList.forEach(shape => {
     if (style.indexOf(`${shape}`) !== -1) {

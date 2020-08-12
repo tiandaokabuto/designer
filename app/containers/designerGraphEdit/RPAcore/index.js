@@ -12,6 +12,7 @@ import {
   hasTwoEntryPortInProcessBlock,
   findStartProcessBlockInContain,
   findCatchFinallyNode,
+  translateGroup,
 } from '_utils/RPACoreUtils/GraphEdit/utils';
 
 import { writeFileRecursive } from '../../../nodejs';
@@ -237,7 +238,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-            '\n'
+          '\n'
         }` + result.output;
       // 判断一下当前的流程块结点是否有两个入点，那么就是循环相关 就需要包括在 while True: 的循环结构下边。
       // 同时解析的深度要 +1
@@ -276,7 +277,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-            '\n'
+          '\n'
         }`,
         funcName: funcName,
         params: params,
@@ -507,7 +508,7 @@ export const transformEditorProcess = (
           transformEditorProcess(
             graphData,
             graphDataMap,
-            tryStartNodeEdge.source,
+            tryStartNodeEdge.id,
             result,
             depth + 1,
             breakPoint,
@@ -543,6 +544,17 @@ export const transformEditorProcess = (
             false
           );
       }
+      const nextPoint = findTargetIdBySourceId(graphData.edges, currentId);
+      nextPoint &&
+        transformEditorProcess(
+          graphData,
+          graphDataMap,
+          nextPoint,
+          result,
+          depth,
+          breakPoint,
+          false
+        );
       break;
     case 'catch':
       const catchStartNodeEdge = findStartProcessBlockInContain(
@@ -568,7 +580,7 @@ export const transformEditorProcess = (
           transformEditorProcess(
             graphData,
             graphDataMap,
-            catchStartNodeEdge.source,
+            catchStartNodeEdge.id,
             result,
             depth + 1,
             breakPoint,
@@ -603,16 +615,61 @@ export const transformEditorProcess = (
           transformEditorProcess(
             graphData,
             graphDataMap,
-            finallyStartNodeEdge.source,
+            finallyStartNodeEdge.id,
             result,
             depth + 1,
             breakPoint,
             false
           );
-          console.log('对象');
         }
       }
       result.output += `${padding(depth + 1)}pass\n`;
+      break;
+    case 'group':
+      const groupStartNodeEdge = findStartProcessBlockInContain(
+        graphData.nodes,
+        graphData.edges,
+        currentId,
+        ''
+      );
+      const groupTrans = translateGroup(blockData);
+      console.log(groupTrans);
+      result.output += `${padding(depth)}${groupTrans}:\n`;
+      if (groupStartNodeEdge) {
+        if (groupStartNodeEdge.constructor === String) {
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            groupStartNodeEdge,
+            result,
+            depth + 1,
+            breakPoint,
+            false
+          );
+        } else {
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            groupStartNodeEdge.id,
+            result,
+            depth + 1,
+            breakPoint,
+            false
+          );
+        }
+      }
+      result.output += `${padding(depth + 1)}pass\n`;
+      const nextPoint2 = findTargetIdBySourceId(graphData.edges, currentId);
+      nextPoint2 &&
+        transformEditorProcess(
+          graphData,
+          graphDataMap,
+          nextPoint2,
+          result,
+          depth,
+          breakPoint,
+          false
+        );
       break;
     case 'end-node':
       // 停止解析
@@ -687,7 +744,7 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
     writeFileRecursive(
       `${process.cwd()}/python/temp.py`,
       result.output,
-      function() {
+      function () {
         // console.log('保存成功');
       }
     );

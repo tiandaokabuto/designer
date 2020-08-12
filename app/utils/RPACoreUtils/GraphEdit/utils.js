@@ -106,29 +106,34 @@ export const findStartProcessBlockInContain = (nodes, edges, id, typeTag) => {
     type = ['catch', 'finally'];
   } else if (typeTag === 'catch') {
     type = ['try', 'finally'];
-  } else {
+  } else if (typeTag === 'finally') {
     type = ['try', 'catch'];
+  } else {
+    type = [];
   }
   childrens = nodes.filter(
     item => item.parent === id && !type.includes(item.shape)
   );
-  let startNodeEdge = undefined;
+  let startNodeEdge = [];
+  let targetNodeEdge = [];
 
-  // 从try的流程块里找一个起始点
+  // 从容器里找一个起始点
   if (childrens.length === 1) {
-    // 1. try里面只有一个流程块，直接返回id
+    // 1. 容器里面只有一个流程块，直接返回id
     return childrens[0].id;
   } else if (childrens.length > 1) {
-    // 2. try里面有其他流程块，起始点应该只有出的线，没有入的线，返回这条边
-    for (let i = 1; i < childrens.length; i++) {
-      startNodeEdge = edges.filter(
-        edge =>
-          edge.source === childrens[i].id || edge.target === childrens[i].id
-      );
+    // 2. 容器里面有其他流程块，起始点应该只有出的线，没有入的线，返回这条边
+
+    // childrens.forEach(item => {
+    //   startNodeEdge = edges.filter(edge => edge.target === item.id);
+    // });
+
+    for (let i = 0; i < childrens.length; i++) {
+      startNodeEdge = edges.filter(edge => edge.target === childrens[i].id);
       if (startNodeEdge.length === 1) {
-        return startNodeEdge[0];
-      } else {
         startNodeEdge = undefined;
+      } else {
+        return childrens[i];
       }
     }
     // childrens.forEach(item => {
@@ -153,4 +158,49 @@ export const findCatchFinallyNode = (nodes, edges, id) => {
     item => item.parent === id && ['catch', 'finally'].includes(item.shape)
   );
   return childrens;
+};
+
+export const translateGroup = blockData => {
+  console.log(blockData);
+  // 选择的循环类型
+  const select = blockData['properties'][1].value
+    ? blockData['properties'][1].value
+    : blockData['properties'][1].default;
+
+  const node = blockData['properties'][2];
+  const valueConditionList = node.valueList;
+  let loopcondition = '';
+  const looptype = select === 'for_condition' ? 'while' : 'for';
+  if (select === 'for_list' && node[select]) {
+    loopcondition = `${node[select][0].value} in ${node[select][1].value}`;
+  } else if (select === 'for_dict' && node[select]) {
+    loopcondition = `${node[select][0].value},${node[select][1].value} in ${node[select][2].value}.items()`;
+  } else if (select === 'for_times' && node[select]) {
+    loopcondition = `${node[select][0].value} in range(${node[select][1].value},${node[select][2].value},${node[select][3].value})`;
+  } else if (select === 'for_condition' && node.tag === 2) {
+    loopcondition = node.value;
+  } else if (
+    select === 'for_condition' &&
+    node.tag === 1 &&
+    Array.isArray(valueConditionList)
+  ) {
+    loopcondition = '';
+    valueConditionList.forEach((item, index) => {
+      if (index === valueConditionList.length - 1) {
+        // 最后一个，不把连接符填上
+        if (item.rule === 'is None' || item.rule === 'not None') {
+          loopcondition += `(${item.v1} ${item.rule}) `;
+        } else {
+          loopcondition += `(${item.v1} ${item.rule} ${item.v2}) `;
+        }
+      } else {
+        if (item.rule === 'is None' || item.rule === 'not None') {
+          loopcondition += `(${item.v1} ${item.rule}) ${item.connect} `;
+        } else {
+          loopcondition += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;
+        }
+      }
+    });
+  }
+  return `${looptype} ${loopcondition}`;
 };
