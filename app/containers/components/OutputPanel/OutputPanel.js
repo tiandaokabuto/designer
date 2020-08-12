@@ -351,8 +351,6 @@ export default memo(
             */}
           </span>
 
-
-
           <div
             className="dragger-editor-container-output-anchor"
             onClick={handleTriggerOpen}

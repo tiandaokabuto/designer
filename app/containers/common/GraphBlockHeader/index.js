@@ -19,14 +19,18 @@ import event, {
   PYTHOH_DEBUG_BLOCK_ALL_RUN,
   PYTHOH_DEBUG_BLOCK_ALL_RUN_END,
   PYTHOH_DEBUG_CARDS_ALL_RUN,
-  PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE
+  PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE,
 } from '../../eventCenter';
 import {
   runDebugServer,
   runAllStepByStepAuto,
   killTask,
 } from '../../../utils/DebugUtils/runDebugServer';
-import { getTempCenter, setPause, clearPause } from '../../designerGraphEdit/RPAcore';
+import {
+  getTempCenter,
+  setPause,
+  clearPause,
+} from '../../designerGraphEdit/RPAcore';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -223,10 +227,7 @@ export default memo(({ history, tag }) => {
       handleRunPythonDebugServerStart
     );
 
-    event.addListener(
-      PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE,
-      setContinueBtn
-    );
+    event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE, setContinueBtn);
 
     event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_END, () => {
       //alert(1);
@@ -244,9 +245,9 @@ export default memo(({ history, tag }) => {
     };
   }, []);
 
-  const setContinueBtn = () =>{
+  const setContinueBtn = () => {
     setPauseState({ running: true, pause: true });
-  }
+  };
 
   return (
     <div
@@ -345,22 +346,53 @@ export default memo(({ history, tag }) => {
 
               {pauseState.running === true ? (
                 pauseState.pause === true ? (
-                  <Tag
-                    color="gold"
-                    className="debug-btn-inner"
-                    onClick={() => {
-                      //testRunOneLine();
-                      clearPause();
-                      if(localStorage.getItem("running_mode") === "blockAll_running"){
-                        event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
-                      }else if(localStorage.getItem("running_mode") === "cardsAll_running"){
-                        event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
-                      }
-                      setPauseState({ running: true, pause: false })
-                    }}
-                  >
-                    <Icon type="play-circle" /> 继续
-                  </Tag>
+                  <>
+                    <Tag
+                      color="gold"
+                      className="debug-btn-inner"
+                      onClick={() => {
+                        //testRunOneLine();
+                        clearPause();
+                        if (
+                          localStorage.getItem('running_mode') ===
+                          'blockAll_running'
+                        ) {
+                          event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
+                        } else if (
+                          localStorage.getItem('running_mode') ===
+                          'cardsAll_running'
+                        ) {
+                          event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+                        }
+                        setPauseState({ running: true, pause: false });
+                      }}
+                    >
+                      <Icon type="play-circle" /> 继续
+                    </Tag>
+                    <Tag
+                      color="green"
+                      className="debug-btn-inner"
+                      onClick={() => {
+                        clearPause();
+                        if (
+                          localStorage.getItem('running_mode') ===
+                          'blockAll_running'
+                        ) {
+                          event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
+                        } else if (
+                          localStorage.getItem('running_mode') ===
+                          'cardsAll_running'
+                        ) {
+                          event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+                        }
+                        setPause();
+                        //event.emit('nextStep');
+                      }}
+                    >
+                      <Icon type="play-circle" />
+                      下一步
+                    </Tag>
+                  </>
                 ) : (
                   <Tag
                     color="purple"
