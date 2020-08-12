@@ -19,10 +19,10 @@ import ItemTypes from '../../constants/statementTypes';
 
 import './index.scss';
 
-import { clickOneStepRun } from '../../../../utils/DebugUtils/clickOneStepRun';
 
 // liuqi
-import event from '../../../eventCenter'
+import event from '../../../eventCenter';
+import { clickOneStepRun } from '../../../../utils/DebugUtils/clickOneStepRun';
 
 const style = {
   borderTop: '4px solid transparent',
