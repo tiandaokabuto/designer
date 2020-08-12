@@ -168,12 +168,12 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
 };
 
 export const handleRunNextStep = () => {
-  if(localStorage.getItem("running_mode") === "blockAll_running"){
+  if (localStorage.getItem('running_mode') === 'blockAll_running') {
     // event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
     //message.info("暂不支持流程图的单步调试")
-    setPause()
-  }else if(localStorage.getItem("running_mode") === "cardsAll_running"){
-    setPause()
+    setPause();
+  } else if (localStorage.getItem('running_mode') === 'cardsAll_running') {
+    setPause();
     //event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
   }
 
@@ -193,9 +193,6 @@ export const handleRunNextStep = () => {
       setPause();
     }
   }
-
-
-
 };
 
 /**
@@ -509,7 +506,7 @@ export const transformEditorProcess = (
           transformEditorProcess(
             graphData,
             graphDataMap,
-            tryStartNodeEdge.source,
+            tryStartNodeEdge.id,
             result,
             depth + 1,
             breakPoint,
@@ -581,7 +578,7 @@ export const transformEditorProcess = (
           transformEditorProcess(
             graphData,
             graphDataMap,
-            catchStartNodeEdge.source,
+            catchStartNodeEdge.id,
             result,
             depth + 1,
             breakPoint,
@@ -616,13 +613,12 @@ export const transformEditorProcess = (
           transformEditorProcess(
             graphData,
             graphDataMap,
-            finallyStartNodeEdge.source,
+            finallyStartNodeEdge.id,
             result,
             depth + 1,
             breakPoint,
             false
           );
-          console.log('对象');
         }
       }
       result.output += `${padding(depth + 1)}pass\n`;
@@ -652,7 +648,7 @@ export const transformEditorProcess = (
           transformEditorProcess(
             graphData,
             graphDataMap,
-            groupStartNodeEdge.source,
+            groupStartNodeEdge.id,
             result,
             depth + 1,
             breakPoint,

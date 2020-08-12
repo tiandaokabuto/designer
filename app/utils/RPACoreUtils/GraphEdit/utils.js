@@ -114,23 +114,26 @@ export const findStartProcessBlockInContain = (nodes, edges, id, typeTag) => {
   childrens = nodes.filter(
     item => item.parent === id && !type.includes(item.shape)
   );
-  let startNodeEdge = undefined;
+  let startNodeEdge = [];
+  let targetNodeEdge = [];
 
-  // 从try的流程块里找一个起始点
+  // 从容器里找一个起始点
   if (childrens.length === 1) {
-    // 1. try里面只有一个流程块，直接返回id
+    // 1. 容器里面只有一个流程块，直接返回id
     return childrens[0].id;
   } else if (childrens.length > 1) {
-    // 2. try里面有其他流程块，起始点应该只有出的线，没有入的线，返回这条边
-    for (let i = 1; i < childrens.length; i++) {
-      startNodeEdge = edges.filter(
-        edge =>
-          edge.source === childrens[i].id || edge.target === childrens[i].id
-      );
+    // 2. 容器里面有其他流程块，起始点应该只有出的线，没有入的线，返回这条边
+
+    // childrens.forEach(item => {
+    //   startNodeEdge = edges.filter(edge => edge.target === item.id);
+    // });
+
+    for (let i = 0; i < childrens.length; i++) {
+      startNodeEdge = edges.filter(edge => edge.target === childrens[i].id);
       if (startNodeEdge.length === 1) {
-        return startNodeEdge[0];
-      } else {
         startNodeEdge = undefined;
+      } else {
+        return childrens[i];
       }
     }
     // childrens.forEach(item => {
