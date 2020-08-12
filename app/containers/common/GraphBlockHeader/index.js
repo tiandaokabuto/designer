@@ -409,14 +409,14 @@ export default memo(({ history, tag }) => {
                         const running = localStorage.getItem('running_mode');
                         console.clear();
                         console.log(running);
-                        if (running === 'blockAll_pasue') {
+                        if (running === 'blockAll_pasue' || running === 'blockAll_running') {
                           localStorage.setItem(
                             'running_mode',
                             'blockAll_running'
                           );
                           event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
                         }
-                        if (running === 'cardsAll_pause') {
+                        if (running === 'cardsAll_pause' || running === 'cardsAll_running') {
                           console.log('!!!!');
                           localStorage.setItem(
                             'running_mode',
@@ -436,13 +436,23 @@ export default memo(({ history, tag }) => {
                       onClick={() => {
                         clearPause();
                         const running = localStorage.getItem('running_mode');
-                        if (running === 'blockAll_pause') {
+                        console.clear();
+                        console.log(running);
+                        if (running === 'blockAll_pause' || running === 'blockAll_running') {
+                          localStorage.setItem(
+                            'running_mode',
+                            'blockAll_running'
+                          );
                           event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
-                        } else if (running === 'cardsAll_pause') {
+                        } else if (running === 'cardsAll_pause' || running === 'cardsAll_running') {
+                          localStorage.setItem(
+                            'running_mode',
+                            'cardsAll_running'
+                          );
                           event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
                         }
                         setPause();
-                        //event.emit('nextStep');
+                        setPauseState({ running: true, pause: false });
                       }}
                     >
                       <Icon type="play-circle" />

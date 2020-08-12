@@ -86,6 +86,7 @@ export const handleDebugBlockAllRun = () => {
   }
   if (nowIndex >= tempCenter.length) {
     nowIndex = 0;
+    localStorage.setItem("running_mode", "started");
     event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
     return message.success('流程已完成');
   }
@@ -140,6 +141,7 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
   }
   if (nowIndexCards >= needRunBlock.length) {
     nowIndexCards = 0;
+    localStorage.setItem("running_mode", "started");
     event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
     return message.success('流程块已完成');
   }
@@ -148,6 +150,10 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
   if (nowIndexCards === 0) {
     if (needRunBlock[nowIndexCards].breakPoint === true) {
       message.info('流程块第1条遇到断点');
+      // localStorage.setItem(
+      //   'running_mode',
+      //   'blockAll_pause'
+      // );
       setPause();
       needRunBlock[nowIndexCards].breakPoint = false;
       return event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
@@ -185,6 +191,10 @@ export const handleRunNextStep = () => {
   if (nowIndexCards === 0) {
     if (needRunBlock[nowIndexCards].breakPoint === true) {
       message.info('流程块第1条遇到断点');
+      // localStorage.setItem(
+      //   'running_mode',
+      //   'cardsAll_pause'
+      // );
       setPause();
       needRunBlock[nowIndexCards].breakPoint = false;
       return event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
@@ -193,6 +203,7 @@ export const handleRunNextStep = () => {
   } else if (nowIndexCards + 1 < needRunBlock.length) {
     // 他有下一条存在
     if (needRunBlock[nowIndexCards + 1].breakPoint === true) {
+      console.log(needRunBlock);
       message.info('发现了1个断点');
       setPause();
     }

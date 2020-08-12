@@ -19,6 +19,8 @@ import ItemTypes from '../../constants/statementTypes';
 
 import './index.scss';
 
+// liuqi
+import event from '../../../eventCenter'
 import { clickOneStepRun } from '../../../../utils/DebugUtils/clickOneStepRun';
 
 const style = {

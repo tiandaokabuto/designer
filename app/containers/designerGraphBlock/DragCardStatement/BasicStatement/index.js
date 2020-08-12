@@ -38,11 +38,11 @@ import ItemTypes from '../../constants/statementTypes';
 
 import './index.scss';
 
-import { clickOneStepRun } from '../../../../utils/DebugUtils/clickOneStepRun';
 import { measureMemory } from 'vm';
 
 // liuqi
 import event from '../../../eventCenter'
+import { clickOneStepRun } from '../../../../utils/DebugUtils/clickOneStepRun';
 
 const { ipcRenderer, remote } = require('electron');
 
