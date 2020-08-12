@@ -8,6 +8,8 @@ import './index.scss';
 const { Option } = Select;
 
 export default ({ cards, param, handleEmitCodeTransform }) => {
+  console.log(param);
+
   const [flag, forceUpdate] = useForceUpdate();
   const [tag, setTag] = useState(param.tag);
 

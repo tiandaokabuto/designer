@@ -156,12 +156,12 @@ const MxgraphContainer = useInjectContext(
       // setGraph(new mxGraph(container));
       graphRef.current = new mxGraph(container);
       graph = graphRef.current;
-      event.addListener('resetGraph', resetGraph);
 
       undoMng = new mxUndoManager();
 
       event.addListener('undo', handleUndo);
       event.addListener('redo', handleRedo);
+      event.addListener('resetGraph', resetGraph);
       return () => {
         event.removeListener('undo', handleUndo);
         event.removeListener('redo', handleRedo);
@@ -291,10 +291,14 @@ const MxgraphContainer = useInjectContext(
       // const cell = graph.getModel().getCell(id);
       graph.getModel().beginUpdate();
       try {
-        if (cell.value.indexOf("class='compoent-content'") > -1) {
-          cell.value = PROCESS_NODE.getLabel(value);
-        } else if (cell.value.indexOf("class='rcomponent-content'") > -1) {
-          cell.value = CONDITION_NODE.getLabel(value);
+        if (cell && cell.value) {
+          if (cell.value.indexOf("class='compoent-content'") > -1) {
+            cell.value = PROCESS_NODE.getLabel(value);
+          } else if (cell.value.indexOf("class='rcomponent-content'") > -1) {
+            cell.value = CONDITION_NODE.getLabel(value);
+          } else if (cell.value.indexOf("class='group-content'") > -1) {
+            cell.value = GROUP_NODE.getLabel(value);
+          }
         }
       } finally {
         graph.getModel().endUpdate();
@@ -497,7 +501,7 @@ const MxgraphContainer = useInjectContext(
       style[mxConstants.STYLE_FILLCOLOR] = '#f4f8f9';
       style[mxConstants.STYLE_STROKECOLOR] = '#4f9982';
       style[mxConstants.STYLE_FONTCOLOR] = '#000';
-      style[mxConstants.STYLE_SWIMLANE_FILLCOLOR] = "#fff";
+      style[mxConstants.STYLE_SWIMLANE_FILLCOLOR] = '#fff';
       style[mxConstants.STYLE_DASHED] = true;
       style[mxConstants.STYLE_ROUNDED] = false;
       style[mxConstants.STYLE_STARTSIZE] = '30';
@@ -689,7 +693,9 @@ const MxgraphContainer = useInjectContext(
         return;
       });
 
-      //
+      graph.addListener(mxEvent.REMOVE_CELLS_FROM_PARENT, (sender, evt) => {
+        console.log('移出parent');
+      });
 
       // 监听 - 双击事件CLICK
       graph.addListener(mxEvent.DOUBLE_CLICK, (sender, evt) => {
@@ -762,7 +768,7 @@ const MxgraphContainer = useInjectContext(
           if (
             // node.item &&
             data &&
-            ['processblock', 'rhombus-node'].includes(data.shape)
+            ['processblock', 'rhombus-node', 'group'].includes(data.shape)
           ) {
             changeCheckedGraphBlockId(cellId);
             synchroCodeBlock(graphDataMapRef.current.get(cellId));
@@ -835,9 +841,10 @@ const MxgraphContainer = useInjectContext(
 
       // 移动 CELLS_MOVED MOVE_CELLS
       graph.addListener(mxEvent.CELLS_MOVED, (sender, evt) => {
-        updateGraphDataAction(graph);
+        setTimeout(() => {
+          updateGraphDataAction(graph);
+        }, 0);
         // console.log('\n\n\n\n 更新啊啊啊啊啊啊 \n\n\n');
-        console.log(undoMng);
 
         // 要区别2种move，假如没有target，则是正常move
         // 有target，则是新增
@@ -930,7 +937,6 @@ const MxgraphContainer = useInjectContext(
 
       // 更新
       graph.addListener('update_graphData', () => {
-        console.log('转换');
         const output = translateToGraphData(graph.getModel());
         if (output) {
           updateGraphData(output);
@@ -1046,18 +1052,6 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._width = String(END_NODE.width);
             obj.mxGeometry._height = String(END_NODE.height);
             obj.mxGeometry._as = 'geometry';
-          } else if (item.shape === 'group') {
-            obj._id = item.id;
-            obj._parent = item.parent ? item.parent : '1';
-            obj._style = GROUP_NODE.style;
-            obj._value = GROUP_NODE.label;
-            obj._vertex = '1';
-            obj.mxGeometry = {};
-            obj.mxGeometry._x = String(item.x);
-            obj.mxGeometry._y = String(item.y);
-            obj.mxGeometry._width = String(GROUP_NODE.width);
-            obj.mxGeometry._height = String(GROUP_NODE.height);
-            obj.mxGeometry._as = 'geometry';
           } else if (item.shape === 'try') {
             const sizes = item.size.split('*');
             obj._id = item.id;
@@ -1097,12 +1091,12 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._width = String(sizes[0]);
             obj.mxGeometry._height = String(sizes[1]);
             obj.mxGeometry._as = 'geometry';
-          } else if (item.shape === '循环') {
+          } else if (item.shape === 'group') {
             const sizes = item.size.split('*');
             obj._id = item.id;
-            obj._parent = item.parent;
+            obj._parent = item.parent ? item.parent : '1';
             obj._style = GROUP_NODE.style;
-            obj._value = '循环';
+            obj._value = GROUP_NODE.getLabel(item.label);
             obj._vertex = '1';
             obj.mxGeometry = {};
             obj.mxGeometry._x = String(item.x);
@@ -1562,10 +1556,131 @@ const MxgraphContainer = useInjectContext(
                       item.geometry.x = 0;
                       item.geometry.y = 200;
                       select[0].insert(item);
+                    } else if (
+                      item.value.indexOf("class='group-content'") > -1
+                    ) {
+                      setGraphDataMap(item.id, {
+                        shape: 'group',
+                        properties: [
+                          {
+                            cnName: '标签名称',
+                            enName: 'label',
+                            value: 'for in',
+                            defaule: '',
+                          },
+                          {
+                            cnName: '循环类型',
+                            enName: 'looptype',
+                            value: '',
+                            default: 'for_list',
+                            valueMapping: [
+                              { name: '遍历数组', value: 'for_list' },
+                              { name: '遍历字典', value: 'for_dict' },
+                              { name: '计次循环', value: 'for_times' },
+                              { name: '条件循环', value: 'for_condition' },
+                            ],
+                          },
+                          {
+                            cnName: '循环条件',
+                            enName: 'loopcondition',
+                            value: '',
+                            default: '',
+                            tag: 1,
+                            valueList: [],
+                            valueMapping: [
+                              { name: '等于', value: '==' },
+                              { name: '不等于', value: '!=' },
+                              { name: '大于', value: '>' },
+                              { name: '小于', value: '<' },
+                              { name: '大于等于', value: '>=' },
+                              { name: '小于等于', value: '<=' },
+                              { name: '空', value: 'is None' },
+                              { name: '非空', value: 'not None' },
+                            ],
+                            for_list: [
+                              {
+                                id: 'listKeyword',
+                                enName: 'value',
+                                cnName: '值',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'listArray',
+                                enName: 'arrayRet',
+                                cnName: '数组',
+                                value: '',
+                                default: '',
+                                paramType: ['List'],
+                              },
+                            ],
+                            for_dict: [
+                              {
+                                id: 'dictKey',
+                                enName: 'key',
+                                cnName: '键',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'dictValue',
+                                enName: 'value',
+                                cnName: '值',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'dictVar',
+                                enName: 'dictVar',
+                                cnName: '字典',
+                                value: '',
+                                default: '',
+                                paramType: ['Dictionary'],
+                              },
+                            ],
+                            for_times: [
+                              {
+                                id: 'timeIndex',
+                                enName: 'index',
+                                cnName: '索引名称',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'timeStartIndex',
+                                enName: 'startIndex',
+                                cnName: '初始值',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'timeEndIndex',
+                                enName: 'endIndex',
+                                cnName: '结束值',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                              {
+                                id: 'timeStep',
+                                enName: 'step',
+                                cnName: '每次增加',
+                                value: '',
+                                default: '',
+                                paramType: ['String'],
+                              },
+                            ],
+                          },
+                        ],
+                      });
                     }
                   });
                 }
-                console.log('修改结束');
                 updateGraphDataAction(graph);
                 graph.refresh();
                 setTimeout(() => {

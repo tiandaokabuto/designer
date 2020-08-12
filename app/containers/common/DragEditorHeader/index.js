@@ -228,8 +228,6 @@ export default memo(
 
           // 实验-liuqi
           //console.log(getTempCenter());
-
-
         } else {
           transformPythonWithPoint(fromOrTo);
         }

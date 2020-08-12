@@ -106,8 +106,10 @@ export const findStartProcessBlockInContain = (nodes, edges, id, typeTag) => {
     type = ['catch', 'finally'];
   } else if (typeTag === 'catch') {
     type = ['try', 'finally'];
-  } else {
+  } else if (typeTag === 'finally') {
     type = ['try', 'catch'];
+  } else {
+    type = [];
   }
   childrens = nodes.filter(
     item => item.parent === id && !type.includes(item.shape)
@@ -153,4 +155,49 @@ export const findCatchFinallyNode = (nodes, edges, id) => {
     item => item.parent === id && ['catch', 'finally'].includes(item.shape)
   );
   return childrens;
+};
+
+export const translateGroup = blockData => {
+  console.log(blockData);
+  // 选择的循环类型
+  const select = blockData['properties'][1].value
+    ? blockData['properties'][1].value
+    : blockData['properties'][1].default;
+
+  const node = blockData['properties'][2];
+  const valueConditionList = node.valueList;
+  let loopcondition = '';
+  const looptype = select === 'for_condition' ? 'while' : 'for';
+  if (select === 'for_list' && node[select]) {
+    loopcondition = `${node[select][0].value} in ${node[select][1].value}`;
+  } else if (select === 'for_dict' && node[select]) {
+    loopcondition = `${node[select][0].value},${node[select][1].value} in ${node[select][2].value}.items()`;
+  } else if (select === 'for_times' && node[select]) {
+    loopcondition = `${node[select][0].value} in range(${node[select][1].value},${node[select][2].value},${node[select][3].value})`;
+  } else if (select === 'for_condition' && node.tag === 2) {
+    loopcondition = node.value;
+  } else if (
+    select === 'for_condition' &&
+    node.tag === 1 &&
+    Array.isArray(valueConditionList)
+  ) {
+    loopcondition = '';
+    valueConditionList.forEach((item, index) => {
+      if (index === valueConditionList.length - 1) {
+        // 最后一个，不把连接符填上
+        if (item.rule === 'is None' || item.rule === 'not None') {
+          loopcondition += `(${item.v1} ${item.rule}) `;
+        } else {
+          loopcondition += `(${item.v1} ${item.rule} ${item.v2}) `;
+        }
+      } else {
+        if (item.rule === 'is None' || item.rule === 'not None') {
+          loopcondition += `(${item.v1} ${item.rule}) ${item.connect} `;
+        } else {
+          loopcondition += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;
+        }
+      }
+    });
+  }
+  return `${looptype} ${loopcondition}`;
 };
