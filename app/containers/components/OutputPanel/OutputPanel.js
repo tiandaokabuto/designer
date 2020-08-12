@@ -205,6 +205,7 @@ export default memo(
         if (index === selectedOutputList.length - 1) {
           isLastOutput = true;
         }
+
         if (filter && item.value.includes(filter)) {
           const className = `keyWordRow_${index}`;
           return (
@@ -401,7 +402,7 @@ export default memo(
             className="dragger-editor-container-output-content"
             onMouseDown={e => e.stopPropagation()}
             style={{
-              background: 'rgba(244,252,250,1)',
+              //background: 'rgba(244,252,250,1)',
             }}
           >
             {transformOutput}

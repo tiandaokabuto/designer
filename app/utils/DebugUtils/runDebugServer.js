@@ -3,14 +3,14 @@ import event, {
   PYTHON_OUTPUT,
   PYTHON_GO_NEXT_STEP,
   PYTHOH_DEBUG_BLOCK_ALL_RUN,
-  PYTHOH_DEBUG_CARDS_ALL_RUN
+  PYTHOH_DEBUG_CARDS_ALL_RUN,
 } from '../../containers/eventCenter';
 
 import { getUTF8 } from './getUTF8';
 const net = require('net');
 const path = require('path');
 const process = require('process');
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 const fs = require('fs');
 
 const port = 3001;
@@ -24,6 +24,14 @@ export const runDebugServer = async () => {
   worker = await spawn(`${process.cwd()}/../Python/python3_lib/python.exe`, [
     `${process.cwd()}/../Python/python3_lib/debug/DebugServer.py`,
   ]);
+
+  // worker = await exec(
+  //   `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/../Python/python3_lib/debug/DebugServer.py`,
+  //   { encoding: 'gb2312' },
+  //   (error, stdout) => {
+  //     console.log('stdout1', stdout);
+  //   }
+  // );
 
   // python的情况
   worker.stderr.on('exit', code => {
@@ -48,20 +56,36 @@ export const runDebugServer = async () => {
   });
 
   socket.on('data', msg => {
-    console.log(msg)
+    console.log(msg);
     const log = getUTF8(msg);
-    console.log('[收到soket—data]', JSON.parse(log));
+    try {
+      const getLogToJSON = JSON.parse(log);
+      console.log('[收到soket—data]', getLogToJSON);
+      let temp = '';
+      Object.keys(getLogToJSON).forEach(array => {
+        console.log(array)
+        // array.forEach(item =>{
+        //   if(item.source.length > 0){
+        //     temp += `发送的代码：\n` + item.source[0
+        //     ]
+        //   }
+        // })
+        //temp = `发送的代码：\n` + array.sources[0];
+      });
+      event.emit(PYTHON_OUTPUT, log);
+    } catch (e) {
+      console.clear();
+      console.log(e);
+    }
 
-    event.emit(PYTHON_OUTPUT, log);
     // event.emit(PYTHON_GO_NEXT_STEP, 'block');
 
     // if 现在的运行模式是 第一层 自动单步
-    if(localStorage.getItem("running_mode") === "blockAll_running"){
+    if (localStorage.getItem('running_mode') === 'blockAll_running') {
       event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
-    }else if(localStorage.getItem("running_mode") === "cardsAll_running"){
+    } else if (localStorage.getItem('running_mode') === 'cardsAll_running') {
       event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
     }
-
 
     try {
       // fs.open(
@@ -80,7 +104,7 @@ export const runDebugServer = async () => {
       //   }
       // );
       //const file =  fs.readSync(fd, buffer, offset, length, position)
-      setTimeout(()=>{
+      setTimeout(() => {
         const file = fs.readFileSync(
           `${process.cwd()}/../python/python3_lib/debug/logfile_fromDesigner.log`,
           {
@@ -92,7 +116,7 @@ export const runDebugServer = async () => {
         tempLength = output.length;
 
         event.emit(PYTHON_OUTPUT, output);
-      },2000)
+      }, 2000);
 
       // var buf = new Buffer.alloc(1024);
 
@@ -111,7 +135,6 @@ export const runDebugServer = async () => {
       //       }
       //       tempLength = bytes;
       //     });
-
 
       //   }
       // );
@@ -160,6 +183,7 @@ export const sendPythonCodeByLine = sendMsg => {
 };
 
 export const killTask = () => {
+  tempLength = 0;
   try {
     socket.write('exit()');
     setTimeout(() => worker.kill(), 3000);
@@ -170,5 +194,3 @@ export const killTask = () => {
     console.log('终止debug', e);
   }
 };
-
-
