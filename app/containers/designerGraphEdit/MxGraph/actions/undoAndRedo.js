@@ -1,7 +1,7 @@
 import { message } from 'antd';
 
 // 从mxGraph里面强制删除元素
-const deleteFromMxModel = (id, graph) => {
+export const deleteFromMxModel = (id, graph) => {
   Object.keys(graph.model.cells).forEach(mxIndex => {
     console.log(graph.model.cells[mxIndex].id);
     if (graph.model.cells[mxIndex].id === id) delete graph.model.cells[mxIndex];
@@ -9,7 +9,7 @@ const deleteFromMxModel = (id, graph) => {
 };
 
 // 用我们的id找到那个cell
-const find_id = (id, graph) => {
+export const find_id = (id, graph) => {
   const model = graph.getModel();
   let temp = {};
   for (const [key, item] of Object.entries(model.cells)) {
