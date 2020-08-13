@@ -176,6 +176,26 @@ const MxgraphContainer = useInjectContext(
       event.addListener('undo', handleUndo);
       event.addListener('redo', handleRedo);
       event.addListener('resetGraph', resetGraph);
+
+
+      // 地表最强监听
+      Object.keys(mxEvent).forEach(item =>{
+        if(!item[0].match(/^.*[A-Z]+.*$/)){
+          return;
+        }
+
+        console.log(item)
+        //console.log(_this)
+
+        if(item === 'MOUSE_MOVE') return;
+        if(item === 'FIRE_MOUSE_EVENT') return;
+
+        graph.addListener(mxEvent[item], function (sender, evt){
+          console.log(`当前执行了`, item, {sender, evt, mxEvent})
+        });
+        console.clear();
+      })
+
       return () => {
         event.removeListener('undo', handleUndo);
         event.removeListener('redo', handleRedo);
@@ -867,14 +887,27 @@ const MxgraphContainer = useInjectContext(
       //   );
       // });
 
-      graph.addListener(mxEvent.CELLS_RESIZED, (sender, evt) => {
-        console.log('改变大小', sender, evt);
-        const ans = Rule_sizeRule(graph, {
-          evt,
-          graphData: graphDataRef.current,
-          updateGraphDataAction,
-        });
-      });
+      // graph.addListener(mxEvent.CELLS_RESIZED, (sender, evt) => {
+      //   console.log('改变大小', sender, evt);
+      //   const ans = Rule_sizeRule(graph, {
+      //     evt,
+      //     graphData: graphDataRef.current,
+      //     updateGraphDataAction,
+      //   });
+      // });
+
+      // graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+      //   //console.log('改变大小', sender, evt);
+      //   if(evt.properties.cells[0].parent.id === "1") return;
+      //   console.clear();
+      //   console.log(evt.properties.cells[0].parent.id);
+      //   const ans = Rule_sizeRule(graph, {
+      //     evt,
+      //     graphData: graphDataRef.current,
+      //     updateGraphDataAction,
+      //   });
+
+      // });
 
       layoutManagerRef.current.cellsMoved = (cells, evt) => {
         let targetEdges = [];
@@ -920,24 +953,24 @@ const MxgraphContainer = useInjectContext(
         console.log(`【移动】纯移动`, sender, evt, undoAndRedoRef.current);
 
         // 假如被移动的时
-        try{
-          if (evt.properties.cells[0].parent.id !== '1') {
-            message.info('这个元素有爸爸，需要对其进行容器扩大检查');
-            Rule_move_sizeRule(
-              evt.properties.cells[0].id,
-              evt.properties.cells[0].parent.id,
-              {
-                graphData: graphDataRef.current,
-                graph: sender,
-                evt,
-                updateGraphDataAction,
-              }
-            );
-          }
+        // try{
+        //   if (evt.properties.cells[0].parent.id !== '1') {
+        //     message.info('这个元素有爸爸，需要对其进行容器扩大检查');
+        //     Rule_move_sizeRule(
+        //       evt.properties.cells[0].id,
+        //       evt.properties.cells[0].parent.id,
+        //       {
+        //         graphData: graphDataRef.current,
+        //         graph: sender,
+        //         evt,
+        //         updateGraphDataAction,
+        //       }
+        //     );
+        //   }
 
-        }catch(e){
-          console.log(e)
-        }
+        // }catch(e){
+        //   console.log(e)
+        // }
 
 
         temp.undoSteps.push(
