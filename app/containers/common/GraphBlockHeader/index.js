@@ -481,7 +481,7 @@ export default memo(({ history, tag }) => {
                     }}
                   >
                     <Icon type="pause-circle" />
-                    暂停
+                    {` `}暂停
                   </Tag>
                 )
               ) : (
@@ -496,7 +496,7 @@ export default memo(({ history, tag }) => {
                   killTask();
                 }}
               >
-                <Icon type="stop" /> 终止
+                <Icon type="stop" />{` `}终止
               </Tag>
             </>
           ) : (
