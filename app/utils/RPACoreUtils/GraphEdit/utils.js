@@ -161,7 +161,6 @@ export const findCatchFinallyNode = (nodes, edges, id) => {
 };
 
 export const translateGroup = blockData => {
-  console.log(blockData);
   // 选择的循环类型
   const select = blockData['properties'][1].value
     ? blockData['properties'][1].value

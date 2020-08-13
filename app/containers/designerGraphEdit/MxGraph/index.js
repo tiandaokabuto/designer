@@ -50,7 +50,12 @@ import { translateToGraphData } from './actions/translateToGraphData';
 import { Rule_checkConnection } from './rules/checkRules';
 import { Rule_sizeRule } from './rules/sizeRule';
 
-import { goHandleUndo, goHandleRedo } from './actions/undoAndRedo.js';
+import {
+  goHandleUndo,
+  goHandleRedo,
+  find_id,
+  deleteFromMxModel,
+} from './actions/undoAndRedo.js';
 import { message } from 'antd';
 import { cloneDeep } from 'lodash';
 
@@ -107,7 +112,8 @@ const MxgraphContainer = useInjectContext(
       !!!isDirNode(processTree, currentCheckedTreeNode);
 
     const graphContainer = useRef(null);
-    // const [graph, setGraph] = useState(null);
+
+    const layoutManagerRef = useRef(null);
 
     const [resetTag, setResetTag] = useState(false);
 
@@ -139,6 +145,8 @@ const MxgraphContainer = useInjectContext(
       mxDragSource,
       mxGeometry: MxGeometry,
       mxRectangle: MxRectangle,
+      mxLayoutManager,
+      mxSwimlaneLayout,
 
       // 剪切板
       mxClipboard,
@@ -159,6 +167,8 @@ const MxgraphContainer = useInjectContext(
       // setGraph(new mxGraph(container));
       graphRef.current = new mxGraph(container);
       graph = graphRef.current;
+
+      layoutManagerRef.current = new mxLayoutManager(graph);
 
       undoMng = new mxUndoManager();
 
@@ -289,7 +299,6 @@ const MxgraphContainer = useInjectContext(
 
     // 有坑
     const resetGraph = (value, id) => {
-      console.log(graph);
       const cell = graph.getSelectionCell();
       // const cell = graph.getModel().getCell(id);
       graph.getModel().beginUpdate();
@@ -697,8 +706,8 @@ const MxgraphContainer = useInjectContext(
         return;
       });
 
-      graph.addListener(mxEvent.REMOVE_CELLS_FROM_PARENT, (sender, evt) => {
-        console.log('移出parent');
+      graph.addListener(mxEvent.LAYOUT_CELLS, (sender, evt) => {
+        console.log('layout');
       });
 
       // 监听 - 双击事件CLICK
@@ -750,8 +759,6 @@ const MxgraphContainer = useInjectContext(
         const cell = evt.getProperty('cell');
         if (cell != null) {
           if (!cell.vertex) return;
-
-          console.log(cell);
 
           const overlays = graph.getCellOverlays(cell);
           // 排除连接点和连接线
@@ -851,8 +858,33 @@ const MxgraphContainer = useInjectContext(
         });
       });
 
+      layoutManagerRef.current.cellsMoved = (cells, evt) => {
+        let targetEdges = [];
+        cells.forEach(cell => {
+          console.log(evt);
+          // 父节点不是原来的背景板，移入了容器
+          if (cell.getParent().id !== '1') {
+            console.log(cell.getParent());
+            console.log(graph.getModel());
+            targetEdges = graphDataRef.current.edges.filter(
+              item => item.target === cell.id || item.source === cell.id
+            );
+            console.log(targetEdges);
+            targetEdges.forEach(item => {
+              graph.removeCells([find_id(item.id, graph)]);
+              deleteFromMxModel(item.id, graph); //从mxGraph的Model里面删掉
+            });
+            updateGraphDataAction(graph);
+          }
+        });
+      };
+      // layoutManagerRef.current.getCellsForChanges = changes => {
+      //   console.log(changes);
+      // };
+
       // 移动 CELLS_MOVED MOVE_CELLS
       graph.addListener(mxEvent.CELLS_MOVED, (sender, evt) => {
+        console.log('aa');
         setTimeout(() => {
           updateGraphDataAction(graph);
         }, 0);
@@ -1560,13 +1592,13 @@ const MxgraphContainer = useInjectContext(
                       });
                     } else if (item.value === 'catch') {
                       item.geometry.x = 0;
-                      item.geometry.y = 100;
+                      item.geometry.y = 200;
                       select[0].insert(item);
                       // item.parent = select[0];
                     } else if (item.value === 'finally') {
                       // item.parent = select[0];
                       item.geometry.x = 0;
-                      item.geometry.y = 200;
+                      item.geometry.y = 300;
                       select[0].insert(item);
                     } else if (
                       item.value.indexOf("class='group-content'") > -1
