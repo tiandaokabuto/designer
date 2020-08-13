@@ -920,19 +920,25 @@ const MxgraphContainer = useInjectContext(
         console.log(`【移动】纯移动`, sender, evt, undoAndRedoRef.current);
 
         // 假如被移动的时
-        if (evt.properties.cells[0].parent.id !== '1') {
-          message.info('这个元素有爸爸，需要对其进行容器扩大检查');
-          Rule_move_sizeRule(
-            evt.properties.cells[0].id,
-            evt.properties.cells[0].parent.id,
-            {
-              graphData: graphDataRef.current,
-              graph: sender,
-              evt,
-              updateGraphDataAction,
-            }
-          );
+        try{
+          if (evt.properties.cells[0].parent.id !== '1') {
+            message.info('这个元素有爸爸，需要对其进行容器扩大检查');
+            Rule_move_sizeRule(
+              evt.properties.cells[0].id,
+              evt.properties.cells[0].parent.id,
+              {
+                graphData: graphDataRef.current,
+                graph: sender,
+                evt,
+                updateGraphDataAction,
+              }
+            );
+          }
+
+        }catch(e){
+          console.log(e)
         }
+
 
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
