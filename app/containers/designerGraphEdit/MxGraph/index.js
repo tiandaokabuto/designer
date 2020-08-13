@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
+import useDebounce from 'react-hook-easier/lib/useDebounce';
 import X2JS from 'x2js';
 // import { useSelector } from 'react-redux';
 
@@ -585,6 +586,23 @@ const MxgraphContainer = useInjectContext(
     };
 
     const configEventHandle = () => {
+      // const oldMouseMove = mxGraphHandler.prototype.mouseMove;
+      // const oldMouseDown = mxGraphHandler.prototype.mouseDown;
+      // const oldMouseUp = mxGraphHandler.prototype.mouseUp;
+      // mxGraphHandler.prototype.mouseMove = function (...args) {
+      //   oldMouseMove.apply(this, args);
+      //   console.log('move', args);
+      //   console.log(args[1].getCell());
+      // };
+      // mxGraphHandler.prototype.mouseDown = function (...args) {
+      //   oldMouseDown.apply(this, args);
+      //   console.log('down', args);
+      // };
+      // mxGraphHandler.prototype.mouseUp = function (...args) {
+      //   oldMouseUp.apply(this, args);
+      //   console.log('up', args);
+      // };
+
       // 监听 - 键盘事件, 删除，复制，粘贴
       mxEvent.addListener(document, 'keydown', function (evt) {
         if (currentPagePositionRef.current === 'block') return;
@@ -706,9 +724,7 @@ const MxgraphContainer = useInjectContext(
         return;
       });
 
-      graph.addListener(mxEvent.LAYOUT_CELLS, (sender, evt) => {
-        console.log('layout');
-      });
+      mxGraphHandler;
 
       // 监听 - 双击事件CLICK
       graph.addListener(mxEvent.DOUBLE_CLICK, (sender, evt) => {
@@ -756,6 +772,7 @@ const MxgraphContainer = useInjectContext(
       });
 
       graph.addListener(mxEvent.CLICK, (sender, evt) => {
+        console.log('点击');
         const cell = evt.getProperty('cell');
         if (cell != null) {
           if (!cell.vertex) return;
@@ -861,11 +878,8 @@ const MxgraphContainer = useInjectContext(
       layoutManagerRef.current.cellsMoved = (cells, evt) => {
         let targetEdges = [];
         cells.forEach(cell => {
-          console.log(evt);
           // 父节点不是原来的背景板，移入了容器
           if (cell.getParent().id !== '1') {
-            console.log(cell.getParent());
-            console.log(graph.getModel());
             targetEdges = graphDataRef.current.edges.filter(
               item => item.target === cell.id || item.source === cell.id
             );
@@ -884,7 +898,7 @@ const MxgraphContainer = useInjectContext(
 
       // 移动 CELLS_MOVED MOVE_CELLS
       graph.addListener(mxEvent.CELLS_MOVED, (sender, evt) => {
-        console.log('aa');
+        graph.fireEvent(new mxEventObject('get_mouse'));
         setTimeout(() => {
           updateGraphDataAction(graph);
         }, 0);
@@ -927,6 +941,30 @@ const MxgraphContainer = useInjectContext(
         undoAndRedoRef.current.counter += 1;
       });
 
+      graph.addListener(mxEvent.MOVE_START, (sender, evt) => {
+        console.log('开始移动');
+      });
+
+      graph.addListener(mxEvent.MOVE, (sender, evt) => {
+        console.log('移动');
+      });
+
+      graph.addListener(mxEvent.MOVE_END, (sender, evt) => {
+        console.log('结束移动');
+      });
+
+      graph.addListener(mxEvent.MOUSE_DOWN, (sender, evt) => {
+        console.log('鼠标按下');
+      });
+
+      graph.addListener(mxEvent.MOUSE_MOVE, (sender, evt) => {
+        console.log('鼠标移动');
+      });
+
+      graph.addListener(mxEvent.MOUSE_UP, (sender, evt) => {
+        console.log('鼠标松开');
+      });
+
       // 添加
       // graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
       //   console.log('添加', sender);
@@ -940,8 +978,6 @@ const MxgraphContainer = useInjectContext(
 
       // 删除，仅用于撤销恢复
       graph.addListener(mxEvent.CELLS_REMOVED, (sender, evt) => {
-        console.log('删除', sender, evt);
-
         let temp = undoAndRedoRef.current;
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
@@ -986,6 +1022,10 @@ const MxgraphContainer = useInjectContext(
           updateGraphData(output);
           synchroGraphDataToProcessTree();
         }
+      });
+
+      graph.addListener('get_mouse', () => {
+        console.log('get_mouse');
       });
 
       // graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
