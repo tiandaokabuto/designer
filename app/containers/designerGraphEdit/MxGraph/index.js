@@ -1133,6 +1133,10 @@ const MxgraphContainer = useInjectContext(
         if(graphDataCell){
           console.clear();
           console.log(`旧的parent`,graphDataCell.parent,`新的parent`, parent.id, `被放入的位置属于`, parent.value)
+          // TODO : 触发自动扩容
+          if(!parent.value){
+            console.log("假如放入的位置是容器，则开始自动扩容")
+          }
         }
 
         // if (
