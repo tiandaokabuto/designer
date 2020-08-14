@@ -227,7 +227,7 @@ const MxgraphContainer = useInjectContext(
       // 允许子项内容超出父项
       graph.constrainChildren = false;
       // 允许子项改变宽度后，内容超出父项
-      graph.extendParents = false;
+      graph.extendParents = true;
       // 允许拖拽到另一个单元格中
       graph.setDropEnabled(true);
       //  启用画布平移
@@ -1746,12 +1746,14 @@ const MxgraphContainer = useInjectContext(
                     } else if (item.value === 'catch') {
                       item.geometry.x = 0;
                       item.geometry.y = 200;
+                      item.style += 'resizable=0';
                       select[0].insert(item);
                       // item.parent = select[0];
                     } else if (item.value === 'finally') {
                       // item.parent = select[0];
                       item.geometry.x = 0;
                       item.geometry.y = 300;
+                      item.style += 'resizable=0';
                       select[0].insert(item);
                     } else if (
                       item.value.indexOf("class='group-content'") > -1
