@@ -1114,18 +1114,27 @@ const MxgraphContainer = useInjectContext(
       });
 
       graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
-        // console.log('CELLS_ADDED');
-        // console.log(sender, evt);
-        // console.log(graphDataRef.current);
-        // const cell = evt.properties.cells.length
-        //   ? evt.properties.cells[0]
-        //   : undefined;
-        // const parent = evt.properties.parent
-        //   ? evt.properties.parent
-        //   : undefined;
-        // const graphDataCell = graphDataRef.current.nodes.find(
-        //   item => item.id === cell.id
-        // );
+        console.log('CELLS_ADDED');
+        console.log(sender, evt);
+        console.log(graphDataRef.current);
+        // 当前被拖动的cell
+        const cell = evt.properties.cells.length
+          ? evt.properties.cells[0]
+          : undefined;
+        // 新的parent
+        const parent = evt.properties.parent
+          ? evt.properties.parent
+          : undefined;
+        // 旧的parent
+        const graphDataCell = graphDataRef.current.nodes.find(
+          item => item.id === cell.id
+        );
+
+        if(graphDataCell){
+          console.clear();
+          console.log(`旧的parent`,graphDataCell.parent,`新的parent`, parent.id, `被放入的位置属于`, parent.value)
+        }
+
         // if (
         //   cell &&
         //   parent &&
@@ -1137,6 +1146,30 @@ const MxgraphContainer = useInjectContext(
         //     const oldParent = find_id(graphDataCell.parent, sender);
         //     console.log('newparent', parent);
         //     console.log('oldparent', oldParent);
+
+        //     let temp = undoAndRedoRef.current;
+        //     console.log(`跨层移动`, sender, evt, undoAndRedoRef.current);
+        //     temp.undoSteps.push(
+        //       evt.properties.cells.map(cell => {
+        //         return {
+        //           type: 'moveParent',
+        //           counter: undoAndRedoRef.current.counter,
+        //           change: {
+        //             counter: undoAndRedoRef.current.counter,
+        //             id: cell ? cell.id : 'xxx',
+        //             cell: cell ? cell : undefined,
+        //             // geometry: {
+        //             //   x: cell ? cell.geometry.x : 'xxx',
+        //             //   y: cell ? cell.geometry.y : 'xxx',
+        //             //   dx: cell ? evt.properties.dx : 'xxx',
+        //             //   dy: cell ? evt.properties.dy : 'xxx',
+        //             // },
+        //           },
+        //         };
+        //       })
+        //     );
+
+
         //   }
         // }
       });
