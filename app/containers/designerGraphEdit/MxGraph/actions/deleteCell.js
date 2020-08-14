@@ -28,11 +28,25 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
   if (cells[0].value === 'try') {
     const sons = findSameLevelCell(graphData, cells[0].id);
     checkSonsHasProcess(sons);
-    if(error) return message.info("不能删除非空的容器，请先删除内部流程块或拖出内部流程块后删除");
+    if (error)
+      return message.info(
+        '不能删除非空的容器，请先删除内部流程块或拖出内部流程块后删除'
+      );
   } else if (cells[0].value === 'catch' || cells[0].value === 'finally') {
     return message.info('try和catch块不能单独删除');
   }
 
+  if (
+    cells[0].value.search(`for`) >= 0 ||
+    cells[0].value.search(`while`) >= 0
+  ) {
+    const sons = findSameLevelCell(graphData, cells[0].id);
+    checkSonsHasProcess(sons);
+    if (error)
+      return message.info(
+        '不能删除非空的容器，请先删除内部流程块或拖出内部流程块后删除'
+      );
+  }
   // let lock = false;
   // cells.forEach(cell => {
   //   console.log(getNodeInfo(cell.id, graphData));
