@@ -148,6 +148,7 @@ const MxgraphContainer = useInjectContext(
       mxGeometry: MxGeometry,
       mxRectangle: MxRectangle,
       mxLayoutManager,
+      mxGraphLayout,
       mxSwimlaneLayout,
 
       // 剪切板
@@ -969,23 +970,23 @@ const MxgraphContainer = useInjectContext(
 
       // });
 
-      layoutManagerRef.current.cellsMoved = (cells, evt) => {
-        let targetEdges = [];
-        cells.forEach(cell => {
-          // 父节点不是原来的背景板，移入了容器
-          if (cell.getParent().id !== '1') {
-            targetEdges = graphDataRef.current.edges.filter(
-              item => item.target === cell.id || item.source === cell.id
-            );
-            console.log(targetEdges);
-            targetEdges.forEach(item => {
-              graph.removeCells([find_id(item.id, graph)]);
-              deleteFromMxModel(item.id, graph); //从mxGraph的Model里面删掉
-            });
-            updateGraphDataAction(graph);
-          }
-        });
-      };
+      // layoutManagerRef.current.cellsMoved = (cells, evt) => {
+      //   let targetEdges = [];
+      //   cells.forEach(cell => {
+      //     // 父节点不是原来的背景板，移入了容器
+      //     if (cell.getParent().id !== '1') {
+      //       targetEdges = graphDataRef.current.edges.filter(
+      //         item => item.target === cell.id || item.source === cell.id
+      //       );
+      //       console.log(targetEdges);
+      //       targetEdges.forEach(item => {
+      //         graph.removeCells([find_id(item.id, graph)]);
+      //         deleteFromMxModel(item.id, graph); //从mxGraph的Model里面删掉
+      //       });
+      //       updateGraphDataAction(graph);
+      //     }
+      //   });
+      // };
       // layoutManagerRef.current.getCellsForChanges = changes => {
       //   console.log(changes);
       // };
@@ -1124,28 +1125,65 @@ const MxgraphContainer = useInjectContext(
           ? evt.properties.cells[0]
           : undefined;
         // 新的parent
-        const parent = evt.properties.parent
+        const newParent = evt.properties.parent
           ? evt.properties.parent
           : undefined;
-        // 旧的parent
+        // 存在graphData里面未被改动cell，如果是从工具栏拖下来则为undefined
         const graphDataCell = graphDataRef.current.nodes.find(
           item => item.id === cell.id
         );
 
-        if (true || graphDataCell) {
+        if (cell && newParent) {
           console.clear();
-          console.log(
-            `旧的parent`,
-            graphDataCell ? graphDataCell.parent : '没有parent',
-            `新的parent`,
-            parent.id,
-            `被放入的位置属于`,
-            parent.value
-          );
-          // TODO : 触发自动扩容
+          // console.log(
+          //   `旧的parent`,
+          //   graphDataCell.parent,
+          //   `新的parent`,
+          //   parent.id,
+          //   `被放入的位置属于`,
+          //   parent.value
+          // );
+          // TODO : 拖入到容器里面，触发自动扩容
           if (!parent.value) {
+            const parentGeometry = newParent.getGeometry();
+            const cellGeometry = cell.getGeometry();
+            if (parentGeometry && cellGeometry) {
+              const parentX = parentGeometry.x;
+              const parentY = parentGeometry.y;
+              const parentWidth = parentGeometry.width;
+              const parentHeight = parentGeometry.height;
+
+              const cellX = cellGeometry.x;
+              const cellY = cellGeometry.y;
+              const cellWidth = cellGeometry.width;
+              const cellHeight = cellGeometry.height;
+
+              console.log('父坐标', parentX, parentY);
+              console.log('子坐标', cellX, cellY);
+            }
+
+            // mxGraphLayout.moveCell(cell, 0, 0);
+            // const layout = graph.layoutManager.getLayout(parent);
+            // layout.moveCell(cell, 0, 0);
             console.log('假如放入的位置是容器，则开始自动扩容');
           }
+          // cells.forEach(cell => {
+          // 父节点不是原来的背景板，移入了容器
+          if (graphDataCell) {
+            let targetEdges = [];
+            if (newParent.id !== graphDataCell.parent) {
+              targetEdges = graphDataRef.current.edges.filter(
+                item => item.target === cell.id || item.source === cell.id
+              );
+              console.log(targetEdges);
+              targetEdges.forEach(item => {
+                graph.removeCells([find_id(item.id, graph)]);
+                deleteFromMxModel(item.id, graph); //从mxGraph的Model里面删掉
+              });
+              updateGraphDataAction(graph);
+            }
+          }
+          // });
         }
 
         // if (
@@ -1718,7 +1756,7 @@ const MxgraphContainer = useInjectContext(
                 // this.editorUi.handleError(e);
               } finally {
                 graph.model.endUpdate();
-                //if (!select) return;
+                // if (!select) return;
                 if (select.length !== 0) {
                   select.forEach((item, index) => {
                     item.id = getMxId(graphDataRef.current);
@@ -1787,12 +1825,14 @@ const MxgraphContainer = useInjectContext(
                     } else if (item.value === 'catch') {
                       item.geometry.x = 0;
                       item.geometry.y = 200;
+                      item.style += 'resizable=0';
                       select[0].insert(item);
                       // item.parent = select[0];
                     } else if (item.value === 'finally') {
                       // item.parent = select[0];
                       item.geometry.x = 0;
                       item.geometry.y = 300;
+                      item.style += 'resizable=0';
                       select[0].insert(item);
                     } else if (
                       item.value.indexOf("class='group-content'") > -1
