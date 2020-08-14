@@ -157,7 +157,7 @@ const checkSize = (graph, sameLevelCells, moreCheck = false, updateGraphDataActi
     }
 
     if (son.pos_x < 0 || son.pos_y - 30 < 0) {
-      message.warning('要矫正');
+      //message.warning('要矫正');
       console.log(son.cell);
       graph.moveCells(
         [son.cell],
@@ -188,7 +188,7 @@ const checkSize = (graph, sameLevelCells, moreCheck = false, updateGraphDataActi
     }
 
     if (geo.x < 0 || geo.y - 30 < 0) {
-      message.warning('要TM矫正');
+      //message.warning('要TM矫正');
       graph.moveCells(
         [moreCheck],
         geo.x < 0 ? -geo.x : 0,
