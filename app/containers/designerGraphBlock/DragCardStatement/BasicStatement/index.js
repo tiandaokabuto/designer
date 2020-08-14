@@ -415,6 +415,7 @@ const BasicStatement = useInjectContext(props => {
                         if (running !== 'blockAll_pause') {
                           if (running !== 'started') {
                             if (running !== 'feedom') {
+                              console.log(running);
                               return message.info('非暂停时不能进行单步调试');
                             }
                           }
