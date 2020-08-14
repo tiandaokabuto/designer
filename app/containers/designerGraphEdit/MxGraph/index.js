@@ -969,23 +969,23 @@ const MxgraphContainer = useInjectContext(
 
       // });
 
-      layoutManagerRef.current.cellsMoved = (cells, evt) => {
-        let targetEdges = [];
-        cells.forEach(cell => {
-          // 父节点不是原来的背景板，移入了容器
-          if (cell.getParent().id !== '1') {
-            targetEdges = graphDataRef.current.edges.filter(
-              item => item.target === cell.id || item.source === cell.id
-            );
-            console.log(targetEdges);
-            targetEdges.forEach(item => {
-              graph.removeCells([find_id(item.id, graph)]);
-              deleteFromMxModel(item.id, graph); //从mxGraph的Model里面删掉
-            });
-            updateGraphDataAction(graph);
-          }
-        });
-      };
+      // layoutManagerRef.current.cellsMoved = (cells, evt) => {
+      //   let targetEdges = [];
+      //   cells.forEach(cell => {
+      //     // 父节点不是原来的背景板，移入了容器
+      //     if (cell.getParent().id !== '1') {
+      //       targetEdges = graphDataRef.current.edges.filter(
+      //         item => item.target === cell.id || item.source === cell.id
+      //       );
+      //       console.log(targetEdges);
+      //       targetEdges.forEach(item => {
+      //         graph.removeCells([find_id(item.id, graph)]);
+      //         deleteFromMxModel(item.id, graph); //从mxGraph的Model里面删掉
+      //       });
+      //       updateGraphDataAction(graph);
+      //     }
+      //   });
+      // };
       // layoutManagerRef.current.getCellsForChanges = changes => {
       //   console.log(changes);
       // };
@@ -1127,9 +1127,9 @@ const MxgraphContainer = useInjectContext(
           ? evt.properties.parent
           : undefined;
         // 存在graphData里面未被改动cell，如果是从工具栏拖下来则为undefined
-        // const graphDataCell = graphDataRef.current.nodes.find(
-        //   item => item.id === cell.id
-        // );
+        const graphDataCell = graphDataRef.current.nodes.find(
+          item => item.id === cell.id
+        );
 
         if (cell && newParent) {
           console.clear();
@@ -1165,6 +1165,23 @@ const MxgraphContainer = useInjectContext(
             // layout.moveCell(cell, 0, 0);
             console.log('假如放入的位置是容器，则开始自动扩容');
           }
+          // cells.forEach(cell => {
+          // 父节点不是原来的背景板，移入了容器
+          if (graphDataCell) {
+            let targetEdges = [];
+            if (newParent.id !== graphDataCell.parent) {
+              targetEdges = graphDataRef.current.edges.filter(
+                item => item.target === cell.id || item.source === cell.id
+              );
+              console.log(targetEdges);
+              targetEdges.forEach(item => {
+                graph.removeCells([find_id(item.id, graph)]);
+                deleteFromMxModel(item.id, graph); //从mxGraph的Model里面删掉
+              });
+              updateGraphDataAction(graph);
+            }
+          }
+          // });
         }
 
         // if (
