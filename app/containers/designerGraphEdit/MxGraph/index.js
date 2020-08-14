@@ -50,6 +50,7 @@ import { translateToGraphData } from './actions/translateToGraphData';
 
 import { Rule_checkConnection } from './rules/checkRules';
 import { Rule_sizeRule, Rule_move_sizeRule } from './rules/sizeRule';
+import { autoResizeContainer } from './rules/autoResizeContainer';
 
 import {
   goHandleUndo,
@@ -147,6 +148,7 @@ const MxgraphContainer = useInjectContext(
       mxGeometry: MxGeometry,
       mxRectangle: MxRectangle,
       mxLayoutManager,
+      mxGraphLayout,
       mxSwimlaneLayout,
 
       // 剪切板
@@ -176,6 +178,25 @@ const MxgraphContainer = useInjectContext(
       event.addListener('undo', handleUndo);
       event.addListener('redo', handleRedo);
       event.addListener('resetGraph', resetGraph);
+
+      // 地表最强监听   实属牛逼
+      // Object.keys(mxEvent).forEach(item => {
+      //   if (!item[0].match(/^.*[A-Z]+.*$/)) {
+      //     return;
+      //   }
+
+      //   console.log(item);
+      //   //console.log(_this)
+
+      //   if (item === 'MOUSE_MOVE') return;
+      //   if (item === 'FIRE_MOUSE_EVENT') return;
+
+      //   graph.addListener(mxEvent[item], function (sender, evt) {
+      //     console.log(`当前执行了`, item, { sender, evt, mxEvent });
+      //   });
+      //   console.clear();
+      // });
+
       return () => {
         event.removeListener('undo', handleUndo);
         event.removeListener('redo', handleRedo);
@@ -586,17 +607,77 @@ const MxgraphContainer = useInjectContext(
     };
 
     const configEventHandle = () => {
-      // const oldMouseMove = mxGraphHandler.prototype.mouseMove;
+      const oldMouseMove = mxGraphHandler.prototype.mouseMove;
       // const oldMouseDown = mxGraphHandler.prototype.mouseDown;
       // const oldMouseUp = mxGraphHandler.prototype.mouseUp;
-      // mxGraphHandler.prototype.mouseMove = function (...args) {
-      //   oldMouseMove.apply(this, args);
-      //   console.log('move', args);
-      //   console.log(args[1].getCell());
-      // };
+      mxGraphHandler.prototype.mouseMove = function(...args) {
+        oldMouseMove.apply(this, args);
+        // console.log('move', args);
+        const sender = args[0];
+        const mouse = args[1];
+        if (sender.isMouseDown) {
+          if (
+            sender.getSelectionCell() &&
+            (sender.getSelectionCell().value === 'catch' ||
+              sender.getSelectionCell().value === 'finally')
+          ) {
+            sender.isMouseDown = false;
+            graph.refresh();
+            // sender.isMouseDown = false;
+            // const parent = sender.getSelectionCell().getParent();
+            // const parentGeometry = parent.getGeometry();
+            // const parentX = parentGeometry.x;
+            // const parentY = parentGeometry.y;
+            // const parentWidth = parentGeometry.width;
+            // const parentHeight = parentGeometry.height;
+            // const mouseGraphX = mouse.getGraphX();
+            // const mouseGraphY = mouse.getGraphY();
+            // if (
+            //   mouseGraphX < parentX ||
+            //   mouseGraphX > parentX + parentWidth ||
+            //   mouseGraphY < parentY ||
+            //   mouseGraphY > parentY + parentHeight
+            // ) {
+            //   sender.isMouseDown = false;
+            //   graph.refresh();
+            // }
+
+            // console.log('父节点:', parentX, parentY);
+            // console.log('鼠标', mouseGraphX, mouseGraphY);
+            // console.log(parent)
+          }
+        }
+      };
+
+      // Object.keys(mxEvent).forEach(item => {
+      //   if (!item[0].match(/^.*[A-Z]+.*$/)) {
+      //     return;
+      //   }
+
+      //   console.log(item);
+      //   //console.log(_this)
+
+      //   if (item === 'MOUSE_MOVE') return;
+      //   if (item === 'FIRE_MOUSE_EVENT') return;
+
+      //   graph.addListener(mxEvent[item], function (sender, evt) {
+      //     console.log(`当前执行了`, item, { sender, evt, mxEvent });
+      //   });
+      //   console.clear();
+      // });
+
       // mxGraphHandler.prototype.mouseDown = function (...args) {
       //   oldMouseDown.apply(this, args);
       //   console.log('down', args);
+
+      //   const sender = args[0];
+      //   const mouse = args[1];
+      //   if (sender.getSelectionCell()) {
+      //     // sender.isMouseDown = false;
+      //     // const parent = .getParent();
+      //     console.log(sender.getSelectionCell());
+      //     console.log(mouse);
+      //   }
       // };
       // mxGraphHandler.prototype.mouseUp = function (...args) {
       //   oldMouseUp.apply(this, args);
@@ -867,32 +948,45 @@ const MxgraphContainer = useInjectContext(
       //   );
       // });
 
-      graph.addListener(mxEvent.CELLS_RESIZED, (sender, evt) => {
-        console.log('改变大小', sender, evt);
-        const ans = Rule_sizeRule(graph, {
-          evt,
-          graphData: graphDataRef.current,
-          updateGraphDataAction,
-        });
-      });
+      // graph.addListener(mxEvent.CELLS_RESIZED, (sender, evt) => {
+      //   console.log('改变大小', sender, evt);
+      //   const ans = Rule_sizeRule(graph, {
+      //     evt,
+      //     graphData: graphDataRef.current,
+      //     updateGraphDataAction,
+      //   });
+      // });
 
-      layoutManagerRef.current.cellsMoved = (cells, evt) => {
-        let targetEdges = [];
-        cells.forEach(cell => {
-          // 父节点不是原来的背景板，移入了容器
-          if (cell.getParent().id !== '1') {
-            targetEdges = graphDataRef.current.edges.filter(
-              item => item.target === cell.id || item.source === cell.id
-            );
-            console.log(targetEdges);
-            targetEdges.forEach(item => {
-              graph.removeCells([find_id(item.id, graph)]);
-              deleteFromMxModel(item.id, graph); //从mxGraph的Model里面删掉
-            });
-            updateGraphDataAction(graph);
-          }
-        });
-      };
+      // graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+      //   //console.log('改变大小', sender, evt);
+      //   if(evt.properties.cells[0].parent.id === "1") return;
+      //   console.clear();
+      //   console.log(evt.properties.cells[0].parent.id);
+      //   const ans = Rule_sizeRule(graph, {
+      //     evt,
+      //     graphData: graphDataRef.current,
+      //     updateGraphDataAction,
+      //   });
+
+      // });
+
+      // layoutManagerRef.current.cellsMoved = (cells, evt) => {
+      //   let targetEdges = [];
+      //   cells.forEach(cell => {
+      //     // 父节点不是原来的背景板，移入了容器
+      //     if (cell.getParent().id !== '1') {
+      //       targetEdges = graphDataRef.current.edges.filter(
+      //         item => item.target === cell.id || item.source === cell.id
+      //       );
+      //       console.log(targetEdges);
+      //       targetEdges.forEach(item => {
+      //         graph.removeCells([find_id(item.id, graph)]);
+      //         deleteFromMxModel(item.id, graph); //从mxGraph的Model里面删掉
+      //       });
+      //       updateGraphDataAction(graph);
+      //     }
+      //   });
+      // };
       // layoutManagerRef.current.getCellsForChanges = changes => {
       //   console.log(changes);
       // };
@@ -920,25 +1014,24 @@ const MxgraphContainer = useInjectContext(
         console.log(`【移动】纯移动`, sender, evt, undoAndRedoRef.current);
 
         // 假如被移动的时
-        try{
-          if (evt.properties.cells[0].parent.id !== '1') {
-            message.info('这个元素有爸爸，需要对其进行容器扩大检查');
-            Rule_move_sizeRule(
-              evt.properties.cells[0].id,
-              evt.properties.cells[0].parent.id,
-              {
-                graphData: graphDataRef.current,
-                graph: sender,
-                evt,
-                updateGraphDataAction,
-              }
-            );
-          }
+        // try{
+        //   if (evt.properties.cells[0].parent.id !== '1') {
+        //     message.info('这个元素有爸爸，需要对其进行容器扩大检查');
+        //     Rule_move_sizeRule(
+        //       evt.properties.cells[0].id,
+        //       evt.properties.cells[0].parent.id,
+        //       {
+        //         graphData: graphDataRef.current,
+        //         graph: sender,
+        //         evt,
+        //         updateGraphDataAction,
+        //       }
+        //     );
+        //   }
 
-        }catch(e){
-          console.log(e)
-        }
-
+        // }catch(e){
+        //   console.log(e)
+        // }
 
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
@@ -963,30 +1056,6 @@ const MxgraphContainer = useInjectContext(
         undoAndRedoRef.current.counter += 1;
       });
 
-      graph.addListener(mxEvent.MOVE_START, (sender, evt) => {
-        console.log('开始移动');
-      });
-
-      graph.addListener(mxEvent.MOVE, (sender, evt) => {
-        console.log('移动');
-      });
-
-      graph.addListener(mxEvent.MOVE_END, (sender, evt) => {
-        console.log('结束移动');
-      });
-
-      graph.addListener(mxEvent.MOUSE_DOWN, (sender, evt) => {
-        console.log('鼠标按下');
-      });
-
-      graph.addListener(mxEvent.MOUSE_MOVE, (sender, evt) => {
-        console.log('鼠标移动');
-      });
-
-      graph.addListener(mxEvent.MOUSE_UP, (sender, evt) => {
-        console.log('鼠标松开');
-      });
-
       // 添加
       // graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
       //   console.log('添加', sender);
@@ -1001,6 +1070,7 @@ const MxgraphContainer = useInjectContext(
       // 删除，仅用于撤销恢复
       graph.addListener(mxEvent.CELLS_REMOVED, (sender, evt) => {
         let temp = undoAndRedoRef.current;
+        console.log(`删除操作`, evt);
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
             return {
@@ -1046,8 +1116,112 @@ const MxgraphContainer = useInjectContext(
         }
       });
 
-      graph.addListener('get_mouse', () => {
-        console.log('get_mouse');
+      graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+        console.log('CELLS_ADDED');
+        console.log(sender, evt);
+        console.log(graphDataRef.current);
+        // 当前被拖动的cell
+        const cell = evt.properties.cells.length
+          ? evt.properties.cells[0]
+          : undefined;
+        // 新的parent
+        const newParent = evt.properties.parent
+          ? evt.properties.parent
+          : undefined;
+        // 存在graphData里面未被改动cell，如果是从工具栏拖下来则为undefined
+        const graphDataCell = graphDataRef.current.nodes.find(
+          item => item.id === cell.id
+        );
+
+        if (cell && newParent) {
+          console.clear();
+          // console.log(
+          //   `旧的parent`,
+          //   graphDataCell.parent,
+          //   `新的parent`,
+          //   parent.id,
+          //   `被放入的位置属于`,
+          //   parent.value
+          // );
+          // TODO : 拖入到容器里面，触发自动扩容
+          if (!parent.value) {
+            const parentGeometry = newParent.getGeometry();
+            const cellGeometry = cell.getGeometry();
+            if (parentGeometry && cellGeometry) {
+              const parentX = parentGeometry.x;
+              const parentY = parentGeometry.y;
+              const parentWidth = parentGeometry.width;
+              const parentHeight = parentGeometry.height;
+
+              const cellX = cellGeometry.x;
+              const cellY = cellGeometry.y;
+              const cellWidth = cellGeometry.width;
+              const cellHeight = cellGeometry.height;
+
+              console.log('父坐标', parentX, parentY);
+              console.log('子坐标', cellX, cellY);
+            }
+
+            // mxGraphLayout.moveCell(cell, 0, 0);
+            // const layout = graph.layoutManager.getLayout(parent);
+            // layout.moveCell(cell, 0, 0);
+            console.log('假如放入的位置是容器，则开始自动扩容');
+          }
+          // cells.forEach(cell => {
+          // 父节点不是原来的背景板，移入了容器
+          if (graphDataCell) {
+            let targetEdges = [];
+            if (newParent.id !== graphDataCell.parent) {
+              targetEdges = graphDataRef.current.edges.filter(
+                item => item.target === cell.id || item.source === cell.id
+              );
+              console.log(targetEdges);
+              targetEdges.forEach(item => {
+                graph.removeCells([find_id(item.id, graph)]);
+                deleteFromMxModel(item.id, graph); //从mxGraph的Model里面删掉
+              });
+              updateGraphDataAction(graph);
+            }
+          }
+          // });
+        }
+
+        // if (
+        //   cell &&
+        //   parent &&
+        //   graphDataCell &&
+        //   (cell.value === 'catch' || cell.value === 'finally')
+        // ) {
+        //   if (parent.id === '1' && parent.id !== graphDataCell.parent) {
+        //     console.log('parent不一样，被拖出了容器');
+        //     const oldParent = find_id(graphDataCell.parent, sender);
+        //     console.log('newparent', parent);
+        //     console.log('oldparent', oldParent);
+
+        //     let temp = undoAndRedoRef.current;
+        //     console.log(`跨层移动`, sender, evt, undoAndRedoRef.current);
+        //     temp.undoSteps.push(
+        //       evt.properties.cells.map(cell => {
+        //         return {
+        //           type: 'moveParent',
+        //           counter: undoAndRedoRef.current.counter,
+        //           change: {
+        //             counter: undoAndRedoRef.current.counter,
+        //             id: cell ? cell.id : 'xxx',
+        //             cell: cell ? cell : undefined,
+        //             // geometry: {
+        //             //   x: cell ? cell.geometry.x : 'xxx',
+        //             //   y: cell ? cell.geometry.y : 'xxx',
+        //             //   dx: cell ? evt.properties.dx : 'xxx',
+        //             //   dy: cell ? evt.properties.dy : 'xxx',
+        //             // },
+        //           },
+        //         };
+        //       })
+        //     );
+
+        //   }
+        // }
       });
 
       // graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
@@ -1582,6 +1756,7 @@ const MxgraphContainer = useInjectContext(
                 // this.editorUi.handleError(e);
               } finally {
                 graph.model.endUpdate();
+                // if (!select) return;
                 if (select.length !== 0) {
                   select.forEach((item, index) => {
                     item.id = getMxId(graphDataRef.current);
@@ -1650,12 +1825,14 @@ const MxgraphContainer = useInjectContext(
                     } else if (item.value === 'catch') {
                       item.geometry.x = 0;
                       item.geometry.y = 200;
+                      item.style += 'resizable=0';
                       select[0].insert(item);
                       // item.parent = select[0];
                     } else if (item.value === 'finally') {
                       // item.parent = select[0];
                       item.geometry.x = 0;
                       item.geometry.y = 300;
+                      item.style += 'resizable=0';
                       select[0].insert(item);
                     } else if (
                       item.value.indexOf("class='group-content'") > -1

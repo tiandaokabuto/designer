@@ -92,6 +92,9 @@ export const runDebugServer = async () => {
       running === 'blockAll_one'
     ) {
       event.emit('one_finished'); // 单步跑完，通知结束
+      if(running === 'started_one'){
+        localStorage.setItem('running_mode', 'started');
+      }
       if(running === 'cardsAll_one'){
         localStorage.setItem('running_mode', 'cardsAll_pause');
       }

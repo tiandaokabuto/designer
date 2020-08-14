@@ -16,6 +16,17 @@ export function Action_CopyCell(graph, option = {}, callback = {}) {
 
   if (cells.length > 1) return message.info('只能复制单个流程块');
   if (!cells[0].isVertex()) return message.info('线条不能复制');
+  if (
+    cells[0].value === 'try' ||
+    cells[0].value === 'catch' ||
+    cells[0].value === 'finally' ||
+    cells[0].value.search(`for`) >= 0 ||
+    cells[0].value.search(`while`) >= 0
+  ) {
+    return message.info('容器不能复制');
+  }
+  console.clear();
+  console.log(cells[0]);
 
   mxClipboard.copy(graph, cells);
 
