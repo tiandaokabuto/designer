@@ -147,6 +147,7 @@ const MxgraphContainer = useInjectContext(
       mxGeometry: MxGeometry,
       mxRectangle: MxRectangle,
       mxLayoutManager,
+      mxGraphLayout,
       mxSwimlaneLayout,
 
       // 剪切板
@@ -227,7 +228,7 @@ const MxgraphContainer = useInjectContext(
       // 允许子项内容超出父项
       graph.constrainChildren = false;
       // 允许子项改变宽度后，内容超出父项
-      graph.extendParents = true;
+      graph.extendParents = false;
       // 允许拖拽到另一个单元格中
       graph.setDropEnabled(true);
       //  启用画布平移
@@ -1122,20 +1123,47 @@ const MxgraphContainer = useInjectContext(
           ? evt.properties.cells[0]
           : undefined;
         // 新的parent
-        const parent = evt.properties.parent
+        const newParent = evt.properties.parent
           ? evt.properties.parent
           : undefined;
-        // 旧的parent
-        const graphDataCell = graphDataRef.current.nodes.find(
-          item => item.id === cell.id
-        );
+        // 存在graphData里面未被改动cell，如果是从工具栏拖下来则为undefined
+        // const graphDataCell = graphDataRef.current.nodes.find(
+        //   item => item.id === cell.id
+        // );
 
-        if(graphDataCell){
+        if (cell && newParent) {
           console.clear();
-          console.log(`旧的parent`,graphDataCell.parent,`新的parent`, parent.id, `被放入的位置属于`, parent.value)
-          // TODO : 触发自动扩容
-          if(!parent.value){
-            console.log("假如放入的位置是容器，则开始自动扩容")
+          // console.log(
+          //   `旧的parent`,
+          //   graphDataCell.parent,
+          //   `新的parent`,
+          //   parent.id,
+          //   `被放入的位置属于`,
+          //   parent.value
+          // );
+          // TODO : 拖入到容器里面，触发自动扩容
+          if (!parent.value) {
+            const parentGeometry = newParent.getGeometry();
+            const cellGeometry = cell.getGeometry();
+            if (parentGeometry && cellGeometry) {
+              const parentX = parentGeometry.x;
+              const parentY = parentGeometry.y;
+              const parentWidth = parentGeometry.width;
+              const parentHeight = parentGeometry.height;
+
+              const cellX = cellGeometry.x;
+              const cellY = cellGeometry.y;
+              const cellWidth = cellGeometry.width;
+              const cellHeight = cellGeometry.height;
+
+              console.log('父坐标', parentX, parentY);
+              console.log('子坐标', cellX, cellY);
+            }
+
+            // mxGraphLayout.moveCell(cell, 0, 0);
+            // const layout = graph.layoutManager.getLayout(parent);
+            // layout.moveCell(cell, 0, 0);
+            console.log('假如放入的位置是容器，则开始自动扩容');
           }
         }
 
@@ -1172,7 +1200,6 @@ const MxgraphContainer = useInjectContext(
         //         };
         //       })
         //     );
-
 
         //   }
         // }
@@ -1715,6 +1742,7 @@ const MxgraphContainer = useInjectContext(
                 // this.editorUi.handleError(e);
               } finally {
                 graph.model.endUpdate();
+                // if (!select) return;
                 if (select.length !== 0) {
                   select.forEach((item, index) => {
                     item.id = getMxId(graphDataRef.current);
