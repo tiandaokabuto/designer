@@ -176,6 +176,25 @@ const MxgraphContainer = useInjectContext(
       event.addListener('undo', handleUndo);
       event.addListener('redo', handleRedo);
       event.addListener('resetGraph', resetGraph);
+
+      // 地表最强监听   实属牛逼
+      // Object.keys(mxEvent).forEach(item => {
+      //   if (!item[0].match(/^.*[A-Z]+.*$/)) {
+      //     return;
+      //   }
+
+      //   console.log(item);
+      //   //console.log(_this)
+
+      //   if (item === 'MOUSE_MOVE') return;
+      //   if (item === 'FIRE_MOUSE_EVENT') return;
+
+      //   graph.addListener(mxEvent[item], function (sender, evt) {
+      //     console.log(`当前执行了`, item, { sender, evt, mxEvent });
+      //   });
+      //   console.clear();
+      // });
+
       return () => {
         event.removeListener('undo', handleUndo);
         event.removeListener('redo', handleRedo);
@@ -587,7 +606,7 @@ const MxgraphContainer = useInjectContext(
 
     const configEventHandle = () => {
       const oldMouseMove = mxGraphHandler.prototype.mouseMove;
-      const oldMouseDown = mxGraphHandler.prototype.mouseDown;
+      // const oldMouseDown = mxGraphHandler.prototype.mouseDown;
       // const oldMouseUp = mxGraphHandler.prototype.mouseUp;
       mxGraphHandler.prototype.mouseMove = function (...args) {
         oldMouseMove.apply(this, args);
@@ -600,27 +619,29 @@ const MxgraphContainer = useInjectContext(
             (sender.getSelectionCell().value === 'catch' ||
               sender.getSelectionCell().value === 'finally')
           ) {
+            sender.isMouseDown = false;
+            graph.refresh();
             // sender.isMouseDown = false;
-            const parent = sender.getSelectionCell().getParent();
-            const parentGeometry = parent.getGeometry();
-            const parentX = parentGeometry.x;
-            const parentY = parentGeometry.y;
-            const parentWidth = parentGeometry.width;
-            const parentHeight = parentGeometry.height;
-            const mouseGraphX = mouse.getGraphX();
-            const mouseGraphY = mouse.getGraphY();
-            if (
-              mouseGraphX < parentX ||
-              mouseGraphX > parentX + parentWidth ||
-              mouseGraphY < parentY ||
-              mouseGraphY > parentY + parentHeight
-            ) {
-              sender.isMouseDown = false;
-              graph.refresh();
-            }
+            // const parent = sender.getSelectionCell().getParent();
+            // const parentGeometry = parent.getGeometry();
+            // const parentX = parentGeometry.x;
+            // const parentY = parentGeometry.y;
+            // const parentWidth = parentGeometry.width;
+            // const parentHeight = parentGeometry.height;
+            // const mouseGraphX = mouse.getGraphX();
+            // const mouseGraphY = mouse.getGraphY();
+            // if (
+            //   mouseGraphX < parentX ||
+            //   mouseGraphX > parentX + parentWidth ||
+            //   mouseGraphY < parentY ||
+            //   mouseGraphY > parentY + parentHeight
+            // ) {
+            //   sender.isMouseDown = false;
+            //   graph.refresh();
+            // }
 
-            console.log('父节点:', parentX, parentY);
-            console.log('鼠标', mouseGraphX, mouseGraphY);
+            // console.log('父节点:', parentX, parentY);
+            // console.log('鼠标', mouseGraphX, mouseGraphY);
             // console.log(parent)
           }
         }
@@ -925,14 +946,27 @@ const MxgraphContainer = useInjectContext(
       //   );
       // });
 
-      graph.addListener(mxEvent.CELLS_RESIZED, (sender, evt) => {
-        console.log('改变大小', sender, evt);
-        const ans = Rule_sizeRule(graph, {
-          evt,
-          graphData: graphDataRef.current,
-          updateGraphDataAction,
-        });
-      });
+      // graph.addListener(mxEvent.CELLS_RESIZED, (sender, evt) => {
+      //   console.log('改变大小', sender, evt);
+      //   const ans = Rule_sizeRule(graph, {
+      //     evt,
+      //     graphData: graphDataRef.current,
+      //     updateGraphDataAction,
+      //   });
+      // });
+
+      // graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+      //   //console.log('改变大小', sender, evt);
+      //   if(evt.properties.cells[0].parent.id === "1") return;
+      //   console.clear();
+      //   console.log(evt.properties.cells[0].parent.id);
+      //   const ans = Rule_sizeRule(graph, {
+      //     evt,
+      //     graphData: graphDataRef.current,
+      //     updateGraphDataAction,
+      //   });
+
+      // });
 
       layoutManagerRef.current.cellsMoved = (cells, evt) => {
         let targetEdges = [];
@@ -978,23 +1012,24 @@ const MxgraphContainer = useInjectContext(
         console.log(`【移动】纯移动`, sender, evt, undoAndRedoRef.current);
 
         // 假如被移动的时
-        try {
-          if (evt.properties.cells[0].parent.id !== '1') {
-            message.info('这个元素有爸爸，需要对其进行容器扩大检查');
-            Rule_move_sizeRule(
-              evt.properties.cells[0].id,
-              evt.properties.cells[0].parent.id,
-              {
-                graphData: graphDataRef.current,
-                graph: sender,
-                evt,
-                updateGraphDataAction,
-              }
-            );
-          }
-        } catch (e) {
-          console.log(e);
-        }
+        // try{
+        //   if (evt.properties.cells[0].parent.id !== '1') {
+        //     message.info('这个元素有爸爸，需要对其进行容器扩大检查');
+        //     Rule_move_sizeRule(
+        //       evt.properties.cells[0].id,
+        //       evt.properties.cells[0].parent.id,
+        //       {
+        //         graphData: graphDataRef.current,
+        //         graph: sender,
+        //         evt,
+        //         updateGraphDataAction,
+        //       }
+        //     );
+        //   }
+
+        // }catch(e){
+        //   console.log(e)
+        // }
 
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
@@ -1078,8 +1113,32 @@ const MxgraphContainer = useInjectContext(
         }
       });
 
-      graph.addListener('get_mouse', () => {
-        console.log('get_mouse');
+      graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+        // console.log('CELLS_ADDED');
+        // console.log(sender, evt);
+        // console.log(graphDataRef.current);
+        // const cell = evt.properties.cells.length
+        //   ? evt.properties.cells[0]
+        //   : undefined;
+        // const parent = evt.properties.parent
+        //   ? evt.properties.parent
+        //   : undefined;
+        // const graphDataCell = graphDataRef.current.nodes.find(
+        //   item => item.id === cell.id
+        // );
+        // if (
+        //   cell &&
+        //   parent &&
+        //   graphDataCell &&
+        //   (cell.value === 'catch' || cell.value === 'finally')
+        // ) {
+        //   if (parent.id === '1' && parent.id !== graphDataCell.parent) {
+        //     console.log('parent不一样，被拖出了容器');
+        //     const oldParent = find_id(graphDataCell.parent, sender);
+        //     console.log('newparent', parent);
+        //     console.log('oldparent', oldParent);
+        //   }
+        // }
       });
 
       // graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
