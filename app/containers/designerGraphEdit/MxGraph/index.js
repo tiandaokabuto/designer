@@ -50,6 +50,7 @@ import { translateToGraphData } from './actions/translateToGraphData';
 
 import { Rule_checkConnection } from './rules/checkRules';
 import { Rule_sizeRule, Rule_move_sizeRule } from './rules/sizeRule';
+import { autoResizeContainer } from './rules/autoResizeContainer';
 
 import {
   goHandleUndo,
@@ -218,7 +219,7 @@ const MxgraphContainer = useInjectContext(
 
       // 启用连线功能
       graph.setConnectable(true);
-      graph.connectionHandler.getConnectImage = function (state) {
+      graph.connectionHandler.getConnectImage = function(state) {
         return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
       };
 
@@ -233,7 +234,7 @@ const MxgraphContainer = useInjectContext(
       //  启用画布平移
       graph.setPanning(true);
       // 开启右键菜单
-      graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
+      graph.popupMenuHandler.factoryMethod = function(menu, cell, evt) {
         return createPopupMenu(
           graph,
           menu,
@@ -340,22 +341,22 @@ const MxgraphContainer = useInjectContext(
 
     const configMxCell = () => {
       // 禁用双击编辑
-      mxGraph.prototype.isCellEditable = function (cell) {
+      mxGraph.prototype.isCellEditable = function(cell) {
         //return !this.getModel().isEdge(cell)&&!this.getModel().isVertex(cell);
         return false;
       };
 
-      mxCell.prototype.setNodeType = function (nodetype) {
+      mxCell.prototype.setNodeType = function(nodetype) {
         this.nodetype = nodetype;
       };
-      mxCell.prototype.setComponentType = function (componentType) {
+      mxCell.prototype.setComponentType = function(componentType) {
         this.componentType = componentType;
       };
-      mxCell.prototype.setNodeId = function (nodeId) {
+      mxCell.prototype.setNodeId = function(nodeId) {
         this.nodeId = nodeId;
       };
       // 更新组件状态
-      mxCell.prototype.updateStatus = function (graph, status) {
+      mxCell.prototype.updateStatus = function(graph, status) {
         let html = this.getValue();
         const index = html.indexOf('class="status');
         if (index === -1) {
@@ -385,15 +386,15 @@ const MxgraphContainer = useInjectContext(
         this.setValue(html);
         graph.cellLabelChanged(this, html);
       };
-      mxCell.prototype.setPortIndex = function (portIndex) {
+      mxCell.prototype.setPortIndex = function(portIndex) {
         this.portIndex = portIndex;
       };
-      mxCell.prototype.setPortType = function (portType) {
+      mxCell.prototype.setPortType = function(portType) {
         this.portType = portType;
       };
 
       // 重写isValidDropTarget方法。加入自定义style.container的判断，只有容器组件可以被拖拽进去
-      mxGraph.prototype.isValidDropTarget = function (cell, cells, evt) {
+      mxGraph.prototype.isValidDropTarget = function(cell, cells, evt) {
         const style = this.getCellStyle(cell);
         const isContainer = style.container === 1;
 
@@ -409,7 +410,7 @@ const MxgraphContainer = useInjectContext(
       };
 
       // 判断是否是连线约束点
-      mxGraph.prototype.isPort = function (cell) {
+      mxGraph.prototype.isPort = function(cell) {
         const geo = this.getCellGeometry(cell);
 
         return geo != null ? geo.relative : false;
@@ -556,7 +557,7 @@ const MxgraphContainer = useInjectContext(
      */
     const setDataMingEdgeStyle = () => {
       //
-      const listener = function (sender, evt) {
+      const listener = function(sender, evt) {
         undoMng.undoableEditHappened(evt.getProperty('edit'));
       };
       graph.getModel().addListener(mxEvent.UNDO, listener);
@@ -608,7 +609,7 @@ const MxgraphContainer = useInjectContext(
       const oldMouseMove = mxGraphHandler.prototype.mouseMove;
       // const oldMouseDown = mxGraphHandler.prototype.mouseDown;
       // const oldMouseUp = mxGraphHandler.prototype.mouseUp;
-      mxGraphHandler.prototype.mouseMove = function (...args) {
+      mxGraphHandler.prototype.mouseMove = function(...args) {
         oldMouseMove.apply(this, args);
         // console.log('move', args);
         const sender = args[0];
@@ -683,7 +684,7 @@ const MxgraphContainer = useInjectContext(
       // };
 
       // 监听 - 键盘事件, 删除，复制，粘贴
-      mxEvent.addListener(document, 'keydown', function (evt) {
+      mxEvent.addListener(document, 'keydown', function(evt) {
         if (currentPagePositionRef.current === 'block') return;
         // 删除
         if (evt.key === 'Delete') {
@@ -701,7 +702,7 @@ const MxgraphContainer = useInjectContext(
         // message.success({ content: `按键松了`, key: "keyboard", duration: 1 });
       });
 
-      mxEvent.addListener(document, 'paste', function (evt) {
+      mxEvent.addListener(document, 'paste', function(evt) {
         if (currentPagePositionRef.current === 'block') return;
 
         if (evt.target.nodeName === 'PRE' || evt.target.nodeName === 'BODY') {
@@ -731,7 +732,7 @@ const MxgraphContainer = useInjectContext(
         }
       });
 
-      mxEvent.addListener(document, 'copy', function (evt) {
+      mxEvent.addListener(document, 'copy', function(evt) {
         if (currentPagePositionRef.current === 'block') return;
 
         console.log(evt);
@@ -1068,6 +1069,7 @@ const MxgraphContainer = useInjectContext(
       // 删除，仅用于撤销恢复
       graph.addListener(mxEvent.CELLS_REMOVED, (sender, evt) => {
         let temp = undoAndRedoRef.current;
+        console.log(`删除操作`, evt);
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
             return {
@@ -1130,12 +1132,19 @@ const MxgraphContainer = useInjectContext(
           item => item.id === cell.id
         );
 
-        if(graphDataCell){
+        if (true || graphDataCell) {
           console.clear();
-          console.log(`旧的parent`,graphDataCell.parent,`新的parent`, parent.id, `被放入的位置属于`, parent.value)
+          console.log(
+            `旧的parent`,
+            graphDataCell ? graphDataCell.parent : '没有parent',
+            `新的parent`,
+            parent.id,
+            `被放入的位置属于`,
+            parent.value
+          );
           // TODO : 触发自动扩容
-          if(!parent.value){
-            console.log("假如放入的位置是容器，则开始自动扩容")
+          if (!parent.value) {
+            console.log('假如放入的位置是容器，则开始自动扩容');
           }
         }
 
@@ -1172,7 +1181,6 @@ const MxgraphContainer = useInjectContext(
         //         };
         //       })
         //     );
-
 
         //   }
         // }
@@ -1472,7 +1480,7 @@ const MxgraphContainer = useInjectContext(
       }
 
       // 成功拖拽后的回调方法
-      const funt = mxUtils.bind(this, function (...args) {
+      const funt = mxUtils.bind(this, function(...args) {
         dropHandler.apply(this, args);
       });
 
@@ -1494,17 +1502,12 @@ const MxgraphContainer = useInjectContext(
         highlightDropTargets
       );
 
-      dragSource.dragOver = function (...args) {
+      dragSource.dragOver = function(...args) {
         mxDragSource.prototype.dragOver.apply(this, args);
       };
 
       // 仅当拖拽目标是一个合法根的时候可以拖进
-      dragSource.getDropTarget = mxUtils.bind(this, function (
-        graph,
-        x,
-        y,
-        evt
-      ) {
+      dragSource.getDropTarget = mxUtils.bind(this, function(graph, x, y, evt) {
         // Alt表示没有目标
         // 得到与x，y相交的底层单元格
         let cell =
@@ -1581,7 +1584,7 @@ const MxgraphContainer = useInjectContext(
         allowCellsInserted !== null ? allowCellsInserted : true;
 
       // 更新视图
-      return mxUtils.bind(this, function (graph, evt, target, x, y, force) {
+      return mxUtils.bind(this, function(graph, evt, target, x, y, force) {
         let elt = null;
         if (!force) {
           elt = mxEvent.isTouchEvent(evt) /* || mxEvent.isPenEvent(evt) */
@@ -1715,6 +1718,7 @@ const MxgraphContainer = useInjectContext(
                 // this.editorUi.handleError(e);
               } finally {
                 graph.model.endUpdate();
+                //if (!select) return;
                 if (select.length !== 0) {
                   select.forEach((item, index) => {
                     item.id = getMxId(graphDataRef.current);
@@ -1978,7 +1982,7 @@ const MxgraphContainer = useInjectContext(
                 select !== null &&
                 select.length === 1
               ) {
-                window.setTimeout(function () {
+                window.setTimeout(function() {
                   graph.startEditing(select[0]);
                 }, 0);
               }

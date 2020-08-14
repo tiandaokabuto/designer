@@ -3,6 +3,8 @@ import { message } from 'antd';
 import { deleteCellAction } from '../mxgraphAction';
 import { getNodeInfo } from '../rules/checkRules';
 
+import { findSameLevelCell } from './findSameLevelCell';
+
 // 删除cell
 export function Action_DeleteCell(graph, opt = {}, callback = {}) {
   const { deleteGraphDataMap, changeCheckedGraphBlockId, graphData } = opt;
@@ -77,12 +79,3 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
 
   deleteCellAction(graph);
 }
-
-// 找所有的同级元素
-const findSameLevelCell = (graphData, id) => {
-  console.log(`开始寻找-------------------\n`, graphData);
-  return graphData.nodes.filter(node => {
-    // 找sons
-    if (node.parent === id) return true;
-  });
-};
