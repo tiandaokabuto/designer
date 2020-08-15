@@ -43,7 +43,7 @@ import { updateGraphDataAction, deleteCellAction } from './mxgraphAction';
 import './index.scss';
 
 // liuqi
-import { Action_DeleteCell } from './actions/deleteCell';
+import { Action_DeleteCell, getTempCellParent } from './actions/deleteCell';
 import { Action_CopyCell, Action_PasteCell } from './actions/copyCell';
 import { Action_findNode } from './actions/findNode';
 import { translateToGraphData } from './actions/translateToGraphData';
@@ -1033,8 +1033,14 @@ const MxgraphContainer = useInjectContext(
         //   console.log(e)
         // }
 
+        // const previous = graphDataRef.current;
+
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
+            const previous = graphDataRef.current.nodes.find(node => {
+              return node.id === cell.id;
+            });
+
             return {
               type: 'move',
               counter: undoAndRedoRef.current.counter,
@@ -1045,9 +1051,26 @@ const MxgraphContainer = useInjectContext(
                 geometry: {
                   x: cell ? cell.geometry.x : 'xxx',
                   y: cell ? cell.geometry.y : 'xxx',
+
+                  parent_x: previous ? previous.x : 'xxx',
+                  parent_y: previous ? previous.y : 'xxx',
+
                   dx: cell ? evt.properties.dx : 'xxx',
                   dy: cell ? evt.properties.dy : 'xxx',
+                  height: 55,
+                  width: 186,
                 },
+
+                //---
+                cell: cell,
+                value: cell.value,
+                style: cell.style,
+                parent: cell.parent ? cell.parent : getTempCellParent(),
+                parent_id: cell.parent ? cell.parent.id : '', // getTempCellParent().id,
+                children: cell.children
+                  ? [cell.children[0], cell.children[1]]
+                  : null,
+                previous: previous,
               },
             };
           })
@@ -1070,7 +1093,7 @@ const MxgraphContainer = useInjectContext(
       // 删除，仅用于撤销恢复
       graph.addListener(mxEvent.CELLS_REMOVED, (sender, evt) => {
         let temp = undoAndRedoRef.current;
-        console.log(`删除操作`, evt);
+        console.log(`删除操作`, graphDataRef.current, evt, getTempCellParent());
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
             return {
@@ -1092,7 +1115,10 @@ const MxgraphContainer = useInjectContext(
                 value: cell.value,
 
                 cell: cell,
-                parent: cell.parent ? cell.parent : null,
+                parent: cell.parent ? cell.parent : getTempCellParent(),
+                children: cell.children
+                  ? [cell.children[0], cell.children[1]]
+                  : null,
                 // deepCopy一下当时的dataGraph
               },
             };
@@ -1181,12 +1207,28 @@ const MxgraphContainer = useInjectContext(
               targetEdges.forEach(item => {
                 graph.removeCells([find_id(item.id, graph)]);
                 deleteFromMxModel(item.id, graph); //从mxGraph的Model里面删掉
+                undoAndRedoRef.current.undoSteps.pop();
               });
               updateGraphDataAction(graph);
             }
           }
           // });
         }
+
+        console.log(`\n\n\n\n是插入哦`, undoAndRedoRef.current);
+
+        let temp = undoAndRedoRef.current;
+        if (temp.undoSteps.length > 0) {
+          if (temp.undoSteps[temp.undoSteps.length - 1][0].type === 'move') {
+            temp.undoSteps[temp.undoSteps.length - 1][0].type = 'moveParent';
+            temp.undoSteps[temp.undoSteps.length - 1][0].change.toId =
+              newParent.id;
+            temp.undoSteps[
+              temp.undoSteps.length - 1
+            ][0].change.toId_cellGeometry = evt.properties.cells[0].geometry;
+          }
+        }
+        //
 
         // if (
         //   cell &&
@@ -1976,11 +2018,19 @@ const MxgraphContainer = useInjectContext(
                   );
                   let cell = graph.getSelectionCell();
                   let temp = undoAndRedoRef.current;
+
+                  if (cell.value === 'try') {
+                    temp.undoSteps.pop();
+                    temp.undoSteps.pop();
+                    temp.undoSteps.pop();
+                  }
+
                   temp.undoSteps.push(
                     // evt.properties.cells.map(cell => {
                     //   return {
                     [
                       {
+                        // ---
                         type: 'cellsAdded',
                         counter: undoAndRedoRef.current.counter,
                         change: {
@@ -1998,8 +2048,18 @@ const MxgraphContainer = useInjectContext(
                           target_id: cell.target ? cell.target.id : null,
                           value: cell.value,
 
-                          cell: cell,
                           // deepCopy一下当时的dataGraph
+
+                          cell: cell,
+                          value: cell.value,
+                          style: cell.style,
+                          parent: cell.parent
+                            ? cell.parent
+                            : getTempCellParent(),
+                          children: cell.children
+                            ? [cell.children[0], cell.children[1]]
+                            : null,
+                          previous: null, //graphData.find()
                         },
                       },
                     ]

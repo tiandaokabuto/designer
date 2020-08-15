@@ -97,6 +97,33 @@ function goHandleUndo_real(
       updateGraphDataAction(graph);
     }
 
+    if (undoStep.type === 'moveParent') {
+      console.clear();
+      console.log(`父子移动`, undoStep);
+
+      graph.removeCells([find_id(undoStep.change.id, graph)]);
+
+      graph.insertVertex(
+        undoStep.change.parent
+          ? find_id(undoStep.change.parent_id, graph)
+          : graph.getDefaultParent(),
+        undoStep.change.id,
+        undoStep.change.value,
+        undoStep.change.geometry.parent_x,
+        undoStep.change.geometry.parent_y,
+        undoStep.change.geometry.width,
+        undoStep.change.geometry.height,
+        undoStep.change.style,
+        false
+      );
+
+      undo_s.pop(); // 移除掉移动引发的撤销新增
+      needPush = true;
+
+      graph.refresh();
+      updateGraphDataAction(graph);
+    }
+
     // 假如是 连线操作
     if (undoStep.type === 'connectLine') {
       console.log(undoStepArray[0]);
@@ -141,6 +168,8 @@ function goHandleUndo_real(
             console.clear();
             console.log(undoStep.change.cell);
 
+            if (!undoStep.change.children) return;
+
             graph.insertVertex(
               undoStep.parent ? undoStep.parent : graph.getDefaultParent(),
               undoStep.change.id,
@@ -155,18 +184,31 @@ function goHandleUndo_real(
 
             setTimeout(() => {
               const newCell = find_id(undoStep.change.id, graph);
-              console.log(`要插回去的`,undoStep.change.cell.children[1])
+              console.log(`要插回去的`, undoStep.change.children[0]);
 
-              newCell.insert(undoStep.change.cell.children[0]);
-              newCell.insert(undoStep.change.cell.children[1]);
-            }, 100);
+              newCell.insert(undoStep.change.children[0]);
+              updateGraphDataAction(graph);
+
+              setTimeout(() => {
+                const newCell = find_id(undoStep.change.id, graph);
+                console.log(`要插回去的`, undoStep.change.children[1]);
+                newCell.insert(undoStep.change.children[1]);
+                graph.refresh();
+                updateGraphDataAction(graph);
+              }, 0);
+              //newCell.insert(undoStep.change.cell.children[1]);
+            }, 0);
 
             updateGraphDataAction(graph);
           }, 0);
         } else {
           setTimeout(() => {
+            console.clear();
+            console.log(undoStep.change.parent);
             graph.insertVertex(
-              graph.getDefaultParent(),
+              undoStep.change.parent
+                ? undoStep.change.parent
+                : graph.getDefaultParent(),
               undoStep.change.id,
               undoStep.change.value,
               undoStep.change.geometry.x,
@@ -281,6 +323,33 @@ function goHandleRedo_real(
       needPush = true;
     }
 
+    if (redoStep.type === 'moveParent') {
+      console.clear();
+      console.log(`父子移动`, redoStep);
+
+      graph.removeCells([find_id(redoStep.change.id, graph)]);
+
+      graph.insertVertex(
+        redoStep.change.parent
+          ? find_id(redoStep.change.toId, graph)
+          : graph.getDefaultParent(),
+        redoStep.change.id,
+        redoStep.change.value,
+        redoStep.change.toId_cellGeometry.x,
+        redoStep.change.toId_cellGeometry.y,
+        redoStep.change.geometry.width,
+        redoStep.change.geometry.height,
+        redoStep.change.style,
+        false
+      );
+
+      undo_s.pop(); // 移除掉移动引发的撤销新增
+      needPush = true;
+
+      graph.refresh();
+      updateGraphDataAction(graph);
+    }
+
     if (redoStep.type === 'connectLine') {
       //parent画板父层，线条id,value连线值，source起点，target重点，style样式
 
@@ -309,17 +378,70 @@ function goHandleRedo_real(
       needPush = true;
 
       if (redoStep.change.vertex) {
-        graph.insertVertex(
-          graph.getDefaultParent(),
-          redoStep.change.id,
-          redoStep.change.value,
-          redoStep.change.geometry.x,
-          redoStep.change.geometry.y,
-          redoStep.change.geometry.width,
-          redoStep.change.geometry.height,
-          redoStep.change.style,
-          false
-        );
+        if (redoStep.change.value === 'try') {
+          // Todo 恢复try Catch
+          setTimeout(() => {
+            // const importableCells = graph.getImportableCells(cells);
+            // const toolCells = document.querySelectorAll('.mxgraph-cell');
+            // const elt = toolCells[3];
+            // const { label, style, width, height } = elt.dataset;
+            // const cell = new MxCell(
+            //   label,
+            //   new MxGeometry(0, 0, parseInt(width, 10), parseInt(height, 10)),
+            //   style
+            // );
+
+            // select = graph.importCells(importableCells, x, y, target);
+            console.clear();
+            console.log(redoStep.change.cell);
+
+            if (!redoStep.change.children) return;
+
+            graph.insertVertex(
+              redoStep.parent ? redoStep.parent : graph.getDefaultParent(),
+              redoStep.change.id,
+              redoStep.change.value,
+              redoStep.change.geometry.x,
+              redoStep.change.geometry.y,
+              redoStep.change.geometry.width,
+              redoStep.change.geometry.height,
+              redoStep.change.style,
+              false
+            );
+
+            setTimeout(() => {
+              const newCell = find_id(redoStep.change.id, graph);
+              console.log(`要插回去的`, redoStep.change.children[0]);
+
+              newCell.insert(redoStep.change.children[0]);
+              updateGraphDataAction(graph);
+
+              setTimeout(() => {
+                const newCell = find_id(redoStep.change.id, graph);
+                console.log(`要插回去的`, redoStep.change.children[1]);
+                newCell.insert(redoStep.change.children[1]);
+                graph.refresh();
+                updateGraphDataAction(graph);
+              }, 0);
+              //newCell.insert(undoStep.change.cell.children[1]);
+            }, 0);
+
+            updateGraphDataAction(graph);
+          }, 0);
+        } else {
+          graph.insertVertex(
+            graph.getDefaultParent(),
+            redoStep.change.id,
+            redoStep.change.value,
+            redoStep.change.geometry.x,
+            redoStep.change.geometry.y,
+            redoStep.change.geometry.width,
+            redoStep.change.geometry.height,
+            redoStep.change.style,
+            false
+          );
+        }
+
         //undo_s.pop();
       }
 
