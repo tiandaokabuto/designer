@@ -102,6 +102,7 @@ function getShape(style, value) {
   if (value === 'finally') return 'finally';
   if (value.indexOf('group-content') > -1) return 'group';
 
+
   typeList.forEach(shape => {
     if (style.indexOf(`${shape}`) !== -1) {
       type = shape;
