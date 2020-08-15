@@ -123,20 +123,62 @@ function goHandleUndo_real(
         //   height,
         //   style,
         //   relative	)
-        setTimeout(() => {
-          graph.insertVertex(
-            graph.getDefaultParent(),
-            undoStep.change.id,
-            undoStep.change.value,
-            undoStep.change.geometry.x,
-            undoStep.change.geometry.y,
-            undoStep.change.geometry.width,
-            undoStep.change.geometry.height,
-            undoStep.change.style,
-            false
-          );
-          updateGraphDataAction(graph);
-        }, 0);
+
+        if (undoStep.change.value === 'try') {
+          // Todo 恢复try Catch
+          setTimeout(() => {
+            // const importableCells = graph.getImportableCells(cells);
+            // const toolCells = document.querySelectorAll('.mxgraph-cell');
+            // const elt = toolCells[3];
+            // const { label, style, width, height } = elt.dataset;
+            // const cell = new MxCell(
+            //   label,
+            //   new MxGeometry(0, 0, parseInt(width, 10), parseInt(height, 10)),
+            //   style
+            // );
+
+            // select = graph.importCells(importableCells, x, y, target);
+            console.clear();
+            console.log(undoStep.change.cell);
+
+            graph.insertVertex(
+              undoStep.parent ? undoStep.parent : graph.getDefaultParent(),
+              undoStep.change.id,
+              undoStep.change.value,
+              undoStep.change.geometry.x,
+              undoStep.change.geometry.y,
+              undoStep.change.geometry.width,
+              undoStep.change.geometry.height,
+              undoStep.change.style,
+              false
+            );
+
+            setTimeout(() => {
+              const newCell = find_id(undoStep.change.id, graph);
+              console.log(`要插回去的`,undoStep.change.cell.children[1])
+
+              newCell.insert(undoStep.change.cell.children[0]);
+              newCell.insert(undoStep.change.cell.children[1]);
+            }, 100);
+
+            updateGraphDataAction(graph);
+          }, 0);
+        } else {
+          setTimeout(() => {
+            graph.insertVertex(
+              graph.getDefaultParent(),
+              undoStep.change.id,
+              undoStep.change.value,
+              undoStep.change.geometry.x,
+              undoStep.change.geometry.y,
+              undoStep.change.geometry.width,
+              undoStep.change.geometry.height,
+              undoStep.change.style,
+              false
+            );
+            updateGraphDataAction(graph);
+          }, 0);
+        }
       } else {
         setTimeout(() => {
           graph.insertEdge(

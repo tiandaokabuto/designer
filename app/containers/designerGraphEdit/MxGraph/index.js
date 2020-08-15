@@ -1091,6 +1091,8 @@ const MxgraphContainer = useInjectContext(
                 target_id: cell.target ? cell.target.id : null,
                 value: cell.value,
 
+                cell: cell,
+                parent: cell.parent ? cell.parent : null,
                 // deepCopy一下当时的dataGraph
               },
             };
@@ -1134,7 +1136,7 @@ const MxgraphContainer = useInjectContext(
         );
 
         if (cell && newParent) {
-          console.clear();
+          // console.clear();
           // console.log(
           //   `旧的parent`,
           //   graphDataCell.parent,
