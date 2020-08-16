@@ -275,7 +275,7 @@ export default () => {
           message.info('请选择粘贴位置');
         }
       } else {
-        message.info('当前不能执行粘贴操作');
+        message.info('多选粘贴时，请选择需要粘贴位置上方的单个原子能力');
       }
     });
     // 支持批量剪切的操作

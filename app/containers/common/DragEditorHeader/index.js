@@ -173,7 +173,7 @@ export default memo(
             handlePublishZip(descText, versionText);
           }, 0);
         } catch (e) {
-          message.error('代码转换出错，请检查流程图');
+          message.error('代码转换出错，请检查流程图（异常捕获容器必须3个容器均有流程块）');
           console.log(e);
         }
       }
