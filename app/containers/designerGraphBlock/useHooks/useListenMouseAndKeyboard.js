@@ -64,6 +64,7 @@ const extractTraverse = async (cards, callback, parent = cards) => {
       !isExact &&
         extractTraverse(child.elseChildren, callback, child.elseChildren);
     } else if (child.tryChildren) {
+      const isExact = await callback(child, parent);
       !isExact &&
         extractTraverse(child.tryChildren, callback, child.tryChildren);
       !isExact &&
