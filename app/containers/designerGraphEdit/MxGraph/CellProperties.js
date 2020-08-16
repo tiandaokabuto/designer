@@ -36,7 +36,7 @@ export const GROUP_NODE = {
   getLabel: str => `<span class='group-content'>${str}</span>`,
   label: "<span class='group-content'>for in</span>",
   style:
-    'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0',
+    'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;',
   width: 286,
   height: 400,
 };
@@ -44,7 +44,7 @@ export const GROUP_NODE = {
 export const TRY_NODE = {
   label: 'contain',
   style:
-    'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0',
+    'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;',
   width: 286,
   height: 400,
 };

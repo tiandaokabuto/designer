@@ -27,7 +27,12 @@ export const Rule_sizeRule = (graph, option = {}, callback) => {
       w: resizeBounds[0].width,
       h: resizeBounds[0].height,
     };
-    const error = checkSize(graph, sameLevelCells, false, updateGraphDataAction);
+    const error = checkSize(
+      graph,
+      sameLevelCells,
+      false,
+      updateGraphDataAction
+    );
 
     // 假如校验通过，则允许他改大小
     if (!error.ans) return;
@@ -53,7 +58,6 @@ const find_id = (id, graph) => {
       temp = item;
     }
   }
-  console.log(temp);
   return temp;
 };
 
@@ -70,7 +74,12 @@ export const Rule_move_sizeRule = (id, parentId, opt) => {
   //console.clear();
   console.log(fatherCell);
   console.log(evt);
-  const error = checkSize(graph, sameLevelCells, evt.properties.cells[0], updateGraphDataAction);
+  const error = checkSize(
+    graph,
+    sameLevelCells,
+    evt.properties.cells[0],
+    updateGraphDataAction
+  );
 
   // 假如校验通过，则允许他改大小
   if (!error.ans) return;
@@ -89,7 +98,7 @@ export const Rule_move_sizeRule = (id, parentId, opt) => {
 };
 
 // 找所有的同级元素
-const findSameLevelCell = (graphData, id) => {
+export const findSameLevelCell = (graphData, id) => {
   console.log(`开始寻找-------------------\n`, graphData);
   //let father;
   const getSize = node => {
@@ -126,7 +135,12 @@ const findSameLevelCell = (graphData, id) => {
 };
 
 // 检查尺寸是否符合要求
-const checkSize = (graph, sameLevelCells, moreCheck = false, updateGraphDataAction) => {
+const checkSize = (
+  graph,
+  sameLevelCells,
+  moreCheck = false,
+  updateGraphDataAction
+) => {
   const { father, sons } = sameLevelCells;
 
   let error = {
@@ -164,7 +178,6 @@ const checkSize = (graph, sameLevelCells, moreCheck = false, updateGraphDataActi
         son.pos_x < 0 ? -son.pos_x : 0,
         son.pos_y - 30 < 0 ? -son.pos_y + 30 : 0
       );
-
     }
   });
 
@@ -200,4 +213,60 @@ const checkSize = (graph, sameLevelCells, moreCheck = false, updateGraphDataActi
   updateGraphDataAction(graph);
 
   return error;
+};
+
+export const getMiddleWidth = (cellWidth, parentWidth) => {
+  return parentWidth / 2 - cellWidth / 2;
+};
+
+export const getMiddleHeight = (cellHeight, parentHeight) => {
+  return parentHeight / 2 - cellHeight / 2;
+};
+
+export const getSibilings = (graphData, cellId, parentId) => {
+  const { nodes, edges } = graphData;
+
+  const sibilings = nodes.filter(
+    item =>
+      item.parent === parentId &&
+      item.label !== 'catch' &&
+      item.label !== 'finally'
+  );
+
+  return sibilings;
+};
+
+export const getLastHeight = (
+  cellHeight,
+  parentHeight,
+  cellY,
+  parentY,
+  sibilings = [],
+  graph
+) => {
+  // let lastHeight = 0;
+  if (sibilings.length === 0) {
+    return 30 + 20;
+  } else {
+    const [lastY, height] = sibilings.reduce(
+      (pre, cur) => {
+        const target = find_id(cur.id, graph);
+        const geometry = target.getGeometry();
+        if (geometry.y > pre[0]) {
+          return [geometry.y, geometry.height];
+        } else {
+          return pre;
+        }
+      },
+      [0, 0]
+    );
+    console.log(lastY, height);
+    return lastY + height + 20;
+    // sibilings.forEach(item => {
+    //   const target = find_id(item.id, graph);
+    //   const geometry = target.getGeometry()
+
+    //   // if(target.size.split('*')[1])
+    // });
+  }
 };

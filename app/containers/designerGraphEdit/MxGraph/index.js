@@ -49,7 +49,14 @@ import { Action_findNode } from './actions/findNode';
 import { translateToGraphData } from './actions/translateToGraphData';
 
 import { Rule_checkConnection } from './rules/checkRules';
-import { Rule_sizeRule, Rule_move_sizeRule } from './rules/sizeRule';
+import {
+  Rule_sizeRule,
+  Rule_move_sizeRule,
+  getSibilings,
+  getMiddleWidth,
+  getMiddleHeight,
+  getLastHeight,
+} from './rules/sizeRule';
 
 import {
   goHandleUndo,
@@ -59,6 +66,7 @@ import {
 } from './actions/undoAndRedo.js';
 import { message } from 'antd';
 import { cloneDeep } from 'lodash';
+import { call } from 'file-loader';
 
 const fs = require('fs');
 const checkPng = require('./images/check.png');
@@ -947,15 +955,6 @@ const MxgraphContainer = useInjectContext(
       //   );
       // });
 
-      // graph.addListener(mxEvent.CELLS_RESIZED, (sender, evt) => {
-      //   console.log('改变大小', sender, evt);
-      //   const ans = Rule_sizeRule(graph, {
-      //     evt,
-      //     graphData: graphDataRef.current,
-      //     updateGraphDataAction,
-      //   });
-      // });
-
       // graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
       //   //console.log('改变大小', sender, evt);
       //   if(evt.properties.cells[0].parent.id === "1") return;
@@ -1115,9 +1114,6 @@ const MxgraphContainer = useInjectContext(
       });
 
       graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
-        console.log('CELLS_ADDED');
-        console.log(sender, evt);
-        console.log(graphDataRef.current);
         // 当前被拖动的cell
         const cell = evt.properties.cells.length
           ? evt.properties.cells[0]
@@ -1132,17 +1128,8 @@ const MxgraphContainer = useInjectContext(
         );
 
         if (cell && newParent) {
-          console.clear();
-          // console.log(
-          //   `旧的parent`,
-          //   graphDataCell.parent,
-          //   `新的parent`,
-          //   parent.id,
-          //   `被放入的位置属于`,
-          //   parent.value
-          // );
-          // TODO : 拖入到容器里面，触发自动扩容
-          if (!parent.value) {
+          // console.clear();
+          if (newParent.value) {
             const parentGeometry = newParent.getGeometry();
             const cellGeometry = cell.getGeometry();
             if (parentGeometry && cellGeometry) {
@@ -1156,17 +1143,111 @@ const MxgraphContainer = useInjectContext(
               const cellWidth = cellGeometry.width;
               const cellHeight = cellGeometry.height;
 
+              const middleWidth = getMiddleWidth(cellWidth, parentWidth);
+
+              const arr = getSibilings(
+                graphDataRef.current,
+                cell.id,
+                newParent.id
+              );
+
+              const lastHeight = getLastHeight(
+                cellHeight,
+                parentHeight,
+                cellY,
+                parentY,
+                arr,
+                sender
+              );
+
+              // 把流程块移动到中间
+              graph.moveCells([cell], middleWidth - cellX, lastHeight - cellY);
+
+              /**
+               * 1.循环自动扩容，直接判断lastHeight是否比父级高度大即可
+               * 2.try自动扩容，判断lastHeight是否比（父级高度 - catch高度 - finally高度）大，大了则扩容，catch和finally也要做相应扩容
+               */
+
+              // 判断是否try，如果是try的话，catch和finally也要向下位移
+              if (newParent.value === 'try') {
+                // catch和finally的高的和
+                let catchAndFinallyHeight = 0;
+                // graphData里面
+                const graphDataChildren = graphDataRef.current.nodes.filter(
+                  item =>
+                    item.parent === newParent.id &&
+                    (item.label === 'finally' || item.label === 'catch')
+                );
+                const cellArr = graphDataChildren.map(element => {
+                  const child = find_id(element.id, sender);
+                  const childGeo = child.getGeometry();
+                  catchAndFinallyHeight += childGeo.height;
+                  return child;
+                });
+
+                if (
+                  lastHeight + cellHeight >
+                  parentHeight - catchAndFinallyHeight
+                ) {
+                  parentGeometry.height = parentHeight + cellHeight + 20;
+                  graph.resizeCells([newParent], parentGeometry);
+
+                  cellArr.forEach(child => {
+                    graph.moveCells([child], 0, cellHeight + 20);
+                  });
+                }
+              } else {
+                if (lastHeight + cellHeight > parentHeight) {
+                  const oldParentHeight = parentGeometry.height;
+                  parentGeometry.height = lastHeight + cellHeight + 20;
+                  graph.resizeCells([newParent], parentGeometry);
+                  if (newParent.value === 'catch') {
+                    // catch变高之后的操作
+                    const catchParentGeo = newParent.parent.getGeometry();
+                    catchParentGeo.height =
+                      catchParentGeo.height +
+                      parentGeometry.height -
+                      oldParentHeight;
+
+                    const graphDataSibilling = graphDataRef.current.nodes.find(
+                      item =>
+                        item.parent === newParent.parent.id &&
+                        item.label === 'finally'
+                    );
+                    const sibiling = find_id(graphDataSibilling.id, sender);
+
+                    graph.moveCells(
+                      [sibiling],
+                      0,
+                      parentGeometry.height - oldParentHeight
+                    );
+                    // 修改父级try的高度
+                    graph.resizeCells([newParent.parent], catchParentGeo);
+                  } else if (newParent.value === 'finally') {
+                    // finally变高之后的操作
+                    const finallyParentGeo = newParent.parent.getGeometry();
+                    finallyParentGeo.height =
+                      finallyParentGeo.height +
+                      parentGeometry.height -
+                      oldParentHeight;
+                    // 修改父级try的高度
+                    graph.resizeCells([newParent.parent], finallyParentGeo);
+                  }
+                }
+              }
+              updateGraphDataAction(graph);
+              // if (cellX < 0 || cellY - 30 < 0) {
+              //   graph.moveCells([cell], -cellX + middleWidth, -cellY + 30);
+              // } else if (cellX + cellWidth > parentWidth) {
+              //   graph.moveCells([cell], -cellX + middleWidth, 0);
+              // } else if (cellY + cellHeight > parentHeight) {
+              //   graph.moveCells([cell], 0, -cellY + 30);
+              // }
               console.log('父坐标', parentX, parentY);
               console.log('子坐标', cellX, cellY);
             }
-
-            // mxGraphLayout.moveCell(cell, 0, 0);
-            // const layout = graph.layoutManager.getLayout(parent);
-            // layout.moveCell(cell, 0, 0);
-            console.log('假如放入的位置是容器，则开始自动扩容');
           }
-          // cells.forEach(cell => {
-          // 父节点不是原来的背景板，移入了容器
+          // 父节点变更，断开连线
           if (graphDataCell) {
             let targetEdges = [];
             if (newParent.id !== graphDataCell.parent) {
@@ -1181,7 +1262,6 @@ const MxgraphContainer = useInjectContext(
               updateGraphDataAction(graph);
             }
           }
-          // });
         }
 
         // if (
@@ -1222,27 +1302,39 @@ const MxgraphContainer = useInjectContext(
         // }
       });
 
-      // graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
-      // console.log('变动', sender);
-      // console.log('graph model的改变');
-      // console.clear();
-      // console.log('MxGraph发生了变动', sender, evt);
+      graph.addListener(mxEvent.CELLS_RESIZED, (sender, evt) => {
+        console.log('改变大小', sender, evt);
+        const cell = evt.properties.cells.length
+          ? evt.properties.cells[0]
+          : undefined;
+        const previous = evt.properties.previous.length
+          ? evt.properties.previous[0]
+          : undefined;
+        const bounds = evt.properties.bounds.length
+          ? evt.properties.bounds[0]
+          : undefined;
+        const cells = sender.getModel().cells;
+        // 对异常捕获块进行尺寸重置
+        if (cell.value === 'try') {
+          const graphDataChildren = graphDataRef.current.nodes.filter(
+            item =>
+              item.parent === cell.id &&
+              (item.label === 'finally' || item.label === 'catch')
+          );
+          graphDataChildren.forEach(element => {
+            const child = find_id(element.id, sender);
+            const childGeo = child.getGeometry();
+            // childGeo.height = bounds.height;
+            childGeo.width = bounds.width;
+            // if (child.value === 'catch') {
 
-      // const changes = evt.getProperty('edit').changes;
-      // console.log(changes[0].constructor.name);
-
-      // if (evt.properties.changes[0])
-      // const codec = new MxCodec();
-      // const node = codec.encode(sender);
-      // const xml = mxUtils.getXml(node);
-
-      // TODO: 将Mxgraph的结构转换成我们原来的GgEditor结构
-      // const output = translateToGraphData(sender);
-      // if (output) {
-      //   updateGraphData(output);
-      //   synchroGraphDataToProcessTree();
-      // }
-      // });
+            // } else if (child.value === 'finally') {
+            // }
+            graph.moveCells([child], 0, bounds.height - previous.height);
+            graph.resizeCells([child], childGeo);
+          });
+        }
+      });
     };
 
     const loadGraph = graphData => {
@@ -1347,7 +1439,7 @@ const MxgraphContainer = useInjectContext(
             const sizes = item.size.split('*');
             obj._id = item.id;
             obj._parent = item.parent;
-            obj._style = GROUP_NODE.style;
+            obj._style = GROUP_NODE.style + 'resizable=0';
             obj._value = 'catch';
             obj._vertex = '1';
             obj.mxGeometry = {};
@@ -1360,7 +1452,7 @@ const MxgraphContainer = useInjectContext(
             const sizes = item.size.split('*');
             obj._id = item.id;
             obj._parent = item.parent;
-            obj._style = GROUP_NODE.style;
+            obj._style = GROUP_NODE.style + 'resizable=0';
             obj._value = 'finally';
             obj._vertex = '1';
             obj.mxGeometry = {};
@@ -1732,20 +1824,21 @@ const MxgraphContainer = useInjectContext(
                 }
 
                 // Executes parent layout hooks for position/order
-                if (graph.layoutManager !== null) {
-                  const layout = graph.layoutManager.getLayout(target);
+                // 不存在graph.layoutManager这个属性
+                // if (graph.layoutManager !== null) {
+                //   const layout = graph.layoutManager.getLayout(target);
 
-                  if (layout !== null) {
-                    const s = graph.view.scale;
-                    const tr = graph.view.translate;
-                    const tx = (x + tr.x) * s;
-                    const ty = (y + tr.y) * s;
+                //   if (layout !== null) {
+                //     const s = graph.view.scale;
+                //     const tr = graph.view.translate;
+                //     const tx = (x + tr.x) * s;
+                //     const ty = (y + tr.y) * s;
 
-                    for (let i = 0; i < select.length; i += 1) {
-                      layout.moveCell(select[i], tx, ty);
-                    }
-                  }
-                }
+                //     for (let i = 0; i < select.length; i += 1) {
+                //       layout.moveCell(select[i], tx, ty);
+                //     }
+                //   }
+                // }
 
                 if (
                   allowCellsInsertedValue &&
@@ -1757,6 +1850,7 @@ const MxgraphContainer = useInjectContext(
                 }
               } catch (e) {
                 // this.editorUi.handleError(e);
+                console.log(e);
               } finally {
                 graph.model.endUpdate();
                 // if (!select) return;
