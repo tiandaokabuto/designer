@@ -19,6 +19,8 @@ import {
   handleDebugCardsAllRun,
 } from '../../designerGraphEdit/RPAcore';
 
+import './OutputPanel.scss';
+
 const fs = require('fs');
 const { TabPane } = Tabs;
 
@@ -318,6 +320,7 @@ export default memo(
         <div
           className="dragger-editor-container-output-title"
           onMouseDown={e => e.stopPropagation()}
+          style={{ position: 'absolute', width: '100%' }}
         >
           {tag === 'graph' && <ZoomToolBar zoomIn={zoomIn} zoomOut={zoomOut} />}
           <span
@@ -327,20 +330,29 @@ export default memo(
                 : 'normal-tip'
             }
           >
-            <span style={{ paddingRight: 20 }}>输出</span>
-            {/**
-          <Tabs defaultActiveKey="1" //onChange={callback}
-          >
-          <TabPane tab={<span style={{ paddingRight: 20 }}>输出</span>} key="tab1">
-            tab1
-          </TabPane>
-          <TabPane tab="" key="2">
-           tab2
-          </TabPane>
-        </Tabs>
+            <div style={{ width: 180 }}>
+              <Tabs
+                className="outputTabs"
+                defaultActiveKey="1" //onChange={callback}
+              >
+                <TabPane
+                  tab="输出"
+                  key="tab_output"
+                  style={{ widht: '20px !important' }}
+                ></TabPane>
+                <TabPane
+                  tab="Debug"
+                  key="tab_debug"
+                  style={{ widht: '20px !important' }}
+                ></TabPane>
+              </Tabs>
+            </div>
+          </span>
+          {/**
+         <span style={{ paddingRight: 20 }}>输出</span>
  */}
 
-            {/*
+          {/*
               <Tag
               color="green"
               className="debug-btn-inner"
@@ -362,15 +374,16 @@ export default memo(
               运行至断点
             </Tag>
             */}
-          </span>
 
           <div
+            style={{ marginTop: -38 }}
             className="dragger-editor-container-output-anchor"
             onClick={handleTriggerOpen}
           >
             <Icon type={openFlag ? 'down' : 'up'} />
           </div>
           <Tags
+
             className="dragger-editor-container-output-tages"
             tagsData={tagsFromServer}
             selectedTags={selectedTags}
@@ -386,6 +399,7 @@ export default memo(
           />
         </div>
         <div
+        style={{ marginTop: -3 }}
           className="dragger-editor-container-output-search"
           onMouseDown={e => e.stopPropagation()}
         >
