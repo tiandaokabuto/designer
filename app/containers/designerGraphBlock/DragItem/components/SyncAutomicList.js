@@ -135,7 +135,7 @@ const getAutomicList = async (automicList, callback, flag, offLine) => {
     try {
       const abilityStructure = await getAbialityStructure;
       const abilityTree = await getAbilityTree;
-      message.info('刷新成功');
+
       const resultTree = automicListToTree(abilityTree, abilityStructure); // 转换后的tree
       const prevPending = automicList
         ? automicList.filter(item => ['favorite', 'recent'].includes(item.key))
@@ -145,29 +145,38 @@ const getAutomicList = async (automicList, callback, flag, offLine) => {
         const recentChild = prevPending[1].children;
         const deepResultTree = cloneDeep(resultTree);
         if (favoriteChild.length !== 0) {
-          const newArr = favoriteChild.map(favoriteItem => {
+          const newArr = favoriteChild.reduce((pre, cur) => {
             let newItem = null;
             traverseTree(deepResultTree, item => {
-              if (item.key === favoriteItem.key) {
+              if (item.key === cur.key) {
                 newItem = item;
               }
             });
-            newItem.loved = true;
-            return newItem;
-          });
+            if (newItem) {
+              newItem.loved = true;
+              pre.push(newItem);
+              return pre;
+            } else {
+              return pre;
+            }
+          }, []);
           prevPending[0].children = newArr;
         }
         if (recentChild.length !== 0) {
-          const newArr = recentChild.map(recentItem => {
+          const newArr = recentChild.reduce((pre, cur) => {
             let newItem = null;
             traverseTree(deepResultTree, item => {
-              if (item.key === recentItem.key) {
+              if (item.key === cur.key) {
                 newItem = item;
               }
             });
-            newItem.loved = true;
-            return newItem;
-          });
+            if (newItem) {
+              pre.push(newItem);
+              return pre;
+            } else {
+              return pre;
+            }
+          }, []);
           prevPending[1].children = newArr;
         }
       }
@@ -203,6 +212,7 @@ const getAutomicList = async (automicList, callback, flag, offLine) => {
       writeGlobalConfig({
         automicList: treeData,
       });
+      message.info('刷新成功');
       callback && callback(treeData);
     } catch (err) {
       console.log(err);
