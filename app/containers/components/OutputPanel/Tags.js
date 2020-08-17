@@ -15,7 +15,7 @@ const Tags = ({ tagsData, className, selectedTags, handleChange }) => {
   };
 
   return (
-    <div className={className}>
+    <div className={className} style={{ marginTop: -38 }}>
       {tagsData.map(({ label, icon, fill }) => (
         <CheckableTag
           // style={{

@@ -1033,6 +1033,12 @@ const MxgraphContainer = useInjectContext(
 
         // const previous = graphDataRef.current;
 
+        if(evt.properties.cells>0){
+          if(!evt.properties.cells[0].id ){
+            return "妈的，没有id";
+          }
+        }
+
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
             const previous = graphDataRef.current.nodes.find(node => {
@@ -1098,9 +1104,10 @@ const MxgraphContainer = useInjectContext(
         console.log(`删除操作`, graphDataRef.current, evt, getTempCellParent());
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
-            const previous = graphDataRef.current.nodes.find(node => {
-              return node.id === cell.id;
-            });
+            const previous = null;
+            //  graphDataRef.current.nodes.find(node => {
+            //   return node.id === cell.id;
+            // });
 
             return {
               type: 'remove',
@@ -1114,8 +1121,8 @@ const MxgraphContainer = useInjectContext(
                   ...cell.geometry,
                 },
                 geometry_parent: {
-                  parent_x: previous ? previous.x : 'xxx',
-                  parent_y: previous ? previous.y : 'xxx',
+                  parent_x: previous ? previous.x : 0,
+                  parent_y: previous ? previous.y : 0,
                 },
                 id: cell.id,
                 style: cell.style,
@@ -1162,6 +1169,8 @@ const MxgraphContainer = useInjectContext(
       });
 
       graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+        message.info("触发了这个")
+
         // 当前被拖动的cell
         const cell = evt.properties.cells.length
           ? evt.properties.cells[0]
@@ -1211,6 +1220,10 @@ const MxgraphContainer = useInjectContext(
               // 把流程块移动到中间
               graph.moveCells([cell], middleWidth - cellX, lastHeight - cellY);
 
+              // [这个步骤不记录在撤销回复中]
+              let temp = undoAndRedoRef.current;
+              temp.undoSteps.pop();
+
               /**
                * 1.循环自动扩容，直接判断lastHeight是否比父级高度大即可
                * 2.try自动扩容，判断lastHeight是否比（父级高度 - catch高度 - finally高度）大，大了则扩容，catch和finally也要做相应扩容
@@ -1242,6 +1255,10 @@ const MxgraphContainer = useInjectContext(
 
                   cellArr.forEach(child => {
                     graph.moveCells([child], 0, cellHeight + 20);
+
+                    // [这个步骤不记录在撤销回复中]
+                    let temp = undoAndRedoRef.current;
+                    temp.undoSteps.pop();
                   });
                 }
               } else {
@@ -1269,6 +1286,11 @@ const MxgraphContainer = useInjectContext(
                       0,
                       parentGeometry.height - oldParentHeight
                     );
+
+                    // [这个步骤不记录在撤销回复中]
+                    let temp = undoAndRedoRef.current;
+                    temp.undoSteps.pop();
+
                     // 修改父级try的高度
                     graph.resizeCells([newParent.parent], catchParentGeo);
                   } else if (newParent.value === 'finally') {
@@ -1395,6 +1417,12 @@ const MxgraphContainer = useInjectContext(
             // } else if (child.value === 'finally') {
             // }
             graph.moveCells([child], 0, bounds.height - previous.height);
+
+            // [这个步骤不记录在撤销回复中]
+            let temp = undoAndRedoRef.current;
+            temp.undoSteps.pop();
+
+
             graph.resizeCells([child], childGeo);
           });
         }
@@ -2141,7 +2169,37 @@ const MxgraphContainer = useInjectContext(
                     temp.undoSteps.pop();
                     temp.undoSteps.pop();
                   }
+                   else {
+                    temp.undoSteps.pop();
+                    //temp.undoSteps.pop();
+                  }
 
+                  // const getParentId = cell.parent
+                  //   ? cell.parent
+                  //   : getTempCellParent()
+                  //   ? getTempCellParent().id
+                  //   : '1';
+
+                  // if (getParentId !== '1') {
+                  //   temp.undoSteps.pop();
+                  // }
+
+                  // if (cell.value === 'catch') {
+                  //   temp.undoSteps.pop();
+                  //   temp.undoSteps.pop();
+                  //   temp.undoSteps.pop();
+                  //   temp.undoSteps.pop();
+                  // }
+
+                  // if (cell.value === 'finally') {
+                  //   temp.undoSteps.pop();
+                  //   temp.undoSteps.pop();
+                  //   temp.undoSteps.pop();
+                  //   temp.undoSteps.pop();
+                  // }
+
+                  // undoAndRedoRef.current.undoSteps.pop();
+                  // undoAndRedoRef.current.undoSteps.pop();
                   temp.undoSteps.push(
                     // evt.properties.cells.map(cell => {
                     //   return {
