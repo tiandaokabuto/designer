@@ -254,8 +254,8 @@ function goHandleUndo_real(
 
       graph.removeCells([find_id(undoStep.change.id, graph)]);
       deleteFromMxModel(undoStep.change.id, graph); //从mxGraph的Model里面删掉
-      undo_s.pop();
-      undoAndRedoRefCurrent.counter -= 1;
+      //undo_s.pop();
+      //undoAndRedoRefCurrent.counter -= 1;
       updateGraphDataAction(graph);
     }
 
@@ -267,7 +267,7 @@ function goHandleUndo_real(
       graph.removeCells([find_id(undoStep.change.id, graph)]);
       deleteFromMxModel(undoStep.change.id, graph); //从mxGraph的Model里面删掉
       undo_s.pop();
-      undoAndRedoRefCurrent.counter -= 1;
+      //undoAndRedoRefCurrent.counter -= 1;
       undoStepArray[index].type = 'cellsAdded_By_redo';
       updateGraphDataAction(graph);
     }
@@ -455,6 +455,8 @@ function goHandleRedo_real(
             redoStep.change.style,
             false
           );
+          needPush = true;
+          //undo_s.push(redoStepArray);
         }
 
         //undo_s.pop();

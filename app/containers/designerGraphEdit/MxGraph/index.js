@@ -1104,9 +1104,10 @@ const MxgraphContainer = useInjectContext(
         console.log(`删除操作`, graphDataRef.current, evt, getTempCellParent());
         temp.undoSteps.push(
           evt.properties.cells.map(cell => {
-            const previous = graphDataRef.current.nodes.find(node => {
-              return node.id === cell.id;
-            });
+            const previous = null;
+            //  graphDataRef.current.nodes.find(node => {
+            //   return node.id === cell.id;
+            // });
 
             return {
               type: 'remove',
@@ -1120,8 +1121,8 @@ const MxgraphContainer = useInjectContext(
                   ...cell.geometry,
                 },
                 geometry_parent: {
-                  parent_x: previous ? previous.x : 'xxx',
-                  parent_y: previous ? previous.y : 'xxx',
+                  parent_x: previous ? previous.x : 0,
+                  parent_y: previous ? previous.y : 0,
                 },
                 id: cell.id,
                 style: cell.style,
@@ -1168,6 +1169,8 @@ const MxgraphContainer = useInjectContext(
       });
 
       graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
+        message.info("触发了这个")
+
         // 当前被拖动的cell
         const cell = evt.properties.cells.length
           ? evt.properties.cells[0]
