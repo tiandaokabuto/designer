@@ -85,6 +85,7 @@ export default memo(
     // 生成3个表格整合的值
     const handleGenerateXpath = () => {
       const { xpathData, JSpathData } = data;
+      console.log(param);
       const find = (selectedOption === 'xpath' ? xpathData : JSpathData).find(
         item => item.checked
       );
@@ -94,7 +95,7 @@ export default memo(
           [selectedOption === 'xpath' ? 'XPath' : 'JSpath']: find
             ? find.xpath
             : '',
-          iframe: iframe ? iframe : [],
+          iframe: iframes ? iframes : [],
         });
         if (value !== xpath) {
           setXpath(value);

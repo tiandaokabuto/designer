@@ -338,7 +338,7 @@ const BasicStatement = useInjectContext(props => {
   const checkedGraphBlockIdRef = useRef({});
   checkedGraphBlockIdRef.current = checkedGraphBlockId;
 
-  console.log(`!`, card, card.breakPoint);
+  // console.log(`!`, card, card.breakPoint);
 
   return (
     <div
