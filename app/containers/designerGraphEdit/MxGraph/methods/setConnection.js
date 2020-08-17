@@ -89,6 +89,14 @@ export default () => {
 
         return result;
       } else if (terminal.shape != null && terminal.shape.bounds != null) {
+        if (
+          terminal.cell.value === 'catch' ||
+          terminal.cell.value === 'finally'
+        ) {
+          // console.log(terminal.cell.parent.m)
+          return null;
+        }
+
         const dir = terminal.shape.direction;
         const { bounds } = terminal.shape;
         const { scale } = terminal.shape;
