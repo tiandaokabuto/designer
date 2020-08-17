@@ -1169,7 +1169,7 @@ const MxgraphContainer = useInjectContext(
       });
 
       graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
-        message.info("触发了这个")
+        // message.info("触发了这个")
 
         // 当前被拖动的cell
         const cell = evt.properties.cells.length
@@ -1222,7 +1222,18 @@ const MxgraphContainer = useInjectContext(
 
               // [这个步骤不记录在撤销回复中]
               let temp = undoAndRedoRef.current;
-              temp.undoSteps.pop();
+              if(temp.redoSteps.length>0){
+                if(temp.redoSteps[temp.redoSteps.length-1][0].type==="cellsAdded_By_redo"){
+                  // 假如是恢复出来的，不要删
+                  //message.warning("我没删")
+                  console.log("key 我没删哦",temp)
+                }else{
+                  temp.undoSteps.pop();
+                }
+              }else{
+                temp.undoSteps.pop();
+              }
+
 
               /**
                * 1.循环自动扩容，直接判断lastHeight是否比父级高度大即可
