@@ -59,26 +59,26 @@ function goHandleUndo_real(
   // }
 
   // 假如是插入元素，则插入之后会触发一次移动，所以要把那个操作去掉,并把对应的数据搬过去
-  if (undo_s.length >= 2) {
-    if (
-      undoStepArray[0].type === 'cellsAdded' &&
-      //|| undoStepArray[0].type === 'cellsAdded' &&
-      [...undo_s[undo_s.length - 2]][0].type === 'move'
-    ) {
-      // 1. 把 move 中的id取出来
-      //let temp = undoStepArray.map(cell=>cell.change.id);
-      //delete undo_s[undo_s.length - 2];
-      undo_s[undo_s.length - 2] = undo_s[undo_s.length - 1];
-      // 2. 移除 move
-      //undo_s.pop();
-      // 3. 更新 当前操作的步骤
-      undoStepArray = [...undo_s[undo_s.length - 1]];
-      // 4. 把temp中的id全部替换到当前对应位置
-      // temp.forEach((id, index)=>{
-      //   undoStepArray[index].change.id = id
-      // })
-    }
-  }
+  // if (undo_s.length >= 2) {
+  //   if (
+  //     undoStepArray[0].type === 'cellsAdded' &&
+  //     //|| undoStepArray[0].type === 'cellsAdded' &&
+  //     [...undo_s[undo_s.length - 2]][0].type === 'move'
+  //   ) {
+  //     // 1. 把 move 中的id取出来
+  //     //let temp = undoStepArray.map(cell=>cell.change.id);
+  //     //delete undo_s[undo_s.length - 2];
+  //     undo_s[undo_s.length - 2] = undo_s[undo_s.length - 1];
+  //     // 2. 移除 move
+  //     //undo_s.pop();
+  //     // 3. 更新 当前操作的步骤
+  //     undoStepArray = [...undo_s[undo_s.length - 1]];
+  //     // 4. 把temp中的id全部替换到当前对应位置
+  //     // temp.forEach((id, index)=>{
+  //     //   undoStepArray[index].change.id = id
+  //     // })
+  //   }
+  // }
 
   if (undoStepArray.length === 0) return undo_s.pop();
 
@@ -225,11 +225,10 @@ function goHandleUndo_real(
               false
             );
             updateGraphDataAction(graph);
-            if(undoStep.change.parent_id !== "1"){
+            if (undoStep.change.parent_id !== '1') {
               undo_s.pop();
               undoAndRedoRefCurrent.counter -= 1;
             }
-
           }, 0);
         }
       } else {
@@ -250,28 +249,27 @@ function goHandleUndo_real(
       updateGraphDataAction(graph);
     }
 
+    if (undoStep.type === 'cellsAdded_By_redo') {
+      needPush = true;
+
+      graph.removeCells([find_id(undoStep.change.id, graph)]);
+      deleteFromMxModel(undoStep.change.id, graph); //从mxGraph的Model里面删掉
+      undo_s.pop();
+      undoAndRedoRefCurrent.counter -= 1;
+      updateGraphDataAction(graph);
+    }
+
     if (undoStep.type === 'cellsAdded') {
       needPush = true;
 
+      //undo_s.pop();
+
+      graph.removeCells([find_id(undoStep.change.id, graph)]);
+      deleteFromMxModel(undoStep.change.id, graph); //从mxGraph的Model里面删掉
       undo_s.pop();
-      setTimeout(() => {
-        graph.removeCells([find_id(undoStep.change.id, graph)]);
-        deleteFromMxModel(undoStep.change.id, graph); //从mxGraph的Model里面删掉
-        undo_s.pop();
-        updateGraphDataAction(graph);
-      }, 0);
-
+      undoAndRedoRefCurrent.counter -= 1;
       undoStepArray[index].type = 'cellsAdded_By_redo';
-    }
-
-    if (undoStep.type === 'cellsAdded_By_redo') {
-      needPush = true;
-      setTimeout(() => {
-        graph.removeCells([find_id(undoStep.change.id, graph)]);
-        deleteFromMxModel(undoStep.change.id, graph); //从mxGraph的Model里面删掉
-        undo_s.pop();
-        updateGraphDataAction(graph);
-      }, 0);
+      updateGraphDataAction(graph);
     }
   });
 
