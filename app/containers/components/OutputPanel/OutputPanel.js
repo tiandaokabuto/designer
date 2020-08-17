@@ -2,7 +2,7 @@ import React, { useEffect, useState, memo, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
-import { Icon, Input, Dropdown, Menu, Tag } from 'antd';
+import { Icon, Input, Dropdown, Menu, Tag, Tabs } from 'antd';
 
 import event, {
   PYTHON_OUTPUT,
@@ -20,6 +20,7 @@ import {
 } from '../../designerGraphEdit/RPAcore';
 
 const fs = require('fs');
+const { TabPane } = Tabs;
 
 let isMouseDown = false;
 let startOffset = 0;
@@ -134,7 +135,6 @@ export default memo(
       event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN, blockAllNext);
       // 第二层的全体调试
       event.addListener(PYTHOH_DEBUG_CARDS_ALL_RUN, cardsAllNext);
-
 
       return () => {
         event.removeListener(PYTHON_OUTPUT, handlePythonOutput);
@@ -327,7 +327,18 @@ export default memo(
                 : 'normal-tip'
             }
           >
-            <span style={{ paddingRight: 20 }}>输出</span>{' '}
+            <span style={{ paddingRight: 20 }}>输出</span>
+            {/**
+          <Tabs defaultActiveKey="1" //onChange={callback}
+          >
+          <TabPane tab={<span style={{ paddingRight: 20 }}>输出</span>} key="tab1">
+            tab1
+          </TabPane>
+          <TabPane tab="" key="2">
+           tab2
+          </TabPane>
+        </Tabs>
+ */}
 
             {/*
               <Tag
@@ -402,9 +413,11 @@ export default memo(
           <pre
             className="dragger-editor-container-output-content"
             onMouseDown={e => e.stopPropagation()}
-            style={{
-              //background: 'rgba(244,252,250,1)',
-            }}
+            style={
+              {
+                //background: 'rgba(244,252,250,1)',
+              }
+            }
           >
             {transformOutput}
           </pre>
