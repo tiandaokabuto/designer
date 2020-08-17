@@ -1064,7 +1064,11 @@ const MxgraphContainer = useInjectContext(
                 value: cell.value,
                 style: cell.style,
                 parent: cell.parent ? cell.parent : getTempCellParent(),
-                parent_id: cell.parent ? cell.parent.id : getTempCellParent().id, // getTempCellParent().id,
+                parent_id: cell.parent
+                  ? cell.parent.id
+                  : getTempCellParent()
+                  ? getTempCellParent().id
+                  : '1', // getTempCellParent().id,
                 children: cell.children
                   ? [cell.children[0], cell.children[1]]
                   : null,
@@ -1106,10 +1110,10 @@ const MxgraphContainer = useInjectContext(
                 vertex: cell.isVertex(),
 
                 // 恢复块所需要的数据
-                geometry:{
+                geometry: {
                   ...cell.geometry,
                 },
-                geometry_parent:{
+                geometry_parent: {
                   parent_x: previous ? previous.x : 'xxx',
                   parent_y: previous ? previous.y : 'xxx',
                 },
@@ -1124,7 +1128,11 @@ const MxgraphContainer = useInjectContext(
 
                 cell: cell,
                 parent: cell.parent ? cell.parent : getTempCellParent(),
-                parent_id:  cell.parent ? cell.parent.id : getTempCellParent().id, // getTempCellParent().id,
+                parent_id: cell.parent
+                  ? cell.parent.id
+                  : getTempCellParent()
+                  ? getTempCellParent().id
+                  : '1', // getTempCellParent().id,
                 children: cell.children
                   ? [cell.children[0], cell.children[1]]
                   : null,
@@ -2162,7 +2170,9 @@ const MxgraphContainer = useInjectContext(
                             : getTempCellParent(),
                           parent_id: cell.parent
                             ? cell.parent.id
-                            : getTempCellParent().id,
+                            : getTempCellParent()
+                            ? getTempCellParent().id
+                            : '1', // getTempCellParent().id,
                           children: cell.children
                             ? [cell.children[0], cell.children[1]]
                             : null,
