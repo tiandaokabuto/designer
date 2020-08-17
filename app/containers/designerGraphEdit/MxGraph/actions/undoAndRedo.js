@@ -254,7 +254,7 @@ function goHandleUndo_real(
 
       graph.removeCells([find_id(undoStep.change.id, graph)]);
       deleteFromMxModel(undoStep.change.id, graph); //从mxGraph的Model里面删掉
-      //undo_s.pop();
+      undo_s.pop();
       //undoAndRedoRefCurrent.counter -= 1;
       updateGraphDataAction(graph);
     }
