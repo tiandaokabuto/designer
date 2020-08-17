@@ -171,7 +171,10 @@ function goHandleUndo_real(
             if (!undoStep.change.children) return;
 
             graph.insertVertex(
-              undoStep.parent ? undoStep.parent : graph.getDefaultParent(),
+              //undoStep.parent ? undoStep.parent : graph.getDefaultParent(),
+              undoStep.change.parent
+                ? find_id(undoStep.change.parent_id, graph)
+                : graph.getDefaultParent(),
               undoStep.change.id,
               undoStep.change.value,
               undoStep.change.geometry.x,
@@ -204,21 +207,29 @@ function goHandleUndo_real(
         } else {
           setTimeout(() => {
             console.clear();
-            console.log(undoStep.change.parent);
+            console.log(undoStep, undoStep.change.parent);
             graph.insertVertex(
+              // undoStep.change.parent
+              //   ? undoStep.change.parent
+              //   : graph.getDefaultParent(),
               undoStep.change.parent
-                ? undoStep.change.parent
+                ? find_id(undoStep.change.parent_id, graph)
                 : graph.getDefaultParent(),
               undoStep.change.id,
               undoStep.change.value,
-              undoStep.change.geometry.x,
-              undoStep.change.geometry.y,
+              undoStep.change.geometry_parent.parent_x,
+              undoStep.change.geometry_parent.parent_y,
               undoStep.change.geometry.width,
               undoStep.change.geometry.height,
               undoStep.change.style,
               false
             );
             updateGraphDataAction(graph);
+            if(undoStep.change.parent_id !== "1"){
+              undo_s.pop();
+              undoAndRedoRefCurrent.counter -= 1;
+            }
+
           }, 0);
         }
       } else {
@@ -398,7 +409,10 @@ function goHandleRedo_real(
             if (!redoStep.change.children) return;
 
             graph.insertVertex(
-              redoStep.parent ? redoStep.parent : graph.getDefaultParent(),
+              //redoStep.parent ? redoStep.parent : graph.getDefaultParent(),
+              redoStep.change.parent
+                ? find_id(redoStep.change.parent_id, graph)
+                : graph.getDefaultParent(),
               redoStep.change.id,
               redoStep.change.value,
               redoStep.change.geometry.x,
@@ -430,7 +444,10 @@ function goHandleRedo_real(
           }, 0);
         } else {
           graph.insertVertex(
-            graph.getDefaultParent(),
+            //graph.getDefaultParent(),
+            redoStep.change.parent
+              ? find_id(redoStep.change.parent_id, graph)
+              : graph.getDefaultParent(),
             redoStep.change.id,
             redoStep.change.value,
             redoStep.change.geometry.x,
