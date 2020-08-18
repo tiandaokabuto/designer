@@ -219,14 +219,14 @@ const BasicStatement = useInjectContext(props => {
     } else if (mouseCmdName === card.cmdName) {
       ipcRenderer.send('start_server', id);
       try {
-        const mouseWorker = exec(`${PATH_CONFIG('WinRun')} -p`);
+        const mouseWorker = exec(`${PATH_CONFIG('WinRun')}`);
       } catch (err) {
         console.log(err);
       }
     } else if (windowsCmdNameArr.includes(card.cmdName)) {
       ipcRenderer.send('start_server', id);
       try {
-        const windowsWorker = exec(`${PATH_CONFIG('WinRun')} -w`);
+        const windowsWorker = exec(`${PATH_CONFIG('EnumWinHandle')}`);
       } catch (e) {
         console.log(e);
       }
