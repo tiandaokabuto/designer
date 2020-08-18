@@ -151,7 +151,7 @@ function goHandleUndo_real(
         //   style,
         //   relative	)
 
-        if (undoStep.change.value === 'try') {
+        if (undoStep.change.value === '异常捕获') {
           // Todo 恢复try Catch
           setTimeout(() => {
             // const importableCells = graph.getImportableCells(cells);
@@ -387,7 +387,7 @@ function goHandleRedo_real(
       needPush = true;
 
       if (redoStep.change.vertex) {
-        if (redoStep.change.value === 'try') {
+        if (redoStep.change.value === '异常捕获') {
           // Todo 恢复try Catch
           setTimeout(() => {
             // const importableCells = graph.getImportableCells(cells);

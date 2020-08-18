@@ -17,9 +17,9 @@ export function Action_CopyCell(graph, option = {}, callback = {}) {
   if (cells.length > 1) return message.info('只能复制单个流程块');
   if (!cells[0].isVertex()) return message.info('线条不能复制');
   if (
-    cells[0].value === 'try' ||
-    cells[0].value === 'catch' ||
-    cells[0].value === 'finally' ||
+    cells[0].value === '异常捕获' ||
+    cells[0].value === '异常处理' ||
+    cells[0].value === '结束' ||
     cells[0].value.search(`for`) >= 0 ||
     cells[0].value.search(`while`) >= 0
   ) {
@@ -37,7 +37,7 @@ export function Action_CopyCell(graph, option = {}, callback = {}) {
   // 只复制cell当中不是线的元素
   cells.forEach(item => {
     console.log(`将要复制 `, item, item.id, item.isVertex());
-    if (item.value === '开始' || item.value === '结束') {
+    if (item.value === '开始' || item.value === '<span>结束</span>') {
       errorFlag = true;
       return message.info({ content: '开始、结束不能复制', key: 'copy' });
     }

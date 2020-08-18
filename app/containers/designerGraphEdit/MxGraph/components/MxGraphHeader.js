@@ -138,7 +138,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           data-width="286"
           data-height="402"
           data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;"
-          data-label="try"
+          data-label="异常捕获"
         >
           异常捕获
         </div>
@@ -158,7 +158,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           data-width="80"
           data-height="55"
           data-style="ellipse;shape=doubleEllipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center;"
-          data-label="结束"
+          data-label="<span>结束</span>"
         >
           结束
         </div>
