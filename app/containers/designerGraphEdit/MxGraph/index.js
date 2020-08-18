@@ -1033,9 +1033,9 @@ const MxgraphContainer = useInjectContext(
 
         // const previous = graphDataRef.current;
 
-        if(evt.properties.cells>0){
-          if(!evt.properties.cells[0].id ){
-            return "妈的，没有id";
+        if (evt.properties.cells > 0) {
+          if (!evt.properties.cells[0].id) {
+            return '妈的，没有id';
           }
         }
 
@@ -1222,18 +1222,20 @@ const MxgraphContainer = useInjectContext(
 
               // [这个步骤不记录在撤销回复中]
               let temp = undoAndRedoRef.current;
-              if(temp.redoSteps.length>0){
-                if(temp.redoSteps[temp.redoSteps.length-1][0].type==="cellsAdded_By_redo"){
+              if (temp.redoSteps.length > 0) {
+                if (
+                  temp.redoSteps[temp.redoSteps.length - 1][0].type ===
+                  'cellsAdded_By_redo'
+                ) {
                   // 假如是恢复出来的，不要删
                   //message.warning("我没删")
-                  console.log("key 我没删哦",temp)
-                }else{
+                  console.log('key 我没删哦', temp);
+                } else {
                   temp.undoSteps.pop();
                 }
-              }else{
+              } else {
                 temp.undoSteps.pop();
               }
-
 
               /**
                * 1.循环自动扩容，直接判断lastHeight是否比父级高度大即可
@@ -1432,7 +1434,6 @@ const MxgraphContainer = useInjectContext(
             // [这个步骤不记录在撤销回复中]
             let temp = undoAndRedoRef.current;
             temp.undoSteps.pop();
-
 
             graph.resizeCells([child], childGeo);
           });
@@ -2179,8 +2180,7 @@ const MxgraphContainer = useInjectContext(
                     temp.undoSteps.pop();
                     temp.undoSteps.pop();
                     temp.undoSteps.pop();
-                  }
-                   else {
+                  } else {
                     temp.undoSteps.pop();
                     //temp.undoSteps.pop();
                   }
