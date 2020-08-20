@@ -104,6 +104,14 @@ module.exports = merge.smart(baseConfig, {
           },
           {
             loader: 'less-loader',
+            options: {
+              modifyVars: {
+                'primary-color': '#32A680',
+                'link-color': '#006633',
+                'border-radius-base': '2px',
+              },
+              javascriptEnabled: true
+            }
           },
         ],
       },

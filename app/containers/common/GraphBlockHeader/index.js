@@ -32,6 +32,14 @@ import {
   clearPause,
 } from '../../designerGraphEdit/RPAcore';
 
+// *新 DEBUG liuqi
+import {
+  DEBUG_OPEN_DEBUGSERVER,
+  DEBUG_CLOSE_DEBUGSERVER,
+  DEBUG_RUN_BLOCK_ALL_RUN,
+} from '../../../constants/actions/debugInfos';
+import { changeDebugInfos } from '../../reduxActions';
+
 const { ipcRenderer, remote } = require('electron');
 
 const generateMenu = arr => {
@@ -225,30 +233,76 @@ export default memo(({ history, tag }) => {
   const transformProcessToPython = useTransformProcessToPython();
 
   useEffect(() => {
-    event.addListener(
-      PYTHOH_DEBUG_SERVER_START,
-      handleRunPythonDebugServerStart
-    );
+    // event.addListener(
+    //   PYTHOH_DEBUG_SERVER_START,
+    //   handleRunPythonDebugServerStart
+    // );
 
-    event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE, setContinueBtn);
-    event.addListener(`one_started`, disabledBtn);
-    event.addListener(`one_finished`, abledBtn);
-    event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_END, setPuseBtn);
+    // event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE, setContinueBtn);
+    // event.addListener(`one_started`, disabledBtn);
+    // event.addListener(`one_finished`, abledBtn);
+    // event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_END, setPuseBtn);
+
+    // *新版DEBUG
+    event.addListener(DEBUG_OPEN_DEBUGSERVER, debug_switch_open);
+    event.addListener(DEBUG_CLOSE_DEBUGSERVER, debug_switch_close);
+    event.addListener(DEBUG_RUN_BLOCK_ALL_RUN, debug_run_block_all_run);
 
     return () => {
-      event.removeListener(
-        PYTHOH_DEBUG_SERVER_START,
-        handleRunPythonDebugServerStart
-      );
-      event.removeListener(`one_started`, disabledBtn);
-      event.removeListener(`one_finished`, abledBtn);
-      event.removeListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_END, setPuseBtn);
+      // event.removeListener(
+      //   PYTHOH_DEBUG_SERVER_START,
+      //   handleRunPythonDebugServerStart
+      // );
+      // event.removeListener(`one_started`, disabledBtn);
+      // event.removeListener(`one_finished`, abledBtn);
+      // event.removeListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_END, setPuseBtn);
+
+      // *新版DEBUG
+      event.removeListener(DEBUG_OPEN_DEBUGSERVER, debug_switch_open);
+      event.removeListener(DEBUG_CLOSE_DEBUGSERVER, debug_switch_close);
+      event.removeListener(DEBUG_RUN_BLOCK_ALL_RUN, debug_run_block_all_run);
 
       localStorage.setItem('debug', '关闭');
       // 当返回时，自动杀死debug进程
       killTask();
     };
   }, []);
+
+  // *新版DEBUG
+  // 开关
+  const debug_switch = useSelector(state => state.debug.switch);
+  const debug_switch_ref = useRef();
+  debug_switch_ref.current = debug_switch;
+  // 暂停
+  const debug_pause = useSelector(state => state.debug.pause);
+  // 数据仓库
+  const debug_dataStore = useSelector(state => state.debug.dataStore);
+  // DEBUG服务是否启动
+
+  // 01 启动DEBUG服务
+  const debug_switch_open = () => {
+    if (debug_switch_ref.current === false) {
+      runDebugServer();
+    } else {
+      message.info('已开启...');
+    }
+  };
+
+  // 02 关闭DEBUG服务
+  const debug_switch_close = () => {
+    if (debug_switch_ref.current === true) {
+      killTask();
+    } else {
+      message.info('稍等，正在关闭中...');
+    }
+  };
+
+  // 03 流程图级的按序调试
+  const debug_run_block_all_run = () => {
+    changeDebugInfos(DEBUG_RUN_BLOCK_ALL_RUN, {});
+    console.log(transformProcessToPython());
+    console.log(`缓存代码池\n`, getTempCenter());
+  };
 
   const setPuseBtn = () => {
     setPauseState({
@@ -351,6 +405,8 @@ export default memo(({ history, tag }) => {
           className="debug-btn"
           style={{ WebkitAppRegion: 'no-drag', display: 'block' }}
         >
+          <h5>状态 {debug_switch ? '开' : '关'} / </h5>
+
           <Tag
             color={pyDebugServerState.tagColor}
             className="debug-btn-inner"
@@ -409,14 +465,20 @@ export default memo(({ history, tag }) => {
                         const running = localStorage.getItem('running_mode');
                         console.clear();
                         console.log(running);
-                        if (running === 'blockAll_pasue' || running === 'blockAll_running') {
+                        if (
+                          running === 'blockAll_pasue' ||
+                          running === 'blockAll_running'
+                        ) {
                           localStorage.setItem(
                             'running_mode',
                             'blockAll_running'
                           );
                           event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
                         }
-                        if (running === 'cardsAll_pause' || running === 'cardsAll_running') {
+                        if (
+                          running === 'cardsAll_pause' ||
+                          running === 'cardsAll_running'
+                        ) {
                           console.log('!!!!');
                           localStorage.setItem(
                             'running_mode',
@@ -438,13 +500,19 @@ export default memo(({ history, tag }) => {
                         const running = localStorage.getItem('running_mode');
                         console.clear();
                         console.log(running);
-                        if (running === 'blockAll_pause' || running === 'blockAll_running') {
+                        if (
+                          running === 'blockAll_pause' ||
+                          running === 'blockAll_running'
+                        ) {
                           localStorage.setItem(
                             'running_mode',
                             'blockAll_running'
                           );
                           event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
-                        } else if (running === 'cardsAll_pause' || running === 'cardsAll_running') {
+                        } else if (
+                          running === 'cardsAll_pause' ||
+                          running === 'cardsAll_running'
+                        ) {
                           localStorage.setItem(
                             'running_mode',
                             'cardsAll_running'
@@ -496,7 +564,8 @@ export default memo(({ history, tag }) => {
                   killTask();
                 }}
               >
-                <Icon type="stop" />{` `}终止
+                <Icon type="stop" />
+                {` `}终止
               </Tag>
             </>
           ) : (

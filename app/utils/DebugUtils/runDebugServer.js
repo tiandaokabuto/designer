@@ -6,6 +6,14 @@ import event, {
   PYTHOH_DEBUG_CARDS_ALL_RUN,
 } from '../../containers/eventCenter';
 
+// *新DEBUG
+import {
+  DEBUG_OPEN_DEBUGSERVER,
+  DEBUG_CLOSE_DEBUGSERVER,
+} from '../../constants/actions/debugInfos';
+
+import { changeDebugInfos } from '../../containers/reduxActions';
+
 import { getUTF8 } from './getUTF8';
 const net = require('net');
 const path = require('path');
@@ -47,8 +55,8 @@ export const runDebugServer = async () => {
 
   socket = new net.Socket();
   socket.connect(port, hostname, function() {
-    localStorage.setItem('debug', '运行中');
-    event.emit(PYTHOH_DEBUG_SERVER_START, '连接');
+    // o -> 标题菜单 -> 启动
+    changeDebugInfos(DEBUG_OPEN_DEBUGSERVER, {});
   });
 
   socket.on('error', function(err) {
@@ -92,13 +100,13 @@ export const runDebugServer = async () => {
       running === 'blockAll_one'
     ) {
       event.emit('one_finished'); // 单步跑完，通知结束
-      if(running === 'started_one'){
+      if (running === 'started_one') {
         localStorage.setItem('running_mode', 'started');
       }
-      if(running === 'cardsAll_one'){
+      if (running === 'cardsAll_one') {
         localStorage.setItem('running_mode', 'cardsAll_pause');
       }
-      if(running === 'blockAll_one'){
+      if (running === 'blockAll_one') {
         localStorage.setItem('running_mode', 'blockAll_pause');
       }
     }
@@ -204,8 +212,10 @@ export const killTask = () => {
     socket.write('exit()');
     setTimeout(() => worker.kill(), 3000);
     localStorage.setItem('debug', '关闭');
-    event.emit(PYTHOH_DEBUG_SERVER_START, '终止');
-    setTimeout(() => event.emit(PYTHOH_DEBUG_SERVER_START, '准备'), 3000);
+    // event.emit(PYTHOH_DEBUG_SERVER_START, '终止');
+    // setTimeout(() => event.emit(PYTHOH_DEBUG_SERVER_START, '准备'), 3000);
+
+    changeDebugInfos(DEBUG_CLOSE_DEBUGSERVER, {});
   } catch (e) {
     console.log('终止debug', e);
   }

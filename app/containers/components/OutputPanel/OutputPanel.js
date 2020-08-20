@@ -2,13 +2,10 @@ import React, { useEffect, useState, memo, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
-import { Icon, Input, Dropdown, Menu, Tag, Tabs } from 'antd';
+import { Icon, Input, Dropdown, Menu, Tag, Tabs, Tree, message } from 'antd';
 
-import event, {
-  PYTHON_OUTPUT,
-  PYTHOH_DEBUG_BLOCK_ALL_RUN,
-  PYTHOH_DEBUG_CARDS_ALL_RUN,
-} from '@/containers/eventCenter';
+import './temp.less';
+
 import FilterToolbar from './FilterToolbar';
 import Tags from './Tags';
 import ZoomToolBar from './ZoomToolBar';
@@ -19,10 +16,43 @@ import {
   handleDebugCardsAllRun,
 } from '../../designerGraphEdit/RPAcore';
 
+import DebugBtn from './DebugBtn/DebugBtn';
+
 import './OutputPanel.scss';
+
+// liuqi
+import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
+import event, {
+  PYTHON_OUTPUT,
+  PYTHOH_DEBUG_BLOCK_ALL_RUN,
+  PYTHOH_DEBUG_CARDS_ALL_RUN,
+  PYTHOH_DEBUG_SERVER_START,
+  PYTHOH_DEBUG_BLOCK_ALL_RUN_END,
+  PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE,
+} from '../../eventCenter';
+import {
+  runDebugServer,
+  runAllStepByStepAuto,
+  killTask,
+} from '../../../utils/DebugUtils/runDebugServer';
+import {
+  getTempCenter,
+  setPause,
+  clearPause,
+} from '../../designerGraphEdit/RPAcore';
+
+// liuqi-new
+import { changeDebugInfos } from '../../reduxActions';
+import {
+  DEBUG_OPEN_DEBUGSERVER,
+  DEBUG_CLOSE_DEBUGSERVER,
+  DEBUG_RUN_BLOCK_ALL_RUN
+} from '../../../constants/actions/debugInfos';
 
 const fs = require('fs');
 const { TabPane } = Tabs;
+
+const { TreeNode, DirectoryTree } = Tree;
 
 let isMouseDown = false;
 let startOffset = 0;
@@ -66,6 +96,14 @@ export default memo(
         '.dragger-editor-container-output'
       );
       return parseFloat(window.getComputedStyle(outputDom).height);
+    };
+
+    // 存储下方【输出/Debug】切换选项卡状态
+    const [tabSwicth, setTabSwich] = useState('Debug');
+
+    const changeTabSwich = e => {
+      //console.log(e)
+      setTabSwich(e);
     };
 
     useEffect(() => {
@@ -308,6 +346,18 @@ export default memo(
       </Menu>
     );
 
+    // *新！ DEBUG功能
+    // DEBUG服务是否启动
+    const debug_switch = useSelector(state => state.debug.switch);
+    const debug_pause = useSelector(state => state.debug.pause);
+    const debug_running = useSelector(state => state.debug.running);
+    const debug_oneRunning = useSelector(state => state.debug.oneRunning);
+    const debug_runningState = useSelector(state => state.debug.runningState);
+
+    const currentPagePosition = useSelector(
+      state => state.temporaryvariable.currentPagePosition
+    );
+
     return (
       <div
         className="dragger-editor-container-output"
@@ -333,47 +383,22 @@ export default memo(
             <div style={{ width: 180 }}>
               <Tabs
                 className="outputTabs"
-                defaultActiveKey="1" //onChange={callback}
+                defaultActiveKey={tabSwicth}
+                onChange={changeTabSwich}
               >
                 <TabPane
                   tab="输出"
-                  key="tab_output"
+                  key="输出"
                   style={{ widht: '20px !important' }}
                 ></TabPane>
                 <TabPane
                   tab="Debug"
-                  key="tab_debug"
+                  key="Debug"
                   style={{ widht: '20px !important' }}
                 ></TabPane>
               </Tabs>
             </div>
           </span>
-          {/**
-         <span style={{ paddingRight: 20 }}>输出</span>
- */}
-
-          {/*
-              <Tag
-              color="green"
-              className="debug-btn-inner"
-              onClick={() => {
-                event.emit('nextStep');
-              }}
-            >
-              <Icon type="play-circle" />
-              下一步
-            </Tag>
-            <Tag
-              color="green"
-              className="debug-btn-inner"
-              onClick={() => {
-                event.emit('nextPause');
-              }}
-            >
-              <Icon type="play-circle" />
-              运行至断点
-            </Tag>
-            */}
 
           <div
             style={{ marginTop: -38 }}
@@ -383,7 +408,7 @@ export default memo(
             <Icon type={openFlag ? 'down' : 'up'} />
           </div>
           <Tags
-
+            display={tabSwicth === '输出' ? 'inline' : 'none'}
             className="dragger-editor-container-output-tages"
             tagsData={tagsFromServer}
             selectedTags={selectedTags}
@@ -397,9 +422,91 @@ export default memo(
               }
             }}
           />
+
+          <div
+            style={{
+              marginTop: -38,
+              display: tabSwicth === 'Debug' ? 'inline' : 'none',
+            }}
+            className="dragger-editor-container-output-tages"
+          >
+            {debug_switch === false ? (
+              <DebugBtn
+                labelText="启动Debug模式"
+                iconType="play-circle"
+                click={() => event.emit(DEBUG_OPEN_DEBUGSERVER)}
+              />
+            ) : (
+              <span>
+                <DebugBtn
+                  labelText="关闭Debug服务"
+                  iconType="stop"
+                  click={() => event.emit(DEBUG_CLOSE_DEBUGSERVER)}
+                />
+              </span>
+            )}
+
+            {/** DEBUG服务器开启后，这些按钮才出现 */}
+            {debug_switch === false ? (
+              ''
+            ) : (
+              <span>
+                {/** 单步调试时，上述所有的按钮都不能显示 */}
+                {debug_oneRunning === true ? (
+                  <DebugBtn
+                    labelText="正在进行单步调试"
+                    iconType="stop"
+                    disabled={true}
+                  />
+                ) : (
+                  <span>
+                    {/** 没有操作时，可以进行按序调试 */}
+                    {debug_running === false ? (
+                      <DebugBtn labelText="按序调试" iconType="play-circle" click={()=>{
+                        if (currentPagePosition === 'editor') {
+                          console.log(DEBUG_RUN_BLOCK_ALL_RUN);
+                          event.emit(DEBUG_RUN_BLOCK_ALL_RUN);
+
+                          //event.emit(DEBUG_RUN_BLOCK_ALL_RUN);
+                          //localStorage.setItem('running_mode', 'blockAll_running');
+                        } else if (currentPagePosition === 'block') {
+                          // console.log(DEBUG_RUN_BLOCK_ALL_RUN);
+                          // event.emit(DEBUG_RUN_BLOCK_ALL_RUN);
+
+
+                          // setPauseState({ running: true, pause: false });
+                          // console.log(transformProcessToPython());
+                          // console.log(getTempCenter());
+                          // localStorage.setItem('running_mode', 'cardsAll_running');
+                          // event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+                        }
+                      }}/>
+                    ) : (
+                      <span>
+                        {debug_pause === true ? (
+                          <DebugBtn labelText="暂停" iconType="pause-circle" />
+                        ) : (
+                          <span>
+                            <DebugBtn labelText="继续" iconType="play-circle" />
+                            <DebugBtn
+                              labelText="重新生成代码"
+                              iconType="issues-close"
+                            />
+                          </span>
+                        )}
+                      </span>
+                    )}
+                  </span>
+                )}
+              </span>
+            )}
+          </div>
         </div>
         <div
-        style={{ marginTop: -3 }}
+          style={{
+            marginTop: -3,
+            display: tabSwicth === '输出' ? 'inline' : 'none',
+          }}
           className="dragger-editor-container-output-search"
           onMouseDown={e => e.stopPropagation()}
         >
@@ -424,17 +531,81 @@ export default memo(
           />
         </div>
         <Dropdown overlay={menu} trigger={['contextMenu']}>
-          <pre
-            className="dragger-editor-container-output-content"
-            onMouseDown={e => e.stopPropagation()}
-            style={
-              {
+          <div>
+            <pre
+              className="dragger-editor-container-output-content"
+              onMouseDown={e => e.stopPropagation()}
+              style={{
+                marginTop: 38,
+                display: tabSwicth === '输出' ? 'inline-block' : 'none',
                 //background: 'rgba(244,252,250,1)',
-              }
-            }
-          >
-            {transformOutput}
-          </pre>
+              }}
+            >
+              {transformOutput}
+            </pre>
+            <div
+              className="variablePanel"
+              style={{
+                display: tabSwicth === 'Debug' ? 'inline' : 'none',
+                //background: 'rgba(244,252,250,1)',
+              }}
+            >
+              <div className="left">
+                <p
+                  style={{
+                    background: '#fff',
+                    padding: '2px 0 0 33px',
+                    color: '#aaa',
+                  }}
+                >
+                  Debug范围
+                </p>
+                <DirectoryTree
+                  multiple
+                  defaultExpandAll
+                  // onSelect={this.onSelect}
+                  // onExpand={this.onExpand}
+                >
+                  <TreeNode title="第二步" key="1" isLeaf />
+                  <TreeNode title="第一步" key="2" isLeaf />
+                  {/**
+                <TreeNode title="leaf 0-0" key="0-0-0" isLeaf />
+                  <TreeNode title="parent 0" key="0-0">
+                    <TreeNode title="leaf 0-0" key="0-0-0" isLeaf />
+                  </TreeNode>
+                  <TreeNode title="parent 1" key="0-1">
+                    <TreeNode title="leaf 1-0" key="0-1-0" isLeaf />
+                  </TreeNode>
+                   */}
+                </DirectoryTree>
+              </div>
+              <div className="right">
+                <p
+                  style={{
+                    background: '#fff',
+                    padding: '2px 0 0 33px',
+                    color: '#aaa',
+                  }}
+                >
+                  变量
+                </p>
+                <DirectoryTree
+                  multiple
+                  defaultExpandAll
+                  // onSelect={this.onSelect}
+                  // onExpand={this.onExpand}
+                >
+                  <TreeNode title="parent 0" key="0-0">
+                    <TreeNode title="leaf 0-0" key="0-0-0" isLeaf />
+                  </TreeNode>
+                  <TreeNode title="parent 1" key="0-1">
+                    <TreeNode title="leaf 1-0" key="0-1-0" isLeaf />
+                    <TreeNode title="leaf 1-0" key="0-1-1" isLeaf />
+                  </TreeNode>
+                </DirectoryTree>
+              </div>
+            </div>
+          </div>
         </Dropdown>
         <FilterToolbar
           visible={filter !== ''}

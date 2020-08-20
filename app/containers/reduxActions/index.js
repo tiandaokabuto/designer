@@ -33,6 +33,7 @@ import {
   UPDATE_EXECUTEOUTPUT,
   UPDATE_CURRENTPAGEPOSITION,
 } from '../../constants/actions/temporaryvariable';
+
 import store from '../../store';
 
 const { dispatch } = store || { dispatch: () => {} };
@@ -293,3 +294,13 @@ export const changeUndoAndRedo = data => {
     payload: data,
   });
 };
+
+
+// debug的参考数据
+export const changeDebugInfos = (debug_action_name ,data) => {
+  dispatch({
+    type: debug_action_name,
+    payload: data,
+  });
+};
+

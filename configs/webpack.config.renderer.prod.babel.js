@@ -79,6 +79,31 @@ module.exports = merge.smart(baseConfig, {
           },
         ],
       },
+      {
+        test: /\.less$/,
+        use: [
+          {
+            loader: "style-loader",
+          },
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: "less-loader",
+            options: {
+              modifyVars: {
+                "primary-color": "#32A680",
+                "link-color": "#006633",
+                "border-radius-base": "2px",
+              },
+              javascriptEnabled: true,
+            },
+          },
+        ],
+      },
       // // Add SASS support  - compile all .global.scss files and pipe it to style.css
       // {
       //   test: /\.global\.(scss|sass)$/,
