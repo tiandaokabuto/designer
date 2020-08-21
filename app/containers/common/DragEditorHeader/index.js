@@ -8,6 +8,7 @@ import {
   Button,
   Tooltip,
   Radio,
+  Select,
 } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -68,6 +69,8 @@ const layout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 20 },
 };
+
+const { Option } = Select;
 
 export default memo(
   withRouter(({ history }) => {
@@ -173,7 +176,9 @@ export default memo(
             handlePublishZip(descText, versionText);
           }, 0);
         } catch (e) {
-          message.error('代码转换出错，请检查流程图（异常捕获容器必须3个容器均有流程块）');
+          message.error(
+            '代码转换出错，请检查流程图（异常捕获容器必须3个容器均有流程块）'
+          );
           console.log(e);
         }
       }
@@ -282,6 +287,15 @@ export default memo(
     };
 
     useEffect(() => {
+      axios
+        .get(api('taskDataNames'))
+        .then(res => {
+          return res ? res.data : { code: -1 };
+        })
+        .then(json => {
+          console.log(json);
+        })
+        .catch(err => console.log(err));
       event.addListener(START_POINT, handleRunPoint);
       return () => {
         event.removeListener(START_POINT, handleRunPoint);
@@ -700,6 +714,10 @@ export default memo(
               {versionTipVisible2 && (
                 <span className="versionTip">最新版本应大于当前版本</span>
               )}
+            </FormItem>
+            <FormItem label="当前版本号" className="versionInput">
+              <Select></Select>
+              <span style={{ paddingLeft: '12px' }}>{originVersion}</span>
             </FormItem>
           </Form>
         </Modal>

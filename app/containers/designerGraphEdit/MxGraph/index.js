@@ -1319,13 +1319,7 @@ const MxgraphContainer = useInjectContext(
                 }
               }
               updateGraphDataAction(graph);
-              // if (cellX < 0 || cellY - 30 < 0) {
-              //   graph.moveCells([cell], -cellX + middleWidth, -cellY + 30);
-              // } else if (cellX + cellWidth > parentWidth) {
-              //   graph.moveCells([cell], -cellX + middleWidth, 0);
-              // } else if (cellY + cellHeight > parentHeight) {
-              //   graph.moveCells([cell], 0, -cellY + 30);
-              // }
+
               console.log('父坐标', parentX, parentY);
               console.log('子坐标', cellX, cellY);
             }
@@ -1423,12 +1417,7 @@ const MxgraphContainer = useInjectContext(
           graphDataChildren.forEach(element => {
             const child = find_id(element.id, sender);
             const childGeo = child.getGeometry();
-            // childGeo.height = bounds.height;
             childGeo.width = bounds.width;
-            // if (child.value === 'catch') {
-
-            // } else if (child.value === 'finally') {
-            // }
             graph.moveCells([child], 0, bounds.height - previous.height);
 
             // [这个步骤不记录在撤销回复中]

@@ -383,7 +383,6 @@ export default memo(
             <Icon type={openFlag ? 'down' : 'up'} />
           </div>
           <Tags
-
             className="dragger-editor-container-output-tages"
             tagsData={tagsFromServer}
             selectedTags={selectedTags}
@@ -399,7 +398,7 @@ export default memo(
           />
         </div>
         <div
-        style={{ marginTop: -3 }}
+          style={{ marginTop: -3 }}
           className="dragger-editor-container-output-search"
           onMouseDown={e => e.stopPropagation()}
         >
@@ -427,11 +426,10 @@ export default memo(
           <pre
             className="dragger-editor-container-output-content"
             onMouseDown={e => e.stopPropagation()}
-            style={
-              {
-                //background: 'rgba(244,252,250,1)',
-              }
-            }
+            style={{
+              marginTop: 38,
+              //background: 'rgba(244,252,250,1)',
+            }}
           >
             {transformOutput}
           </pre>
