@@ -42,7 +42,7 @@ import { measureMemory } from 'vm';
 
 // liuqi
 import event from '../../../eventCenter';
-import { clickOneStepRun } from '../../../../utils/DebugUtils/clickOneStepRun';
+import { DEBUG_ONE_STEP } from '../../../../constants/actions/debugInfos';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -410,31 +410,11 @@ const BasicStatement = useInjectContext(props => {
                   <Icon
                     type="play-circle"
                     onClick={() => {
-                      const running = localStorage.getItem('running_mode');
-                      if (running !== 'cardsAll_pause') {
-                        if (running !== 'blockAll_pause') {
-                          if (running !== 'started') {
-                            if (running !== 'feedom') {
-                              console.log(running);
-                              return message.info('非暂停时不能进行单步调试');
-                            }
-                          }
-                        }
-                      }
-                      if (running === 'started') {
-                        localStorage.setItem('running_mode', 'started_one');
-                        event.emit(`one_started`);
-                      }
-                      if (running === 'cardsAll_pause') {
-                        localStorage.setItem('running_mode', 'cardsAll_one');
-                        event.emit(`one_started`);
-                      }
-                      if (running === 'blockAll_pause') {
-                        localStorage.setItem('running_mode', 'blockAll_one');
-                        event.emit(`one_started`);
-                      }
-
-                      clickOneStepRun(cards, id);
+                      event.emit(DEBUG_ONE_STEP, {
+                        isIgnore: card.ignore,
+                        cards,
+                        id,
+                      });
                     }}
                   />
                   <Icon

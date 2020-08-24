@@ -12,35 +12,55 @@ import HelpModel from './HelpModel';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
 import SaveConfirmModel from '../../designerGraphEdit/GraphItem/components/SaveConfirmModel';
 
-//liuqi
+// *新 DEBUG liuqi
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
-import event, {
-  PYTHOH_DEBUG_SERVER_START,
-  PYTHOH_DEBUG_BLOCK_ALL_RUN,
-  PYTHOH_DEBUG_BLOCK_ALL_RUN_END,
-  PYTHOH_DEBUG_CARDS_ALL_RUN,
-  PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE,
-} from '../../eventCenter';
+import {
+  getTempCenter,
+  setPause,
+  clearPause,
+  handleDebugBlockAllRun,
+  handleDebugCardsAllRun,
+} from '../../designerGraphEdit/RPAcore';
 import {
   runDebugServer,
   runAllStepByStepAuto,
   killTask,
 } from '../../../utils/DebugUtils/runDebugServer';
-import {
-  getTempCenter,
-  setPause,
-  clearPause,
-} from '../../designerGraphEdit/RPAcore';
-
-// *新 DEBUG liuqi
+import { clickOneStepRun } from '../../../utils/DebugUtils/clickOneStepRun';
+import event from '../../eventCenter';
 import {
   CHANGE_DEBUG_INFOS,
   DEBUG_RESET_ALL_INFO,
   DEBUG_OPEN_DEBUGSERVER,
   DEBUG_CLOSE_DEBUGSERVER,
+  DEBUG_RUN_STEP_BY_STEP,
+  //
+  DEBUG_SET_PAUSE,
+  DEBUG_CONTINUE,
+  DEBUG_CONTINUE_ONESTEP_NEXT,
+  DEBUG_RESET_CODE,
+  DEBUG_ONE_STEP,
+  //
   DEBUG_RUN_BLOCK_ALL_RUN,
+  DEBUG_RUN_BLOCK_CHANGE_STATE_RUNNING,
+  DEBUG_RUN_BLOCK_CHANGE_STATE_END,
+  //
+  DEBUG_RUN_CARDS_ALL_RUN,
+  DEBUG_RUN_CARDS_CHANGE_STATE_RUNNING,
+  DEBUG_RUN_CARDS_CHANGE_STATE_END,
+  //
+  DEBUG_SET_BTN_CAN_BE_PASUE,
+  //
+  DEBUG_ONE_STEP_RUN_BLOCK,
+  DEBUG_ONE_STEP_RUN_CARDS,
+  DEBUG_ONE_STEP_RUN_STARTED,
+  DEBUG_ONE_STEP_FINISHED,
+  DEBUG_ONE_STEP_FINISHED_BLOCK,
+  DEBUG_ONE_STEP_FINISHED_CARDS,
+  DEBUG_ONE_STEP_FINISHED_STARTED,
 } from '../../../constants/actions/debugInfos';
 import { changeDebugInfos } from '../../reduxActions';
+import { isFlowPredicate } from '../../../../../../Users/鲸/AppData/Local/Microsoft/TypeScript/3.9/node_modules/@babel/types/lib/index';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -192,10 +212,6 @@ export default memo(({ history, tag }) => {
    *
    */
 
-  const currentPagePosition = useSelector(
-    state => state.temporaryvariable.currentPagePosition
-  );
-
   // 用来管理pythonDebug的状态
   const [pyDebugServerState, setPyDebugServerState] = useState({
     type: '启动debug模式',
@@ -231,55 +247,100 @@ export default memo(({ history, tag }) => {
   });
   const [onePause, setOnePause] = useState(false);
 
+  // *新版DEBUG
+  //
+  // 按钮在下侧面板中，由于下侧面板没有办法长时间驻留
+  // 所以DEBUG的服务器保持在菜单栏
+  //
+  // 1.DEBUG服务器随着跳转到项目界面，会销毁
+  // 2.DEBUG服务器不会因为切换块级而销毁，但是生成的代码和指针会充值
+  //
+
   // 流程快代码转义
   const transformProcessToPython = useTransformProcessToPython();
 
   useEffect(() => {
-    // event.addListener(
-    //   PYTHOH_DEBUG_SERVER_START,
-    //   handleRunPythonDebugServerStart
-    // );
-
-    // event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE, setContinueBtn);
-    // event.addListener(`one_started`, disabledBtn);
-    // event.addListener(`one_finished`, abledBtn);
-    // event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_END, setPuseBtn);
-
-    // *新版DEBUG
     event.addListener(DEBUG_OPEN_DEBUGSERVER, debug_switch_open);
     event.addListener(DEBUG_CLOSE_DEBUGSERVER, debug_switch_close);
-    event.addListener(DEBUG_RUN_BLOCK_ALL_RUN, debug_run_block_all_run);
+    event.addListener(DEBUG_RUN_STEP_BY_STEP, debug_run_stepByStep);
+    event.addListener(DEBUG_RUN_BLOCK_ALL_RUN, debug_continueRun_Block);
+    event.addListener(DEBUG_RUN_CARDS_ALL_RUN, debug_continueRun_Cards);
+    event.addListener(DEBUG_SET_PAUSE, debug_setPause);
+    event.addListener(DEBUG_CONTINUE, debug_continue);
+    event.addListener(
+      DEBUG_CONTINUE_ONESTEP_NEXT,
+      debug_continueRun_oneStep_next
+    );
+    event.addListener(DEBUG_RESET_CODE, resetPythonCode);
+    event.addListener(DEBUG_ONE_STEP, oneStepRun);
+    event.addListener(DEBUG_ONE_STEP_FINISHED, oneStepFinished);
 
     return () => {
-      // event.removeListener(
-      //   PYTHOH_DEBUG_SERVER_START,
-      //   handleRunPythonDebugServerStart
-      // );
-      // event.removeListener(`one_started`, disabledBtn);
-      // event.removeListener(`one_finished`, abledBtn);
-      // event.removeListener(PYTHOH_DEBUG_BLOCK_ALL_RUN_END, setPuseBtn);
-
-      // *新版DEBUG
       event.removeListener(DEBUG_OPEN_DEBUGSERVER, debug_switch_open);
       event.removeListener(DEBUG_CLOSE_DEBUGSERVER, debug_switch_close);
-      event.removeListener(DEBUG_RUN_BLOCK_ALL_RUN, debug_run_block_all_run);
+      event.removeListener(DEBUG_RUN_STEP_BY_STEP, debug_run_stepByStep);
+      event.removeListener(DEBUG_RUN_BLOCK_ALL_RUN, debug_continueRun_Block);
+      event.removeListener(DEBUG_RUN_CARDS_ALL_RUN, debug_continueRun_Cards);
+      event.removeListener(DEBUG_SET_PAUSE, debug_setPause);
+      event.removeListener(DEBUG_CONTINUE, debug_continue);
+      event.removeListener(
+        DEBUG_CONTINUE_ONESTEP_NEXT,
+        debug_continueRun_oneStep_next
+      );
+      event.removeListener(DEBUG_RESET_CODE, resetPythonCode);
+      event.removeListener(DEBUG_ONE_STEP, oneStepRun);
+      event.removeListener(DEBUG_ONE_STEP_FINISHED, oneStepFinished);
 
-      localStorage.setItem('debug', '关闭');
       // 当返回时，自动杀死debug进程
       killTask();
     };
   }, []);
 
-  // *新版DEBUG
   // 开关
   const debug_switch = useSelector(state => state.debug.switch);
   const debug_switch_ref = useRef();
   debug_switch_ref.current = debug_switch;
   // 暂停
   const debug_pause = useSelector(state => state.debug.pause);
+  // 运行中状态
+  const debug_runningState = useSelector(state => state.debug.runningState);
+  const debug_runningState_ref = useRef();
+  debug_runningState_ref.current = debug_runningState;
+
   // 数据仓库
   const debug_dataStore = useSelector(state => state.debug.dataStore);
-  // DEBUG服务是否启动
+  // 当前选中的流程块
+  const checkedGraphBlockId = useSelector(
+    state => state.grapheditor.checkedGraphBlockId
+  );
+  const checkedGraphBlockId_ref = useRef();
+  checkedGraphBlockId_ref.current = checkedGraphBlockId;
+  // 当前层级
+  const currentPagePosition = useSelector(
+    state => state.temporaryvariable.currentPagePosition
+  );
+  const currentPagePosition_ref = useRef();
+  currentPagePosition_ref.current = currentPagePosition;
+
+  // 00 切换层级时，则重置代码
+  useEffect(() => {
+    if (!debug_switch) return;
+    resetPythonCode();
+  }, [currentPagePosition]);
+
+  // 00-1 重置代码
+  const resetPythonCode = () => {
+    if (currentPagePosition_ref.current === 'editor') {
+      console.log(transformProcessToPython());
+      console.log(getTempCenter());
+      changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_END);
+    } else if (currentPagePosition_ref.current === 'block') {
+      console.log(transformProcessToPython());
+      console.log(getTempCenter());
+      changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END);
+    }
+    message.info('已重新生成当前页的代码,并将指针指向第一条');
+  };
 
   // 01 启动DEBUG服务
   const debug_switch_open = () => {
@@ -295,65 +356,121 @@ export default memo(({ history, tag }) => {
     if (debug_switch_ref.current === true) {
       killTask();
       // 恢复原有的所有配置
-      changeDebugInfos(DEBUG_RESET_ALL_INFO,{})
+      changeDebugInfos(DEBUG_RESET_ALL_INFO, {});
     } else {
       message.info('稍等，正在关闭中...');
     }
   };
 
   // 03 流程图级的按序调试
-  const debug_run_block_all_run = () => {
-    changeDebugInfos(DEBUG_RUN_BLOCK_ALL_RUN, {});
+  const debug_run_stepByStep = () => {
     console.log(transformProcessToPython());
     console.log(`缓存代码池\n`, getTempCenter());
-  };
 
-  const setPuseBtn = () => {
-    setPauseState({
-      running: false,
-      pause: true,
-    });
-  };
-
-  const disabledBtn = () => {
-    setOnePause(true);
-  };
-
-  const abledBtn = () => {
-    setOnePause(false);
-  };
-
-  useEffect(() => {
-    if (!pauseState.running) return;
-    resetPythonCode();
-    message.info(
-      '由于切换了层级，已重新生成当前页的代码,并将指针指向第一条',
-      'resetPythonCode'
-    );
-  }, [currentPagePosition]);
-
-  const resetPythonCode = () => {
-    if (currentPagePosition === 'editor') {
-      //setPauseState({ running: true, pause: false });
-      console.log(transformProcessToPython());
-      console.log(getTempCenter());
-      localStorage.setItem('running_mode', 'blockAll_running');
-      //event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
-    } else if (currentPagePosition === 'block') {
-      //setPauseState({ running: true, pause: false });
-      console.log(transformProcessToPython());
-      console.log(getTempCenter());
-      localStorage.setItem('running_mode', 'cardsAll_running');
-      //event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+    // 块级运行
+    if (currentPagePosition_ref.current === 'editor') {
+      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
+      changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_RUNNING); // 'blockAll_running'
+      handleDebugBlockAllRun();
     }
-    message.info(
-      '已重新生成当前页的代码,并将指针指向第一条',
-      'resetPythonCode'
-    );
+    // 原子能力级运行
+    else if (currentPagePosition_ref.current === 'block') {
+      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
+      changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_RUNNING); // 'cardsAll_running'
+      handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+    }
   };
 
-  const setContinueBtn = () => {
-    setPauseState({ running: true, pause: true });
+  // 03-0 单点下一步
+  const debug_continueRun_oneStep_next = () => {
+    const running = debug_runningState_ref.current;
+
+    clearPause();
+    if (running === 'blockAll_pasue') {
+      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
+      changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_RUNNING); // 'blockAll_running'
+      handleDebugBlockAllRun();
+    } else if (running === 'cardsAll_pause') {
+      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
+      changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_RUNNING); // 'cardsAll_running'
+      handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+    }
+    setPause();
+  };
+
+  // 03-1 继续下一步
+  const debug_continueRun_Block = () => {
+    handleDebugBlockAllRun();
+  };
+
+  // 03-2 继续下一步
+  const debug_continueRun_Cards = () => {
+    handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+  };
+
+  // 03-3 暂停
+  const debug_setPause = () => {
+    setPause();
+  };
+
+  // 03-4 继续
+  const debug_continue = () => {
+    clearPause();
+    const running = debug_runningState_ref.current;
+    console.log(running);
+    if (running === 'blockAll_pasue' || running === 'blockAll_running') {
+      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
+      changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_RUNNING);
+      debug_continueRun_Block();
+    }
+    if (running === 'cardsAll_pause' || running === 'cardsAll_running') {
+      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
+      changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_RUNNING);
+      debug_continueRun_Cards();
+    }
+    setPauseState({ running: true, pause: false });
+  };
+
+  // 04 单步发送
+  const oneStepRun = data => {
+    const { isIgnore, cards, id } = data;
+    const running = debug_runningState_ref.current;
+
+    if (debug_switch_ref.current === false) {
+      return message.info('调试模式未打开');
+    }
+
+    if (running !== 'cardsAll_pause') {
+      if (running !== 'blockAll_pause') {
+        if (running !== 'started') {
+          if (running !== 'feedom') {
+            console.log(running);
+            return message.info('非暂停时不能进行单步调试');
+          }
+        }
+      }
+    }
+    if (running === 'blockAll_pause') {
+      changeDebugInfos(DEBUG_ONE_STEP_RUN_BLOCK, {});
+    } else if (running === 'cardsAll_pause') {
+      changeDebugInfos(DEBUG_ONE_STEP_RUN_CARDS, {});
+    } else if (running === 'started') {
+      changeDebugInfos(DEBUG_ONE_STEP_RUN_STARTED, {});
+    }
+
+    clickOneStepRun(cards, id);
+  };
+
+  // 05 单步结束
+  const oneStepFinished = () => {
+    const running = debug_runningState_ref.current;
+    if (running === 'blockAll_one') {
+      changeDebugInfos(DEBUG_ONE_STEP_FINISHED_BLOCK, {});
+    } else if (running === 'cardsAll_one') {
+      changeDebugInfos(DEBUG_ONE_STEP_FINISHED_CARDS, {});
+    } else if (running === 'started_one') {
+      changeDebugInfos(DEBUG_ONE_STEP_FINISHED_STARTED, {});
+    }
   };
 
   return (

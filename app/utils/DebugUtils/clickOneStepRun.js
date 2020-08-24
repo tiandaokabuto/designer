@@ -5,6 +5,8 @@ import { transformBlockToCode } from '../../containers/designerGraphBlock/RPAcor
 import { fetchCard, resetTemp } from './fetchCard';
 import { sendPythonCodeByLine } from './runDebugServer';
 
+import store from '@/store';
+
 export const clickOneStepRun = (cards, id) => {
   resetTemp();
 
@@ -23,9 +25,9 @@ export const clickOneStepRun = (cards, id) => {
   console.log(`【\n=>\\n 且 " => \" 后的python代码】\n`, line);
 
 
-  //line = 'import GUI'
+  const switchOn = store.getState().debug.switch;
 
-  if (localStorage.getItem('debug') === '关闭') {
+  if (!switchOn) {
     return message.warning('未打开debug模式');
   }
 

@@ -11,25 +11,12 @@ import Tags from './Tags';
 import ZoomToolBar from './ZoomToolBar';
 import useGetDownloadPath from '../../common/DragEditorHeader/useHooks/useGetDownloadPath';
 
-import {
-  handleDebugBlockAllRun,
-  handleDebugCardsAllRun,
-} from '../../designerGraphEdit/RPAcore';
-
 import DebugBtn from './DebugBtn/DebugBtn';
 
 import './OutputPanel.scss';
 
 // liuqi
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
-import event, {
-  PYTHON_OUTPUT,
-  PYTHOH_DEBUG_BLOCK_ALL_RUN,
-  PYTHOH_DEBUG_CARDS_ALL_RUN,
-  PYTHOH_DEBUG_SERVER_START,
-  PYTHOH_DEBUG_BLOCK_ALL_RUN_END,
-  PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE,
-} from '../../eventCenter';
 import {
   runDebugServer,
   runAllStepByStepAuto,
@@ -42,11 +29,16 @@ import {
 } from '../../designerGraphEdit/RPAcore';
 
 // liuqi-new
+import event from '../../eventCenter';
 import { changeDebugInfos } from '../../reduxActions';
 import {
   DEBUG_OPEN_DEBUGSERVER,
   DEBUG_CLOSE_DEBUGSERVER,
-  DEBUG_RUN_BLOCK_ALL_RUN
+  DEBUG_RUN_STEP_BY_STEP,
+  DEBUG_SET_PAUSE,
+  DEBUG_CONTINUE,
+  DEBUG_CONTINUE_ONESTEP_NEXT,
+  DEBUG_RESET_CODE,
 } from '../../../constants/actions/debugInfos';
 
 const fs = require('fs');
@@ -168,34 +160,16 @@ export default memo(
         originKey = 0;
         allLogMessage.value = '';
       };
-      event.addListener(PYTHON_OUTPUT, handlePythonOutput);
+      // DEBUG行更新
+      //event.addListener(DEBUG_LINE_OUTPUT, handlePythonOutput);
+      // DEBUG变量池更新
+      //event.addListener(DEBUG_VARIABLE_POOL, handlePythonOutput);
+
       event.addListener('clear_output', handleClearOutput);
-
-      // 第一层的全体调试
-      event.addListener(PYTHOH_DEBUG_BLOCK_ALL_RUN, blockAllNext);
-      // 第二层的全体调试
-      event.addListener(PYTHOH_DEBUG_CARDS_ALL_RUN, cardsAllNext);
-
       return () => {
-        event.removeListener(PYTHON_OUTPUT, handlePythonOutput);
         event.removeListener('clear_output', handleClearOutput);
-        event.removeListener(PYTHOH_DEBUG_BLOCK_ALL_RUN, blockAllNext);
-        event.removeListener(PYTHOH_DEBUG_CARDS_ALL_RUN, cardsAllNext);
       };
     }, []);
-
-    const checkedGraphBlockId = useSelector(
-      state => state.grapheditor.checkedGraphBlockId
-    );
-
-    // 处理第一层调试
-    const blockAllNext = () => {
-      handleDebugBlockAllRun();
-    };
-    // 处理第二层调试
-    const cardsAllNext = () => {
-      handleDebugCardsAllRun(checkedGraphBlockId);
-    };
 
     useEffect(() => {
       updateExecuteOutput(output);
@@ -349,7 +323,7 @@ export default memo(
     // *新！ DEBUG功能
     // DEBUG服务是否启动
     const debug_switch = useSelector(state => state.debug.switch);
-    const debug_pause = useSelector(state => state.debug.pause);
+    const debug_pause = useSelector(state => state.debug.pasue);
     const debug_running = useSelector(state => state.debug.running);
     const debug_oneRunning = useSelector(state => state.debug.oneRunning);
     const debug_runningState = useSelector(state => state.debug.runningState);
@@ -455,42 +429,52 @@ export default memo(
                 {debug_oneRunning === true ? (
                   <DebugBtn
                     labelText="正在进行单步调试"
-                    iconType="stop"
+                    iconType="loading"
                     disabled={true}
                   />
                 ) : (
                   <span>
                     {/** 没有操作时，可以进行按序调试 */}
                     {debug_running === false ? (
-                      <DebugBtn labelText="按序调试" iconType="play-circle" click={()=>{
-                        if (currentPagePosition === 'editor') {
-                          console.log(DEBUG_RUN_BLOCK_ALL_RUN);
-                          event.emit(DEBUG_RUN_BLOCK_ALL_RUN);
-
-                          //event.emit(DEBUG_RUN_BLOCK_ALL_RUN);
-                          //localStorage.setItem('running_mode', 'blockAll_running');
-                        } else if (currentPagePosition === 'block') {
-                          // console.log(DEBUG_RUN_BLOCK_ALL_RUN);
-                          // event.emit(DEBUG_RUN_BLOCK_ALL_RUN);
-
-
-                          // setPauseState({ running: true, pause: false });
-                          // console.log(transformProcessToPython());
-                          // console.log(getTempCenter());
-                          // localStorage.setItem('running_mode', 'cardsAll_running');
-                          // event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
-                        }
-                      }}/>
+                      <DebugBtn
+                        labelText="从头按序调试"
+                        iconType="play-circle"
+                        click={() => {
+                          event.emit(DEBUG_RUN_STEP_BY_STEP);
+                        }}
+                      />
                     ) : (
                       <span>
-                        {debug_pause === true ? (
-                          <DebugBtn labelText="暂停" iconType="pause-circle" />
+                        {debug_pause === false ? (
+                          <DebugBtn
+                            labelText="暂停"
+                            iconType="pause-circle"
+                            click={() => {
+                              event.emit(DEBUG_SET_PAUSE);
+                            }}
+                          />
                         ) : (
                           <span>
-                            <DebugBtn labelText="继续" iconType="play-circle" />
+                            <DebugBtn
+                              labelText="继续"
+                              iconType="play-circle"
+                              click={() => {
+                                event.emit(DEBUG_CONTINUE);
+                              }}
+                            />
+                            <DebugBtn
+                              labelText="下一步"
+                              iconType="vertical-align-bottom"
+                              click={() => {
+                                event.emit(DEBUG_CONTINUE_ONESTEP_NEXT);
+                              }}
+                            />
                             <DebugBtn
                               labelText="重新生成代码"
                               iconType="issues-close"
+                              click={() => {
+                                event.emit(DEBUG_RESET_CODE);
+                              }}
                             />
                           </span>
                         )}

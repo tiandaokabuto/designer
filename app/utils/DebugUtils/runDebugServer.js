@@ -5,12 +5,18 @@ import event, {
   PYTHOH_DEBUG_BLOCK_ALL_RUN,
   PYTHOH_DEBUG_CARDS_ALL_RUN,
 } from '../../containers/eventCenter';
+import {message} from 'antd';
 
 // *新DEBUG
 import {
   DEBUG_OPEN_DEBUGSERVER,
   DEBUG_CLOSE_DEBUGSERVER,
+  DEBUG_RUN_BLOCK_ALL_RUN,
+  DEBUG_RUN_CARDS_ALL_RUN,
+  DEBUG_ONE_STEP_FINISHED,
 } from '../../constants/actions/debugInfos';
+
+import store from '@/store';
 
 import { changeDebugInfos } from '../../containers/reduxActions';
 
@@ -60,6 +66,7 @@ export const runDebugServer = async () => {
   });
 
   socket.on('error', function(err) {
+    message.warning("遇到错误");
     console.log(err);
   });
 
@@ -82,33 +89,31 @@ export const runDebugServer = async () => {
       });
       event.emit(PYTHON_OUTPUT, log);
     } catch (e) {
-      console.clear();
+      //console.clear();
       console.log(e);
     }
 
     // event.emit(PYTHON_GO_NEXT_STEP, 'block');
 
-    const running = localStorage.getItem('running_mode');
-    // if 现在的运行模式是 第一层 自动单步
+    //const running = localStorage.getItem('running_mode');
+    const {
+      debug: { runningState },
+    } = store.getState();
+    // 当前的运行状态
+    const running = runningState
+
+    // if 现在的运行模式是
     if (running === 'blockAll_running') {
-      event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
+      // 继续通知下一步
+      event.emit(DEBUG_RUN_BLOCK_ALL_RUN);
     } else if (running === 'cardsAll_running') {
-      event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+      event.emit(DEBUG_RUN_CARDS_ALL_RUN);
     } else if (
       running === 'started_one' ||
       running === 'cardsAll_one' ||
       running === 'blockAll_one'
     ) {
-      event.emit('one_finished'); // 单步跑完，通知结束
-      if (running === 'started_one') {
-        localStorage.setItem('running_mode', 'started');
-      }
-      if (running === 'cardsAll_one') {
-        localStorage.setItem('running_mode', 'cardsAll_pause');
-      }
-      if (running === 'blockAll_one') {
-        localStorage.setItem('running_mode', 'blockAll_pause');
-      }
+      event.emit(DEBUG_ONE_STEP_FINISHED); // 单步跑完，通知结束
     }
 
     try {
