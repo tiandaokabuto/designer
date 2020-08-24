@@ -8,6 +8,11 @@ export const CHANGE_DEBUG_INFOS = 'change_debug_infos';
  *
  * ps: 虽然DEBUG按钮在下方OutputPanel，但不是在那里实现的哦
  */
+
+// 恢复default配置
+export const DEBUG_RESET_ALL_INFO = 'debug_reset_all_info';
+
+
 // 打开DEBUG服务器
 export const DEBUG_OPEN_DEBUGSERVER = 'debug_open_debugServer';
 // 关闭DEBUG服务器

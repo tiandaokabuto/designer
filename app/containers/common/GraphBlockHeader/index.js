@@ -34,6 +34,8 @@ import {
 
 // *新 DEBUG liuqi
 import {
+  CHANGE_DEBUG_INFOS,
+  DEBUG_RESET_ALL_INFO,
   DEBUG_OPEN_DEBUGSERVER,
   DEBUG_CLOSE_DEBUGSERVER,
   DEBUG_RUN_BLOCK_ALL_RUN,
@@ -292,6 +294,8 @@ export default memo(({ history, tag }) => {
   const debug_switch_close = () => {
     if (debug_switch_ref.current === true) {
       killTask();
+      // 恢复原有的所有配置
+      changeDebugInfos(DEBUG_RESET_ALL_INFO,{})
     } else {
       message.info('稍等，正在关闭中...');
     }
