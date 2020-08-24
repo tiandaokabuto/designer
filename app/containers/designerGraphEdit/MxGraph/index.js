@@ -625,8 +625,8 @@ const MxgraphContainer = useInjectContext(
         if (sender.isMouseDown) {
           if (
             sender.getSelectionCell() &&
-            (sender.getSelectionCell().value === 'catch' ||
-              sender.getSelectionCell().value === 'finally')
+            (sender.getSelectionCell().value === '异常处理' ||
+              sender.getSelectionCell().value === '结束')
           ) {
             sender.isMouseDown = false;
             graph.refresh();
@@ -1033,9 +1033,9 @@ const MxgraphContainer = useInjectContext(
 
         // const previous = graphDataRef.current;
 
-        if(evt.properties.cells>0){
-          if(!evt.properties.cells[0].id ){
-            return "妈的，没有id";
+        if (evt.properties.cells > 0) {
+          if (!evt.properties.cells[0].id) {
+            return '妈的，没有id';
           }
         }
 
@@ -1222,18 +1222,20 @@ const MxgraphContainer = useInjectContext(
 
               // [这个步骤不记录在撤销回复中]
               let temp = undoAndRedoRef.current;
-              if(temp.redoSteps.length>0){
-                if(temp.redoSteps[temp.redoSteps.length-1][0].type==="cellsAdded_By_redo"){
+              if (temp.redoSteps.length > 0) {
+                if (
+                  temp.redoSteps[temp.redoSteps.length - 1][0].type ===
+                  'cellsAdded_By_redo'
+                ) {
                   // 假如是恢复出来的，不要删
                   //message.warning("我没删")
-                  console.log("key 我没删哦",temp)
-                }else{
+                  console.log('key 我没删哦', temp);
+                } else {
                   temp.undoSteps.pop();
                 }
-              }else{
+              } else {
                 temp.undoSteps.pop();
               }
-
 
               /**
                * 1.循环自动扩容，直接判断lastHeight是否比父级高度大即可
@@ -1241,14 +1243,14 @@ const MxgraphContainer = useInjectContext(
                */
 
               // 判断是否try，如果是try的话，catch和finally也要向下位移
-              if (newParent.value === 'try') {
+              if (newParent.value === '异常捕获') {
                 // catch和finally的高的和
                 let catchAndFinallyHeight = 0;
                 // graphData里面
                 const graphDataChildren = graphDataRef.current.nodes.filter(
                   item =>
                     item.parent === newParent.id &&
-                    (item.label === 'finally' || item.label === 'catch')
+                    (item.label === '结束' || item.label === '异常处理')
                 );
                 const cellArr = graphDataChildren.map(element => {
                   const child = find_id(element.id, sender);
@@ -1277,7 +1279,7 @@ const MxgraphContainer = useInjectContext(
                   const oldParentHeight = parentGeometry.height;
                   parentGeometry.height = lastHeight + cellHeight + 20;
                   graph.resizeCells([newParent], parentGeometry);
-                  if (newParent.value === 'catch') {
+                  if (newParent.value === '异常处理') {
                     // catch变高之后的操作
                     const catchParentGeo = newParent.parent.getGeometry();
                     catchParentGeo.height =
@@ -1288,7 +1290,7 @@ const MxgraphContainer = useInjectContext(
                     const graphDataSibilling = graphDataRef.current.nodes.find(
                       item =>
                         item.parent === newParent.parent.id &&
-                        item.label === 'finally'
+                        item.label === '结束'
                     );
                     const sibiling = find_id(graphDataSibilling.id, sender);
 
@@ -1304,7 +1306,7 @@ const MxgraphContainer = useInjectContext(
 
                     // 修改父级try的高度
                     graph.resizeCells([newParent.parent], catchParentGeo);
-                  } else if (newParent.value === 'finally') {
+                  } else if (newParent.value === '结束') {
                     // finally变高之后的操作
                     const finallyParentGeo = newParent.parent.getGeometry();
                     finallyParentGeo.height =
@@ -1317,13 +1319,7 @@ const MxgraphContainer = useInjectContext(
                 }
               }
               updateGraphDataAction(graph);
-              // if (cellX < 0 || cellY - 30 < 0) {
-              //   graph.moveCells([cell], -cellX + middleWidth, -cellY + 30);
-              // } else if (cellX + cellWidth > parentWidth) {
-              //   graph.moveCells([cell], -cellX + middleWidth, 0);
-              // } else if (cellY + cellHeight > parentHeight) {
-              //   graph.moveCells([cell], 0, -cellY + 30);
-              // }
+
               console.log('父坐标', parentX, parentY);
               console.log('子坐标', cellX, cellY);
             }
@@ -1412,27 +1408,21 @@ const MxgraphContainer = useInjectContext(
           : undefined;
         const cells = sender.getModel().cells;
         // 对异常捕获块进行尺寸重置
-        if (cell.value === 'try') {
+        if (cell.value === '异常捕获') {
           const graphDataChildren = graphDataRef.current.nodes.filter(
             item =>
               item.parent === cell.id &&
-              (item.label === 'finally' || item.label === 'catch')
+              (item.label === '结束' || item.label === '异常处理')
           );
           graphDataChildren.forEach(element => {
             const child = find_id(element.id, sender);
             const childGeo = child.getGeometry();
-            // childGeo.height = bounds.height;
             childGeo.width = bounds.width;
-            // if (child.value === 'catch') {
-
-            // } else if (child.value === 'finally') {
-            // }
             graph.moveCells([child], 0, bounds.height - previous.height);
 
             // [这个步骤不记录在撤销回复中]
             let temp = undoAndRedoRef.current;
             temp.undoSteps.pop();
-
 
             graph.resizeCells([child], childGeo);
           });
@@ -1530,7 +1520,7 @@ const MxgraphContainer = useInjectContext(
             obj._id = item.id;
             obj._parent = item.parent !== undefined ? item.parent : '1';
             obj._style = GROUP_NODE.style;
-            obj._value = 'try';
+            obj._value = '异常捕获';
             obj._vertex = '1';
             obj.mxGeometry = {};
             obj.mxGeometry._x = String(item.x);
@@ -1543,7 +1533,7 @@ const MxgraphContainer = useInjectContext(
             obj._id = item.id;
             obj._parent = item.parent !== undefined ? item.parent : '1';
             obj._style = GROUP_NODE.style + 'resizable=0';
-            obj._value = 'catch';
+            obj._value = '异常处理';
             obj._vertex = '1';
             obj.mxGeometry = {};
             obj.mxGeometry._x = String(item.x);
@@ -1556,7 +1546,7 @@ const MxgraphContainer = useInjectContext(
             obj._id = item.id;
             obj._parent = item.parent !== undefined ? item.parent : '1';
             obj._style = GROUP_NODE.style + 'resizable=0';
-            obj._value = 'finally';
+            obj._value = '结束';
             obj._vertex = '1';
             obj.mxGeometry = {};
             obj.mxGeometry._x = String(item.x);
@@ -1843,13 +1833,13 @@ const MxgraphContainer = useInjectContext(
           // console.log(`ok`, importableCells[0], graphDataRef.current);
           if (
             importableCells[0].value === '开始' &&
-            Action_findNode('nodes.label', '开始', graphDataRef.current)
+            Action_findNode('nodes.label', 'start-node', graphDataRef.current)
           )
             return message.info('开始块只能有一个');
 
           if (
-            importableCells[0].value === '结束' &&
-            Action_findNode('nodes.label', '结束', graphDataRef.current)
+            importableCells[0].value === '<span>结束</span>' &&
+            Action_findNode('nodes.label', 'end-node', graphDataRef.current)
           )
             return message.info('结束块只能有一个');
 
@@ -1908,13 +1898,13 @@ const MxgraphContainer = useInjectContext(
                   );
                   select = clones;
                 } else if (importableCells.length > 0) {
-                  if (importableCells[0].value === 'try') {
+                  if (importableCells[0].value === '异常捕获') {
                     select = graph.importCells(importableCells, x, y, target);
                     const tryCells = cloneDeep(importableCells);
-                    tryCells[0].value = 'catch';
+                    tryCells[0].value = '异常处理';
                     tryCells[0].geometry.height = 100;
                     const finalCells = cloneDeep(importableCells);
-                    finalCells[0].value = 'finally';
+                    finalCells[0].value = '结束';
                     finalCells[0].geometry.height = 100;
                     select = select.concat(
                       graph.importCells(tryCells, x, y, target),
@@ -2022,13 +2012,13 @@ const MxgraphContainer = useInjectContext(
                           },
                         ],
                       });
-                    } else if (item.value === 'catch') {
+                    } else if (item.value === '异常处理') {
                       item.geometry.x = 0;
                       item.geometry.y = 200;
                       item.style += 'resizable=0';
                       select[0].insert(item);
                       // item.parent = select[0];
-                    } else if (item.value === 'finally') {
+                    } else if (item.value === '结束') {
                       // item.parent = select[0];
                       item.geometry.x = 0;
                       item.geometry.y = 300;
@@ -2175,12 +2165,11 @@ const MxgraphContainer = useInjectContext(
                   let cell = graph.getSelectionCell();
                   let temp = undoAndRedoRef.current;
 
-                  if (cell.value === 'try') {
+                  if (cell.value === '异常捕获') {
                     temp.undoSteps.pop();
                     temp.undoSteps.pop();
                     temp.undoSteps.pop();
-                  }
-                   else {
+                  } else {
                     temp.undoSteps.pop();
                     //temp.undoSteps.pop();
                   }

@@ -32,14 +32,14 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
       });
     };
 
-    if (cells[0].value === 'try') {
+    if (cells[0].value === '异常捕获') {
       const sons = findSameLevelCell(graphData, cells[0].id);
       checkSonsHasProcess(sons);
       if (error)
         return message.info(
           '不能删除非空的容器，请先删除内部流程块或拖出内部流程块后删除'
         );
-    } else if (cells[0].value === 'catch' || cells[0].value === 'finally') {
+    } else if (cells[0].value === '异常处理' || cells[0].value === '结束') {
       return message.info('try和catch块不能单独删除');
     }
 

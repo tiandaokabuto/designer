@@ -274,6 +274,7 @@ const transformBlockToCodeImpl = (
         }
         break;
       case 7: // try catch
+        console.log(statement);
         transformCatchStatement(padding, statement, result);
         ignore = statement.ignore ? '#' : '';
         if (!statement.tryChildren.length) {
@@ -293,7 +294,11 @@ const transformBlockToCodeImpl = (
           }
         }
 
-        result.output += `${padding}${ignore}except Exception as error:\n`;
+        result.output += `${padding}${ignore}except Exception as ${
+          statement.properties.required.length
+            ? statement.properties.required[0].value
+            : 'error'
+        }:\n`;
         if (!statement.catchChildren.length) {
           result.output += `${paddingStart(depth + 1)}${ignore}pass\n`;
         } else {

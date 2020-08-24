@@ -229,8 +229,8 @@ export const getSibilings = (graphData, cellId, parentId) => {
   const sibilings = nodes.filter(
     item =>
       item.parent === parentId &&
-      item.label !== 'catch' &&
-      item.label !== 'finally'
+      item.label !== '异常处理' &&
+      item.label !== '结束'
   );
 
   return sibilings;

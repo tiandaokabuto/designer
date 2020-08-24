@@ -96,12 +96,11 @@ function getShape(style, value) {
   let type = false;
 
   if (value === '开始') return 'start';
-  if (value === '结束') return 'end';
-  if (value === 'try') return 'try';
-  if (value === 'catch') return 'catch';
-  if (value === 'finally') return 'finally';
+  if (value === '<span>结束</span>') return 'end';
+  if (value === '异常捕获') return 'try';
+  if (value === '异常处理') return 'catch';
+  if (value === '结束') return 'finally';
   if (value.indexOf('group-content') > -1) return 'group';
-
 
   typeList.forEach(shape => {
     if (style.indexOf(`${shape}`) !== -1) {

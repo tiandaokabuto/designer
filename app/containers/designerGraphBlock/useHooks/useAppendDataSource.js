@@ -7,7 +7,7 @@ export default param => {
   const [missionDataSource, setMissionDataSource] = useState([]);
   if (!missionDataSource.length && param.enName === 'name') {
     axios
-      .get(api('getControllerParam'))
+      .get(api('variableNames'))
       .then(res => res.data)
       .then(json => {
         if (json.data.length > 0) {

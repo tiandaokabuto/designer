@@ -90,8 +90,8 @@ export default () => {
         return result;
       } else if (terminal.shape != null && terminal.shape.bounds != null) {
         if (
-          terminal.cell.value === 'catch' ||
-          terminal.cell.value === 'finally'
+          terminal.cell.value === '异常处理' ||
+          terminal.cell.value === '结束'
         ) {
           // console.log(terminal.cell.parent.m)
           return null;

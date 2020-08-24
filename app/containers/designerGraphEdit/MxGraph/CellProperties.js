@@ -26,7 +26,7 @@ export const START_NODE = {
 };
 
 export const END_NODE = {
-  label: '结束',
+  label: '<span>结束</span>',
   style:
     'ellipse;shape=doubleEllipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center;',
   width: 80,

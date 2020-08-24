@@ -405,6 +405,7 @@ export default memo(({ history, tag }) => {
           }
           return <span key={index}>{tool}</span>;
         })}
+        {/**
         <div
           className="debug-btn"
           style={{ WebkitAppRegion: 'no-drag', display: 'block' }}
@@ -576,6 +577,7 @@ export default memo(({ history, tag }) => {
             ''
           )}
         </div>
+        */}
       </div>
       <div
         className="graphblock-header-title"
