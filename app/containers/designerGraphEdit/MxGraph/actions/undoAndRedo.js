@@ -98,7 +98,7 @@ function goHandleUndo_real(
     }
 
     if (undoStep.type === 'moveParent') {
-      console.clear();
+      //console.clear();
       console.log(`父子移动`, undoStep);
 
       graph.removeCells([find_id(undoStep.change.id, graph)]);
@@ -165,7 +165,7 @@ function goHandleUndo_real(
             // );
 
             // select = graph.importCells(importableCells, x, y, target);
-            console.clear();
+            //console.clear();
             console.log(undoStep.change.cell);
 
             if (!undoStep.change.children) return;
@@ -206,7 +206,7 @@ function goHandleUndo_real(
           }, 0);
         } else {
           setTimeout(() => {
-            console.clear();
+            //console.clear();
             console.log(undoStep, undoStep.change.parent);
             graph.insertVertex(
               // undoStep.change.parent
@@ -333,7 +333,7 @@ function goHandleRedo_real(
     }
 
     if (redoStep.type === 'moveParent') {
-      console.clear();
+      //console.clear();
       console.log(`父子移动`, redoStep);
 
       graph.removeCells([find_id(redoStep.change.id, graph)]);
@@ -401,7 +401,7 @@ function goHandleRedo_real(
             // );
 
             // select = graph.importCells(importableCells, x, y, target);
-            console.clear();
+            //console.clear();
             console.log(redoStep.change.cell);
 
             if (!redoStep.change.children) return;

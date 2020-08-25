@@ -22,17 +22,30 @@ import { updateEditorBlockPythonCode } from '../../reduxActions';
 
 // liuqi
 import { sendPythonCodeByLine } from '../../../utils/DebugUtils/runDebugServer';
-import event, {
-  PYTHOH_DEBUG_BLOCK_ALL_RUN_END,
-  PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE,
-} from '../../eventCenter';
+import event from '../../eventCenter';
 import { clickOneStepRun } from '../../../utils/DebugUtils/clickOneStepRun';
+
+// liuqi-new
+import {
+  DEBUG_SET_BTN_CAN_BE_PASUE,
+  DEBUG_SET_BTN_CAN_BE_CONTINUE,
+  //
+  DEBUG_RUN_BLOCK_CHANGE_STATE_PAUSED,
+  DEBUG_RUN_BLOCK_CHANGE_STATE_END,
+  //
+  DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED,
+  DEBUG_RUN_CARDS_CHANGE_STATE_END,
+  //
+  DEBUG_PUT_SOURCECODE,
+} from '../../../constants/actions/debugInfos';
+import { changeDebugInfos } from '../../../containers/reduxActions';
 
 const padding = length => '    '.repeat(length);
 
 let tempCenter = [];
 let nowIndex = 0;
 let nowIndexCards = 0;
+let nowLevel = 'block';
 let pass = false;
 let isPause = false;
 
@@ -43,10 +56,20 @@ export const claerTempCenter = () => {
   nowIndexCards = 0;
   pass = false;
   isPause = false;
+  nowLevel = 'block';
+};
+
+export const getDebugIndex = () => {
+  return{
+    nowIndex:nowIndex,
+    nowIndexCards:nowIndexCards,
+    nowLevel:nowLevel,
+  }
 };
 
 // 获取代码分段缓存区的内容
 export const getTempCenter = () => {
+  changeDebugInfos(DEBUG_PUT_SOURCECODE, tempCenter);
   return tempCenter;
 };
 
@@ -75,19 +98,23 @@ export const clearPause = () => {
 
 // 【 editor的单步调试 - 01 】开始第一层块级，逐步发送
 export const handleDebugBlockAllRun = () => {
+  nowLevel = 'block';
   if (isPause) {
-    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
-    localStorage.setItem("running_mode", "blockAll_pause");
+    // 当检测到暂停时
+    // 1. 设置按钮为可点继续
+    // 2. 修改运行状态为blockAll_pause
+    changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
+    changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_PAUSED, {}); // 'blockAll_pause'
     return message.info('进程被暂停');
   }
   if (tempCenter.length < 1) {
-    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
+    // 结束时，自动复位
+    changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_END, {});
     return message.warning('无流程块可以运行');
   }
   if (nowIndex >= tempCenter.length) {
     nowIndex = 0;
-    localStorage.setItem("running_mode", "started");
-    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
+    changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_END, {});
     return message.success('流程已完成');
   }
 
@@ -100,6 +127,7 @@ export const handleDebugBlockAllRun = () => {
     // 执行
     setTimeout(() => {
       sendPythonCodeByLine({
+        running: running,
         varNames: running.return_string,
         output: running.__main__,
       });
@@ -110,6 +138,7 @@ export const handleDebugBlockAllRun = () => {
   } else {
     setTimeout(() => {
       sendPythonCodeByLine({
+        running: running,
         varNames: '', //running.return_string,
         output: running.pythonCode,
       });
@@ -120,29 +149,29 @@ export const handleDebugBlockAllRun = () => {
 
 // 【 editor的单步调试 - 02 】开始第二层卡片级，逐步发送
 export const handleDebugCardsAllRun = checkedGraphBlockId => {
+  nowLevel = 'cards';
   if (isPause) {
-    localStorage.setItem("running_mode", "cardsAll_pause");
-    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
+    changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
+    changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
     return message.info('进程被暂停');
   }
   const cardsIndex = tempCenter.findIndex(block => {
     return block.currentId === checkedGraphBlockId;
   });
   if (cardsIndex === -1) {
-    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
+    changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
     return message.warning('这个流程块没有被正确连线到流程中，请检查连线关系');
   }
 
   const needRunBlock = tempCenter[cardsIndex].cards;
 
   if (tempCenter.length < 1) {
-    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
+    changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
     return message.warning('无代码块可以运行');
   }
   if (nowIndexCards >= needRunBlock.length) {
     nowIndexCards = 0;
-    localStorage.setItem("running_mode", "started");
-    event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_END);
+    changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
     return message.success('流程块已完成');
   }
 
@@ -156,7 +185,9 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
       // );
       setPause();
       needRunBlock[nowIndexCards].breakPoint = false;
-      return event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
+      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
+      changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
+      return;// event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
       //needRunBlock[cardsIndex].breakPoint === false;
     }
   }
@@ -169,7 +200,7 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
   }
 
   setTimeout(() => {
-    console.clear();
+    //console.clear();
     console.log(needRunBlock);
     clickOneStepRun(needRunBlock, needRunBlock[nowIndexCards].id);
     nowIndexCards += 1;
@@ -177,38 +208,38 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
   }, 300);
 };
 
-export const handleRunNextStep = () => {
-  if (localStorage.getItem('running_mode') === 'blockAll_running') {
-    // event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
-    //message.info("暂不支持流程图的单步调试")
-    setPause();
-  } else if (localStorage.getItem('running_mode') === 'cardsAll_running') {
-    setPause();
-    //event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
-  }
+// export const handleRunNextStep = () => {
+//   if (localStorage.getItem('running_mode') === 'blockAll_running') {
+//     // event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
+//     //message.info("暂不支持流程图的单步调试")
+//     setPause();
+//   } else if (localStorage.getItem('running_mode') === 'cardsAll_running') {
+//     setPause();
+//     //event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
+//   }
 
-  // 断点检查
-  if (nowIndexCards === 0) {
-    if (needRunBlock[nowIndexCards].breakPoint === true) {
-      message.info('流程块第1条遇到断点');
-      // localStorage.setItem(
-      //   'running_mode',
-      //   'cardsAll_pause'
-      // );
-      setPause();
-      needRunBlock[nowIndexCards].breakPoint = false;
-      return event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
-      //needRunBlock[cardsIndex].breakPoint === false;
-    }
-  } else if (nowIndexCards + 1 < needRunBlock.length) {
-    // 他有下一条存在
-    if (needRunBlock[nowIndexCards + 1].breakPoint === true) {
-      console.log(needRunBlock);
-      message.info('发现了1个断点');
-      setPause();
-    }
-  }
-};
+//   // 断点检查
+//   if (nowIndexCards === 0) {
+//     if (needRunBlock[nowIndexCards].breakPoint === true) {
+//       message.info('流程块第1条遇到断点');
+//       // localStorage.setItem(
+//       //   'running_mode',
+//       //   'cardsAll_pause'
+//       // );
+//       setPause();
+//       needRunBlock[nowIndexCards].breakPoint = false;
+//       return event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
+//       //needRunBlock[cardsIndex].breakPoint === false;
+//     }
+//   } else if (nowIndexCards + 1 < needRunBlock.length) {
+//     // 他有下一条存在
+//     if (needRunBlock[nowIndexCards + 1].breakPoint === true) {
+//       console.log(needRunBlock);
+//       message.info('发现了1个断点');
+//       setPause();
+//     }
+//   }
+// };
 
 /**
  *
@@ -251,7 +282,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-          '\n'
+            '\n'
         }` + result.output;
       // 判断一下当前的流程块结点是否有两个入点，那么就是循环相关 就需要包括在 while True: 的循环结构下边。
       // 同时解析的深度要 +1
@@ -281,7 +312,8 @@ export const transformEditorProcess = (
        *
        *
        */
-
+      const findLabelName = graphData.nodes.find(item => item.id === currentId)
+        .label;
       tempCenter.push({
         currentId: currentId,
         pythonCode: `def ${funcName}(${params
@@ -290,7 +322,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-          '\n'
+            '\n'
         }`,
         funcName: funcName,
         params: params,
@@ -303,6 +335,7 @@ export const transformEditorProcess = (
           .map(item => item.name + ' = ' + item.value)
           .join(',')})\n`,
         cards: cloneDeep(blockData.cards) || [],
+        titleName: findLabelName ? findLabelName : '未定义流程块名',
         blockData: blockData,
       });
       console.log(`tempCenter`, tempCenter);
@@ -757,7 +790,7 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
     writeFileRecursive(
       `${process.cwd()}/python/temp.py`,
       result.output,
-      function () {
+      function() {
         // console.log('保存成功');
       }
     );
