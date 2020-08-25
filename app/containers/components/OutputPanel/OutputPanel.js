@@ -411,12 +411,26 @@ export default memo(
                     defaultExpandAll={true}
                   >
                     <TreeNode
-                      title={`变量名 ${variable.var_name}`}
+                      title={
+                        <span>
+                          <span className="outputPanel-normalTag">变量名</span>
+                          {`${variable.var_name}`}
+                        </span>
+                      }
                       key={uniqueId()}
                       isLeaf
                     />
                     <TreeNode
-                      title={`变量值 ${variable.var_value}`}
+                      title={
+                        <span>
+                          <span className="outputPanel-spTag">变量值</span>
+                          <Input
+                            type="text"
+                            value={`${variable.var_value}`}
+                            className="outputPanel-spTag-input"
+                          ></Input>
+                        </span>
+                      }
                       key={uniqueId()}
                       defaultExpandAll={true}
                     >
@@ -427,12 +441,26 @@ export default memo(
                       />
                     </TreeNode>
                     <TreeNode
-                      title={`变量类型 ${variable.var_type}`}
+                      title={
+                        <span>
+                          <span className="outputPanel-normalTag">
+                            变量类型
+                          </span>
+                          {`${variable.var_type}`}
+                        </span>
+                      }
                       key={uniqueId()}
                       isLeaf
                     />
                     <TreeNode
-                      title={`变量长度 ${variable.var_length}`}
+                      title={
+                        <span>
+                          <span className="outputPanel-normalTag">
+                            变量长度
+                          </span>
+                          {`${variable.var_length}`}
+                        </span>
+                      }
                       key={uniqueId()}
                       isLeaf
                     />
@@ -453,46 +481,81 @@ export default memo(
         if (!debug_dataStore.stepLog) return;
         if (!debug_dataStore.stepLog[index]) return;
         if (!debug_dataStore.stepLog[index].var_datas) return;
-        return Object.keys(debug_dataStore.stepLog[index].var_datas).map(key => {
-          //console.log(debug_left_data[index].hasLog.var_datas);
-          console.log(`WHAT???`,debug_dataStore.stepLog[index].var_datas,key);
-          return (
-            <TreeNode title={`作用域 ${key}`} defaultExpandAll={true}>
-              {debug_dataStore.stepLog[index].var_datas[key].map(variable => {
-                return (
-                  <TreeNode
-                    title={`${variable.var_name} = ${variable.var_value}`}
-                    key={uniqueId()}
-                    defaultExpandAll={true}
-                  >
+        return Object.keys(debug_dataStore.stepLog[index].var_datas).map(
+          key => {
+            //console.log(debug_left_data[index].hasLog.var_datas);
+            console.log(
+              `WHAT???`,
+              debug_dataStore.stepLog[index].var_datas,
+              key
+            );
+            return (
+              <TreeNode title={`作用域 ${key}`} defaultExpandAll={true}>
+                {debug_dataStore.stepLog[index].var_datas[key].map(variable => {
+                  return (
                     <TreeNode
-                      title={`变量名 ${variable.var_name}`}
+                      title={`${variable.var_name} = ${variable.var_value}`}
                       key={uniqueId()}
-                      isLeaf
-                    />
-                    <TreeNode
-                      //title={(<Input type="text" value={`变量值 ${variable.var_value}`}></Input>)}
-                      title={`变量值 ${variable.var_value}`}
-                      key={uniqueId()}
-                      isLeaf
-
-                    />
-                    <TreeNode
-                      title={`变量类型 ${variable.var_type}`}
-                      key={uniqueId()}
-                      isLeaf
-                    />
-                    <TreeNode
-                      title={`变量长度 ${variable.var_length}`}
-                      key={uniqueId()}
-                      isLeaf
-                    />
-                  </TreeNode>
-                );
-              })}
-            </TreeNode>
-          );
-        });
+                      defaultExpandAll={true}
+                    >
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-normalTag">
+                              变量名
+                            </span>
+                            {`${variable.var_name}`}
+                          </span>
+                        }
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-spTag">变量值</span>
+                            <Input
+                              type="text"
+                              value={`${variable.var_value}`}
+                              className="outputPanel-spTag-input"
+                            ></Input>
+                          </span>
+                        }
+                        //title={`变量值 ${variable.var_value}`}
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-normalTag">
+                              变量类型
+                            </span>
+                            {`${variable.var_type}`}
+                          </span>
+                        }
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-normalTag">
+                              变量长度
+                            </span>
+                            {`${variable.var_length}`}
+                          </span>
+                        }
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                    </TreeNode>
+                  );
+                })}
+              </TreeNode>
+            );
+          }
+        );
       }
     };
 

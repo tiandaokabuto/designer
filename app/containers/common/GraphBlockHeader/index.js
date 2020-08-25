@@ -60,7 +60,6 @@ import {
   DEBUG_ONE_STEP_FINISHED_STARTED,
 } from '../../../constants/actions/debugInfos';
 import { changeDebugInfos } from '../../reduxActions';
-import { isFlowPredicate } from '../../../../../../Users/鲸/AppData/Local/Microsoft/TypeScript/3.9/node_modules/@babel/types/lib/index';
 
 const { ipcRenderer, remote } = require('electron');
 
