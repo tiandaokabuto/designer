@@ -715,10 +715,7 @@ export default memo(
                 <span className="versionTip">最新版本应大于当前版本</span>
               )}
             </FormItem>
-            <FormItem label="当前版本号" className="versionInput">
-              <Select></Select>
-              <span style={{ paddingLeft: '12px' }}>{originVersion}</span>
-            </FormItem>
+
           </Form>
         </Modal>
       </div>

@@ -1,11 +1,9 @@
-import React, { useEffect, useState, memo, useMemo } from 'react';
+import React, { useEffect, useState, memo, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import { Icon, Input, Dropdown, Menu, Tag, Tabs, Tree, message } from 'antd';
 import uniqueId from 'lodash/uniqueId';
-
-import './temp.less';
 
 import FilterToolbar from './FilterToolbar';
 import Tags from './Tags';
@@ -43,7 +41,8 @@ import {
   DEBUG_RESET_CODE,
   DEBUG_SOURCECODE_INSERT,
 } from '../../../constants/actions/debugInfos';
-import { uniq } from 'lodash';
+
+import { sendChangeVariable } from '../../../utils/DebugUtils/runDebugServer';
 
 const fs = require('fs');
 const { TabPane } = Tabs;
@@ -358,6 +357,9 @@ export default memo(
 
     const insertDebugInfo = infos => {
       console.log(`关键变量`, infos);
+      if (!infos.log.outputs) {
+        return message.info('已完成变量发送');
+      }
       changeDebugInfos(DEBUG_SOURCECODE_INSERT, infos);
     };
 
@@ -391,6 +393,58 @@ export default memo(
         }
       }
     }, [debug_dataStore, updater]);
+
+    const handleSendVariable = (var_name, key) => {
+      if (!tempVariables.current.var_name) {
+        return message.info('没有修改的变量');
+      }
+      if (var_name !== tempVariables.current.var_name) {
+        return message.info(
+          '改动的变量和发送按钮不匹配，请点击一次你要修改的变量值'
+        );
+      }
+
+      sendChangeVariable({
+        method_name: key, //这个是修改的函数体名称
+        var_data: [
+          {
+            var_name: tempVariables.current.var_name,
+            var_value: tempVariables.current.var_value,
+          },
+        ],
+      });
+      setTimeout(() => {
+        tempVariables.current.var_name = null;
+        tempVariables.current.var_value = null;
+      }, 200);
+    };
+
+    const tempVariables = useRef({
+      var_name: null,
+      var_value: null,
+    });
+
+    const signVariableChange = (value, var_name, var_value) => {
+      console.clear();
+      console.log(value, var_name, var_value);
+      if (!value) {
+        console.log(tempVariables.current);
+        tempVariables.current.var_name = var_name;
+        tempVariables.current.var_value = var_value;
+        // tempVariables({
+        //   var_name: var_name,
+        //   var_value: var_value,
+        // });
+      } else {
+        console.log(tempVariables.current);
+        tempVariables.current.var_name = var_name;
+        tempVariables.current.var_value = value.currentTarget.value;
+        // setTempVariables({
+        //   var_name: var_name,
+        //   var_value: value.currentTarget.value,
+        // });
+      }
+    };
 
     // 显示的变量详情
     const showDetails = () => {
@@ -426,7 +480,7 @@ export default memo(
                           <span className="outputPanel-spTag">变量值</span>
                           <Input
                             type="text"
-                            value={`${variable.var_value}`}
+                            defaultValue={`${variable.var_value}`}
                             className="outputPanel-spTag-input"
                           ></Input>
                         </span>
@@ -516,9 +570,33 @@ export default memo(
                             <span className="outputPanel-spTag">变量值</span>
                             <Input
                               type="text"
-                              value={`${variable.var_value}`}
+                              defaultValue={`${variable.var_value}`}
                               className="outputPanel-spTag-input"
+                              onFocus={value => {
+                                signVariableChange(
+                                  null,
+                                  variable.var_name,
+                                  variable.var_value
+                                );
+                              }}
+                              onChange={value => {
+                                signVariableChange(
+                                  value,
+                                  variable.var_name,
+                                  variable.var_value
+                                );
+                              }}
                             ></Input>
+                            <span
+                              className="outputPanel-spTag-pushBtn"
+                              onClick={() => {
+                                //alert('发送');
+                                handleSendVariable(variable.var_name, key);
+                              }}
+                            >
+                              <Icon type="export" />
+                              修改变量
+                            </span>
                           </span>
                         }
                         //title={`变量值 ${variable.var_value}`}

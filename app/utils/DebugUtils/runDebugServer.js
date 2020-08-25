@@ -204,9 +204,27 @@ export const runAllStepByStepAuto = (
 export const sendPythonCodeByLine = sendMsg => {
   console.log(`sendMsg`, sendMsg);
 
+  const {
+    debug: { dataStore },
+    grapheditor: { checkedGraphBlockId },
+  } = store.getState();
+
   const { running, varNames, output } = sendMsg;
+
+  let find_funcName = null;
+  if (!running.funcName) {
+    find_funcName = dataStore.find(
+      block => block.currentId === checkedGraphBlockId
+    );
+    if (find_funcName) {
+      find_funcName = find_funcName.funcName;
+    } else {
+      find_funcName = '未知函数体';
+    }
+  }
+
   const jsonObj = {
-    method_name: running.funcName ? running.funcName : '函数体内',
+    method_name: running.funcName ? running.funcName : find_funcName,
     //source: ["import GUI\nresult = GUI.showDialog(title = \"\", msg = \"\", dialogType = \"showinfo\")\n\n\npass\n"],
     source: [output],
     var_data: [
@@ -222,17 +240,43 @@ export const sendPythonCodeByLine = sendMsg => {
   //socket.write('{"method_name":"RPA_test","source":["from sendiRPA import Browser\n\n\nhWeb = Browser.openBrowser(browserType = \"chrome\", _url = \"www.baidu.com\", useragent = \"\", blocked_urls = \"\")\n\npass\n"],"var_data":[{"var_name":"hWeb","var_value":""}]}');
 };
 
+export const sendChangeVariable = sendMsg => {
+  console.log(`sendMsg`, sendMsg);
+
+  const { var_data, method_name } = sendMsg;
+  const jsonObj = {
+    method_name: method_name,
+    //source: ["import GUI\nresult = GUI.showDialog(title = \"\", msg = \"\", dialogType = \"showinfo\")\n\n\npass\n"],
+    source: [],
+    var_data: var_data,
+    // : [
+    //   {
+    //     var_name: varNames,
+    //     var_value: '',
+    //   },
+    // ],
+  };
+  const sendText = JSON.stringify(jsonObj); //.replace(/'/g, '"')
+  console.log(`【实际发送到socket的字符串】\n`, sendText);
+  socket.write(sendText);
+  //socket.write('{"method_name":"RPA_test","source":["from sendiRPA import Browser\n\n\nhWeb = Browser.openBrowser(browserType = \"chrome\", _url = \"www.baidu.com\", useragent = \"\", blocked_urls = \"\")\n\npass\n"],"var_data":[{"var_name":"hWeb","var_value":""}]}');
+};
+
 export const killTask = () => {
   tempLength = 0;
   try {
     changeDebugInfos(DEBUG_CLOSE_DEBUGSERVER, {});
     changeDebugInfos(DEBUG_PUT_SOURCECODE, []);
     socket.write('exit()');
-    setTimeout(() => worker.kill(), 3000);
     localStorage.setItem('debug', '关闭');
     // event.emit(PYTHOH_DEBUG_SERVER_START, '终止');
     // setTimeout(() => event.emit(PYTHOH_DEBUG_SERVER_START, '准备'), 3000);
   } catch (e) {
     console.log('终止debug', e);
+    try {
+      worker.kill();
+    } catch (e) {
+      console.log('强杀debug', e);
+    }
   }
 };

@@ -13,47 +13,55 @@
   margin-top: 38px;
   height: 100%;
   display: block;
-  .ant-tree li{
+  .ant-tree li {
     padding: 0;
   }
 
-
-  .left{
-
-    margin-top:38px;
-    float:left;
-    width:223px;
+  .left {
+    margin-top: 38px;
+    float: left;
+    width: 223px;
     height: calc(100% - 38px);
     display: block;
   }
-  .right{
-    margin-top:38px;
-    margin-left:4px;
+  .right {
+    margin-top: 38px;
+    margin-left: 4px;
     //background: lemonchiffon;
-    float:left;
+    float: left;
     width: calc(100% - 223px - 4px);
     height: calc(100% - 38px);
     display: block;
   }
 }
 
-
-.dragger-editor-container-output{
-  .ant-dropdown-trigger{
+.dragger-editor-container-output {
+  .ant-dropdown-trigger {
     height: 100% !important;
   }
 }
 
-.outputPanel-spTag{
+.outputPanel-spTag {
   width: 61px;
   display: inline-block;
 }
 
-.outputPanel-normalTag{
+.outputPanel-normalTag {
   width: 73px;
   display: inline-block;
 }
-.outputPanel-spTag-input{
+.outputPanel-spTag-input {
   height: 20px;
   min-width: 320px;
+}
+.outputPanel-spTag-pushBtn {
+  margin-left: 10px;
+
+}
+
+.outputPanel-spTag-pushBtn:hover {
+  margin-left: 6px;
+  padding:0 4px;
+  color: #32A680;
+  background: #fff;
 }
