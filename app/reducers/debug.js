@@ -24,6 +24,7 @@ import {
   DEBUG_ONE_STEP_FINISHED_STARTED,
   //
   DEBUG_PUT_SOURCECODE,
+  DEBUG_SOURCECODE_INSERT,
 } from '../constants/actions/debugInfos';
 
 import cloneDeep from 'lodash/cloneDeep';
@@ -36,9 +37,9 @@ const defaultState = {
   oneRunning: false, // 是否在单步调试运行中
   runningState: 'started', // 当前的运行状态
   pause: false, // 是否处于暂停状态
-  dataStore: [
-
-  ], // 数据仓库
+  dataStore: [], // 数据仓库
+  stepLog:{},
+  updater: 0,
 };
 
 const copyDefault = cloneDeep(defaultState);
@@ -165,12 +166,40 @@ export default (state = defaultState, action) => {
       };
     // 放入代码
     case DEBUG_PUT_SOURCECODE:
-      console.log(`action.payload`,action.tempCenter)
+      console.log(`action.payload`, action.tempCenter);
       return {
         ...state,
-        dataStore: action.payload
-      }
+        dataStore: action.payload,
+      };
+    case DEBUG_SOURCECODE_INSERT:
+      const { nowIndex, nowIndexCards, nowLevel } = action.payload.index;
+      const log = action.payload.log;
+      if (nowLevel === 'block') {
+        let temp = state.dataStore;
+        temp[nowIndex - 1].hasLog = log;
 
+        return {
+          ...state,
+          dataStore: temp,
+          updater: state.updater + 1,
+        };
+      } else if (nowLevel === 'cards') {
+        let temp = state.dataStore;
+        if (!temp.stepLog) {
+          temp.stepLog = {};
+        }
+
+        const stepLog = state.stepLog
+        temp.stepLog[nowIndexCards - 1] = log;
+        stepLog[nowIndexCards - 1] = log;
+
+        return {
+          ...state,
+          dataStore: temp,
+          stepLog: stepLog,
+          updater: state.updater + 1,
+        };
+      }
     default:
       return state;
   }

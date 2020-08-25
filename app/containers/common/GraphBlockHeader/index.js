@@ -322,6 +322,24 @@ export default memo(({ history, tag }) => {
   const currentPagePosition_ref = useRef();
   currentPagePosition_ref.current = currentPagePosition;
 
+  // 树改变时
+  const currentCheckedTreeNode = useSelector(
+    state => state.grapheditor.currentCheckedTreeNode
+  );
+
+
+  // 切换树时，直接挂掉debug
+  useEffect(() => {
+    killTask();
+  }, [currentCheckedTreeNode]);
+
+  // 切换层级时，刷新debug代码
+  useEffect(() => {
+    if (debug_switch_ref.current) {
+      getTreeData();
+    }
+  }, [currentPagePosition]);
+
   // 00 切换层级时，则重置代码
   useEffect(() => {
     if (!debug_switch) return;
@@ -346,8 +364,19 @@ export default memo(({ history, tag }) => {
   const debug_switch_open = () => {
     if (debug_switch_ref.current === false) {
       runDebugServer();
+      getTreeData();
     } else {
       message.info('已开启...');
+    }
+  };
+
+  // 刷新底部debug显示
+  const getTreeData = () => {
+    try {
+      console.log(transformProcessToPython());
+      console.log(getTempCenter());
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -386,7 +415,7 @@ export default memo(({ history, tag }) => {
     const running = debug_runningState_ref.current;
 
     clearPause();
-    if (running === 'blockAll_pasue') {
+    if (running === 'blockAll_pause') {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_RUNNING); // 'blockAll_running'
       handleDebugBlockAllRun();

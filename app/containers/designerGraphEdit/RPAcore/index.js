@@ -45,6 +45,7 @@ const padding = length => '    '.repeat(length);
 let tempCenter = [];
 let nowIndex = 0;
 let nowIndexCards = 0;
+let nowLevel = 'block';
 let pass = false;
 let isPause = false;
 
@@ -55,17 +56,20 @@ export const claerTempCenter = () => {
   nowIndexCards = 0;
   pass = false;
   isPause = false;
+  nowLevel = 'block';
+};
+
+export const getDebugIndex = () => {
+  return{
+    nowIndex:nowIndex,
+    nowIndexCards:nowIndexCards,
+    nowLevel:nowLevel,
+  }
 };
 
 // 获取代码分段缓存区的内容
 export const getTempCenter = () => {
-  let temp = [];
-  //tmepCenter.forEach()
-  //console.log(tempCenter)
-  console.clear();
-
   changeDebugInfos(DEBUG_PUT_SOURCECODE, tempCenter);
-
   return tempCenter;
 };
 
@@ -94,6 +98,7 @@ export const clearPause = () => {
 
 // 【 editor的单步调试 - 01 】开始第一层块级，逐步发送
 export const handleDebugBlockAllRun = () => {
+  nowLevel = 'block';
   if (isPause) {
     // 当检测到暂停时
     // 1. 设置按钮为可点继续
@@ -122,6 +127,7 @@ export const handleDebugBlockAllRun = () => {
     // 执行
     setTimeout(() => {
       sendPythonCodeByLine({
+        running: running,
         varNames: running.return_string,
         output: running.__main__,
       });
@@ -132,6 +138,7 @@ export const handleDebugBlockAllRun = () => {
   } else {
     setTimeout(() => {
       sendPythonCodeByLine({
+        running: running,
         varNames: '', //running.return_string,
         output: running.pythonCode,
       });
@@ -142,6 +149,7 @@ export const handleDebugBlockAllRun = () => {
 
 // 【 editor的单步调试 - 02 】开始第二层卡片级，逐步发送
 export const handleDebugCardsAllRun = checkedGraphBlockId => {
+  nowLevel = 'cards';
   if (isPause) {
     changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
     changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
@@ -177,7 +185,9 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
       // );
       setPause();
       needRunBlock[nowIndexCards].breakPoint = false;
-      return event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
+      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
+      changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
+      return;// event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
       //needRunBlock[cardsIndex].breakPoint === false;
     }
   }
@@ -190,7 +200,7 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
   }
 
   setTimeout(() => {
-    console.clear();
+    //console.clear();
     console.log(needRunBlock);
     clickOneStepRun(needRunBlock, needRunBlock[nowIndexCards].id);
     nowIndexCards += 1;
@@ -302,7 +312,8 @@ export const transformEditorProcess = (
        *
        *
        */
-
+      const findLabelName = graphData.nodes.find(item => item.id === currentId)
+        .label;
       tempCenter.push({
         currentId: currentId,
         pythonCode: `def ${funcName}(${params
@@ -324,6 +335,7 @@ export const transformEditorProcess = (
           .map(item => item.name + ' = ' + item.value)
           .join(',')})\n`,
         cards: cloneDeep(blockData.cards) || [],
+        titleName: findLabelName ? findLabelName : '未定义流程块名',
         blockData: blockData,
       });
       console.log(`tempCenter`, tempCenter);

@@ -5,7 +5,7 @@ import event, {
   PYTHOH_DEBUG_BLOCK_ALL_RUN,
   PYTHOH_DEBUG_CARDS_ALL_RUN,
 } from '../../containers/eventCenter';
-import {message} from 'antd';
+import { message } from 'antd';
 
 // *新DEBUG
 import {
@@ -14,9 +14,14 @@ import {
   DEBUG_RUN_BLOCK_ALL_RUN,
   DEBUG_RUN_CARDS_ALL_RUN,
   DEBUG_ONE_STEP_FINISHED,
+  DEBUG_PUT_SOURCECODE,
+  //
+  DEBUG_SOURCECODE_INSERT,
 } from '../../constants/actions/debugInfos';
 
 import store from '@/store';
+
+import { getDebugIndex } from '../../containers/designerGraphEdit/RPAcore';
 
 import { changeDebugInfos } from '../../containers/reduxActions';
 
@@ -66,7 +71,7 @@ export const runDebugServer = async () => {
   });
 
   socket.on('error', function(err) {
-    message.warning("遇到错误");
+    message.warning('遇到错误');
     console.log(err);
   });
 
@@ -87,7 +92,11 @@ export const runDebugServer = async () => {
         // })
         //temp = `发送的代码：\n` + array.sources[0];
       });
-      event.emit(PYTHON_OUTPUT, log);
+      //event.emit(PYTHON_OUTPUT, log);
+      event.emit(DEBUG_SOURCECODE_INSERT, {
+        log: getLogToJSON,
+        index: getDebugIndex(),
+      });
     } catch (e) {
       //console.clear();
       console.log(e);
@@ -100,7 +109,7 @@ export const runDebugServer = async () => {
       debug: { runningState },
     } = store.getState();
     // 当前的运行状态
-    const running = runningState
+    const running = runningState;
 
     // if 现在的运行模式是
     if (running === 'blockAll_running') {
@@ -193,9 +202,11 @@ export const runAllStepByStepAuto = (
 };
 
 export const sendPythonCodeByLine = sendMsg => {
-  const { varNames, output } = sendMsg;
+  console.log(`sendMsg`, sendMsg);
+
+  const { running, varNames, output } = sendMsg;
   const jsonObj = {
-    method_name: '',
+    method_name: running.funcName ? running.funcName : '函数体内',
     //source: ["import GUI\nresult = GUI.showDialog(title = \"\", msg = \"\", dialogType = \"showinfo\")\n\n\npass\n"],
     source: [output],
     var_data: [
@@ -214,13 +225,13 @@ export const sendPythonCodeByLine = sendMsg => {
 export const killTask = () => {
   tempLength = 0;
   try {
+    changeDebugInfos(DEBUG_CLOSE_DEBUGSERVER, {});
+    changeDebugInfos(DEBUG_PUT_SOURCECODE, []);
     socket.write('exit()');
     setTimeout(() => worker.kill(), 3000);
     localStorage.setItem('debug', '关闭');
     // event.emit(PYTHOH_DEBUG_SERVER_START, '终止');
     // setTimeout(() => event.emit(PYTHOH_DEBUG_SERVER_START, '准备'), 3000);
-
-    changeDebugInfos(DEBUG_CLOSE_DEBUGSERVER, {});
   } catch (e) {
     console.log('终止debug', e);
   }

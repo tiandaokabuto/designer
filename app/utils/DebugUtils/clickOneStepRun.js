@@ -33,6 +33,7 @@ export const clickOneStepRun = (cards, id) => {
 
   try {
     sendPythonCodeByLine({
+      running: varNames,
       varNames: varNames.outPut ? varNames.outPut : '',
       output: line,
     });

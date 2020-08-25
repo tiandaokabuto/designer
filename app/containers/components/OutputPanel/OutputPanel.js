@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
 import { Icon, Input, Dropdown, Menu, Tag, Tabs, Tree, message } from 'antd';
+import uniqueId from 'lodash/uniqueId';
 
 import './temp.less';
 
@@ -23,6 +24,7 @@ import {
   killTask,
 } from '../../../utils/DebugUtils/runDebugServer';
 import {
+  getDebugIndex,
   getTempCenter,
   setPause,
   clearPause,
@@ -39,7 +41,9 @@ import {
   DEBUG_CONTINUE,
   DEBUG_CONTINUE_ONESTEP_NEXT,
   DEBUG_RESET_CODE,
+  DEBUG_SOURCECODE_INSERT,
 } from '../../../constants/actions/debugInfos';
+import { uniq } from 'lodash';
 
 const fs = require('fs');
 const { TabPane } = Tabs;
@@ -160,10 +164,6 @@ export default memo(
         originKey = 0;
         allLogMessage.value = '';
       };
-      // DEBUG行更新
-      //event.addListener(DEBUG_LINE_OUTPUT, handlePythonOutput);
-      // DEBUG变量池更新
-      //event.addListener(DEBUG_VARIABLE_POOL, handlePythonOutput);
 
       event.addListener('clear_output', handleClearOutput);
       return () => {
@@ -326,11 +326,175 @@ export default memo(
     const debug_pause = useSelector(state => state.debug.pasue);
     const debug_running = useSelector(state => state.debug.running);
     const debug_oneRunning = useSelector(state => state.debug.oneRunning);
+
     const debug_runningState = useSelector(state => state.debug.runningState);
+
+    // 需要debug的数据
+    const [debug_left_data, set_debug_left_data] = useState([]);
+    const debug_dataStore = useSelector(state => state.debug.dataStore);
+    const updater = useSelector(state => state.debug.updater);
+    const [debug_lastPointer, set_debug_lastPointer] = useState(-1);
 
     const currentPagePosition = useSelector(
       state => state.temporaryvariable.currentPagePosition
     );
+    const checkedGraphBlockId = useSelector(
+      state => state.grapheditor.checkedGraphBlockId
+    );
+
+    useEffect(() => {
+      event.addListener(DEBUG_SOURCECODE_INSERT, insertDebugInfo);
+      event.addListener(DEBUG_RUN_STEP_BY_STEP, resetDebugIndex);
+      return () => {
+        event.removeListener(DEBUG_SOURCECODE_INSERT, insertDebugInfo);
+        event.addListener(DEBUG_RUN_STEP_BY_STEP, resetDebugIndex);
+      };
+    }, []);
+
+    const resetDebugIndex = () => {
+      setSelectedTreeNode([]);
+      set_debug_lastPointer(-1);
+    };
+
+    const insertDebugInfo = infos => {
+      console.log(`关键变量`, infos);
+      changeDebugInfos(DEBUG_SOURCECODE_INSERT, infos);
+    };
+
+    const [selectedTreeNode, setSelectedTreeNode] = useState([]);
+
+    useEffect(() => {
+      console.log('有更新', debug_dataStore, getDebugIndex());
+
+      if (currentPagePosition === 'editor') {
+        if (debug_lastPointer < getDebugIndex().nowIndex)
+          set_debug_lastPointer(getDebugIndex().nowIndex);
+        set_debug_left_data(debug_dataStore);
+      } else if (currentPagePosition === 'block') {
+        if (debug_lastPointer < getDebugIndex().nowIndexCards)
+          set_debug_lastPointer(getDebugIndex().nowIndexCards);
+        try {
+          const find = debug_dataStore.find(
+            item => item.currentId === checkedGraphBlockId
+          );
+          // if (debug_dataStore.stepLog) {
+          //   debug_dataStore.stepLog.forEach((log, index) => {
+          //     find.cards[index].hasLog = log;
+          //   });
+          // }
+
+          // console.log(`显示查询结果`, find, debug_dataStore);
+
+          set_debug_left_data(find.cards);
+        } catch (e) {
+          console.log(e, '开发模式下避免问题');
+        }
+      }
+    }, [debug_dataStore, updater]);
+
+    // 显示的变量详情
+    const showDetails = () => {
+      if (currentPagePosition === 'editor') {
+        const index = parseInt(selectedTreeNode[0]);
+        if (!debug_left_data[index]) return;
+        if (!debug_left_data[index].hasLog) return;
+        return Object.keys(debug_left_data[index].hasLog.var_datas).map(key => {
+          console.log(debug_left_data[index].hasLog.var_datas);
+
+          return (
+            <TreeNode title={`作用域 ${key}`} defaultExpandAll={true}>
+              {debug_left_data[index].hasLog.var_datas[key].map(variable => {
+                return (
+                  <TreeNode
+                    title={`${variable.var_name} = ${variable.var_value}`}
+                    key={uniqueId()}
+                    defaultExpandAll={true}
+                  >
+                    <TreeNode
+                      title={`变量名 ${variable.var_name}`}
+                      key={uniqueId()}
+                      isLeaf
+                    />
+                    <TreeNode
+                      title={`变量值 ${variable.var_value}`}
+                      key={uniqueId()}
+                      defaultExpandAll={true}
+                    >
+                      <TreeNode
+                        title={`查看更深的变量内容`}
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                    </TreeNode>
+                    <TreeNode
+                      title={`变量类型 ${variable.var_type}`}
+                      key={uniqueId()}
+                      isLeaf
+                    />
+                    <TreeNode
+                      title={`变量长度 ${variable.var_length}`}
+                      key={uniqueId()}
+                      isLeaf
+                    />
+                  </TreeNode>
+                );
+              })}
+            </TreeNode>
+          );
+        });
+      } else if (currentPagePosition === 'block') {
+        console.log(
+          `block状态下的右侧面板`,
+          debug_left_data,
+          debug_dataStore.stepLog
+        );
+        const index = parseInt(selectedTreeNode[0]);
+
+        if (!debug_dataStore.stepLog) return;
+        if (!debug_dataStore.stepLog[index]) return;
+        if (!debug_dataStore.stepLog[index].var_datas) return;
+        return Object.keys(debug_dataStore.stepLog[index].var_datas).map(key => {
+          //console.log(debug_left_data[index].hasLog.var_datas);
+          console.log(`WHAT???`,debug_dataStore.stepLog[index].var_datas,key);
+          return (
+            <TreeNode title={`作用域 ${key}`} defaultExpandAll={true}>
+              {debug_dataStore.stepLog[index].var_datas[key].map(variable => {
+                return (
+                  <TreeNode
+                    title={`${variable.var_name} = ${variable.var_value}`}
+                    key={uniqueId()}
+                    defaultExpandAll={true}
+                  >
+                    <TreeNode
+                      title={`变量名 ${variable.var_name}`}
+                      key={uniqueId()}
+                      isLeaf
+                    />
+                    <TreeNode
+                      //title={(<Input type="text" value={`变量值 ${variable.var_value}`}></Input>)}
+                      title={`变量值 ${variable.var_value}`}
+                      key={uniqueId()}
+                      isLeaf
+
+                    />
+                    <TreeNode
+                      title={`变量类型 ${variable.var_type}`}
+                      key={uniqueId()}
+                      isLeaf
+                    />
+                    <TreeNode
+                      title={`变量长度 ${variable.var_length}`}
+                      key={uniqueId()}
+                      isLeaf
+                    />
+                  </TreeNode>
+                );
+              })}
+            </TreeNode>
+          );
+        });
+      }
+    };
 
     return (
       <div
@@ -448,7 +612,7 @@ export default memo(
                         {debug_pause === false ? (
                           <DebugBtn
                             labelText="暂停"
-                            iconType="pause-circle"
+                            iconType="loading"
                             click={() => {
                               event.emit(DEBUG_SET_PAUSE);
                             }}
@@ -473,6 +637,7 @@ export default memo(
                               labelText="重新生成代码"
                               iconType="issues-close"
                               click={() => {
+                                resetDebugIndex();
                                 event.emit(DEBUG_RESET_CODE);
                               }}
                             />
@@ -547,11 +712,45 @@ export default memo(
                 <DirectoryTree
                   multiple
                   defaultExpandAll
-                  // onSelect={this.onSelect}
+                  selectedKeys={selectedTreeNode}
+                  onSelect={(selectedKeys, info) => {
+                    if (selectedKeys.length != 1) return;
+                    console.log(selectedKeys);
+                    setSelectedTreeNode(selectedKeys);
+                  }}
                   // onExpand={this.onExpand}
                 >
-                  <TreeNode title="第二步" key="1" isLeaf />
-                  <TreeNode title="第一步" key="2" isLeaf />
+                  {currentPagePosition === 'editor'
+                    ? debug_left_data.map((item, index) => {
+                        return (
+                          <TreeNode
+                            title={item.titleName}
+                            key={`${index}`}
+                            isLeaf
+                            disabled={item.hasLog ? false : true}
+                          />
+                        );
+                      })
+                    : ''}
+
+                  {currentPagePosition === 'block'
+                    ? debug_left_data.map((item, index) => {
+                        return (
+                          <TreeNode
+                            title={item.userDesc ? item.userDesc : item.cmdName}
+                            key={`${index}`}
+                            isLeaf
+                            disabled={
+                              debug_dataStore.stepLog
+                                ? debug_dataStore.stepLog[index]
+                                  ? false
+                                  : true
+                                : true
+                            }
+                          />
+                        );
+                      })
+                    : ''}
                   {/**
                 <TreeNode title="leaf 0-0" key="0-0-0" isLeaf />
                   <TreeNode title="parent 0" key="0-0">
@@ -579,13 +778,7 @@ export default memo(
                   // onSelect={this.onSelect}
                   // onExpand={this.onExpand}
                 >
-                  <TreeNode title="parent 0" key="0-0">
-                    <TreeNode title="leaf 0-0" key="0-0-0" isLeaf />
-                  </TreeNode>
-                  <TreeNode title="parent 1" key="0-1">
-                    <TreeNode title="leaf 1-0" key="0-1-0" isLeaf />
-                    <TreeNode title="leaf 1-0" key="0-1-1" isLeaf />
-                  </TreeNode>
+                  {selectedTreeNode.length === 1 ? showDetails() : ''}
                 </DirectoryTree>
               </div>
             </div>
