@@ -6,7 +6,7 @@
 
 body {
   position: relative;
-  color: white;
+  color: white !important;
   min-width: 952px;
   height: 100vh;
   background-color: transparent !important;
