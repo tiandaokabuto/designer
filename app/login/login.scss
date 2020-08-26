@@ -149,6 +149,28 @@
       margin-bottom: 10px;
     }
   }
+
+  .login-form-button {
+    height: 32px;
+    width: 80px;
+    text-align: center;
+    color: #fff;
+    border-color: #fff;
+    margin-right: 16px;
+    background: rgba(50, 166, 127, 1);
+
+    &:hover {
+      border-color: #fff;
+      color: #fff;
+      background: rgba(50, 166, 127, 1);
+    }
+
+    &:focus {
+      border-color: #fff;
+      color: #fff;
+      background: rgba(50, 166, 127, 1);
+    }
+  }
 }
 
 .login-right .login-right-serial {
