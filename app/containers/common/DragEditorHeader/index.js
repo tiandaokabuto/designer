@@ -119,6 +119,12 @@ export default memo(
     const [isRunCode, setIsRunCode] = useState(false); // 默认值
     const [tools, setTools] = useState([]);
 
+    const [taskDataNames, setTaskDataNames] = useState([]);
+    const [variableNames, setVariableNames] = useState([]);
+
+    const [taskDataNamesData, setTaskDataNamesData] = useState([]);
+    const [variableNamesData, setVariableNamesData] = useState([]);
+
     const uuidRef = useRef(null);
 
     const saveAsXML = useSaveAsXML();
@@ -173,7 +179,7 @@ export default memo(
         try {
           transformProcessToPython();
           setTimeout(() => {
-            handlePublishZip(descText, versionText);
+            handlePublishZip(descText, versionText, taskDataNamesData);
           }, 0);
         } catch (e) {
           message.error(
@@ -286,16 +292,46 @@ export default memo(
       handleOperation(fromOrTo);
     };
 
-    useEffect(() => {
+    const getVariableNames = () => {
       axios
-        .get(api('taskDataNames'))
-        .then(res => {
-          return res ? res.data : { code: -1 };
-        })
+        .get(`${api('variableNames')}?tag=true`)
+        .then(res => res.data)
         .then(json => {
-          console.log(json);
+          if (json.code !== -1) {
+            console.log(json);
+            setTaskDataNames(json.data);
+          } else {
+            message.error(json.message);
+          }
         })
         .catch(err => console.log(err));
+    };
+
+    const getTaskDataNames = () => {
+      axios
+        .get(`${api('taskDataNames')}?tag=true`)
+        .then(res => res.data)
+        .then(json => {
+          if (json.code !== -1) {
+            console.log(json);
+            setTaskDataNames(json.data);
+          } else {
+            message.error(json.message);
+          }
+        })
+        .catch(err => console.log(err));
+    };
+
+    const selectTaskDataName = value => {
+      setTaskDataNamesData(value);
+    };
+
+    const selectVariableName = value => {
+      setTaskDataNamesData(value);
+    };
+
+    useEffect(() => {
+      setTaskDataNames([1, 2, 3]);
       event.addListener(START_POINT, handleRunPoint);
       return () => {
         event.removeListener(START_POINT, handleRunPoint);
@@ -491,6 +527,8 @@ export default memo(
           onClick: () => {
             if (isEffectProcess()) {
               getProcessVersion(getProcessName());
+              getTaskDataNames();
+              getVariableNames();
               setModalVisible(true);
             } else {
               message.error('未选择流程');
@@ -715,9 +753,19 @@ export default memo(
                 <span className="versionTip">最新版本应大于当前版本</span>
               )}
             </FormItem>
-            <FormItem label="当前版本号" className="versionInput">
-              <Select></Select>
-              <span style={{ paddingLeft: '12px' }}>{originVersion}</span>
+            <FormItem label="任务数据">
+              <Select
+                mode="multiple"
+                style={{ width: '100%' }}
+                placeholder="选择任务数据"
+                onChange={selectTaskDataName}
+              >
+                {taskDataNames.map((item, index) => (
+                  <Option key={item} value={item}>
+                    {item}
+                  </Option>
+                ))}
+              </Select>
             </FormItem>
           </Form>
         </Modal>
