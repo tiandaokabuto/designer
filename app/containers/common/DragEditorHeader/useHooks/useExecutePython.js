@@ -31,6 +31,7 @@ export default () => {
 
     ls.stderr.on('data', data => {
       const log = getUTF8(data);
+      console.log(`输出`,log)
       event.emit(PYTHON_OUTPUT, log);
     });
 

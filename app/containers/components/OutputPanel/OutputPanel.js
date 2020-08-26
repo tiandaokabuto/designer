@@ -27,6 +27,7 @@ import {
   setPause,
   clearPause,
 } from '../../designerGraphEdit/RPAcore';
+import { PYTHON_OUTPUT } from '@/containers/eventCenter';
 
 // liuqi-new
 import event from '../../eventCenter';
@@ -164,8 +165,10 @@ export default memo(
         allLogMessage.value = '';
       };
 
+      event.addListener(PYTHON_OUTPUT, handlePythonOutput);
       event.addListener('clear_output', handleClearOutput);
       return () => {
+        event.addListener(PYTHON_OUTPUT, handlePythonOutput);
         event.removeListener('clear_output', handleClearOutput);
       };
     }, []);
@@ -357,9 +360,9 @@ export default memo(
 
     const insertDebugInfo = infos => {
       console.log(`关键变量`, infos);
-      if (!infos.log.outputs) {
-        return message.info('已完成变量发送');
-      }
+      // if (!infos.log.outputs) {
+      //   return message.info('已完成变量发送');
+      // }
       changeDebugInfos(DEBUG_SOURCECODE_INSERT, infos);
     };
 
@@ -404,12 +407,23 @@ export default memo(
         );
       }
 
+      let value = tempVariables.current.var_value;
+      //
+      value = value.trim();
+      if(value.length === 0){
+        return message.info("不能发送空值")
+      }
+
+      if(!isNaN(Number(value))){
+        value = Number(value);
+      }
+
       sendChangeVariable({
         method_name: key, //这个是修改的函数体名称
         var_data: [
           {
             var_name: tempVariables.current.var_name,
-            var_value: tempVariables.current.var_value,
+            var_value: value,
           },
         ],
       });

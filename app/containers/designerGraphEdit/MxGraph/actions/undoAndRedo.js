@@ -123,7 +123,7 @@ function goHandleUndo_real(
         false
       );
       console.log(`[密切关注]3 insertVertex 后`, undo_s);
-      //undo_s.pop(); // 移除掉移动引发的撤销新增
+      undo_s.pop(); // 移除掉移动引发的撤销新增
 
       needPush = true;
 
@@ -343,6 +343,15 @@ function goHandleRedo_real(
       //console.clear();
       console.log(`父子移动`, redoStep);
 
+      const needDeleteCell = find_id(redoStep.change.id, graph);
+      console.log('不执行操作?', needDeleteCell);
+      if (needDeleteCell.children) {
+        if (needDeleteCell.children.children) {
+          console.log('不执行操作');
+          return (needPush = false);
+        }
+      }
+
       graph.removeCells([find_id(redoStep.change.id, graph)]);
       //undo_s.pop(); // 移除掉移动引发的撤销新增
 
@@ -360,7 +369,7 @@ function goHandleRedo_real(
         false
       );
 
-      //undo_s.pop(); // 移除掉移动引发的撤销新增
+      undo_s.pop(); // 移除掉移动引发的撤销新增
       needPush = true;
 
       updateGraphDataAction(graph);

@@ -38,7 +38,7 @@ const defaultState = {
   runningState: 'started', // 当前的运行状态
   pause: false, // 是否处于暂停状态
   dataStore: [], // 数据仓库
-  stepLog:{},
+  stepLog: {},
   updater: 0,
 };
 
@@ -176,7 +176,12 @@ export default (state = defaultState, action) => {
       const log = action.payload.log;
       if (nowLevel === 'block') {
         let temp = state.dataStore;
-        temp[nowIndex - 1].hasLog = log;
+
+        if (nowIndex - 1 === -1) {
+          temp[Object.keys(temp).length - 1].hasLog = log;
+        }else{
+          temp[nowIndex - 1].hasLog = log;
+        }
 
         return {
           ...state,
@@ -189,8 +194,18 @@ export default (state = defaultState, action) => {
           temp.stepLog = {};
         }
 
-        const stepLog = state.stepLog
-        temp.stepLog[nowIndexCards - 1] = log;
+        const stepLog = state.stepLog;
+
+        if (nowIndexCards - 1 === -1) {
+          // console.clear();
+          console.log(Object.keys(temp.stepLog).length)
+          temp.stepLog[Object.keys(temp.stepLog).length - 1] = log;
+        }else{
+          temp.stepLog[nowIndexCards - 1] = log;
+        }
+
+
+
         stepLog[nowIndexCards - 1] = log;
 
         return {
