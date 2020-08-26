@@ -24,7 +24,7 @@ const CheckNodeEnv = require('../internals/scripts/CheckNodeEnv');
 CheckNodeEnv('production');
 
 module.exports = merge.smart(baseConfig, {
-  devtool: 'cheap-module-source-map',
+  devtool: 'source-map',
 
   mode: 'production',
 
@@ -246,7 +246,7 @@ module.exports = merge.smart(baseConfig, {
      */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
-      OPEN_ANALYZER: 'true',
+      //OPEN_ANALYZER: 'true',
     }),
 
     new MiniCssExtractPlugin({
