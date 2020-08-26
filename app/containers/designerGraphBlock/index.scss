@@ -84,37 +84,37 @@
     .ant-tabs-nav {
       width: 240px;
     }
-    // &-tree {
-    //   .ant-tree-switcher_open {
-    //     position: absolute !important;
-    //     right: 0;
-    //   }
-    //   .ant-tree-switcher_close {
-    //     position: absolute !important;
-    //     right: 0;
-    //   }
-    //   .ant-tree-switcher-noop {
-    //     display: none !important;
-    //   }
-    // }
-    // .sd-tree {
-    //   overflow: auto;
-    //   height: calc(100vh - 180px);
-    //   margin: 8px 17px 0 20px;
-    //   .sd-tree-open {
-    //     height: 40px;
-    //     line-height: 40px;
-    //   }
-    //   .sd-tree-switcher {
-    //     position: absolute;
-    //     right: 0;
-    //     top: 14px;
-    //     user-select: none;
-    //   }
-    //   &::-webkit-scrollbar {
-    //     display: none;
-    //   }
-    // }
+    &-tree {
+      .ant-tree-switcher_open {
+        position: absolute !important;
+        right: 0;
+      }
+      .ant-tree-switcher_close {
+        position: absolute !important;
+        right: 0;
+      }
+      .ant-tree-switcher-noop {
+        display: none !important;
+      }
+    }
+    .sd-tree {
+      overflow: auto;
+      height: calc(100vh - 180px);
+      margin: 8px 17px 0 20px;
+      .sd-tree-open {
+        height: 40px;
+        line-height: 40px;
+      }
+      .sd-tree-switcher {
+        position: absolute;
+        right: 0;
+        top: 14px;
+        user-select: none;
+      }
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
   }
   &-container {
     height: calc(100%);

@@ -295,9 +295,10 @@ const Login = () => {
           {offLine ? '' : '* 帐号不存在或密码错误，请重新输入'}
         </span>
         <Button
-          type="priamry"
+          //type="priamry"
           disabled={memoizedDisable}
-          className="login-right-primary-button"
+          className="login-form-button"
+          // className="login-right-primary-button"
           onClick={() => {
             handleClickSignIn();
           }}
