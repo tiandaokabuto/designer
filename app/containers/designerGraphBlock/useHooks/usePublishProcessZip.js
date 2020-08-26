@@ -12,14 +12,20 @@ export default () => {
   const pythonCodeRef = useRef(null);
   pythonCodeRef.current = pythonCode;
 
-  const publishZip = (descText, versionText, taskDataNames) => {
+  const publishZip = (
+    descText,
+    versionText,
+    taskDataNamesData,
+    variableNamesData
+  ) => {
     const process = require('process');
     writeFile(
       `${process.cwd()}/python/test.py`,
       pythonCodeRef.current,
       descText,
       versionText,
-      taskDataNames
+      taskDataNamesData,
+      variableNamesData
     );
   };
   return publishZip;

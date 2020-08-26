@@ -7,7 +7,13 @@ import api from '../api';
 
 const { remote } = require('electron');
 
-export const issueProcess = (content, descText, versionText, taskDataNames) => {
+export const issueProcess = (
+  content,
+  descText,
+  versionText,
+  taskDataNamesData,
+  variableNamesData
+) => {
   const {
     grapheditor: { currentCheckedTreeNode, processTree },
   } = store.getState();
@@ -35,7 +41,8 @@ export const issueProcess = (content, descText, versionText, taskDataNames) => {
   formData.append('desc', descText);
   formData.append('mainFile', 'test.py');
   formData.append('version', versionText);
-  formData.append('taskDataNames', taskDataNames);
+  formData.append('taskDataNames', taskDataNamesData);
+  formData.append('variableNames', variableNamesData);
   axios
     .post(api('issueProcess'), formData, {
       headers: {

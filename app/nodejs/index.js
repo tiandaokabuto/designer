@@ -38,7 +38,12 @@ export function readDir(obj, nowPath) {
   });
 }
 
-export const startZIP = (descText, versionText, taskDataNames) => {
+export const startZIP = (
+  descText,
+  versionText,
+  taskDataNamesData,
+  variableNamesData
+) => {
   const currPath = process.cwd();
   const targetDir = path.join(currPath, '/python');
   readDir(zip, targetDir);
@@ -53,7 +58,13 @@ export const startZIP = (descText, versionText, taskDataNames) => {
       },
     })
     .then(function (content) {
-      issueProcess(content, descText, versionText, taskDataNames);
+      issueProcess(
+        content,
+        descText,
+        versionText,
+        taskDataNamesData,
+        variableNamesData
+      );
     });
 };
 
@@ -62,12 +73,13 @@ export const writeFile = (
   content,
   descText,
   versionText,
-  taskDataNames
+  taskDataNamesData,
+  variableNamesData
 ) => {
   writeFileRecursive(dirname, content, err => {
     if (!err) {
       console.log('开始压缩...');
-      startZIP(descText, versionText, taskDataNames);
+      startZIP(descText, versionText, taskDataNamesData, variableNamesData);
     } else {
       message.info('压缩失败...');
     }

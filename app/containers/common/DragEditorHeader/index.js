@@ -179,7 +179,12 @@ export default memo(
         try {
           transformProcessToPython();
           setTimeout(() => {
-            handlePublishZip(descText, versionText, taskDataNamesData);
+            handlePublishZip(
+              descText,
+              versionText,
+              taskDataNamesData,
+              variableNamesData
+            );
           }, 0);
         } catch (e) {
           message.error(
@@ -299,7 +304,7 @@ export default memo(
         .then(json => {
           if (json.code !== -1) {
             console.log(json);
-            setTaskDataNames(json.data);
+            setVariableNames(json.data);
           } else {
             message.error(json.message);
           }
@@ -322,12 +327,12 @@ export default memo(
         .catch(err => console.log(err));
     };
 
-    const selectTaskDataName = value => {
+    const selectTaskDataNameData = value => {
       setTaskDataNamesData(value);
     };
 
-    const selectVariableName = value => {
-      setTaskDataNamesData(value);
+    const selectVariableNameData = value => {
+      setVariableNamesData(value);
     };
 
     useEffect(() => {
@@ -703,6 +708,8 @@ export default memo(
           onCancel={() => {
             setIsExport(false);
             setModalVisible(false);
+            setTaskDataNamesData([]);
+            setVariableNamesData([]);
           }}
         >
           <Form {...layout} labelAlign="left">
@@ -758,11 +765,25 @@ export default memo(
                 mode="multiple"
                 style={{ width: '100%' }}
                 placeholder="选择任务数据"
-                onChange={selectTaskDataName}
+                onChange={selectTaskDataNameData}
               >
                 {taskDataNames.map((item, index) => (
                   <Option key={item} value={item}>
                     {item}
+                  </Option>
+                ))}
+              </Select>
+            </FormItem>
+            <FormItem label="任务变量">
+              <Select
+                mode="multiple"
+                style={{ width: '100%' }}
+                placeholder="选择任务变量"
+                onChange={selectVariableNameData}
+              >
+                {variableNames.map((item, index) => (
+                  <Option key={item.id} value={item.name}>
+                    {item.name}
                   </Option>
                 ))}
               </Select>
