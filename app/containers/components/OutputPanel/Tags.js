@@ -6,7 +6,7 @@ import './Tages.scss';
 
 const { CheckableTag } = Tag;
 
-const Tags = ({ tagsData, className, selectedTags, handleChange }) => {
+const Tags = ({ tagsData, className, selectedTags, handleChange, display }) => {
   const checkTagIsChecked = label => {
     for (let i = 0; i < selectedTags.length; i += 1) {
       if (label === selectedTags[i]) return true;
@@ -15,7 +15,7 @@ const Tags = ({ tagsData, className, selectedTags, handleChange }) => {
   };
 
   return (
-    <div className={className} style={{ marginTop: -38 }}>
+    <div className={className} style={{ marginTop: -38, display: display }}>
       {tagsData.map(({ label, icon, fill }) => (
         <CheckableTag
           // style={{

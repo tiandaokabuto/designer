@@ -36,7 +36,7 @@ module.exports = (api) => {
         {
           libraryName: 'antd',
           libraryDirectory: 'es',
-          style: 'css',
+          style: true,
         },
       ], // antd按需加载
       // Stage 0
