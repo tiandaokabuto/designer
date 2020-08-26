@@ -253,10 +253,10 @@ module.exports = merge.smart(baseConfig, {
       filename: '[name].css',
     }),
     // new BundleAnalyzerPlugin(),
-    // new BundleAnalyzerPlugin({
-    //   analyzerMode:
-    //     process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
-    //   openAnalyzer: process.env.OPEN_ANALYZER === 'true',
-    // }),
+    new BundleAnalyzerPlugin({
+      analyzerMode:
+        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
+      openAnalyzer: process.env.OPEN_ANALYZER === 'true',
+    }),
   ],
 });
