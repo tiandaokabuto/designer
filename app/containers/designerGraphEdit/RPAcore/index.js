@@ -60,11 +60,11 @@ export const claerTempCenter = () => {
 };
 
 export const getDebugIndex = () => {
-  return{
-    nowIndex:nowIndex,
-    nowIndexCards:nowIndexCards,
-    nowLevel:nowLevel,
-  }
+  return {
+    nowIndex: nowIndex,
+    nowIndexCards: nowIndexCards,
+    nowLevel: nowLevel,
+  };
 };
 
 // 获取代码分段缓存区的内容
@@ -187,7 +187,7 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
       needRunBlock[nowIndexCards].breakPoint = false;
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
       changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
-      return;// event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
+      return; // event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
       //needRunBlock[cardsIndex].breakPoint === false;
     }
   }
@@ -241,6 +241,29 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
 //   }
 // };
 
+// 新增辅助标识符
+const get_level_Tag = (depth, on=false) => {
+  let levelTag = '';
+  if(!on){
+    return levelTag;
+  }
+  let arr = new Array(depth-1).keys();
+  arr = Array.from(arr);
+  //levelTag += arr.length
+  if(arr.length === 0){
+    return levelTag;
+  }
+  arr.forEach((item,index) => {
+    // if(index === arr.length -1){
+    //   levelTag += "┖"
+    // }else{
+    //   //levelTag += "-"
+    // }
+    levelTag += "┖"
+  });
+  return levelTag;
+};
+
 /**
  *
  * @param {*} graphData ggeditor下的包含结点和边的集合的对象
@@ -251,6 +274,7 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
  * @param {*} breakPoint 解析到此处时停止解析的过程
  * @param {*} notWhile 手动标记当前的判断结点为非循环的类型
  */
+
 export const transformEditorProcess = (
   graphData,
   graphDataMap,
@@ -335,7 +359,7 @@ export const transformEditorProcess = (
           .map(item => item.name + ' = ' + item.value)
           .join(',')})\n`,
         cards: cloneDeep(blockData.cards) || [],
-        titleName: findLabelName ? findLabelName : '未定义流程块名',
+        titleName: get_level_Tag(depth,true) + `${findLabelName ? findLabelName : '未定义流程块名'}`,
         blockData: blockData,
       });
       console.log(`tempCenter`, tempCenter);
@@ -422,7 +446,19 @@ export const transformEditorProcess = (
         );
         // 寻找label为是的出点进行解析
         const nextTrue = findNodeByLabelAndId(graphData.edges, currentId, '是');
-        nextTrue && (result.output += `${padding(depth)}if ${condition}:\n`);
+        nextTrue &&
+          (result.output += `${padding(depth)}if ${condition}:\n`) &&
+          tempCenter.push({
+            currentId: currentId,
+            pythonCode: `if${isYesCircleExist ? ' not' : ''} ${condition}:\n`,
+            funcName: `_START_IF_`,
+            return_string: '',
+            cards: cloneDeep(blockData.cards) || [],
+            titleName:
+              get_level_Tag(depth) +
+              `判断是 if${isYesCircleExist ? ' not' : ''} ${condition}:\n`,
+            blockData: blockData,
+          });
         nextTrue &&
           transformEditorProcess(
             graphData,
@@ -440,7 +476,17 @@ export const transformEditorProcess = (
           currentId,
           '否'
         );
-        nextFalse && (result.output += `${padding(depth)}else:\n`);
+        nextFalse &&
+          (result.output += `${padding(depth)}else:\n`) &&
+          tempCenter.push({
+            currentId: currentId,
+            pythonCode: `else:\n`,
+            funcName: `_ELSE_IF_`,
+            return_string: '',
+            cards: cloneDeep(blockData.cards) || [],
+            titleName: get_level_Tag(depth) + `判断否:\n`,
+            blockData: blockData,
+          });
         nextFalse &&
           transformEditorProcess(
             graphData,
@@ -522,7 +568,23 @@ export const transformEditorProcess = (
             false
           );
       }
-
+      tempCenter.push({
+        currentId: currentId,
+        pythonCode: `pass\n`,
+        funcName: `_END_IF_`,
+        //params: params,
+        return_string: '',
+        //`${padding(depth)}
+        // __main__: `${
+        //   return_string ? return_string + ' = ' : ''
+        // }${funcName}(${params
+        //   .filter(item => item.name)
+        //   .map(item => item.name + ' = ' + item.value)
+        //   .join(',')})\n`,
+        cards: cloneDeep(blockData.cards) || [],
+        titleName: get_level_Tag(depth) + `判断结束\n`,
+        blockData: blockData,
+      });
       break;
     case 'try':
       const tryStartNodeEdge = findStartProcessBlockInContain(
@@ -539,6 +601,19 @@ export const transformEditorProcess = (
       console.log(catchAndFinally);
       console.log('tryStartNodeEdge', tryStartNodeEdge);
       result.output += `${padding(depth)}try:\n`;
+
+      tempCenter.push({
+        currentId: currentId,
+        pythonCode: `try:\n`,
+        funcName: `_START_TRY_`,
+        return_string: '',
+        cards: cloneDeep(blockData.cards) || [],
+        titleName:
+          get_level_Tag(depth) +
+          `异常捕获\n`,
+        blockData: blockData,
+      }); // 【sp1 - 记录代码】
+
       if (tryStartNodeEdge) {
         if (tryStartNodeEdge.constructor === String) {
           transformEditorProcess(
@@ -564,6 +639,19 @@ export const transformEditorProcess = (
         }
       }
       result.output += `${padding(depth + 1)}pass\n`;
+
+      tempCenter.push({
+        currentId: currentId,
+        pythonCode: `pass\n`,
+        funcName: `_END_TRY_`,
+        return_string: '',
+        cards: cloneDeep(blockData.cards) || [],
+        titleName:
+          get_level_Tag(depth) +
+          `异常捕获\n`,
+        blockData: blockData,
+      }); // 【sp1 - 记录代码】
+
       if (catchAndFinally.length !== 0) {
         const catchNode = catchAndFinally.find(item => item.shape === 'catch');
         const finallyNode = catchAndFinally.find(
@@ -611,6 +699,19 @@ export const transformEditorProcess = (
       );
       console.log('catchStartNodeEdge', catchStartNodeEdge);
       result.output += `${padding(depth)}except Exception as error:\n`;
+
+      tempCenter.push({
+        currentId: currentId,
+        pythonCode: `except Exception as error:\n`,
+        funcName: `_START_EXCEPT_`,
+        return_string: '',
+        cards: cloneDeep(blockData.cards) || [],
+        titleName:
+          get_level_Tag(depth) +
+          `异常处理\n`,
+        blockData: blockData,
+      }); // 【sp1 - 记录代码】
+
       if (catchStartNodeEdge) {
         if (catchStartNodeEdge.constructor === String) {
           transformEditorProcess(
@@ -636,6 +737,19 @@ export const transformEditorProcess = (
         }
       }
       result.output += `${padding(depth + 1)}pass\n`;
+
+      tempCenter.push({
+        currentId: currentId,
+        pythonCode: `pass\n`,
+        funcName: `_END_EXCEPT_`,
+        return_string: '',
+        cards: cloneDeep(blockData.cards) || [],
+        titleName:
+          get_level_Tag(depth) +
+          `---- ---- ----\n`,
+        blockData: blockData,
+      }); // 【sp1 - 记录代码】
+
       break;
     case 'finally':
       const finallyStartNodeEdge = findStartProcessBlockInContain(
@@ -646,6 +760,20 @@ export const transformEditorProcess = (
       );
       console.log('finallyStartNodeEdge', finallyStartNodeEdge);
       result.output += `${padding(depth)}finally:\n`;
+
+      tempCenter.push({
+        currentId: currentId,
+        pythonCode: `finally:\n`,
+        funcName: `_START_FINALLY_`,
+        return_string: '',
+        cards: cloneDeep(blockData.cards) || [],
+        titleName:
+          get_level_Tag(depth) +
+          `异常处理\n`,
+        blockData: blockData,
+      }); // 【sp1 - 记录代码】
+
+
       if (finallyStartNodeEdge) {
         if (finallyStartNodeEdge.constructor === String) {
           transformEditorProcess(
@@ -670,6 +798,19 @@ export const transformEditorProcess = (
         }
       }
       result.output += `${padding(depth + 1)}pass\n`;
+
+      tempCenter.push({
+        currentId: currentId,
+        pythonCode: `pass\n`,
+        funcName: `_END_FINALLY_`,
+        return_string: '',
+        cards: cloneDeep(blockData.cards) || [],
+        titleName:
+          get_level_Tag(depth) +
+          `---- ---- ----\n`,
+        blockData: blockData,
+      }); // 【sp1 - 记录代码】
+
       break;
     case 'group':
       const groupStartNodeEdge = findStartProcessBlockInContain(
@@ -679,8 +820,29 @@ export const transformEditorProcess = (
         ''
       );
       const groupTrans = translateGroup(blockData);
-      console.log(groupTrans);
+      console.log(`加入循环`, groupTrans, tempCenter);
+
       result.output += `${padding(depth)}${groupTrans}:\n`;
+
+      // tempCenter
+      tempCenter.push({
+        currentId: currentId,
+        pythonCode: `${groupTrans}:\n`,
+        funcName: `_START_GROUP_`,
+        //params: params,
+        return_string: '',
+        //`${padding(depth)}
+        // __main__: `${
+        //   return_string ? return_string + ' = ' : ''
+        // }${funcName}(${params
+        //   .filter(item => item.name)
+        //   .map(item => item.name + ' = ' + item.value)
+        //   .join(',')})\n`,
+        cards: cloneDeep(blockData.cards) || [],
+        titleName: get_level_Tag(depth) + `循环 ${groupTrans}:\n`,
+        blockData: blockData,
+      });
+
       if (groupStartNodeEdge) {
         if (groupStartNodeEdge.constructor === String) {
           transformEditorProcess(
@@ -704,6 +866,27 @@ export const transformEditorProcess = (
           );
         }
       }
+
+      console.log(`循环结束`, groupTrans, tempCenter);
+
+      tempCenter.push({
+        currentId: currentId,
+        pythonCode: `${groupTrans}:\n`,
+        funcName: `_END_GROUP_`,
+        //params: params,
+        return_string: '',
+        //`${padding(depth)}
+        // __main__: `${
+        //   return_string ? return_string + ' = ' : ''
+        // }${funcName}(${params
+        //   .filter(item => item.name)
+        //   .map(item => item.name + ' = ' + item.value)
+        //   .join(',')})\n`,
+        cards: cloneDeep(blockData.cards) || [],
+        titleName: get_level_Tag(depth) + `循环结束 ${groupTrans}:\n`,
+        blockData: blockData,
+      });
+
       result.output += `${padding(depth + 1)}pass\n`;
       const nextPoint2 = findTargetIdBySourceId(graphData.edges, currentId);
       nextPoint2 &&
