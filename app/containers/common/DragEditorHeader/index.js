@@ -299,7 +299,7 @@ export default memo(
 
     const getVariableNames = () => {
       axios
-        .get(`${api('variableNames')}?tag=true`)
+        .get(`${api('variableNames')}?tag=1`)
         .then(res => res.data)
         .then(json => {
           if (json.code !== -1) {
@@ -314,7 +314,7 @@ export default memo(
 
     const getTaskDataNames = () => {
       axios
-        .get(`${api('taskDataNames')}?tag=true`)
+        .get(`${api('taskDataNames')}?tag=1`)
         .then(res => res.data)
         .then(json => {
           if (json.code !== -1) {
@@ -762,10 +762,11 @@ export default memo(
             </FormItem>
             <FormItem label="任务数据">
               <Select
-                mode="multiple"
+                mode="tags"
                 style={{ width: '100%' }}
                 placeholder="选择任务数据"
                 onChange={selectTaskDataNameData}
+                tokenSeparators={[',']}
               >
                 {taskDataNames.map((item, index) => (
                   <Option key={item} value={item}>
@@ -776,10 +777,11 @@ export default memo(
             </FormItem>
             <FormItem label="任务变量">
               <Select
-                mode="multiple"
+                mode="tags"
                 style={{ width: '100%' }}
                 placeholder="选择任务变量"
                 onChange={selectVariableNameData}
+                tokenSeparators={[',']}
               >
                 {variableNames.map((item, index) => (
                   <Option key={item.id} value={item.name}>
