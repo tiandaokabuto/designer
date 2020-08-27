@@ -150,13 +150,13 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         oneRunning: false,
-        runningState: 'blockAll_running',
+        runningState: 'blockAll_pause',
       };
     case DEBUG_ONE_STEP_FINISHED_CARDS:
       return {
         ...state,
         oneRunning: false,
-        runningState: 'cardsAll_running',
+        runningState: 'cardsAll_pause',
       };
     case DEBUG_ONE_STEP_FINISHED_STARTED:
       return {

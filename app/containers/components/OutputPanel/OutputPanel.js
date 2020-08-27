@@ -369,6 +369,7 @@ export default memo(
     const [selectedTreeNode, setSelectedTreeNode] = useState([]);
 
     useEffect(() => {
+      if (Object.keys(debug_dataStore).length === 0) return;
       console.log('有更新', debug_dataStore, getDebugIndex());
 
       if (currentPagePosition === 'editor') {
@@ -410,11 +411,11 @@ export default memo(
       let value = tempVariables.current.var_value;
       //
       value = value.trim();
-      if(value.length === 0){
-        return message.info("不能发送空值")
+      if (value.length === 0) {
+        return message.info('不能发送空值');
       }
 
-      if(!isNaN(Number(value))){
+      if (!isNaN(Number(value))) {
         value = Number(value);
       }
 
@@ -876,35 +877,41 @@ export default memo(
                   // onExpand={this.onExpand}
                 >
                   {currentPagePosition === 'editor'
-                    ? debug_left_data.map((item, index) => {
-                        return (
-                          <TreeNode
-                            title={item.titleName}
-                            key={`${index}`}
-                            isLeaf
-                            disabled={item.hasLog ? false : true}
-                          />
-                        );
-                      })
+                    ? debug_left_data
+                      ? debug_left_data.map((item, index) => {
+                          return (
+                            <TreeNode
+                              title={item.titleName}
+                              key={`${index}`}
+                              isLeaf
+                              disabled={item.hasLog ? false : true}
+                            />
+                          );
+                        })
+                      : ''
                     : ''}
 
                   {currentPagePosition === 'block'
-                    ? debug_left_data.map((item, index) => {
-                        return (
-                          <TreeNode
-                            title={item.userDesc ? item.userDesc : item.cmdName}
-                            key={`${index}`}
-                            isLeaf
-                            disabled={
-                              debug_dataStore.stepLog
-                                ? debug_dataStore.stepLog[index]
-                                  ? false
+                    ? debug_left_data
+                      ? debug_left_data.map((item, index) => {
+                          return (
+                            <TreeNode
+                              title={
+                                item.userDesc ? item.userDesc : item.cmdName
+                              }
+                              key={`${index}`}
+                              isLeaf
+                              disabled={
+                                debug_dataStore.stepLog
+                                  ? debug_dataStore.stepLog[index]
+                                    ? false
+                                    : true
                                   : true
-                                : true
-                            }
-                          />
-                        );
-                      })
+                              }
+                            />
+                          );
+                        })
+                      : ''
                     : ''}
                   {/**
                 <TreeNode title="leaf 0-0" key="0-0-0" isLeaf />

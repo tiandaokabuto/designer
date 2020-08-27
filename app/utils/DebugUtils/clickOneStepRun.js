@@ -15,15 +15,14 @@ export const clickOneStepRun = (cards, id) => {
   //console.log(`//${id}//`, fetchCard(cards, id)); //cards.filter(item => item.id === id))
 
   const varNames = fetchCard(cards, id);
-  console.log(cards,id,varNames)
+  console.log(`varNames`, cards, id, varNames);
   //console.log(cards.filter(item => item.id === id));
-  let line = result.output//.replace(/\n/g, '\\n');
+  let line = result.output; //.replace(/\n/g, '\\n');
   //line = line.replace(/\"/, `"`);
   //line = line.replace(/"/g, `\"`);
   // .replace(/"/g, `\"`)
   // .replace(/'/g, `\'`);
   console.log(`【\n=>\\n 且 " => \" 后的python代码】\n`, line);
-
 
   const switchOn = store.getState().debug.switch;
 
@@ -32,9 +31,23 @@ export const clickOneStepRun = (cards, id) => {
   }
 
   try {
+    const card = cards.find(card => card.id === id);
+    const findVarNames = card.properties.required.find(
+      item => item.cnName === '输出到' || item.cnName === '变量名称'
+    );
     sendPythonCodeByLine({
       running: varNames,
-      varNames: varNames.outPut ? varNames.outPut : '',
+      varNames: findVarNames ? findVarNames.value : '',
+
+      // varNames.properties.require.find(
+      //   item => item.cnName === '输出到' || item.cnName === '变量名称'
+      // )
+      //   ? running.properties.require.find(
+      //       item => item.cnName === '输出到' || item.cnName === '变量名称'
+      //     ).value
+      //   : '',
+
+      //varNames.outPut ? varNames.outPut : '',
       output: line,
     });
 
