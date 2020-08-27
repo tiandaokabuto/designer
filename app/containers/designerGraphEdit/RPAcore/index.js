@@ -60,11 +60,11 @@ export const claerTempCenter = () => {
 };
 
 export const getDebugIndex = () => {
-  return{
-    nowIndex:nowIndex,
-    nowIndexCards:nowIndexCards,
-    nowLevel:nowLevel,
-  }
+  return {
+    nowIndex: nowIndex,
+    nowIndexCards: nowIndexCards,
+    nowLevel: nowLevel,
+  };
 };
 
 // 获取代码分段缓存区的内容
@@ -122,13 +122,16 @@ export const handleDebugBlockAllRun = () => {
   console.log('开始自动单步调试！第一层级别');
   console.log(tempCenter);
   const running = tempCenter[nowIndex];
+  const findVarNames = running.properties.required.find(
+    item => item.cnName === '输出到' || item.cnName === '变量名称'
+  );
 
   if (pass === true) {
     // 执行
     setTimeout(() => {
       sendPythonCodeByLine({
         running: running,
-        varNames: running.return_string,
+        varNames: findVarNames ? findVarNames.value : '',
         output: running.__main__,
       });
       nowIndex += 1;
@@ -139,7 +142,7 @@ export const handleDebugBlockAllRun = () => {
     setTimeout(() => {
       sendPythonCodeByLine({
         running: running,
-        varNames: '', //running.return_string,
+        varNames: findVarNames ? findVarNames.value : '',
         output: running.pythonCode,
       });
     }, 300);
@@ -187,7 +190,7 @@ export const handleDebugCardsAllRun = checkedGraphBlockId => {
       needRunBlock[nowIndexCards].breakPoint = false;
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
       changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
-      return;// event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
+      return; // event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
       //needRunBlock[cardsIndex].breakPoint === false;
     }
   }

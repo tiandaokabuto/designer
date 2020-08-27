@@ -71,7 +71,8 @@ export const runDebugServer = async () => {
   });
 
   socket.on('error', function(err) {
-    message.warning('遇到错误');
+    //message.warning('Debug功能遇到通讯错误');
+
     console.log(err);
   });
 
@@ -266,9 +267,17 @@ export const killTask = () => {
   tempLength = 0;
   try {
     changeDebugInfos(DEBUG_CLOSE_DEBUGSERVER, {});
-    changeDebugInfos(DEBUG_PUT_SOURCECODE, []);
+    changeDebugInfos(DEBUG_PUT_SOURCECODE, {});
+
+    console.log(socket)
+
+    // if (!socket.connecting) {
+    //   worker.kill();
+    //   return;
+    // }
+
     socket.write('exit()');
-    localStorage.setItem('debug', '关闭');
+    //localStorage.setItem('debug', '关闭');
     // event.emit(PYTHOH_DEBUG_SERVER_START, '终止');
     // setTimeout(() => event.emit(PYTHOH_DEBUG_SERVER_START, '准备'), 3000);
   } catch (e) {
