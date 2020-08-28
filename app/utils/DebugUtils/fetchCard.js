@@ -17,6 +17,15 @@ export const fetchCard = (cards, fetchId) => {
     if (card.elseChildren){
       fetchCard(card.elseChildren, fetchId);
     }
+    if (card.tryChildren){
+      fetchCard(card.tryChildren, fetchId);
+    }
+    if (card.catchChildren){
+      fetchCard(card.catchChildren, fetchId);
+    }
+    if (card.finallyChildren){
+      fetchCard(card.finallyChildren, fetchId);
+    }
   });
 
   console.log("最后给出temp",temp)
