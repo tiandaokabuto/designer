@@ -177,11 +177,11 @@ export default (state = defaultState, action) => {
       if (nowLevel === 'block') {
         let temp = state.dataStore;
 
-        if (nowIndex - 1 === -1) {
-          temp[Object.keys(temp).length - 1].hasLog = log;
-        }else{
+        // if (nowIndex - 1 === -1) {
+        //   temp[Object.keys(temp).length - 1].hasLog = log;
+        // }else{
           temp[nowIndex - 1].hasLog = log;
-        }
+        // }
 
         return {
           ...state,
