@@ -7,8 +7,15 @@ export const fetchCard = (cards, fetchId) => {
     console.log(card.id)
     if (card.id === fetchId) {
       temp = card;
-    } else if (card.children) {
+    }
+    if (card.children) {
       fetchCard(card.children, fetchId);
+    }
+    if (card.ifChildren) {
+      fetchCard(card.ifChildren, fetchId);
+    }
+    if (card.elseChildren){
+      fetchCard(card.elseChildren, fetchId);
     }
   });
 
