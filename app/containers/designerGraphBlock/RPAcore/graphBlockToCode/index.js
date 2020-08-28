@@ -45,6 +45,7 @@ const transformBlockToCodeImpl = (
   const padding = paddingStart(depth);
   let ignore = '';
   dataStructure.forEach((statement, index) => {
+    console.log(`statement`,statement)
     switch (statement.$$typeof) {
       case 1: // 基础语句
         /* 处理基础语句下的子语句 */

@@ -277,6 +277,9 @@ export const killTask = () => {
     // }
 
     socket.write('exit()');
+    setTimeout(()=>{
+      worker.kill();
+    },2000)
     //localStorage.setItem('debug', '关闭');
     // event.emit(PYTHOH_DEBUG_SERVER_START, '终止');
     // setTimeout(() => event.emit(PYTHOH_DEBUG_SERVER_START, '准备'), 3000);
