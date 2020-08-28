@@ -122,16 +122,17 @@ export const handleDebugBlockAllRun = () => {
   console.log('开始自动单步调试！第一层级别');
   console.log(tempCenter);
   const running = tempCenter[nowIndex];
-  const findVarNames = running.properties.required.find(
-    item => item.cnName === '输出到' || item.cnName === '变量名称'
-  );
+  // const findVarNames = running.properties.required.find(
+  //   item => item.cnName === '输出到' || item.cnName === '变量名称'
+  // );
 
   if (pass === true) {
     // 执行
     setTimeout(() => {
       sendPythonCodeByLine({
         running: running,
-        varNames: findVarNames ? findVarNames.value : '',
+        varNames: running.return_string,
+        // varNames: findVarNames ? findVarNames.value : '',
         output: running.__main__,
       });
       nowIndex += 1;
@@ -142,7 +143,8 @@ export const handleDebugBlockAllRun = () => {
     setTimeout(() => {
       sendPythonCodeByLine({
         running: running,
-        varNames: findVarNames ? findVarNames.value : '',
+        varNames: "",//running.return_string,
+        //varNames: findVarNames ? findVarNames.value : '',
         output: running.pythonCode,
       });
     }, 300);

@@ -41,7 +41,7 @@ let tempLength = 0;
 export const runDebugServer = async () => {
   // 打开python Debug服务器
   worker = await spawn(`${process.cwd()}/../Python/python3_lib/python.exe`, [
-    `${process.cwd()}/../Python/python3_lib/debug/DebugServer.py`,
+    `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/debug/DebugServer.py`,
   ]);
 
   // worker = await exec(
@@ -145,7 +145,7 @@ export const runDebugServer = async () => {
       //const file =  fs.readSync(fd, buffer, offset, length, position)
       setTimeout(() => {
         const file = fs.readFileSync(
-          `${process.cwd()}/../python/python3_lib/debug/logfile_fromDesigner.log`,
+          `${process.cwd()}/../python/python3_lib/Lib/site-packages/sendiRPA/debug/logfile_fromDesigner.log`,
           {
             encoding: 'binary',
           }
