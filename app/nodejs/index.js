@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { issueProcess } from './utils';
-import event, { PYTHON_OUTPUT } from '@/containers/eventCenter';
+import event, { PYTHON_OUTPUT, PYTHON_OUTPUT_CLEAR } from '@/containers/eventCenter';
 
 const fs = require('fs');
 const process = require('process');
@@ -97,7 +97,7 @@ export const executePython = code => {
         // res.send(matchArr.join(', '));
       } else {
         // 将结果回显到输出面板
-        console.log(stdout);
+        console.log(PYTHON_OUTPUT_CLEAR, stdout);
         event.emit(PYTHON_OUTPUT, stdout);
       }
     });
