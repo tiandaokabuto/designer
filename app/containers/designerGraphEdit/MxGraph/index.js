@@ -1062,8 +1062,8 @@ const MxgraphContainer = useInjectContext(
                   dx: cell ? evt.properties.dx : 'xxx',
                   dy: cell ? evt.properties.dy : 'xxx',
 
-                  width: cell.geometry.width ,
-                  height: cell.geometry.height ,
+                  width: cell.geometry.width,
+                  height: cell.geometry.height,
                 },
 
                 //---
@@ -1221,9 +1221,15 @@ const MxgraphContainer = useInjectContext(
               // 把流程块移动到中间
               graph.moveCells([cell], middleWidth - cellX, lastHeight - cellY);
 
+              console.log(`别再删了，求求你了`);
+
               // [这个步骤不记录在撤销回复中]
               let temp = undoAndRedoRef.current;
               if (temp.redoSteps.length > 0) {
+                console.log(
+                  '进这里',
+                  temp.redoSteps[temp.redoSteps.length - 1][0]
+                );
                 if (
                   temp.redoSteps[temp.redoSteps.length - 1][0].type ===
                   'cellsAdded_By_redo'
@@ -1232,10 +1238,26 @@ const MxgraphContainer = useInjectContext(
                   //message.warning("我没删")
                   console.log('key 我没删哦', temp);
                 } else {
-                  temp.undoSteps.pop();
+                  if (
+                    temp.redoSteps[temp.redoSteps.length - 1][0].type ===
+                      'moveParent' ||
+                    temp.redoSteps[temp.redoSteps.length - 1][0].type ===
+                      'remove'
+                  ) {
+                  } else {
+                    temp.undoSteps.pop();
+                  }
                 }
               } else {
-                temp.undoSteps.pop();
+                console.log(
+                  `别再删了，求求你了`,
+                  temp.undoSteps[temp.undoSteps.length - 1]
+                );
+
+                if (temp.undoSteps[temp.undoSteps.length - 1].stopPop) {
+                } else {
+                  temp.undoSteps.pop();
+                }
               }
 
               /**
