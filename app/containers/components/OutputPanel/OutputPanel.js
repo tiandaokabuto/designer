@@ -27,7 +27,7 @@ import {
   setPause,
   clearPause,
 } from '../../designerGraphEdit/RPAcore';
-import { PYTHON_OUTPUT } from '@/containers/eventCenter';
+import { PYTHON_OUTPUT, PYTHON_OUTPUT_CLEAR } from '@/containers/eventCenter';
 
 // liuqi-new
 import event from '../../eventCenter';
@@ -166,10 +166,10 @@ export default memo(
       };
 
       event.addListener(PYTHON_OUTPUT, handlePythonOutput);
-      event.addListener('clear_output', handleClearOutput);
+      event.addListener(PYTHON_OUTPUT_CLEAR, handleClearOutput);
       return () => {
         event.addListener(PYTHON_OUTPUT, handlePythonOutput);
-        event.removeListener('clear_output', handleClearOutput);
+        event.removeListener(PYTHON_OUTPUT_CLEAR, handleClearOutput);
       };
     }, []);
 
@@ -349,7 +349,7 @@ export default memo(
       event.addListener(DEBUG_RUN_STEP_BY_STEP, resetDebugIndex);
       return () => {
         event.removeListener(DEBUG_SOURCECODE_INSERT, insertDebugInfo);
-        event.addListener(DEBUG_RUN_STEP_BY_STEP, resetDebugIndex);
+        event.removeListener(DEBUG_RUN_STEP_BY_STEP, resetDebugIndex);
       };
     }, []);
 
@@ -735,7 +735,11 @@ export default memo(
                 <DebugBtn
                   labelText="关闭Debug服务"
                   iconType="stop"
-                  click={() => event.emit(DEBUG_CLOSE_DEBUGSERVER)}
+                  click={() => {
+                    event.emit(DEBUG_CLOSE_DEBUGSERVER)
+                    event.emit(DEBUG_CLOSE_DEBUGSERVER)
+
+                  }}
                 />
               </span>
             )}
