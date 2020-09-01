@@ -728,7 +728,10 @@ export default memo(
               <DebugBtn
                 labelText="启动Debug模式"
                 iconType="play-circle"
-                click={() => event.emit(DEBUG_OPEN_DEBUGSERVER)}
+                click={() => {
+                  event.emit(DEBUG_OPEN_DEBUGSERVER);
+                  event.emit(PYTHON_OUTPUT_CLEAR);
+                }}
               />
             ) : (
               <span>
@@ -736,9 +739,7 @@ export default memo(
                   labelText="关闭Debug服务"
                   iconType="stop"
                   click={() => {
-                    event.emit(DEBUG_CLOSE_DEBUGSERVER)
-                    event.emit(DEBUG_CLOSE_DEBUGSERVER)
-
+                    event.emit(DEBUG_CLOSE_DEBUGSERVER);
                   }}
                 />
               </span>

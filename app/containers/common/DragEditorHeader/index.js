@@ -16,6 +16,7 @@ import axios from 'axios';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
 import event, { STOP_RUNNING, START_POINT } from '@/containers/eventCenter';
+import { PYTHON_OUTPUT_CLEAR } from '@/containers/eventCenter/eventTags';
 import {
   UNDO_CARDSDATA,
   REDO_CARDSDATA,
@@ -237,13 +238,11 @@ export default memo(
 
     const handleOperation = (fromOrTo = undefined) => {
       try {
+        event.emit(PYTHON_OUTPUT_CLEAR);
         const uuid = new Date().getTime().toString(16);
         uuidRef.current = uuid;
         if (fromOrTo === undefined) {
           console.log(transformProcessToPython());
-
-          // 实验-liuqi
-          //console.log(getTempCenter());
         } else {
           transformPythonWithPoint(fromOrTo);
         }
