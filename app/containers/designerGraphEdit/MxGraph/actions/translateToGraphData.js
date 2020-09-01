@@ -46,7 +46,7 @@ export function translateToGraphData(sender) {
       //console.log(cells[key].geometry);
 
       output.nodes.push({
-        parent: parent.id,
+        parent: parent ? (parent.id ? parent.id : '1') : '1',
         type: 'node',
         size:
           shape === 'start' || shape === 'end'

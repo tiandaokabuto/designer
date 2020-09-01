@@ -41,7 +41,7 @@ let tempLength = 0;
 export const runDebugServer = async () => {
   // 打开python Debug服务器
   worker = await spawn(`${process.cwd()}/../Python/python3_lib/python.exe`, [
-    `${process.cwd()}/../Python/python3_lib/debug/DebugServer.py`,
+    `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/debug/DebugServer.py`,
   ]);
 
   // worker = await exec(
@@ -71,7 +71,8 @@ export const runDebugServer = async () => {
   });
 
   socket.on('error', function(err) {
-    message.warning('遇到错误');
+    //message.warning('Debug功能遇到通讯错误');
+
     console.log(err);
   });
 
@@ -144,7 +145,7 @@ export const runDebugServer = async () => {
       //const file =  fs.readSync(fd, buffer, offset, length, position)
       setTimeout(() => {
         const file = fs.readFileSync(
-          `${process.cwd()}/../python/python3_lib/debug/logfile_fromDesigner.log`,
+          `${process.cwd()}/../python/python3_lib/Lib/site-packages/sendiRPA/debug/logfile_fromDesigner.log`,
           {
             encoding: 'binary',
           }
@@ -266,9 +267,20 @@ export const killTask = () => {
   tempLength = 0;
   try {
     changeDebugInfos(DEBUG_CLOSE_DEBUGSERVER, {});
-    changeDebugInfos(DEBUG_PUT_SOURCECODE, []);
+    changeDebugInfos(DEBUG_PUT_SOURCECODE, {});
+
+    console.log(socket)
+
+    // if (!socket.connecting) {
+    //   worker.kill();
+    //   return;
+    // }
+
     socket.write('exit()');
-    localStorage.setItem('debug', '关闭');
+    setTimeout(()=>{
+      worker.kill();
+    },2000)
+    //localStorage.setItem('debug', '关闭');
     // event.emit(PYTHOH_DEBUG_SERVER_START, '终止');
     // setTimeout(() => event.emit(PYTHOH_DEBUG_SERVER_START, '准备'), 3000);
   } catch (e) {

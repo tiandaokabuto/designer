@@ -150,13 +150,13 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         oneRunning: false,
-        runningState: 'blockAll_running',
+        runningState: 'blockAll_pause',
       };
     case DEBUG_ONE_STEP_FINISHED_CARDS:
       return {
         ...state,
         oneRunning: false,
-        runningState: 'cardsAll_running',
+        runningState: 'cardsAll_pause',
       };
     case DEBUG_ONE_STEP_FINISHED_STARTED:
       return {
@@ -177,11 +177,11 @@ export default (state = defaultState, action) => {
       if (nowLevel === 'block') {
         let temp = state.dataStore;
 
-        if (nowIndex - 1 === -1) {
-          temp[Object.keys(temp).length - 1].hasLog = log;
-        }else{
+        // if (nowIndex - 1 === -1) {
+        //   temp[Object.keys(temp).length - 1].hasLog = log;
+        // }else{
           temp[nowIndex - 1].hasLog = log;
-        }
+        // }
 
         return {
           ...state,
