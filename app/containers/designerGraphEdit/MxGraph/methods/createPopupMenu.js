@@ -3,6 +3,12 @@ import { Action_CopyCell, Action_PasteCell } from '../actions/copyCell';
 import event, { START_POINT } from '@/containers/eventCenter';
 import { addToReuse, exportCustomProcessBlock } from '_utils/utils';
 
+import store from '@/store';
+import {
+  DEBUG_START_TO_HERE,
+  DEBUG_HERE_TO_END,
+} from '../../../../constants/actions/debugInfos';
+
 export default (
   graph,
   menu,
@@ -35,10 +41,20 @@ export default (
       exportCustomProcessBlock();
     };
     const clickMenuExecuteBefore = () => {
-      event.emit(START_POINT, 'to');
+      const { debug } = store.getState();
+      if (debug.switch) {
+        event.emit(DEBUG_START_TO_HERE);
+      } else {
+        event.emit(START_POINT, 'to');
+      }
     };
     const clickMenuExecuteAfter = () => {
-      event.emit(START_POINT, 'from');
+      const { debug } = store.getState();
+      if (debug.switch) {
+        event.emit(DEBUG_HERE_TO_END);
+      } else {
+        event.emit(START_POINT, 'from');
+      }
     };
 
     const menuItems = [
