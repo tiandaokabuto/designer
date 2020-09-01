@@ -95,7 +95,7 @@ export default memo(
     };
 
     // 存储下方【输出/Debug】切换选项卡状态
-    const [tabSwicth, setTabSwich] = useState('Debug');
+    const [tabSwicth, setTabSwich] = useState('输出');
 
     const changeTabSwich = e => {
       //console.log(e)
@@ -686,8 +686,8 @@ export default memo(
                   style={{ widht: '20px !important' }}
                 ></TabPane>
                 <TabPane
-                  tab="Debug"
-                  key="Debug"
+                  tab="调试"
+                  key="调试"
                   style={{ widht: '20px !important' }}
                 ></TabPane>
               </Tabs>
@@ -720,7 +720,7 @@ export default memo(
           <div
             style={{
               marginTop: -38,
-              display: tabSwicth === 'Debug' ? 'inline' : 'none',
+              display: tabSwicth === '调试' ? 'inline' : 'none',
             }}
             className="dragger-editor-container-output-tages"
           >
@@ -855,7 +855,7 @@ export default memo(
             <div
               className="variablePanel"
               style={{
-                display: tabSwicth === 'Debug' ? 'inline' : 'none',
+                display: tabSwicth === '调试' ? 'inline' : 'none',
                 //background: 'rgba(244,252,250,1)',
               }}
             >

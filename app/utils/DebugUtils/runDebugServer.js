@@ -41,8 +41,12 @@ let tempLength = 0;
 export const runDebugServer = async () => {
   // 打开python Debug服务器
   worker = await spawn(`${process.cwd()}/../Python/python3_lib/python.exe`, [
-    `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/debug/DebugServer.py`,
+    //`${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/debug/DebugServer.py`,
+    `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/PYDHandle.py`,
+    `DebugServer`,
   ]);
+
+  // `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/PYDHandle.py CaptureAreaScreen`,
 
   // worker = await exec(
   //   `${process.cwd()}/../Python/python3_lib/python.exe ${process.cwd()}/../Python/python3_lib/debug/DebugServer.py`,
@@ -102,6 +106,8 @@ export const runDebugServer = async () => {
       //console.clear();
       console.log(e);
     }
+
+    if (getLogToJSON.is_continue) return;
 
     // event.emit(PYTHON_GO_NEXT_STEP, 'block');
 
@@ -269,7 +275,7 @@ export const killTask = () => {
     changeDebugInfos(DEBUG_CLOSE_DEBUGSERVER, {});
     changeDebugInfos(DEBUG_PUT_SOURCECODE, {});
 
-    console.log(socket)
+    console.log(socket);
 
     // if (!socket.connecting) {
     //   worker.kill();
@@ -277,9 +283,9 @@ export const killTask = () => {
     // }
 
     socket.write('exit()');
-    setTimeout(()=>{
+    setTimeout(() => {
       worker.kill();
-    },2000)
+    }, 2000);
     //localStorage.setItem('debug', '关闭');
     // event.emit(PYTHOH_DEBUG_SERVER_START, '终止');
     // setTimeout(() => event.emit(PYTHOH_DEBUG_SERVER_START, '准备'), 3000);

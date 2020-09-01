@@ -35,15 +35,24 @@ appexpress.use(bodyParser.urlencoded({ extended: false }));
 
 // 本地监听8888端口 获取动态的xpath元素回填
 
+appexpress.all('', function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '');
+  //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Methods', '*');
+  res.header('Content-Type', 'application/json;charset=utf-8');
+  next();
+});
+
 // --------------------------- express版本
-appexpress.post('/query', function (req, res) {
+appexpress.post('/query', function(req, res) {
   if (targetId === undefined) {
     res.sendStatus(500);
   } else {
     res.sendStatus(200);
   }
 });
-appexpress.post('/upload', function (req, res) {
+appexpress.post('/upload', function(req, res) {
   try {
     const finallyResult = req.body;
 
@@ -71,7 +80,7 @@ appexpress.post('/upload', function (req, res) {
   res.sendStatus(200);
 });
 
-appexpress.post('/win_get_xpath', function (req, res) {
+appexpress.post('/win_get_xpath', function(req, res) {
   try {
     const finallyResult = req.body;
 
@@ -100,7 +109,7 @@ appexpress.post('/win_get_xpath', function (req, res) {
 });
 
 // let count = 0;
-appexpress.post('/xpathStatus', function (rea, res) {
+appexpress.post('/xpathStatus', function(rea, res) {
   // count++;
   // console.log(
   //   '/xpathStatus' + count + '_____' + global.sharedObject.xpathStatus
@@ -113,7 +122,7 @@ appexpress.post('/xpathStatus', function (rea, res) {
   }
 });
 
-appexpress.post('/position', function (req, res) {
+appexpress.post('/position', function(req, res) {
   try {
     const finallyResult = req.body;
 
@@ -142,7 +151,7 @@ appexpress.post('/position', function (req, res) {
   res.sendStatus(200);
 });
 
-appexpress.post('/windowArray', function (req, res) {
+appexpress.post('/windowArray', function(req, res) {
   // console.log('windowArray');
   try {
     const finallyResult = req.body;
@@ -172,7 +181,7 @@ appexpress.post('/windowArray', function (req, res) {
   res.sendStatus(200);
 });
 
-appexpress.post('/clickImage', function (req, res) {
+appexpress.post('/clickImage', function(req, res) {
   try {
     const finallyResult = req.body;
 
@@ -261,7 +270,7 @@ const createLoginWindow = () => {
   loginWindow.loadURL(`file://${__dirname}/login.html`);
 
   // loginWindow.webContents.openDevTools();
-  loginWindow.on('ready-to-show', function () {
+  loginWindow.on('ready-to-show', function() {
     loginWindow.show();
   });
 };
@@ -352,7 +361,7 @@ const createWindow = async () => {
   });
 
   // 选择文件存储路径
-  ipcMain.on('open-directory-dialog', function (
+  ipcMain.on('open-directory-dialog', function(
     event,
     func,
     label = '存储',
@@ -375,7 +384,7 @@ const createWindow = async () => {
       .catch(err => console.log(err));
   });
 
-  ipcMain.on('choose-directory-dialog', function (
+  ipcMain.on('choose-directory-dialog', function(
     event,
     func,
     label = '存储',
@@ -416,7 +425,7 @@ const createWindow = async () => {
     targetId = id;
     if (isNetStart) return;
 
-    appexpress.listen(8888, function () {
+    appexpress.listen(8888, function() {
       console.log('8888服务器已启动');
     });
     isNetStart = true;
@@ -426,9 +435,10 @@ const createWindow = async () => {
     targetId = id;
     if (isBrowserNetStart) return;
 
-    appexpress.listen(8889, function () {
+    appexpress.listen(8889, function() {
       console.log('8889服务器已启动');
     });
+
     isBrowserNetStart = true;
   });
 
