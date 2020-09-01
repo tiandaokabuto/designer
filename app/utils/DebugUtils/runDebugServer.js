@@ -41,9 +41,9 @@ let tempLength = 0;
 export const runDebugServer = async () => {
   // 打开python Debug服务器
   worker = await spawn(`${process.cwd()}/../Python/python3_lib/python.exe`, [
-    //`${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/debug/DebugServer.py`,
-    `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/PYDHandle.py`,
-    `DebugServer`,
+    `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/debug/DebugServer.py`,
+    // `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/PYDHandle.py`,
+    // `DebugServer`,
   ]);
 
   // `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/PYDHandle.py CaptureAreaScreen`,
@@ -68,73 +68,68 @@ export const runDebugServer = async () => {
     console.log(`stdout: ${log}`);
   });
 
-  setTimeout(() => {
-    socket = new net.Socket();
-    socket.connect(port, hostname, function() {
-      // o -> 标题菜单 -> 启动
-      changeDebugInfos(DEBUG_OPEN_DEBUGSERVER, {});
-    });
+  socket = new net.Socket();
+  socket.connect(port, hostname, function() {
+    // o -> 标题菜单 -> 启动
+    changeDebugInfos(DEBUG_OPEN_DEBUGSERVER, {});
+  });
 
-    socket.on('error', function(err) {
-      //message.warning('Debug功能遇到通讯错误');
+  socket.on('error', function(err) {
+    //message.warning('Debug功能遇到通讯错误');
 
-      console.log(err);
-    });
+    console.log(err);
+  });
 
-    socket.on(
-      'data',
-      msg => {
-        console.log(msg);
-        const log = getUTF8(msg);
-        try {
-          const getLogToJSON = JSON.parse(log);
-          console.log('[收到soket—data]', getLogToJSON);
-          let temp = '';
-          Object.keys(getLogToJSON).forEach(array => {
-            console.log(array);
-            // array.forEach(item =>{
-            //   if(item.source.length > 0){
-            //     temp += `发送的代码：\n` + item.source[0
-            //     ]
-            //   }
-            // })
-            //temp = `发送的代码：\n` + array.sources[0];
-          });
-          //event.emit(PYTHON_OUTPUT, log);
-          event.emit(DEBUG_SOURCECODE_INSERT, {
-            log: getLogToJSON,
-            index: getDebugIndex(),
-          });
-        } catch (e) {
-          //console.clear();
-          console.log(e);
-        }
+  socket.on('data', msg => {
+    console.log(msg);
+    const log = getUTF8(msg);
+    try {
+      const getLogToJSON = JSON.parse(log);
+      console.log('[收到soket—data]', getLogToJSON);
+      let temp = '';
+      Object.keys(getLogToJSON).forEach(array => {
+        console.log(array);
+        // array.forEach(item =>{
+        //   if(item.source.length > 0){
+        //     temp += `发送的代码：\n` + item.source[0
+        //     ]
+        //   }
+        // })
+        //temp = `发送的代码：\n` + array.sources[0];
+      });
+      //event.emit(PYTHON_OUTPUT, log);
+      event.emit(DEBUG_SOURCECODE_INSERT, {
+        log: getLogToJSON,
+        index: getDebugIndex(),
+      });
+    } catch (e) {
+      //console.clear();
+      console.log(e);
+    }
 
-        // event.emit(PYTHON_GO_NEXT_STEP, 'block');
+    // event.emit(PYTHON_GO_NEXT_STEP, 'block');
 
-        //const running = localStorage.getItem('running_mode');
-        const {
-          debug: { runningState },
-        } = store.getState();
-        // 当前的运行状态
-        const running = runningState;
+    //const running = localStorage.getItem('running_mode');
+    const {
+      debug: { runningState },
+    } = store.getState();
+    // 当前的运行状态
+    const running = runningState;
 
-        // if 现在的运行模式是
-        if (running === 'blockAll_running') {
-          // 继续通知下一步
-          event.emit(DEBUG_RUN_BLOCK_ALL_RUN);
-        } else if (running === 'cardsAll_running') {
-          event.emit(DEBUG_RUN_CARDS_ALL_RUN);
-        } else if (
-          running === 'started_one' ||
-          running === 'cardsAll_one' ||
-          running === 'blockAll_one'
-        ) {
-          event.emit(DEBUG_ONE_STEP_FINISHED); // 单步跑完，通知结束
-        }
-      },
-      3000
-    );
+    // if 现在的运行模式是
+    if (running === 'blockAll_running') {
+      // 继续通知下一步
+      event.emit(DEBUG_RUN_BLOCK_ALL_RUN);
+    } else if (running === 'cardsAll_running') {
+      event.emit(DEBUG_RUN_CARDS_ALL_RUN);
+    } else if (
+      running === 'started_one' ||
+      running === 'cardsAll_one' ||
+      running === 'blockAll_one'
+    ) {
+      event.emit(DEBUG_ONE_STEP_FINISHED); // 单步跑完，通知结束
+    }
+
     try {
       // fs.open(
       //   `${process.cwd()}/../python/python3_lib/debug/logfile_fromDesigner.log`,
