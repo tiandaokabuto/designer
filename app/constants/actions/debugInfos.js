@@ -67,3 +67,8 @@ export const DEBUG_ONE_STEP_FINISHED_STARTED = 'debug_oneStep_finished_started';
 // 数据仓储
 export const DEBUG_PUT_SOURCECODE = "debug_put_sourceCode"
 export const DEBUG_SOURCECODE_INSERT = "debug_sourceCode_insert"
+
+
+// 执行到此处，从此处执行
+export const DEBUG_START_TO_HERE = "debug_start_to_here";
+export const DEBUG_HERE_TO_END = "debug_here_to_end"

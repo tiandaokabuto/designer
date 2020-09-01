@@ -28,7 +28,7 @@ export const fetchCard = (cards, fetchId) => {
     }
   });
 
-  console.log("最后给出temp",temp)
+  //console.log("最后给出temp",temp)
   return temp;
 };
 
