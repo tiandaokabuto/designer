@@ -95,7 +95,7 @@ export default memo(
     };
 
     // 存储下方【输出/Debug】切换选项卡状态
-    const [tabSwicth, setTabSwich] = useState('输出');
+    const [tabSwicth, setTabSwich] = useState('调试');
 
     const changeTabSwich = e => {
       //console.log(e)
