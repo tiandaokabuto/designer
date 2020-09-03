@@ -27,7 +27,7 @@ import {
   setPause,
   clearPause,
 } from '../../designerGraphEdit/RPAcore';
-import { PYTHON_OUTPUT } from '@/containers/eventCenter';
+import { PYTHON_OUTPUT, PYTHON_OUTPUT_CLEAR } from '@/containers/eventCenter';
 
 // liuqi-new
 import event from '../../eventCenter';
@@ -95,7 +95,7 @@ export default memo(
     };
 
     // 存储下方【输出/Debug】切换选项卡状态
-    const [tabSwicth, setTabSwich] = useState('Debug');
+    const [tabSwicth, setTabSwich] = useState('调试');
 
     const changeTabSwich = e => {
       //console.log(e)
@@ -166,10 +166,10 @@ export default memo(
       };
 
       event.addListener(PYTHON_OUTPUT, handlePythonOutput);
-      event.addListener('clear_output', handleClearOutput);
+      event.addListener(PYTHON_OUTPUT_CLEAR, handleClearOutput);
       return () => {
         event.addListener(PYTHON_OUTPUT, handlePythonOutput);
-        event.removeListener('clear_output', handleClearOutput);
+        event.removeListener(PYTHON_OUTPUT_CLEAR, handleClearOutput);
       };
     }, []);
 
@@ -349,7 +349,7 @@ export default memo(
       event.addListener(DEBUG_RUN_STEP_BY_STEP, resetDebugIndex);
       return () => {
         event.removeListener(DEBUG_SOURCECODE_INSERT, insertDebugInfo);
-        event.addListener(DEBUG_RUN_STEP_BY_STEP, resetDebugIndex);
+        event.removeListener(DEBUG_RUN_STEP_BY_STEP, resetDebugIndex);
       };
     }, []);
 
@@ -686,8 +686,8 @@ export default memo(
                   style={{ widht: '20px !important' }}
                 ></TabPane>
                 <TabPane
-                  tab="Debug"
-                  key="Debug"
+                  tab="调试"
+                  key="调试"
                   style={{ widht: '20px !important' }}
                 ></TabPane>
               </Tabs>
@@ -720,7 +720,7 @@ export default memo(
           <div
             style={{
               marginTop: -38,
-              display: tabSwicth === 'Debug' ? 'inline' : 'none',
+              display: tabSwicth === '调试' ? 'inline' : 'none',
             }}
             className="dragger-editor-container-output-tages"
           >
@@ -728,14 +728,19 @@ export default memo(
               <DebugBtn
                 labelText="启动Debug模式"
                 iconType="play-circle"
-                click={() => event.emit(DEBUG_OPEN_DEBUGSERVER)}
+                click={() => {
+                  event.emit(DEBUG_OPEN_DEBUGSERVER);
+                  event.emit(PYTHON_OUTPUT_CLEAR);
+                }}
               />
             ) : (
               <span>
                 <DebugBtn
                   labelText="关闭Debug服务"
                   iconType="stop"
-                  click={() => event.emit(DEBUG_CLOSE_DEBUGSERVER)}
+                  click={() => {
+                    event.emit(DEBUG_CLOSE_DEBUGSERVER);
+                  }}
                 />
               </span>
             )}
@@ -851,7 +856,7 @@ export default memo(
             <div
               className="variablePanel"
               style={{
-                display: tabSwicth === 'Debug' ? 'inline' : 'none',
+                display: tabSwicth === '调试' ? 'inline' : 'none',
                 //background: 'rgba(244,252,250,1)',
               }}
             >

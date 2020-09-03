@@ -100,6 +100,7 @@ function goHandleUndo_real(
     if (undoStep.type === 'moveParent') {
       //console.clear();
       console.log(`父子移动`, undoStep);
+
       console.log(`[密切关注]1 `, undo_s, find_id(undoStep.change.id, graph));
       graph.removeCells([find_id(undoStep.change.id, graph)]);
       console.log(
@@ -107,7 +108,9 @@ function goHandleUndo_real(
         undo_s,
         find_id(undoStep.change.parent_id, graph)
       );
-      //undo_s.pop(); // 移除掉移动引发的撤销新增
+      undo_s.pop(); // 移除掉移动引发的撤销新增
+
+      undoStepArray.stopPop = true;
 
       graph.insertVertex(
         undoStep.change.parent
@@ -123,7 +126,7 @@ function goHandleUndo_real(
         false
       );
       console.log(`[密切关注]3 insertVertex 后`, undo_s);
-      undo_s.pop(); // 移除掉移动引发的撤销新增
+      //undo_s.pop(); // 移除掉移动引发的撤销新增
 
       needPush = true;
 
@@ -353,7 +356,7 @@ function goHandleRedo_real(
       }
 
       graph.removeCells([find_id(redoStep.change.id, graph)]);
-      //undo_s.pop(); // 移除掉移动引发的撤销新增
+      undo_s.pop(); // 移除掉移动引发的撤销新增
 
       graph.insertVertex(
         redoStep.change.parent
@@ -369,7 +372,7 @@ function goHandleRedo_real(
         false
       );
 
-      undo_s.pop(); // 移除掉移动引发的撤销新增
+      //undo_s.pop(); // 移除掉移动引发的撤销新增
       needPush = true;
 
       updateGraphDataAction(graph);
