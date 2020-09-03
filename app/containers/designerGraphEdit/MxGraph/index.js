@@ -130,6 +130,10 @@ const MxgraphContainer = useInjectContext(
 
     const getMxId = useMxId();
 
+    // const [zoomLevel, setZoomLevel] = useState(
+    //   localStorage.getItem('zoom') ? localStorage.getItem('zoom') : 9
+    // );
+
     // const saveAsXML = useSaveAsXML();
 
     const {
@@ -311,11 +315,19 @@ const MxgraphContainer = useInjectContext(
 
       graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
 
-      // setTimeout(() => {
-
-      //   graph.refresh();
-      // }, 0);
       loadGraph(graphDataRef.current);
+
+      const zoom =
+        localStorage.getItem('zoom') !== null
+          ? parseInt(localStorage.getItem('zoom'))
+          : 9;
+      if (zoom > 9) {
+        // 放大
+        handleZoomIn(zoom - 9);
+      } else if (zoom < 9) {
+        // 缩小
+        handleZoomOut(9 - zoom);
+      }
       //undoMng.clear();
       // TODO: 清空撤销恢复池
       changeUndoAndRedo({
@@ -2340,6 +2352,7 @@ const MxgraphContainer = useInjectContext(
             tag="graph"
             zoomIn={handleZoomIn}
             zoomOut={handleZoomOut}
+            // zoomLevel={zoomLevel}
           />
         </div>
 
