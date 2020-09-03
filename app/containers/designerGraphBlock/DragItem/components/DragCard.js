@@ -95,8 +95,8 @@ export default ({
   return (
     <div ref={ref} className="dragger-editor-item-statement">
       {tabType === 'atomic' ? (
-        <Tooltip placement="right" title={item.cmdDesc}>
-          <span
+        <Tooltip placement="right" title={item.cmdDesc} overlayStyle={{paddingLeft:"18px",}}>
+          <span style={{minWidth:80,display:"block"}}
             dangerouslySetInnerHTML={{
               __html: filter ? transformText(item, filter, node) : item.text,
             }}

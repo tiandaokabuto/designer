@@ -55,6 +55,7 @@ export default ({ setShowLoadingLayer, createItem }) => {
   return (
     <div
       className="designergraph-item"
+      style={{ zIndex: 9999 }}
       // onMouseDown={e => {
       //   isMouseDown = true;
       //   startOffset = e.pageX;
