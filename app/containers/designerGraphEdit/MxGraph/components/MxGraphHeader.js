@@ -97,6 +97,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
   return (
     <div className="designergraph-container-header">
       <div className="designergraph-container-header-tool">
+        {/**
         <div
           className="mxgraph-cell designergraph-container-header-tool-start"
           data-width="50"
@@ -106,7 +107,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
         >
           开始
         </div>
-
+ */}
         <div
           className="mxgraph-cell designergraph-container-header-tool-process"
           data-width="186"

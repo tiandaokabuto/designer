@@ -32,6 +32,10 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
       });
     };
 
+    if (cells[0].value === '开始') {
+      return message.info("开始不能删除");
+    }
+
     if (cells[0].value === '异常捕获') {
       const sons = findSameLevelCell(graphData, cells[0].id);
       checkSonsHasProcess(sons);
