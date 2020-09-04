@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Select, Button } from 'antd';
 
@@ -15,24 +15,38 @@ for (let i = 0; i < zoomCount; i += 1) {
 }
 
 const Zoom = ({ zoomIn, zoomOut }) => {
-  const [zoomLevel, setZoomLevel] = useState(9);
-  const graphData = useSelector(state => state.grapheditor.graphData) || {
-    nodes: [],
-  };
+  const [zoomLevel, setZoomLevel] = useState(
+    localStorage.getItem('zoom') ? localStorage.getItem('zoom') : 9
+  );
+  // const graphData = useSelector(state => state.grapheditor.graphData) || {
+  //   nodes: [],
+  // };
   const isCanvasNoNode = /* !graphData.nodes || graphData.nodes.length === 0 */ false;
 
+  /**
+   *
+   * @param {*} type 标识放大还是缩小
+   * @param {*} frequency 距离当前比例的步数
+   */
   const handleClick = (type, frequency) => {
+    const zoom = parseInt(zoomLevel);
     if (isCanvasNoNode) return;
     if (type === 'zoom-in') {
-      if (zoomLevel >= 19) return;
+      if (zoom >= 19) return;
       // event.emit(CANVAS_ZOOM_IN, frequency);
-      if (zoomIn) zoomIn(frequency);
-      setZoomLevel(zoomLevel + frequency);
+      if (zoomIn) {
+        zoomIn(frequency); // 设置缩放
+        localStorage.setItem('zoom', zoom + frequency);
+      }
+      setZoomLevel(zoom + frequency);
     } else if (type === 'zoom-out') {
-      if (zoomLevel <= 1) return;
+      if (zoom <= 1) return;
       // event.emit(CANVAS_ZOOM_OUT, frequency);
-      if (zoomOut) zoomOut(frequency);
-      setZoomLevel(zoomLevel - frequency);
+      if (zoomOut) {
+        zoomOut(frequency);
+        localStorage.setItem('zoom', zoom - frequency);
+      }
+      setZoomLevel(zoom - frequency);
     }
   };
 
