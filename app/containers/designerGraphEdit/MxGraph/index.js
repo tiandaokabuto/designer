@@ -168,6 +168,15 @@ const MxgraphContainer = useInjectContext(
       mxUndoManager,
     } = mxgraph;
 
+    const handlePanMove = useDebounce((sender, evt) => {
+      changeModifyState(
+        processTreeRef.current,
+        currentCheckedTreeNodeRef.current,
+        true
+      );
+      updateGraphDataAction(sender);
+    }, 200);
+
     const handleUndo = () => {
       goHandleUndo(graph, undoAndRedoRef.current, updateGraphDataAction);
     };
@@ -317,17 +326,31 @@ const MxgraphContainer = useInjectContext(
 
       loadGraph(graphDataRef.current);
 
+      console.log(graph);
+
+      // graph.getView().setTranslate(-519, 32);
+
       const zoom =
         localStorage.getItem('zoom') !== null
           ? parseInt(localStorage.getItem('zoom'))
           : 9;
+      // const x = localStorage.getItem('graphX');
+      // const y = localStorage.getItem('graphY');
+
+      // if (x && y) {
+      //   console.log('a');
+      //   setTimeout(() => {
+      //     graph.getView().setTranslate(parseInt(x), parseInt(y));
+      //   }, 0);
+      // }
       if (zoom > 9) {
-        // 放大
         handleZoomIn(zoom - 9);
       } else if (zoom < 9) {
-        // 缩小
         handleZoomOut(9 - zoom);
       }
+      // if (x && y) {
+      //   graph.getView().setTranslate(x, y);
+      // }
       //undoMng.clear();
       // TODO: 清空撤销恢复池
       changeUndoAndRedo({
@@ -765,6 +788,8 @@ const MxgraphContainer = useInjectContext(
         }
       });
 
+      graph.addListener(mxEvent.PAN, handlePanMove);
+
       // 连线事件
       graph.addListener(mxEvent.CELL_CONNECTED, (sender, evt) => {
         if (!evt.getProperty('source')) {
@@ -874,8 +899,24 @@ const MxgraphContainer = useInjectContext(
       graph.addListener(mxEvent.CLICK, (sender, evt) => {
         console.log('点击');
         const cell = evt.getProperty('cell');
+
         if (cell != null) {
           if (!cell.vertex) return;
+
+          const x =
+            -cell.geometry.x +
+            (document.querySelector('#graphContainer').clientWidth -
+              cell.geometry.width) /
+              2;
+          const y =
+            -cell.geometry.y +
+            (document.querySelector('#graphContainer').clientHeight -
+              cell.geometry.height) /
+              2;
+          // graph.getView().setTranslate(x, y);
+          // localStorage.setItem('graphX', x);
+          // localStorage.setItem('graphY', y);
+          console.log(x, y);
 
           const overlays = graph.getCellOverlays(cell);
           // 排除连接点和连接线
@@ -1174,7 +1215,7 @@ const MxgraphContainer = useInjectContext(
 
       // 更新
       graph.addListener('update_graphData', () => {
-        const output = translateToGraphData(graph.getModel());
+        const output = translateToGraphData(graph.getModel(), graph);
         if (output) {
           updateGraphData(output);
           synchroGraphDataToProcessTree();
@@ -1707,6 +1748,23 @@ const MxgraphContainer = useInjectContext(
       const xmlDoc = mxUtils.parseXml(xml);
       const writeCodec = new MxCodec(xmlDoc);
       writeCodec.decode(xmlDoc.documentElement, graph.getModel());
+
+      if (graphData.translate) {
+        if (graphData.translate.x && graphData.translate.y) {
+          console.log(
+            parseInt(graphData.translate.x),
+            parseInt(graphData.translate.y)
+          );
+          setTimeout(() => {
+            graph
+              .getView()
+              .setTranslate(
+                parseInt(graphData.translate.x),
+                parseInt(graphData.translate.y)
+              );
+          }, 0);
+        }
+      }
     };
 
     // const loadGraph = () => {

@@ -3,14 +3,15 @@
  * 需要把mxCell转换GgEditor原版的点，线，块
  */
 
-export function translateToGraphData(sender) {
+export function translateToGraphData(sender, graph) {
   //console.clear();
   // console.log(`[liuqi] action/translateToGraphData.js 将要被转换的`, sender);
 
+  const view = graph.getView();
   const { cells } = sender;
   if (cells.length <= 2) return false;
 
-  let output = { nodes: [], edges: [] };
+  let output = { nodes: [], edges: [], translate: {} };
 
   Object.keys(cells).map((key, index) => {
     if (index < 2) return;
@@ -83,6 +84,11 @@ export function translateToGraphData(sender) {
       });
     }
   });
+
+  output.translate = {
+    x: view.translate.x,
+    y: view.translate.y,
+  };
 
   // console.log(`[liuqi] action/translateToGraphData.js 转换后的`, output);
 
