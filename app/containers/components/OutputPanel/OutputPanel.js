@@ -110,7 +110,19 @@ export default memo(
         setTabSwich(e);
       };
 
+      const setOutputHeight = () => {
+        const outputDom = document.querySelector(
+          '.dragger-editor-container-output'
+        );
+        const height = localStorage.getItem('outputHeight');
+        if (height) {
+          outputDom.style.height = height;
+        }
+      };
+
       useEffect(() => {
+        console.log('a');
+        setOutputHeight();
         const handleAnchorMouseMove = useThrottle(e => {
           if (isMouseDown) {
             let offset = startOffset - e.pageY;
@@ -124,6 +136,10 @@ export default memo(
             // originHeight = originHeight < 74 ? 74 : originHeight;
             const currentHeight = originHeight + offset;
             outputDom.style.height = currentHeight + 'px';
+            if (currentHeight >= 40) {
+              localStorage.setItem('outputHeight', outputDom.style.height);
+            }
+
             if (currentHeight > 40) {
               setNewOutputTip(false);
               setOpenFlag(true);
@@ -276,6 +292,7 @@ export default memo(
         outputDom.className =
           'dragger-editor-container-output dragger-editor-container-output-animateOpen';
         outputDom.style.height = isMinStatus ? basicHeight : minHeight;
+        localStorage.setItem('outputHeight', outputDom.style.height);
         if (isMinStatus) {
           setOpenFlag(true);
         } else {
