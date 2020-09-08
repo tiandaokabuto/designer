@@ -16,14 +16,14 @@ const {
   mxEllipse,
 } = mxgraph;
 
-const pointGif = require('../../../assets/images/point.gif');
+const pointGif = require('../../../assets/images/point6.gif');
 
 export default () => {
   // 创建连接点图像
   mxConstraintHandler.prototype.pointImage = new MxImage(
     pointGif.default,
-    5,
-    5
+    8,
+    8
   );
 
   mxEllipse.prototype.constraints = [
