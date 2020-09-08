@@ -237,7 +237,7 @@ const ShowCondition = ({
   const [tag, setTag] = useState(param.tag);
 
   useEffect(() => {
-    if (param.valueList.length > 0) {
+    if (param.valueList && param.valueList.length > 0) {
       if (param.valueList[0].id === undefined) {
         param.valueList.map((item, index) => {
           item.id = index;
