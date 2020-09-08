@@ -1,11 +1,16 @@
 .graphblock-header {
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
+  justify-content: center;
+  align-content: center;
+  position: relative;
   height: 32px;
   line-height: 32px;
   background: rgba(51, 165, 138, 1);
 
   &-tools {
+    position: absolute;
+    left: 0;
     span {
       margin: 0 12px;
       user-select: none;
@@ -14,11 +19,9 @@
       &:hover {
         background: #2e9975;
       }
-
-
     }
     // 调试按钮组
-    .debug-btn{
+    .debug-btn {
       user-select: none;
 
       position: absolute;
@@ -26,11 +29,11 @@
       top: 0;
       z-index: 999;
 
-      .debug-btn-inner{
-        margin:0 3px 0 3px;
+      .debug-btn-inner {
+        margin: 0 3px 0 3px;
       }
 
-      .debug-btn-inner:hover{
+      .debug-btn-inner:hover {
         box-shadow: 0px 0px 3px #fff;
         opacity: 1;
         //border:1px solid rgba(51,165,138,0.6);
@@ -55,6 +58,8 @@
   }
 
   &-user {
+    position: absolute;
+    right: 0;
     &-name {
       display: inline-block;
 
