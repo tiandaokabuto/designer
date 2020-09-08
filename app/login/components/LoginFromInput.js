@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from 'antd';
+import { Input, Form } from 'antd';
 import PropTypes from 'prop-types';
 
 const { Password } = Input;
@@ -16,7 +16,13 @@ const LoginFromInput = ({
 
   return (
     <div className={formItemContentClass}>
-      <div>{label}</div>
+      <div
+        style={{
+          color: 'black',
+        }}
+      >
+        {label}
+      </div>
       {type === 'password' ? (
         <Password
           value={inputValue}
@@ -29,6 +35,7 @@ const LoginFromInput = ({
         <Input
           value={inputValue}
           placeholder={placeholder}
+          allowClear
           onChange={e => {
             handleInputVauleChange(e.target.value);
           }}
