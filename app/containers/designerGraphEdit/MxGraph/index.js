@@ -573,7 +573,7 @@ const MxgraphContainer = useInjectContext(
       //style[mxConstants.STYLE_VERTICAL_LABEL_POSITION] = "middle";
       style[mxConstants.STYLE_FONTSTYLE] = 0;
 
-      style[mxConstants.STYLE_FILLCOLOR] = '#f4f8f9';
+      style[mxConstants.STYLE_FILLCOLOR] = '#F2FAF7';
       style[mxConstants.STYLE_STROKECOLOR] = '#4f9982';
       style[mxConstants.STYLE_FONTCOLOR] = '#000';
       style[mxConstants.STYLE_SWIMLANE_FILLCOLOR] = '#fff';
