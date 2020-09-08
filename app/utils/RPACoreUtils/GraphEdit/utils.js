@@ -160,7 +160,7 @@ export const findCatchFinallyNode = (nodes, edges, id) => {
   return childrens;
 };
 
-export const translateGroup = blockData => {
+export const translateGroup = (blockData, type) => {
   // 选择的循环类型
   const select = blockData['properties'][1].value
     ? blockData['properties'][1].value
@@ -171,22 +171,33 @@ export const translateGroup = blockData => {
   let loopcondition = '';
   const looptype = select === 'for_condition' ? 'while' : 'for';
   if (select === 'for_list' && node[select]) {
-    // loopcondition = `${node[select][0].value} in ${node[select][1].value}`;
-    loopcondition = `用 ${node[select][0].value} 遍历数据 ${node[select][1].value}`;
+    loopcondition =
+      type === 'chinese'
+        ? `用 ${node[select][0].value} 遍历数据 ${node[select][1].value}`
+        : `${node[select][0].value} in ${node[select][1].value}`;
+    // loopcondition = `用 ${node[select][0].value} 遍历数据 ${node[select][1].value}`;
   } else if (select === 'for_dict' && node[select]) {
-    // loopcondition = `${node[select][0].value},${node[select][1].value} in ${node[select][2].value}.items()`;
-    loopcondition = `用 ${node[select][0].value}, ${node[select][1].value} 遍历 ${node[select][2].value}`;
+    loopcondition =
+      type === 'chinese'
+        ? `用 ${node[select][0].value}, ${node[select][1].value} 遍历 ${node[select][2].value}`
+        : `${node[select][0].value},${node[select][1].value} in ${node[select][2].value}.items()`;
+    // loopcondition = `用 ${node[select][0].value}, ${node[select][1].value} 遍历 ${node[select][2].value}`;
   } else if (select === 'for_times' && node[select]) {
-    // loopcondition = `${node[select][0].value} in range(${node[select][1].value},${node[select][2].value},${node[select][3].value})`;
-    loopcondition = `${node[select][0].value} 从 ${node[select][1].value} 到 ${node[select][2].value}, 每次增加 ${node[select][3].value}`;
+    loopcondition =
+      type === 'chinese'
+        ? `${node[select][0].value} 从 ${node[select][1].value} 到 ${node[select][2].value}, 每次增加 ${node[select][3].value}`
+        : `${node[select][0].value} in range(${node[select][1].value},${node[select][2].value},${node[select][3].value})`;
+    // loopcondition = `${node[select][0].value} 从 ${node[select][1].value} 到 ${node[select][2].value}, 每次增加 ${node[select][3].value}`;
   } else if (select === 'for_condition' && node.tag === 2) {
-    loopcondition = `当 ${node.value} 成立时`;
+    // loopcondition = `当 ${node.value} 成立时`;
+    loopcondition = type === 'chinese' ? `当 ${node.value} 成立时` : node.value;
   } else if (
     select === 'for_condition' &&
     node.tag === 1 &&
     Array.isArray(valueConditionList)
   ) {
-    loopcondition = '当 ';
+    // loopcondition = '当 ';
+    loopcondition = type === 'chinese' ? '当' : '';
     valueConditionList.forEach((item, index) => {
       if (index === valueConditionList.length - 1) {
         // 最后一个，不把连接符填上
@@ -203,8 +214,14 @@ export const translateGroup = blockData => {
         }
       }
     });
-    loopcondition += ' 成立时';
+    if (type === 'chinese') {
+      loopcondition += ' 成立时';
+    }
+    // loopcondition += ' 成立时';
   }
-  // return `${looptype} ${loopcondition}`;
-  return `${loopcondition}`;
+  console.log(`${looptype} ${loopcondition}`);
+  return type === 'chinese'
+    ? `${loopcondition}`
+    : `${looptype} ${loopcondition}`;
+  // return `${loopcondition}`;
 };

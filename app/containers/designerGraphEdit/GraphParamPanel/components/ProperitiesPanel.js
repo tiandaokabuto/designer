@@ -36,13 +36,14 @@ const FormItem = ({
   const blockData = graphDataMap.get(checkedGraphBlockId);
   useEffect(() => {
     if (blockData.shape === 'group') {
-      const labelValue = translateGroup(blockData);
+      const chineseValue = translateGroup(blockData, 'chinese');
+      const value = translateGroup(blockData);
       const node = graphData.nodes.find(
         item => item.id === checkedGraphBlockId
       );
-      node.label = labelValue;
-      blockData['properties'][0]['value'] = labelValue;
-      event.emit('resetGraph', labelValue, checkedGraphBlockId);
+      node.label = chineseValue;
+      blockData['properties'][0]['value'] = value;
+      event.emit('resetGraph', chineseValue, checkedGraphBlockId);
       setTimeout(() => {
         updateGraphData(graphData);
         synchroGraphDataToProcessTree();
