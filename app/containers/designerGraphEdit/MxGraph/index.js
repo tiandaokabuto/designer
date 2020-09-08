@@ -161,6 +161,7 @@ const MxgraphContainer = useInjectContext(
       mxLayoutManager,
       mxGraphLayout,
       mxSwimlaneLayout,
+      mxCellTracker,
       // 剪切板
       mxClipboard,
       // 撤销重做
@@ -274,6 +275,8 @@ const MxgraphContainer = useInjectContext(
 
       // 允许框线选择
       new MxRubberband(graph);
+
+      new mxCellTracker(graph, '#fff');
 
       // 启用辅助线
       mxGraphHandler.prototype.guidesEnabled = true;
