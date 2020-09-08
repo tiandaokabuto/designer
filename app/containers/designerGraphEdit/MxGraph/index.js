@@ -161,7 +161,6 @@ const MxgraphContainer = useInjectContext(
       mxLayoutManager,
       mxGraphLayout,
       mxSwimlaneLayout,
-
       // 剪切板
       mxClipboard,
       // 撤销重做
