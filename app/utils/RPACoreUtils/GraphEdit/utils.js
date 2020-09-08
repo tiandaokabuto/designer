@@ -171,19 +171,22 @@ export const translateGroup = blockData => {
   let loopcondition = '';
   const looptype = select === 'for_condition' ? 'while' : 'for';
   if (select === 'for_list' && node[select]) {
-    loopcondition = `${node[select][0].value} in ${node[select][1].value}`;
+    // loopcondition = `${node[select][0].value} in ${node[select][1].value}`;
+    loopcondition = `用 ${node[select][0].value} 遍历数据 ${node[select][1].value}`;
   } else if (select === 'for_dict' && node[select]) {
-    loopcondition = `${node[select][0].value},${node[select][1].value} in ${node[select][2].value}.items()`;
+    // loopcondition = `${node[select][0].value},${node[select][1].value} in ${node[select][2].value}.items()`;
+    loopcondition = `用 ${node[select][0].value}, ${node[select][1].value} 遍历 ${node[select][2].value}`;
   } else if (select === 'for_times' && node[select]) {
-    loopcondition = `${node[select][0].value} in range(${node[select][1].value},${node[select][2].value},${node[select][3].value})`;
+    // loopcondition = `${node[select][0].value} in range(${node[select][1].value},${node[select][2].value},${node[select][3].value})`;
+    loopcondition = `${node[select][0].value} 从 ${node[select][1].value} 到 ${node[select][2].value}, 每次增加 ${node[select][3].value}`;
   } else if (select === 'for_condition' && node.tag === 2) {
-    loopcondition = node.value;
+    loopcondition = `当 ${node.value} 成立时`;
   } else if (
     select === 'for_condition' &&
     node.tag === 1 &&
     Array.isArray(valueConditionList)
   ) {
-    loopcondition = '';
+    loopcondition = '当 ';
     valueConditionList.forEach((item, index) => {
       if (index === valueConditionList.length - 1) {
         // 最后一个，不把连接符填上
@@ -200,6 +203,8 @@ export const translateGroup = blockData => {
         }
       }
     });
+    loopcondition += ' 成立时';
   }
-  return `${looptype} ${loopcondition}`;
+  // return `${looptype} ${loopcondition}`;
+  return `${loopcondition}`;
 };

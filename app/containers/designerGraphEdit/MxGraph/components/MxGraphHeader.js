@@ -117,7 +117,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           流程块
         </div>
 
-        <div
+        {/* <div
           className="mxgraph-cell designergraph-container-header-tool-condition"
           data-width="100"
           data-height="100"
@@ -131,6 +131,16 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
             <span />
           </div>
           <span style={{ position: 'absolute', right: '18px' }}>判断</span>
+        </div> */}
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-condition mxgraph-cell-none-border"
+          data-width="100"
+          data-height="100"
+          data-style="shape=rhombus;perimeter=ellipsePerimeter;resizable=0;"
+          data-label="<div class='rcomponent-content'><label class='rcomponent-content-icon'></label><span class='rcomponent-name' title='condition'>判断</span></div>"
+        >
+          <p></p>
+          <span>判断</span>
         </div>
 
         <div
@@ -148,7 +158,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           data-width="286"
           data-height="402"
           data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;"
-          data-label="<span class='group-content'>for in</span>"
+          data-label="<span class='group-content'>循环</span>"
         >
           循环容器
         </div>
@@ -162,6 +172,15 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
         >
           结束
         </div>
+
+        {/* <div
+          className="mxgraph-cell designergraph-container-header-tool-test"
+          data-width="80"
+          data-height="55"
+        >
+          <p></p>
+          <span>判断</span>
+        </div> */}
       </div>
       <span className="designergraph-container-header-title">
         {/* node && node.title */}
