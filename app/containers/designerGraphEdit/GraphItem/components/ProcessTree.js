@@ -74,18 +74,18 @@ const TreeNodeTitle = ({
           currentProject={currentProject}
         />
       ) : (
-        <Tooltip placement="right" title={title}>
-          <div
-            style={{
-              flexBasis: 150,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {title}
-          </div>
-        </Tooltip>
+        // <Tooltip placement="right" title={title}>
+        <div
+          style={{
+            flexBasis: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {title}
+        </div>
+        // </Tooltip>
       )}
 
       <span
