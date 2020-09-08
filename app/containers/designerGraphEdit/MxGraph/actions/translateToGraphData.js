@@ -20,6 +20,8 @@ export function translateToGraphData(sender, graph) {
       // 根据style和value判断这个cell是什么类型的
       const shape = getShape(style, value);
 
+      console.log(shape);
+
       let label = '';
 
       if (shape === 'label') {
@@ -107,6 +109,8 @@ function getShape(style, value) {
   if (value === '异常处理') return 'catch';
   if (value === '结束') return 'finally';
   if (value.indexOf('group-content') > -1) return 'group';
+  if (value === '跳出循环') return 'break';
+  if (value === '继续循环') return 'continue';
 
   typeList.forEach(shape => {
     if (style.indexOf(`${shape}`) !== -1) {
@@ -135,5 +139,9 @@ function getMeanShape(name) {
       return 'catch';
     case 'finally':
       return 'finally';
+    case 'break':
+      return 'break-node';
+    case 'continue':
+      return 'continue-node';
   }
 }

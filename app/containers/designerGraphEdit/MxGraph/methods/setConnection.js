@@ -14,6 +14,7 @@ const {
   mxImage: MxImage,
   mxDoubleEllipse,
   mxEllipse,
+  mxHexagon,
 } = mxgraph;
 
 const pointGif = require('../../../assets/images/point6.gif');
@@ -25,6 +26,10 @@ export default () => {
     8,
     8
   );
+
+  mxHexagon.prototype.constraints = [
+    new MxConnectionConstraint(new MxPonint(0.5, 0), true),
+  ];
 
   mxEllipse.prototype.constraints = [
     new MxConnectionConstraint(new MxPonint(0.5, 1), true),

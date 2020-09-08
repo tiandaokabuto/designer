@@ -173,6 +173,26 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           结束
         </div>
 
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-process"
+          data-width="186"
+          data-height="55"
+          data-style="shape=hexagon;whiteSpace=wrap;align=centerhtml=1;resizable=0;shadow=1;" //image=../../../../images/icon.jpg"
+          data-label="跳出循环"
+        >
+          跳出循环
+        </div>
+
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-process"
+          data-width="186"
+          data-height="55"
+          data-style="shape=hexagon;whiteSpace=wrap;align=centerhtml=1;resizable=0;shadow=1;" //image=../../../../images/icon.jpg"
+          data-label="继续循环"
+        >
+          继续循环
+        </div>
+
         {/* <div
           className="mxgraph-cell designergraph-container-header-tool-test"
           data-width="80"

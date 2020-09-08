@@ -35,6 +35,8 @@ import {
   END_NODE,
   GROUP_NODE,
   TRY_NODE,
+  BREAK_NODE,
+  CONTINUE_NODE,
 } from './CellProperties';
 import { POINT_POSITION_EXIT, POINT_POSITION_ENTRY } from './PointPosition';
 import event from '@/containers/eventCenter';
@@ -1632,7 +1634,8 @@ const MxgraphContainer = useInjectContext(
             const sizes = item.size.split('*');
             obj._id = item.id;
             obj._parent = item.parent !== undefined ? item.parent : '1';
-            obj._style = GROUP_NODE.style + 'resizable=0';
+            obj._style =
+              GROUP_NODE.style.replace('shadow=1', '') + 'resizable=0';
             obj._value = '异常处理';
             obj._vertex = '1';
             obj.mxGeometry = {};
@@ -1645,7 +1648,8 @@ const MxgraphContainer = useInjectContext(
             const sizes = item.size.split('*');
             obj._id = item.id;
             obj._parent = item.parent !== undefined ? item.parent : '1';
-            obj._style = GROUP_NODE.style + 'resizable=0';
+            obj._style =
+              GROUP_NODE.style.replace('shadow=1', '') + 'resizable=0';
             obj._value = '结束';
             obj._vertex = '1';
             obj.mxGeometry = {};
@@ -1666,6 +1670,30 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._y = String(item.y);
             obj.mxGeometry._width = String(sizes[0]);
             obj.mxGeometry._height = String(sizes[1]);
+            obj.mxGeometry._as = 'geometry';
+          } else if (item.shape === 'break-node') {
+            obj._id = item.id;
+            obj._parent = item.parent !== undefined ? item.parent : '1';
+            obj._style = BREAK_NODE.style;
+            obj._value = BREAK_NODE.label;
+            obj._vertex = '1';
+            obj.mxGeometry = {};
+            obj.mxGeometry._x = String(item.x);
+            obj.mxGeometry._y = String(item.y);
+            obj.mxGeometry._width = String(BREAK_NODE.width);
+            obj.mxGeometry._height = String(BREAK_NODE.height);
+            obj.mxGeometry._as = 'geometry';
+          } else if (item.shape === 'continue-node') {
+            obj._id = item.id;
+            obj._parent = item.parent !== undefined ? item.parent : '1';
+            obj._style = CONTINUE_NODE.style;
+            obj._value = CONTINUE_NODE.label;
+            obj._vertex = '1';
+            obj.mxGeometry = {};
+            obj.mxGeometry._x = String(item.x);
+            obj.mxGeometry._y = String(item.y);
+            obj.mxGeometry._width = String(CONTINUE_NODE.width);
+            obj.mxGeometry._height = String(CONTINUE_NODE.height);
             obj.mxGeometry._as = 'geometry';
           }
           return obj;
