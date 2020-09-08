@@ -581,6 +581,8 @@ const MxgraphContainer = useInjectContext(
       style[mxConstants.STYLE_ROUNDED] = false;
       style[mxConstants.STYLE_STARTSIZE] = '30';
       style[mxConstants.STYLE_FONTSIZE] = '16';
+      // style[mxConstants.STYLE_SHADOW] = true;
+      mxConstants.SHADOW_OPACITY = 0.5;
       //style[mxConstants.STYLE_FONTSTYLE] = 1;
       graph.getStylesheet().putCellStyle('group', style);
     };
@@ -2125,6 +2127,7 @@ const MxgraphContainer = useInjectContext(
                     } else if (item.value === '异常处理') {
                       item.geometry.x = 0;
                       item.geometry.y = 200;
+                      item.style = item.style.replace('shadow=1;', '');
                       item.style += 'resizable=0';
                       select[0].insert(item);
                       // item.parent = select[0];
@@ -2132,6 +2135,7 @@ const MxgraphContainer = useInjectContext(
                       // item.parent = select[0];
                       item.geometry.x = 0;
                       item.geometry.y = 300;
+                      item.style = item.style.replace('shadow=1;', '');
                       item.style += 'resizable=0';
                       select[0].insert(item);
                     } else if (
