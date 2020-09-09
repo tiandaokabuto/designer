@@ -3,7 +3,7 @@ export const PROCESS_NODE = {
     `<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>${str}</span></div>`,
   label:
     "<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>流程块</span></div>",
-  style: 'label;whiteSpace=wrap;html=1;;resizable=0;', //image=../../../../images/icon.jpg',
+  style: 'label;whiteSpace=wrap;html=1;;resizable=0;shadow=1;', //image=../../../../images/icon.jpg',
   width: 186,
   height: 55,
 };
@@ -13,14 +13,15 @@ export const CONDITION_NODE = {
     `<div class='rcomponent-content'><label class='rcomponent-content-icon'></label><span class='rcomponent-name' title='condition'>${str}</span></div>`,
   label:
     "<div class='rcomponent-content'><label class='rcomponent-content-icon'></label><span class='rcomponent-name' title='condition'>判断</span></div>",
-  style: 'shape=rhombus;perimeter=ellipsePerimeter;resizable=0;',
+  style: 'shape=rhombus;perimeter=ellipsePerimeter;resizable=0;shadow=1;',
   width: 100,
   height: 100,
 };
 
 export const START_NODE = {
   label: '开始',
-  style: 'shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;align=center;',
+  style:
+    'shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;align=center;shadow=1;',
   width: 50,
   height: 50,
 };
@@ -28,7 +29,7 @@ export const START_NODE = {
 export const END_NODE = {
   label: '<span>结束</span>',
   style:
-    'ellipse;shape=doubleEllipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center;',
+    'ellipse;shape=doubleEllipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center;shadow=1;',
   width: 80,
   height: 55,
 };
@@ -37,7 +38,7 @@ export const GROUP_NODE = {
   getLabel: str => `<span class='group-content'>${str}</span>`,
   label: "<span class='group-content'>for in</span>",
   style:
-    'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;',
+    'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;shadow=1;',
   width: 286,
   height: 402,
 };
@@ -45,7 +46,23 @@ export const GROUP_NODE = {
 export const TRY_NODE = {
   label: 'contain',
   style:
-    'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;',
+    'group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;shadow=1;',
   width: 286,
   height: 402,
+};
+
+export const BREAK_NODE = {
+  label: '跳出循环',
+  style:
+    'shape=hexagon;whiteSpace=wrap;align=centerhtml=1;resizable=0;shadow=1;',
+  width: 186,
+  height: 55,
+};
+
+export const CONTINUE_NODE = {
+  label: '继续循环',
+  style:
+    'shape=hexagon;whiteSpace=wrap;align=centerhtml=1;resizable=0;shadow=1;',
+  width: 186,
+  height: 55,
 };

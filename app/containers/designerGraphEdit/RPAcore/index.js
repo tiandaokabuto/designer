@@ -143,7 +143,7 @@ export const handleDebugBlockAllRun = () => {
     setTimeout(() => {
       sendPythonCodeByLine({
         running: running,
-        varNames: "",//running.return_string,
+        varNames: '', //running.return_string,
         //varNames: findVarNames ? findVarNames.value : '',
         output: running.pythonCode,
       });
@@ -287,7 +287,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-            '\n'
+          '\n'
         }` + result.output;
       // 判断一下当前的流程块结点是否有两个入点，那么就是循环相关 就需要包括在 while True: 的循环结构下边。
       // 同时解析的深度要 +1
@@ -327,7 +327,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-            '\n'
+          '\n'
         }`,
         funcName: funcName,
         params: params,
@@ -722,6 +722,34 @@ export const transformEditorProcess = (
           false
         );
       break;
+    case 'break-node':
+      result.output += `${padding(depth)}break\n`;
+      const breakNext = findTargetIdBySourceId(graphData.edges, currentId);
+      breakNext &&
+        transformEditorProcess(
+          graphData,
+          graphDataMap,
+          breakNext,
+          result,
+          depth,
+          breakPoint,
+          false
+        );
+      break;
+    case 'continue-node':
+      result.output += `${padding(depth)}continue\n`;
+      const continueNext = findTargetIdBySourceId(graphData.edges, currentId);
+      continueNext &&
+        transformEditorProcess(
+          graphData,
+          graphDataMap,
+          continueNext,
+          result,
+          depth,
+          breakPoint,
+          false
+        );
+      break;
     case 'end-node':
       // 停止解析
       break;
@@ -795,7 +823,7 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
     writeFileRecursive(
       `${process.cwd()}/python/temp.py`,
       result.output,
-      function() {
+      function () {
         // console.log('保存成功');
       }
     );

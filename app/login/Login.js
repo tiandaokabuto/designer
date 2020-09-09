@@ -70,7 +70,7 @@ const Login = () => {
           inputValue: ip,
           handleInputVauleChange: setIp,
           label: 'IP地址',
-          placeholder: '请输入IP地址',
+          placeholder: '如: 192.168.1.1',
         },
         {
           key: 'port',
@@ -279,6 +279,10 @@ const Login = () => {
               defaultChecked
               checked={liscense}
               onChange={() => setLiscense(!liscense)}
+              style={{
+                fontSize: 12,
+                color: '#999',
+              }}
             >
               我已阅读并接受
               <span className="login-right-liscense-file">《许可协议》</span>

@@ -102,7 +102,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           className="mxgraph-cell designergraph-container-header-tool-start"
           data-width="50"
           data-height="50"
-          data-style="shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;align=center"
+          data-style="shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;align=center;shadow=1;"
           data-label="开始"
         >
           开始
@@ -112,7 +112,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           className="mxgraph-cell designergraph-container-header-tool-process"
           data-width="186"
           data-height="55"
-          data-style="label;whiteSpace=wrap;html=1;;resizable=0;" //image=../../../../images/icon.jpg"
+          data-style="label;whiteSpace=wrap;html=1;resizable=0;shadow=1;" //image=../../../../images/icon.jpg"
           data-label="<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>流程块</span></div>"
         >
           流程块
@@ -137,7 +137,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           className="mxgraph-cell designergraph-container-header-tool-condition mxgraph-cell-none-border"
           data-width="100"
           data-height="100"
-          data-style="shape=rhombus;perimeter=ellipsePerimeter;resizable=0;"
+          data-style="shape=rhombus;perimeter=ellipsePerimeter;resizable=0;shadow=1;"
           data-label="<div class='rcomponent-content'><label class='rcomponent-content-icon'></label><span class='rcomponent-name' title='condition'>判断</span></div>"
         >
           <p></p>
@@ -148,7 +148,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           className="mxgraph-cell designergraph-container-header-tool-ground"
           data-width="286"
           data-height="402"
-          data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;"
+          data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;shadow=1;"
           data-label="异常捕获"
         >
           异常捕获
@@ -158,7 +158,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           className="mxgraph-cell designergraph-container-header-tool-ground"
           data-width="286"
           data-height="402"
-          data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;"
+          data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;shadow=1;"
           data-label="<span class='group-content'>循环</span>"
         >
           循环容器
@@ -168,10 +168,30 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           className="mxgraph-cell designergraph-container-header-tool-end"
           data-width="80"
           data-height="55"
-          data-style="ellipse;shape=doubleEllipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center;"
+          data-style="ellipse;shape=doubleEllipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center;shadow=1;"
           data-label="<span>结束</span>"
         >
           结束
+        </div>
+
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-process"
+          data-width="186"
+          data-height="55"
+          data-style="shape=hexagon;whiteSpace=wrap;align=centerhtml=1;resizable=0;shadow=1;" //image=../../../../images/icon.jpg"
+          data-label="跳出循环"
+        >
+          跳出循环
+        </div>
+
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-process"
+          data-width="186"
+          data-height="55"
+          data-style="shape=hexagon;whiteSpace=wrap;align=centerhtml=1;resizable=0;shadow=1;" //image=../../../../images/icon.jpg"
+          data-label="继续循环"
+        >
+          继续循环
         </div>
 
         {/* <div

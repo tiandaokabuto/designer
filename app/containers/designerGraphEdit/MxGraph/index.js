@@ -35,6 +35,8 @@ import {
   END_NODE,
   GROUP_NODE,
   TRY_NODE,
+  BREAK_NODE,
+  CONTINUE_NODE,
 } from './CellProperties';
 import { POINT_POSITION_EXIT, POINT_POSITION_ENTRY } from './PointPosition';
 import event from '@/containers/eventCenter';
@@ -161,12 +163,21 @@ const MxgraphContainer = useInjectContext(
       mxLayoutManager,
       mxGraphLayout,
       mxSwimlaneLayout,
-
+      mxCellTracker,
       // 剪切板
       mxClipboard,
       // 撤销重做
       mxUndoManager,
     } = mxgraph;
+
+    const handlePanMove = useDebounce((sender, evt) => {
+      changeModifyState(
+        processTreeRef.current,
+        currentCheckedTreeNodeRef.current,
+        true
+      );
+      updateGraphDataAction(sender);
+    }, 200);
 
     const handleUndo = () => {
       goHandleUndo(graph, undoAndRedoRef.current, updateGraphDataAction);
@@ -267,6 +278,8 @@ const MxgraphContainer = useInjectContext(
       // 允许框线选择
       new MxRubberband(graph);
 
+      new mxCellTracker(graph, '#fff');
+
       // 启用辅助线
       mxGraphHandler.prototype.guidesEnabled = true;
       window.mxGraphHandler = mxGraphHandler;
@@ -317,17 +330,31 @@ const MxgraphContainer = useInjectContext(
 
       loadGraph(graphDataRef.current);
 
+      console.log(graph);
+
+      // graph.getView().setTranslate(-519, 32);
+
       const zoom =
         localStorage.getItem('zoom') !== null
           ? parseInt(localStorage.getItem('zoom'))
           : 9;
+      // const x = localStorage.getItem('graphX');
+      // const y = localStorage.getItem('graphY');
+
+      // if (x && y) {
+      //   console.log('a');
+      //   setTimeout(() => {
+      //     graph.getView().setTranslate(parseInt(x), parseInt(y));
+      //   }, 0);
+      // }
       if (zoom > 9) {
-        // 放大
         handleZoomIn(zoom - 9);
       } else if (zoom < 9) {
-        // 缩小
         handleZoomOut(9 - zoom);
       }
+      // if (x && y) {
+      //   graph.getView().setTranslate(x, y);
+      // }
       //undoMng.clear();
       // TODO: 清空撤销恢复池
       changeUndoAndRedo({
@@ -509,7 +536,9 @@ const MxgraphContainer = useInjectContext(
       style[mxConstants.STYLE_STROKEWIDTH] = '1';
       style[mxConstants.STYLE_STROKECOLOR] = '#777777';
       style[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
-      style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ComponentEdge;
+      // style[mxConstants.STYLE_EDGE] = mxEdgeStyle.orthogonalEdgeStyle;
+      style[mxConstants.STYLE_EDGE] = mxConstants.EDGESTYLE_ORTHOGONAL;
+      style[mxConstants.STYLE_JETTY_SIZE] = 'auto';
       style[mxConstants.STYLE_CURVED] = true;
       style[mxConstants.STYLE_FONTSIZE] = '28';
       style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = 'none';
@@ -551,7 +580,7 @@ const MxgraphContainer = useInjectContext(
       //style[mxConstants.STYLE_VERTICAL_LABEL_POSITION] = "middle";
       style[mxConstants.STYLE_FONTSTYLE] = 0;
 
-      style[mxConstants.STYLE_FILLCOLOR] = '#f4f8f9';
+      style[mxConstants.STYLE_FILLCOLOR] = '#F2FAF7';
       style[mxConstants.STYLE_STROKECOLOR] = '#4f9982';
       style[mxConstants.STYLE_FONTCOLOR] = '#000';
       style[mxConstants.STYLE_SWIMLANE_FILLCOLOR] = '#fff';
@@ -559,6 +588,8 @@ const MxgraphContainer = useInjectContext(
       style[mxConstants.STYLE_ROUNDED] = false;
       style[mxConstants.STYLE_STARTSIZE] = '30';
       style[mxConstants.STYLE_FONTSIZE] = '16';
+      // style[mxConstants.STYLE_SHADOW] = true;
+      mxConstants.SHADOW_OPACITY = 0.5;
       //style[mxConstants.STYLE_FONTSTYLE] = 1;
       graph.getStylesheet().putCellStyle('group', style);
     };
@@ -765,6 +796,8 @@ const MxgraphContainer = useInjectContext(
         }
       });
 
+      graph.addListener(mxEvent.PAN, handlePanMove);
+
       // 连线事件
       graph.addListener(mxEvent.CELL_CONNECTED, (sender, evt) => {
         if (!evt.getProperty('source')) {
@@ -874,8 +907,24 @@ const MxgraphContainer = useInjectContext(
       graph.addListener(mxEvent.CLICK, (sender, evt) => {
         console.log('点击');
         const cell = evt.getProperty('cell');
+
         if (cell != null) {
           if (!cell.vertex) return;
+
+          const x =
+            -cell.geometry.x +
+            (document.querySelector('#graphContainer').clientWidth -
+              cell.geometry.width) /
+              2;
+          const y =
+            -cell.geometry.y +
+            (document.querySelector('#graphContainer').clientHeight -
+              cell.geometry.height) /
+              2;
+          // graph.getView().setTranslate(x, y);
+          // localStorage.setItem('graphX', x);
+          // localStorage.setItem('graphY', y);
+          console.log(x, y);
 
           const overlays = graph.getCellOverlays(cell);
           // 排除连接点和连接线
@@ -1174,7 +1223,7 @@ const MxgraphContainer = useInjectContext(
 
       // 更新
       graph.addListener('update_graphData', () => {
-        const output = translateToGraphData(graph.getModel());
+        const output = translateToGraphData(graph.getModel(), graph);
         if (output) {
           updateGraphData(output);
           synchroGraphDataToProcessTree();
@@ -1585,7 +1634,8 @@ const MxgraphContainer = useInjectContext(
             const sizes = item.size.split('*');
             obj._id = item.id;
             obj._parent = item.parent !== undefined ? item.parent : '1';
-            obj._style = GROUP_NODE.style + 'resizable=0';
+            obj._style =
+              GROUP_NODE.style.replace('shadow=1', '') + 'resizable=0';
             obj._value = '异常处理';
             obj._vertex = '1';
             obj.mxGeometry = {};
@@ -1598,7 +1648,8 @@ const MxgraphContainer = useInjectContext(
             const sizes = item.size.split('*');
             obj._id = item.id;
             obj._parent = item.parent !== undefined ? item.parent : '1';
-            obj._style = GROUP_NODE.style + 'resizable=0';
+            obj._style =
+              GROUP_NODE.style.replace('shadow=1', '') + 'resizable=0';
             obj._value = '结束';
             obj._vertex = '1';
             obj.mxGeometry = {};
@@ -1619,6 +1670,30 @@ const MxgraphContainer = useInjectContext(
             obj.mxGeometry._y = String(item.y);
             obj.mxGeometry._width = String(sizes[0]);
             obj.mxGeometry._height = String(sizes[1]);
+            obj.mxGeometry._as = 'geometry';
+          } else if (item.shape === 'break-node') {
+            obj._id = item.id;
+            obj._parent = item.parent !== undefined ? item.parent : '1';
+            obj._style = BREAK_NODE.style;
+            obj._value = BREAK_NODE.label;
+            obj._vertex = '1';
+            obj.mxGeometry = {};
+            obj.mxGeometry._x = String(item.x);
+            obj.mxGeometry._y = String(item.y);
+            obj.mxGeometry._width = String(BREAK_NODE.width);
+            obj.mxGeometry._height = String(BREAK_NODE.height);
+            obj.mxGeometry._as = 'geometry';
+          } else if (item.shape === 'continue-node') {
+            obj._id = item.id;
+            obj._parent = item.parent !== undefined ? item.parent : '1';
+            obj._style = CONTINUE_NODE.style;
+            obj._value = CONTINUE_NODE.label;
+            obj._vertex = '1';
+            obj.mxGeometry = {};
+            obj.mxGeometry._x = String(item.x);
+            obj.mxGeometry._y = String(item.y);
+            obj.mxGeometry._width = String(CONTINUE_NODE.width);
+            obj.mxGeometry._height = String(CONTINUE_NODE.height);
             obj.mxGeometry._as = 'geometry';
           }
           return obj;
@@ -1707,6 +1782,23 @@ const MxgraphContainer = useInjectContext(
       const xmlDoc = mxUtils.parseXml(xml);
       const writeCodec = new MxCodec(xmlDoc);
       writeCodec.decode(xmlDoc.documentElement, graph.getModel());
+
+      if (graphData.translate) {
+        if (graphData.translate.x && graphData.translate.y) {
+          console.log(
+            parseInt(graphData.translate.x),
+            parseInt(graphData.translate.y)
+          );
+          setTimeout(() => {
+            graph
+              .getView()
+              .setTranslate(
+                parseInt(graphData.translate.x),
+                parseInt(graphData.translate.y)
+              );
+          }, 0);
+        }
+      }
     };
 
     // const loadGraph = () => {
@@ -2068,6 +2160,7 @@ const MxgraphContainer = useInjectContext(
                     } else if (item.value === '异常处理') {
                       item.geometry.x = 0;
                       item.geometry.y = 200;
+                      item.style = item.style.replace('shadow=1;', '');
                       item.style += 'resizable=0';
                       select[0].insert(item);
                       // item.parent = select[0];
@@ -2075,6 +2168,7 @@ const MxgraphContainer = useInjectContext(
                       // item.parent = select[0];
                       item.geometry.x = 0;
                       item.geometry.y = 300;
+                      item.style = item.style.replace('shadow=1;', '');
                       item.style += 'resizable=0';
                       select[0].insert(item);
                     } else if (

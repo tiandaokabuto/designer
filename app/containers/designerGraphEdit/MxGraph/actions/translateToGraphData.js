@@ -3,14 +3,15 @@
  * 需要把mxCell转换GgEditor原版的点，线，块
  */
 
-export function translateToGraphData(sender) {
+export function translateToGraphData(sender, graph) {
   //console.clear();
   // console.log(`[liuqi] action/translateToGraphData.js 将要被转换的`, sender);
 
+  const view = graph.getView();
   const { cells } = sender;
   if (cells.length <= 2) return false;
 
-  let output = { nodes: [], edges: [] };
+  let output = { nodes: [], edges: [], translate: {} };
 
   Object.keys(cells).map((key, index) => {
     if (index < 2) return;
@@ -18,6 +19,8 @@ export function translateToGraphData(sender) {
       const { style, value, geometry, id, parent } = cells[key];
       // 根据style和value判断这个cell是什么类型的
       const shape = getShape(style, value);
+
+      console.log(shape);
 
       let label = '';
 
@@ -84,6 +87,11 @@ export function translateToGraphData(sender) {
     }
   });
 
+  output.translate = {
+    x: view.translate.x,
+    y: view.translate.y,
+  };
+
   // console.log(`[liuqi] action/translateToGraphData.js 转换后的`, output);
 
   return output;
@@ -101,6 +109,8 @@ function getShape(style, value) {
   if (value === '异常处理') return 'catch';
   if (value === '结束') return 'finally';
   if (value.indexOf('group-content') > -1) return 'group';
+  if (value === '跳出循环') return 'break';
+  if (value === '继续循环') return 'continue';
 
   typeList.forEach(shape => {
     if (style.indexOf(`${shape}`) !== -1) {
@@ -129,5 +139,9 @@ function getMeanShape(name) {
       return 'catch';
     case 'finally':
       return 'finally';
+    case 'break':
+      return 'break-node';
+    case 'continue':
+      return 'continue-node';
   }
 }

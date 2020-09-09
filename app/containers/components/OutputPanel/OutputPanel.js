@@ -103,14 +103,30 @@ export default memo(
       };
 
       // 存储下方【输出/Debug】切换选项卡状态
-      const [tabSwicth, setTabSwich] = useState('调试');
+      const [tabSwicth, setTabSwich] = useState(
+        localStorage.getItem('tabSwitch')
+          ? localStorage.getItem('tabSwitch')
+          : '调试'
+      );
 
       const changeTabSwich = e => {
         //console.log(e)
+        localStorage.setItem('tabSwitch', e);
         setTabSwich(e);
       };
 
+      const setOutputHeight = () => {
+        const outputDom = document.querySelector(
+          '.dragger-editor-container-output'
+        );
+        const height = localStorage.getItem('outputHeight');
+        if (height) {
+          outputDom.style.height = height;
+        }
+      };
+
       useEffect(() => {
+        setOutputHeight();
         const handleAnchorMouseMove = useThrottle(e => {
           if (isMouseDown) {
             let offset = startOffset - e.pageY;
@@ -124,6 +140,10 @@ export default memo(
             // originHeight = originHeight < 74 ? 74 : originHeight;
             const currentHeight = originHeight + offset;
             outputDom.style.height = currentHeight + 'px';
+            if (currentHeight >= 40) {
+              localStorage.setItem('outputHeight', outputDom.style.height);
+            }
+
             if (currentHeight > 40) {
               setNewOutputTip(false);
               setOpenFlag(true);
@@ -276,6 +296,7 @@ export default memo(
         outputDom.className =
           'dragger-editor-container-output dragger-editor-container-output-animateOpen';
         outputDom.style.height = isMinStatus ? basicHeight : minHeight;
+        localStorage.setItem('outputHeight', outputDom.style.height);
         if (isMinStatus) {
           setOpenFlag(true);
         } else {
