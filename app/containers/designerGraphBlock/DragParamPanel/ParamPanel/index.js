@@ -446,6 +446,7 @@ const ParamItem = ({
       <div
         className="parampanel-item"
         style={{
+          marginTop: param.cnName === '循环条件' ? 0 : 12,
           display: linkFlag ? showParentLinkItem(param, linkFlag) : '',
         }}
       >
@@ -462,7 +463,10 @@ const ParamItem = ({
             </span>
           </span>
         )}
-        <div style={{ flex: 1, overflow: 'hidden' }}>
+        <div
+          className="param-item-wrapper"
+          // style={{ flex: 1, overflow: 'hidden' }}
+        >
           {getComponentType(
             param,
             handleEmitCodeTransform,
