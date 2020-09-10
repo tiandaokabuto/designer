@@ -8,9 +8,18 @@
     &__else {
       padding-left: 8px;
     }
+    &:hover {
+      .CatchItem-header-operation {
+        right: 6px;
+        visibility: visible;
+      }
+    }
     &-operation {
+      position: absolute;
+      visibility: hidden;
       > * {
-        margin-right: 16px;
+        margin-right: 10px;
+        vertical-align: middle;
       }
     }
     &-title {

@@ -187,7 +187,7 @@ const CatchStatement = useInjectContext(props => {
             </>
           )}
           <Icon
-            type={isFold ? 'up' : 'down'}
+            type={isFold ? 'down' : 'up'}
             onClick={() => {
               handleStatementFlod();
             }}

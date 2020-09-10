@@ -78,10 +78,19 @@
         }
       }
     }
+    &:hover {
+      .loopstatement-header-operation {
+        right: 16px;
+        visibility: visible;
+      }
+    }
     &-operation {
-      margin-right: 40px;
+      position: absolute;
+      visibility: hidden;
+      // margin-right: 40px;
       > * {
         margin-left: 10px;
+        vertical-align: middle;
       }
     }
   }

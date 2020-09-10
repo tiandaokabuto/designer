@@ -8,10 +8,19 @@
     &__else {
       padding-left: 8px;
     }
+    &:hover {
+      .IFItem-header-operation {
+        right: 16px;
+        visibility: visible;
+      }
+    }
     &-operation {
-      margin-right: 16px;
+      position: absolute;
+      visibility: hidden;
+      // margin-right: 16px;
       > * {
         margin-left: 10px;
+        vertical-align: middle;
       }
     }
     &-title {

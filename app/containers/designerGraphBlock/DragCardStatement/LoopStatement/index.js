@@ -118,13 +118,13 @@ const LoopStatement = useInjectContext(props => {
       className={`loopstatement ${className}`}
     >
       <div className="loopstatement-drag-mask" />
-      <div
+      {/* <div
         className="loopstatement-fold-anchor"
         ref={ref}
         onClick={handleStatementFlod}
       >
-        <Icon type={isFold ? 'up' : 'down'} />
-      </div>
+        <Icon type={isFold ? 'down' : 'up'} />
+      </div> */}
       <div
         className="loopstatement-header"
         ref={readOnly ? null : ref}
@@ -157,40 +157,47 @@ const LoopStatement = useInjectContext(props => {
             dangerouslySetInnerHTML={{ __html: templateVisible }}
           />
         </div>
-        {!readOnly && (
-          <div className="loopstatement-header-operation">
-            <Icon
-              type="play-circle"
-              onClick={() => {
-                event.emit(DEBUG_ONE_STEP, {
-                  isIgnore: card.ignore,
-                  cards,
-                  id,
-                });
-              }}
-            />
-            <Icon
-              type={isIgnore ? 'eye-invisible' : 'eye'}
-              onClick={() => {
-                card.ignore = !card.ignore;
-                // propagateIgnoreChange
+        <div className="loopstatement-header-operation">
+          {!readOnly && (
+            <>
+              <Icon
+                type="play-circle"
+                onClick={() => {
+                  event.emit(DEBUG_ONE_STEP, {
+                    isIgnore: card.ignore,
+                    cards,
+                    id,
+                  });
+                }}
+              />
+              <Icon
+                type={isIgnore ? 'eye-invisible' : 'eye'}
+                onClick={() => {
+                  card.ignore = !card.ignore;
+                  // propagateIgnoreChange
 
-                propagateIgnoreChange(card.children, card.ignore);
-                setTimeout(() => {
-                  setIsIgnore();
-                }, 0);
-                card.hasModified = true;
-                handleEmitCodeTransform(cards);
-              }}
-            />
-            <Icon
-              type="delete"
-              onClick={() => {
-                deleteNodeById(id);
-              }}
-            />
-          </div>
-        )}
+                  propagateIgnoreChange(card.children, card.ignore);
+                  setTimeout(() => {
+                    setIsIgnore();
+                  }, 0);
+                  card.hasModified = true;
+                  handleEmitCodeTransform(cards);
+                }}
+              />
+              <Icon
+                type="delete"
+                onClick={() => {
+                  deleteNodeById(id);
+                }}
+              />
+
+              <Icon
+                onClick={handleStatementFlod}
+                type={isFold ? 'down' : 'up'}
+              />
+            </>
+          )}
+        </div>
       </div>
       <div
         className={`loopstatement-content loopstatement-fold-${id}`}
