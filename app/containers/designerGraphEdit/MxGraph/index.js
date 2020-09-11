@@ -522,7 +522,7 @@ const MxgraphContainer = useInjectContext(
           if (cell.vertex === false || graph.isSwimlane(cell))
             return cell.vertex && !graph.isSwimlane(cell);
           const colorKey = 'fillColor';
-          const color = '#9ed4fb';
+          const color = '#32A67F';
           setTimeout(() => graph.setCellStyles(colorKey, color, [cell]), 0);
         },
       ];
@@ -557,9 +557,9 @@ const MxgraphContainer = useInjectContext(
       const style = {};
       style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
       style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
-      style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
+      style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
       style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
-      style[mxConstants.STYLE_FILLCOLOR] = '#edf6f7';
+      style[mxConstants.STYLE_FILLCOLOR] = '#F2FAF7';
       style[mxConstants.STYLE_STROKECOLOR] = '#3d6dcc';
       style[mxConstants.STYLE_FONTCOLOR] = '#000000';
       style[mxConstants.STYLE_ROUNDED] = true;
@@ -2103,11 +2103,8 @@ const MxgraphContainer = useInjectContext(
                             cnName: '标签名称',
                             enName: 'label',
                             value: item.value
-                              .replace(
-                                "<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>",
-                                ''
-                              )
-                              .replace('</span></div>', ''),
+                              .replace("<div class='compoent-content'>", '')
+                              .replace('</div>', ''),
                             default: '',
                           },
                           {
