@@ -9,7 +9,9 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import DragCard from './components/DragCard';
 import ContextMenu from './components/ContextMenu';
-import ProcessTree from '../../designerGraphEdit/GraphItem/components/ProcessTree';
+import ProcessTree, {
+  MuluIcon,
+} from '../../designerGraphEdit/GraphItem/components/ProcessTree';
 import event from '@/containers/eventCenter';
 import {
   BasicStatementTag,
@@ -354,6 +356,8 @@ export default useInjectContext(
                         node: node.props,
                       });
                     }}
+                    showIcon={true}
+                    switcherIcon={<MuluIcon></MuluIcon>}
                     onSelect={(_, e) => {
                       const props = e.node.props;
                       if (props.children) {
