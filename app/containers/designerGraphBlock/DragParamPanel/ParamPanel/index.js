@@ -202,6 +202,7 @@ const getComponentType = (
   } else if (param.enName === 'taskDataName') {
     return (
       <TaskDataParam
+        cmdName={cmdName}
         param={param}
         aiHintList={aiHintList}
         appendDataSource={appendDataSource}
@@ -216,6 +217,7 @@ const getComponentType = (
       <SelectContext.Consumer>
         {({ isSelectEncty }) => (
           <AutoCompletePlusParam
+            cmdName={cmdName}
             param={param}
             isSelectEncty={isSelectEncty}
             aiHintList={aiHintList}
@@ -279,6 +281,7 @@ const getComponentType = (
       if (param.enName !== 'outPut') {
         return (
           <AutoCompletePlusParam
+            cmdName={cmdName}
             param={param}
             aiHintList={aiHintList}
             appendDataSource={appendDataSource}
