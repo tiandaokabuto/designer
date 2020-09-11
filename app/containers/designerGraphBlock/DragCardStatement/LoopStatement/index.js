@@ -58,10 +58,14 @@ const LoopStatement = useInjectContext(props => {
 
   const handleEmitCodeTransform = useTransformToPython();
 
-  const [backgroundColor, isIgnore, setIsIgnore] = useChangeCheckedBlockColor(
-    id,
-    card
-  );
+  const [
+    backgroundColor,
+    border,
+    headBackground,
+    noneBackground,
+    isIgnore,
+    setIsIgnore,
+  ] = useChangeCheckedBlockColor(id, card);
 
   const [
     canDrag,
@@ -129,7 +133,8 @@ const LoopStatement = useInjectContext(props => {
         className="loopstatement-header"
         ref={readOnly ? null : ref}
         style={{
-          backgroundColor: isIgnore ? '#9c9494' : 'rgba(50, 166, 127, 1)',
+          backgroundColor: isIgnore ? '#9c9494' : headBackground,
+          color: headBackground === '#32A67F' ? 'white' : 'black',
         }}
       >
         <div

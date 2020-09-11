@@ -56,10 +56,14 @@ const CatchStatement = useInjectContext(props => {
 
   const cards = useSelector(state => state.blockcode.cards);
 
-  const [backgroundColor, isIgnore, setIsIgnore] = useChangeCheckedBlockColor(
-    id,
-    card
-  );
+  const [
+    backgroundColor,
+    border,
+    tryBackground,
+    othersBackground,
+    isIgnore,
+    setIsIgnore,
+  ] = useChangeCheckedBlockColor(id, card);
 
   const handleEmitCodeTransform = useTransformToPython();
 
@@ -121,7 +125,8 @@ const CatchStatement = useInjectContext(props => {
         className="CatchItem-header"
         ref={readOnly ? null : ref}
         style={{
-          background: isIgnore ? '#9c9494' : 'rgba(50, 166, 127, 1)',
+          background: isIgnore ? '#9c9494' : tryBackground,
+          color: tryBackground === '#32A67F' ? 'white' : 'black',
         }}
       >
         <div
@@ -221,12 +226,13 @@ const CatchStatement = useInjectContext(props => {
           <div
             className="CatchItem-header CatchItem-header__else"
             style={{
-              backgroundColor: isIgnore ? '#9c9494' : 'rgba(184, 230, 214, 1)',
+              backgroundColor: isIgnore ? '#9c9494' : othersBackground,
+              color: othersBackground === '#AACC7A' ? 'white' : 'black',
             }}
           >
             异常处理
           </div>
-          <div style={{ paddingLeft: 24 }}>
+          <div style={{ padding: '10px 2px 10px 24px' }}>
             {card.catchChildren.map((subChildren, i) =>
               renderStatement(subChildren, i)
             )}
@@ -248,12 +254,13 @@ const CatchStatement = useInjectContext(props => {
           <div
             className="CatchItem-header CatchItem-header__else"
             style={{
-              backgroundColor: isIgnore ? '#9c9494' : 'rgba(184, 230, 214, 1)',
+              backgroundColor: isIgnore ? '#9c9494' : othersBackground,
+              color: othersBackground === '#AACC7A' ? 'white' : 'black',
             }}
           >
             结束
           </div>
-          <div style={{ paddingLeft: 24 }}>
+          <div style={{ padding: '10px 2px 10px 24px' }}>
             {card.finallyChildren.map((subChildren, i) =>
               renderStatement(subChildren, i)
             )}
