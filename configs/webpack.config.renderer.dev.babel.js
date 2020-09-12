@@ -90,6 +90,21 @@ module.exports = merge.smart(baseConfig, {
           },
         },
       },
+
+      {
+        test: /\.global\.css$/,
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+        ],
+      },
       {
         test: /\.less$/,
         use: [
@@ -112,20 +127,6 @@ module.exports = merge.smart(baseConfig, {
                 'item-hover-bg': '#F2FAF8',
               },
               javascriptEnabled: true,
-            },
-          },
-        ],
-      },
-      {
-        test: /\.global\.css$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
             },
           },
         ],
