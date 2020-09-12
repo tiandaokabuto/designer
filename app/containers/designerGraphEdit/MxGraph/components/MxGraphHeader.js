@@ -113,7 +113,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           data-width="96"
           data-height="48"
           data-style="label;whiteSpace=wrap;html=1;resizable=0;shadow=1;rounded=1;fillColor=#F2FAF7;strokeColor=#32A67F;gradientColor=none;fontColor=#000000;" //image=../../../../images/icon.jpg"
-          data-label="<div class='compoent-content'>流程块</div>"
+          data-label="<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>流程块</span></div>"
         >
           流程块
         </div>

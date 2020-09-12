@@ -219,6 +219,7 @@ export default memo(
         tag === 'graph'
           ? {
               width: 'calc(100% - 478px)',
+              left: 239,
               position: 'absolute',
             }
           : {
@@ -709,7 +710,11 @@ export default memo(
           <div
             className="dragger-editor-container-output-title"
             onMouseDown={e => e.stopPropagation()}
-            style={{ position: 'absolute', width: '100%' }}
+            style={{
+              position: 'absolute',
+              width: '100%',
+              border: '1px solid #eee',
+            }}
           >
             {tag === 'graph' && (
               <ZoomToolBar

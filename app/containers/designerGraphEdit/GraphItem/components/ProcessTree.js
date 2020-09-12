@@ -580,7 +580,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
           // className="draggable-tree"
           expandedKeys={expandedKeys}
           defaultExpandAll
-          switcherIcon={type === 'secondModule' ? '' : <Switcher />}
+          switcherIcon={type === 'secondModule' ? false : <Switcher />}
           showIcon={type === 'secondModule' ? false : true}
           draggable={type === 'secondModule' ? false : true}
           blockNode

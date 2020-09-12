@@ -154,7 +154,7 @@ export default useInjectContext(
               : 'designergraph-container'
           }
         >
-          {/* <div
+          <div
             style={{
               background: 'red',
               width: '20px',
@@ -175,7 +175,7 @@ export default useInjectContext(
               margin: '-50px 0 0 0',
               left: 0,
             }}
-          ></div> */}
+          ></div>
           {!showHead && (
             <div className="designergraph-container-header">
               <FlowItemPanel />

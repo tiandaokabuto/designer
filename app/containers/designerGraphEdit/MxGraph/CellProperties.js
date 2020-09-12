@@ -1,6 +1,8 @@
 export const PROCESS_NODE = {
-  getLabel: str => `<div class='compoent-content'>${str}</div>`,
-  label: '<div class="compoent-content">流程块</div>',
+  getLabel: str =>
+    `<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>${str}</span></div>`,
+  label:
+    "<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>流程块</span></div>",
   style:
     'label;whiteSpace=wrap;html=1;resizable=0;shadow=1;rounded=1;fillColor=#F2FAF7;strokeColor=#32A67F;gradientColor=none;fontColor=#000000;', //image=../../../../images/icon.jpg',
   width: 96,
