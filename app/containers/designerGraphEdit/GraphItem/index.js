@@ -20,8 +20,8 @@ export default ({ setShowLoadingLayer, createItem }) => {
   const [editVisible, setEditVisible] = useState(false);
 
   const getDesignergraphItemWidth = () => {
-    const outputDom = document.querySelector('.designergraph-item');
-    return parseFloat(window.getComputedStyle(outputDom).width);
+    const leftDom = document.querySelector('.designergraph-item');
+    return parseFloat(window.getComputedStyle(leftDom).width);
   };
 
   useEffect(() => {
@@ -31,13 +31,34 @@ export default ({ setShowLoadingLayer, createItem }) => {
         // console.log('startOffset - e.pageX = ', offset);
         startOffset = e.pageX;
         // if (e.clientX <= 239) return;
-        const outputDom = document.querySelector('.designergraph-item');
+        const leftDom = document.querySelector('.designergraph-item');
         const originWidth = getDesignergraphItemWidth();
         const currentWidth = originWidth + offset;
-        outputDom.style.flexBasis = currentWidth + 'px';
-        if (currentWidth < 120) {
-          outputDom.style.display = 'none';
-        }
+        leftDom.style.width = currentWidth + 'px';
+        // 工具栏
+        const toolDom = document.querySelector(
+          '.designergraph-container-header'
+        );
+        // 输出面板
+        const outputDom = document.querySelector(
+          '.dragger-editor-container-output'
+        );
+        // 右侧面板
+        const paramDom = document.querySelector('.designergraph-parampanel');
+
+        // 输出面板位置调整
+        outputDom.style.left = currentWidth + 'px';
+        // 工具栏位置调整
+        toolDom.style.left = currentWidth + 'px';
+        // 输出面板宽度调整
+        outputDom.style.width = `calc(100% - ${paramDom.style.width} - ${leftDom.style.width})`;
+        // 工具栏宽度调整
+        toolDom.style.width = `calc(100% - ${paramDom.style.width} - ${leftDom.style.width})`;
+        // 工具栏位置调整
+
+        // if (currentWidth < 120) {
+        //   outputDom.style.display = 'none';
+        // }
       }
     }, 0);
 
@@ -55,15 +76,18 @@ export default ({ setShowLoadingLayer, createItem }) => {
   return (
     <div
       className="designergraph-item"
-      // onMouseDown={e => {
-      //   isMouseDown = true;
-      //   startOffset = e.pageX;
-      // }}
+      onMouseDown={e => {
+        isMouseDown = true;
+        startOffset = e.pageX;
+      }}
     >
       <div
-      // onMouseDown={e => {
-      //   e.stopPropagation();
-      // }}
+        style={{
+          width: '100%',
+        }}
+        onMouseDown={e => {
+          e.stopPropagation();
+        }}
       >
         <div className="designergraph-item-title">
           {editVisible ? (
@@ -98,26 +122,27 @@ export default ({ setShowLoadingLayer, createItem }) => {
           />
         </div>
         <div
-          style={{
-            position: 'fixed',
-            bottom: '0',
-            maxWidth: '239px',
-          }}
+        // style={{
+        //   position: 'fixed',
+        //   bottom: '0',
+        //   maxWidth: '239px',
+        // }}
         >
-          <Tabs
+          <ProcessTree
+            type="process"
+            setShowLoadingLayer={setShowLoadingLayer}
+            createItem={createItem}
+          />
+          {/* <Tabs
             defaultActiveKey={treeTab}
             className="dragger-editor-container-tabs"
             tabPosition="bottom"
             onChange={key => {
               changeTreeTab(key);
             }}
-          >
-            <TabPane tab="流程" key="process">
-              <ProcessTree
-                type="process"
-                setShowLoadingLayer={setShowLoadingLayer}
-                createItem={createItem}
-              />
+          > */}
+          {/* <TabPane tab="流程" key="process">
+              
             </TabPane>
             <TabPane tab="流程块" key="processModule">
               <ProcessTree
@@ -125,8 +150,8 @@ export default ({ setShowLoadingLayer, createItem }) => {
                 setShowLoadingLayer={setShowLoadingLayer}
                 createItem={createItem}
               />
-            </TabPane>
-          </Tabs>
+            </TabPane> */}
+          {/* </Tabs> */}
         </div>
       </div>
     </div>

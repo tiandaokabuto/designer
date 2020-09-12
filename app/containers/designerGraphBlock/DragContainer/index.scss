@@ -23,6 +23,17 @@
   border-top: 1px solid #cccccc;
   bottom: 0px;
   background: #fcfcfc;
+  .ant-tabs-tab {
+    font-family: Source Han Sans CN !important;
+    font-weight: 600;
+  }
+  .ant-tabs-tab-active {
+    flex: 1;
+    font-size: 14px;
+    font-family: Source Han Sans CN !important;
+    font-weight: 600;
+    color: rgba(102, 102, 102, 1) !important;
+  }
   // overflow: hidden;
   &::before {
     content: '';
