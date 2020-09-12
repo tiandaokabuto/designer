@@ -20,6 +20,21 @@
       margin: 40px 0;
       color: rgba(153, 153, 153, 1);
     }
+    .recent-project-table {
+      tr {
+        .deletIconContent {
+          display: none;
+        }
+        &:hover {
+          .deletIconContent {
+            display: inline-block;
+          }
+        }
+      }
+    }
+    .ant-pagination-item-active a {
+      color: #32a680 !important;
+    }
   }
   &-rightcontent {
     flex-basis: 50%;
@@ -35,8 +50,4 @@
       background-image: url('../assets/images/recent-close.png');
     }
   }
-}
-
-.deletIconContent {
-  display: inline-block;
 }

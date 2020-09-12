@@ -34,6 +34,15 @@ const getVariableList = item => {
   return [];
 };
 
+const noAiHintListNames = [
+  '查询任务数据',
+  '新增任务数据',
+  '消费任务数据',
+  '查询任务数据',
+  '查询变量值',
+  '设置变量值',
+];
+
 const AutoCompleteInputParam = React.forwardRef(
   (
     {
@@ -45,9 +54,12 @@ const AutoCompleteInputParam = React.forwardRef(
       handleValidate,
       onChange,
       isSelectEncty,
+      cmdName,
     },
     ref
   ) => {
+    console.log(param, aiHintList);
+    console.log(cmdName);
     // 对密文进行解密
     const defaultValue = () => {
       const value = String(param.value || param.default);
@@ -65,6 +77,7 @@ const AutoCompleteInputParam = React.forwardRef(
     // 待匹配的下拉列表
     const dataSource =
       hasParamType &&
+      !noAiHintListNames.includes(cmdName) &&
       paramType.reduce((prev, next) => {
         return prev.concat(
           aiHintList[next]

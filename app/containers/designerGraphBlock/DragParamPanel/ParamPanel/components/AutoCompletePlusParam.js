@@ -14,6 +14,7 @@ const AutoCompletePlusParam = ({
   handleValidate,
   onChange,
   isSelectEncty,
+  cmdName,
 }) => {
   const inputEl = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -35,6 +36,7 @@ const AutoCompletePlusParam = ({
       <div className="parampanel-item-content-adapt">
         <AutoCompleteInputParam
           ref={inputEl}
+          cmdName={cmdName}
           param={param}
           aiHintList={aiHintList}
           appendDataSource={appendDataSource}

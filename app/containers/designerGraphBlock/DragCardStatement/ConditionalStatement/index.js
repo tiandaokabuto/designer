@@ -56,10 +56,14 @@ const ConditionalStatement = useInjectContext(props => {
 
   const cards = useSelector(state => state.blockcode.cards);
 
-  const [backgroundColor, isIgnore, setIsIgnore] = useChangeCheckedBlockColor(
-    id,
-    card
-  );
+  const [
+    backgroundColor,
+    border,
+    ifBackground,
+    elseBackground,
+    isIgnore,
+    setIsIgnore,
+  ] = useChangeCheckedBlockColor(id, card);
 
   const handleEmitCodeTransform = useTransformToPython();
 
@@ -121,7 +125,8 @@ const ConditionalStatement = useInjectContext(props => {
         className="IFItem-header"
         ref={readOnly ? null : ref}
         style={{
-          background: isIgnore ? '#9c9494' : 'rgba(50, 166, 127, 1)',
+          background: isIgnore ? '#9c9494' : ifBackground,
+          color: ifBackground === '#32A67F' ? 'white' : 'black',
         }}
       >
         <div
@@ -186,7 +191,7 @@ const ConditionalStatement = useInjectContext(props => {
             </>
           )}
           <Icon
-            type={isFold ? 'up' : 'down'}
+            type={isFold ? 'down' : 'up'}
             onClick={() => {
               handleStatementFlod();
             }}
@@ -220,12 +225,13 @@ const ConditionalStatement = useInjectContext(props => {
           <div
             className="IFItem-header IFItem-header__else"
             style={{
-              backgroundColor: isIgnore ? '#9c9494' : 'rgba(184, 230, 214, 1)',
+              backgroundColor: isIgnore ? '#9c9494' : elseBackground,
+              color: elseBackground === '#AACC7A' ? 'white' : 'black',
             }}
           >
             否则
           </div>
-          <div style={{ paddingLeft: 24 }}>
+          <div style={{ padding: '10px 2px 10px 24px' }}>
             {card.elseChildren.map((subChildren, i) =>
               renderStatement(subChildren, i)
             )}

@@ -109,9 +109,10 @@ module.exports = merge.smart(baseConfig, {
                 'primary-color': '#32A680',
                 'link-color': '#006633',
                 'border-radius-base': '2px',
+                'item-hover-bg': '#F2FAF8',
               },
-              javascriptEnabled: true
-            }
+              javascriptEnabled: true,
+            },
           },
         ],
       },

@@ -140,6 +140,7 @@ export default function TaskDataName({
   handleEmitCodeTransform,
   handleValidate,
   markBlockIsUpdated,
+  cmdName,
 }) {
   param.dataSource = param.dataSource || [];
   param.tableName = param.tableName || '';
@@ -319,6 +320,7 @@ export default function TaskDataName({
         </span>
         <div style={{ flex: 1, overflow: 'hidden' }}>
           <AutoCompletePlusParam
+            cmdName={cmdName}
             param={param}
             aiHintList={aiHintList}
             appendDataSource={appendDataSource}

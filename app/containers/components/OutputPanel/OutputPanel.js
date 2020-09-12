@@ -906,7 +906,7 @@ export default memo(
                 {transformOutput}
               </pre>
               <div
-                className="variablePanel"
+                className="debugVariablePanel"
                 style={{
                   display: tabSwicth === '调试' ? 'inline' : 'none',
                   //background: 'rgba(244,252,250,1)',

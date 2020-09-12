@@ -5,12 +5,23 @@
     height: 28px;
     line-height: 28px;
     color: rgba(255, 255, 255, 1);
+    font-family: Source Han Sans CN;
+    // font-weight: 600;
     &__else {
       padding-left: 8px;
     }
+    &:hover {
+      .CatchItem-header-operation {
+        right: 6px;
+        visibility: visible;
+      }
+    }
     &-operation {
+      position: absolute;
+      visibility: hidden;
       > * {
-        margin-right: 16px;
+        margin-right: 10px;
+        vertical-align: middle;
       }
     }
     &-title {
@@ -53,18 +64,18 @@
     }
   }
   &-try {
-    border: 1px solid rgba(50, 166, 127, 1);
+    // border: 1px solid rgba(50, 166, 127, 1);
   }
   &-catch {
-    border: 1px solid rgba(184, 230, 214, 1);
+    // border: 1px solid rgba(184, 230, 214, 1);
   }
   &-finally {
-    border: 1px solid rgba(184, 230, 214, 1);
+    // border: 1px solid rgba(184, 230, 214, 1);
   }
   &-content {
     overflow: hidden;
     .CatchItem-try {
-      padding-left: 24px;
+      padding: 10px 2px 10px 24px;
     }
   }
 }

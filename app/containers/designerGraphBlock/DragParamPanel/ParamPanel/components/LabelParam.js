@@ -16,7 +16,7 @@ export default ({
       <span className="param-title" title={param.desc}>
         {param.cnName}
       </span>
-      <div style={{ flex: 1, overflow: 'hidden' }}>
+      <div className="param-item-wrapper">
         <AutoCompletePlusParam
           param={param}
           aiHintList={aiHintList}

@@ -32,10 +32,40 @@ import usePersistentModuleStorage from '../../../common/DragEditorHeader/useHook
 import SaveConfirmModel from './SaveConfirmModel';
 import { info } from 'electron-log';
 import mxgraph from '../../MxGraph/mxgraph';
+import './ProcessTree.scss';
 
 const { ipcRenderer } = require('electron');
 
 const { mxCell: MxCell, mxGeometry: MxGeometry } = mxgraph;
+
+const LiuchengSVG = () => (
+  <svg
+    width="16px"
+    height="16px"
+    viewBox="0 0 16 16"
+    version="1.1"
+    fill="currentColor"
+  >
+    <path d="M6,0 C6.55228475,0 7,0.44771525 7,1 L7,4 C7,4.55228475 6.55228475,5 6,5 L4.039,5 L4.03982301,11.2743363 C4.03982301,12.0540324 4.63471109,12.694785 5.395363,12.7674697 L5.53982301,12.7743363 L9,12.774 L9,12 C9,11.4477153 9.44771525,11 10,11 L15,11 C15.5522847,11 16,11.4477153 16,12 L16,15 C16,15.5522847 15.5522847,16 15,16 L10,16 C9.44771525,16 9,15.5522847 9,15 L9,13.774 L5.53982301,13.7743363 C4.21433961,13.7743363 3.12978434,12.7428003 3.04514069,11.438712 L3.03982301,11.2743363 L3.039,5 L1,5 C0.44771525,5 0,4.55228475 0,4 L0,1 C0,0.44771525 0.44771525,0 1,0 L6,0 Z M15,12 L10,12 L10,15 L15,15 L15,12 Z M15,4 C15.5522847,4 16,4.44771525 16,5 L16,8 C16,8.55228475 15.5522847,9 15,9 L10,9 C9.44771525,9 9,8.55228475 9,8 L9,5 C9,4.44771525 9.44771525,4 10,4 L15,4 Z M15,5 L10,5 L10,8 L15,8 L15,5 Z M6,1 L1,1 L1,4 L6,4 L6,1 Z"></path>
+  </svg>
+);
+
+const MuluSVG = () => (
+  <svg
+    width="16px"
+    height="16px"
+    viewBox="0 0 16 16"
+    version="1.1"
+    fill="currentColor"
+  >
+    <path d="M9,0 L9,5 L16,5 L16,16 L0,16 L0,0 L9,0 Z M8,1 L1,1 L1,15 L8,15 L8,1 Z M15,6 L9,6 L9,15 L15,15 L15,6 Z M6,11 L6,12 L3,12 L3,11 L6,11 Z M13,10 L13,11 L11,11 L11,10 L13,10 Z M6,7 L6,8 L3,8 L3,7 L6,7 Z M6,3 L6,4 L3,4 L3,3 L6,3 Z"></path>
+  </svg>
+);
+
+export const MuluIcon = props => <Icon component={MuluSVG} {...props} />;
+export const LiuchengIcon = props => (
+  <Icon component={LiuchengSVG} {...props} />
+);
 
 const TreeNodeTitle = ({
   title,
@@ -56,15 +86,25 @@ const TreeNodeTitle = ({
         justifyContent: 'space-between',
       }}
     >
-      <Icon
-        type={iconType}
-        style={{
-          marginRight: 8,
-          marginLeft: 12,
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      />
+      {iconType === 'mulu' ? (
+        <MuluIcon
+          style={{
+            marginRight: 8,
+            marginLeft: 12,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        />
+      ) : (
+        <LiuchengIcon
+          style={{
+            marginRight: 8,
+            marginLeft: 12,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        />
+      )}
       {type === 'secondModule' && node.type === 'process' ? (
         <DragCard
           title={title}
@@ -128,7 +168,7 @@ const transformTreeTitle = (
               node={child}
               title={child.title}
               hasModified={child.hasModified}
-              iconType="cluster"
+              iconType="liucheng"
               type={blockTreeTab}
               currentProject={currentProject}
               dragModule={true}
@@ -140,7 +180,7 @@ const transformTreeTitle = (
               node={child}
               title={child.title}
               hasModified={child.hasModified}
-              iconType="cluster"
+              iconType="liucheng"
               type={blockTreeTab}
               currentProject={currentProject}
             />
@@ -153,7 +193,7 @@ const transformTreeTitle = (
             node={child}
             title={child.title}
             hasModified={child.hasModified}
-            iconType="file"
+            iconType="mulu"
             type={blockTreeTab}
             currentProject={currentProject}
           />
@@ -511,6 +551,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
 
   useEffect(() => {
     const handleAddExpanedKeys = keys => {
+      console.log('a');
       setExpandedKeys(expandedKeys => {
         if (expandedKeys.includes(keys)) return expandedKeys;
         return expandedKeys.concat(keys);
@@ -525,7 +566,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
   return (
     <div
       style={{
-        height: 'calc(100vh - 162px)',
+        height: 'calc(100vh - 155px)',
         display: 'flex',
         flexDirection: 'column',
         overflowY: 'auto',
@@ -579,6 +620,10 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
               : [currentCheckedModuleTreeNode]
           }
           onSelect={(selectedKey, e) => {
+            console.log(e.selectedNodes[0]);
+            console.log(
+              (e.nativeEvent.path[1].firstElementChild.children[0].src = MuluIcon)
+            );
             const node = findNodeByKey(processTree, selectedKey[0]);
             if (node.data === undefined) {
               // 目录

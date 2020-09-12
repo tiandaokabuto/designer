@@ -5,6 +5,7 @@ import Root from './containers/Root';
 import { history } from './store/configureStore';
 import store from './store';
 import './app.global.css';
+import './theme.less';
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 
