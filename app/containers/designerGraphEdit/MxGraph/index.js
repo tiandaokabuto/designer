@@ -2103,8 +2103,12 @@ const MxgraphContainer = useInjectContext(
                             cnName: '标签名称',
                             enName: 'label',
                             value: item.value
-                              .replace("<div class='compoent-content'>", '')
-                              .replace('</div>', ''),
+                              .replace(
+                                "<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>",
+                                ''
+                              )
+                              .replace('</span></div>', ''),
+
                             default: '',
                           },
                           {
