@@ -4,9 +4,11 @@
   height: calc(100vh - 76px);
   display: flex;
   color: #000;
+  font-family: Source Han Sans CN;
   // border-left: 2px solid #32a67f;
   // border-right: 2px solid #32a67f;
   overflow-x: hidden;
+  overflow-y: hidden;
 
   &-item {
     min-width: 130px;
@@ -122,7 +124,7 @@
     flex: 1;
     overflow: hidden;
     // max-width: calc(100vw - 239px * 2);
-    background-color: #f9fafb;
+    background-color: #f2f2f2;
     box-shadow: 1px 0 0 0 #eee;
     position: relative;
     .dragger-editor-title {
@@ -237,7 +239,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    border: 1px dashed rgba(50, 166, 127, 1);
+    border-radius: 5px;
+    // border: 1px dashed rgba(50, 166, 127, 1);
     &__tail {
       border-radius: 3px;
       border: 1px solid rgba(238, 238, 238, 1);
@@ -247,11 +250,11 @@
   .card-content {
     position: relative;
     z-index: 1;
-    height: 52px;
+    height: 55px;
     // line-height: 28px;
-    padding: 8px 16px;
-    box-shadow: 0 1px 0 0 rgba(238, 238, 238, 1),
-      0 -1px 0 0 rgba(238, 238, 238, 1);
+    padding: 0px 16px;
+    // box-shadow: 0 1px 0 0 rgba(238, 238, 238, 1),
+    //   0 -1px 0 0 rgba(238, 238, 238, 1);
     border-radius: 3px 3px 0 0;
     &__tail {
       color: rgba(204, 204, 204, 1);

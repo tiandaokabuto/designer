@@ -49,7 +49,7 @@ const { ipcRenderer, remote } = require('electron');
 const style = {
   borderTop: '4px solid transparent',
   borderBottom: '4px solid transparent',
-  backgroundColor: 'white',
+  // backgroundColor: 'white',
   backgroundClip: 'padding-box',
   cursor: 'move',
   position: 'relative',
@@ -100,10 +100,14 @@ const BasicStatement = useInjectContext(props => {
     save,
   ] = useVisibleDynamicUpdate(id, visibleTemplate, readOnly);
 
-  const [backgroundColor, isIgnore, setIsIgnore] = useChangeCheckedBlockColor(
-    id,
-    card
-  );
+  const [
+    backgroundColor,
+    border,
+    ifBackground,
+    elseBackground,
+    isIgnore,
+    setIsIgnore,
+  ] = useChangeCheckedBlockColor(id, card, 'basic');
 
   // 打调试断点
   const [isBreakPoint, setIsBreakPoint] = useChangeBreakPoint(id, card);
@@ -366,15 +370,17 @@ const BasicStatement = useInjectContext(props => {
         ) : (
           <Fragment>
             <div className="card-content-description">
-              <Icon type="home" className="card-content-icon" />
-              {text}
-              {cmdDesc && (
-                <span style={{ color: '#b1aeb2', marginLeft: 8 }}>
-                  ({cmdDesc || ''})
-                </span>
-              )}
+              <div className="card-content-description-header">
+                <Icon type="home" className="card-content-icon" />
+                {text}
+                {cmdDesc && (
+                  <span style={{ color: '#b1aeb2', marginLeft: 8 }}>
+                    ({cmdDesc || ''})
+                  </span>
+                )}
 
-              <br />
+                <br />
+              </div>
               <div
                 className="card-content-visible"
                 key={uniqueId('visible_')}
@@ -419,6 +425,7 @@ const BasicStatement = useInjectContext(props => {
                   />
                   <Icon
                     type={isIgnore ? 'eye-invisible' : 'eye'}
+                    theme="filled"
                     onClick={() => {
                       setIsIgnore();
                       card.ignore = !card.ignore;
@@ -428,6 +435,7 @@ const BasicStatement = useInjectContext(props => {
                   />
                   <Icon
                     type="delete"
+                    theme="filled"
                     onClick={() => {
                       deleteNodeById(id);
                     }}
@@ -444,7 +452,7 @@ const BasicStatement = useInjectContext(props => {
                   {targetImage === undefined ? (
                     <Fragment>
                       <Icon
-                        type="home"
+                        type="plus-circle"
                         className="card-content-searchtarget-anchor"
                       />
                       <span>{searchTargetDesc(card)}</span>
@@ -481,6 +489,7 @@ const BasicStatement = useInjectContext(props => {
         data-id={isTail ? '' : id}
         style={{
           backgroundColor,
+          border,
           borderColor,
         }}
         ref={dragImage}

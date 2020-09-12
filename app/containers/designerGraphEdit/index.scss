@@ -19,19 +19,26 @@
   // border-left: 2px solid #32a67f;
   // border-right: 2px solid #32a67f;
   overflow-x: hidden;
-  display: flex;
+  // display: flex;
   color: #000;
+  position: relative;
   &-item {
     // flex-basis: 239px;
+    width: 239px;
+    max-width: 500px;
     box-shadow: 1px 0 0 0 rgba(238, 238, 238, 1);
     border-right: 1px solid rgba(238, 238, 238, 1);
     // min-width: 120px;
     // max-width: 500px;
-    min-width: 239px;
-    max-width: 239px;
+    // min-width: 239px;
+    // max-width: 239px;
     // pointer-events: none;
-    position: relative;
-    z-index: 2;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 3;
+    height: 100%;
+    background-color: white;
     &::before {
       pointer-events: auto;
       content: '';
@@ -107,23 +114,25 @@
     }
     .draggable-tree {
       .ant-tree-node-content-wrapper {
-        height: 32px;
-        line-height: 28px;
+        height: 40px;
+        line-height: 35px;
         margin-left: -20px;
       }
       .ant-tree-node-selected {
         color: #32a67f;
-        background-color: transparent !important;
+        background-color: #f2faf8 !important;
+        // background: #f2faf8;
+        // background-color: transparent !important;
         .treenode-title {
-          background-color: #f7f8f9 !important;
-          &::before {
-            content: '';
-            position: absolute;
-            background: #32a67f;
-            width: 2px;
-            height: 30px;
-            margin-left: -3px;
-          }
+          // background-color: #f7f8f9 !important;
+          // &::before {
+          //   content: '';
+          //   position: absolute;
+          //   background: #32a67f;
+          //   width: 2px;
+          //   height: 30px;
+          //   margin-left: -3px;
+          // }
         }
       }
     }
@@ -133,14 +142,18 @@
     // flex-direction: column;
     height: calc(100% - 32px);
     flex: 1;
-    max-width: calc(100vw - 239px * 2);
+    // max-width: calc(100vw - 239px * 2);
     background-color: #f9fafb;
     box-shadow: 1px 0 0 0 #eee;
     // z-index: 2;
     // position: relative;
     &-header {
-      position: relative;
+      position: absolute;
+      left: 239px;
+      width: calc(100% - 478px);
+      z-index: 2;
       height: 40px;
+      overflow: hidden;
       line-height: 40px;
       color: rgba(204, 204, 204, 1);
       background: rgba(255, 255, 255, 1);
@@ -218,11 +231,19 @@
     }
   }
   &-parampanel {
-    min-width: 239px;
-    max-width: 239px;
+    width: 329;
+    max-width: 500px;
+    // min-width: 239px;
+    // max-width: 239px;
+    // flex-basis: 239px;
     border-left: 1px solid #eeeeee;
-    position: relative;
+    position: absolute;
+    background: white;
+    right: 0;
+    top: 0;
+    z-index: 2;
     pointer-events: none;
+    height: 100%;
     &::before {
       pointer-events: auto;
       content: '';
@@ -268,8 +289,8 @@
         .ant-tabs-tab {
           flex: 1;
           font-size: 14px;
-          font-family: PingFangSC-Regular, PingFang SC !important;
-          font-weight: 400;
+          font-family: PingFangSC-Regular, PingFang SC;
+          // font-weight: 600;
           // width: 110px;
           color: rgba(102, 102, 102, 1);
           line-height: 14px;
@@ -279,8 +300,6 @@
         .ant-tabs-tab-active {
           flex: 1;
           font-size: 14px;
-          font-family: PingFangSC-Regular, PingFang SC;
-          font-weight: 400;
           color: rgba(50, 166, 127, 1);
         }
       }

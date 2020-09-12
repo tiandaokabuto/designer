@@ -24,8 +24,8 @@ export default () => {
   const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
 
   const getParamPanelWidth = () => {
-    const outputDom = document.querySelector('.designergraph-parampanel');
-    return parseFloat(window.getComputedStyle(outputDom).width);
+    const rightDom = document.querySelector('.designergraph-parampanel');
+    return parseFloat(window.getComputedStyle(rightDom).width);
   };
 
   useEffect(() => {
@@ -34,13 +34,30 @@ export default () => {
         let offset = startOffset - e.pageX; // 偏移量
         startOffset = e.pageX;
         // if (e.clientX <= 239) return;
-        const outputDom = document.querySelector('.designergraph-parampanel');
+        const rightDom = document.querySelector('.designergraph-parampanel');
         const originWidth = getParamPanelWidth();
         const currentWidth = originWidth + offset;
-        outputDom.style.flexBasis = currentWidth + 'px';
-        if (currentWidth < 120) {
-          outputDom.style.display = 'none';
-        }
+        rightDom.style.width = currentWidth + 'px';
+
+        // 工具栏
+        const toolDom = document.querySelector(
+          '.designergraph-container-header'
+        );
+        // 输出面板
+        const outputDom = document.querySelector(
+          '.dragger-editor-container-output'
+        );
+        // 左侧面板
+        const itemDom = document.querySelector('.designergraph-item');
+
+        // 输出面板宽度调整
+        outputDom.style.width = `calc(100% - ${rightDom.style.width} - ${itemDom.style.width})`;
+        // 工具栏宽度调整
+        toolDom.style.width = `calc(100% - ${rightDom.style.width} - ${itemDom.style.width})`;
+
+        // if (currentWidth < 120) {
+        //   outputDom.style.display = 'none';
+        // }
       }
     }, 0);
 
@@ -58,15 +75,15 @@ export default () => {
   return (
     <div
       className="designergraph-parampanel"
-      // onMouseDown={e => {
-      //   isMouseDown = true;
-      //   startOffset = e.pageX;
-      // }}
+      onMouseDown={e => {
+        isMouseDown = true;
+        startOffset = e.pageX;
+      }}
     >
       <div
-      // onMouseDown={e => {
-      //   e.stopPropagation();
-      // }}
+        onMouseDown={e => {
+          e.stopPropagation();
+        }}
       >
         <Tabs className="designergraph-parampanel-tabs">
           <TabPane tab="属性" key="1">

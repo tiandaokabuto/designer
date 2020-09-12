@@ -206,9 +206,11 @@ export default useInjectContext(({ history }) => {
           <Table
             columns={columns}
             dataSource={fileList}
+            className="recent-project-table"
             scroll={{
               y: 'calc(100vh - 400px)',
             }}
+            pagination={false}
             ellipsis
             onRow={record => {
               return {
