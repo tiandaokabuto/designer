@@ -276,6 +276,7 @@ export default useInjectContext(
 
     return (
       <div
+        //style={{zIndex:9999}}
         className="dragger-editor-item"
         onMouseDown={e => {
           isMouseDown = true;

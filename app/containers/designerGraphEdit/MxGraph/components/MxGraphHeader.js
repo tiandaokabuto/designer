@@ -97,6 +97,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
   return (
     <div className="designergraph-container-header">
       <div className="designergraph-container-header-tool">
+        {/**
         <div
           className="mxgraph-cell designergraph-container-header-tool-start"
           data-width="50"
@@ -106,7 +107,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
         >
           开始
         </div>
-
+ */}
         <div
           className="mxgraph-cell designergraph-container-header-tool-process"
           data-width="96"
@@ -134,10 +135,10 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
         </div> */}
         <div
           className="mxgraph-cell designergraph-container-header-tool-condition mxgraph-cell-none-border"
-          data-width="100"
-          data-height="100"
-          data-style="shape=rhombus;perimeter=ellipsePerimeter;resizable=0;shadow=1;"
-          data-label="<div class='rcomponent-content'><label class='rcomponent-content-icon'></label><span class='rcomponent-name' title='condition'>判断</span></div>"
+          data-width="58"
+          data-height="58"
+          data-style="shape=rhombus;perimeter=ellipsePerimeter;resizable=0;fillColor=#F2FAF7;strokeColor=#32A67F;shadow=1;"
+          data-label="<div class='rcomponent-content'>判断</div>"
         >
           <p></p>
           <span>判断</span>
@@ -167,7 +168,7 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
           className="mxgraph-cell designergraph-container-header-tool-end"
           data-width="80"
           data-height="55"
-          data-style="ellipse;shape=doubleEllipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center;shadow=1;"
+          data-style="ellipse;shape=doubleEllipse;label;whiteSpace=wrap;html=1;fillColor=#F2FAF7;strokeColor=#32A67F;resizable=0;align=center;shadow=1;"
           data-label="<span>结束</span>"
         >
           结束

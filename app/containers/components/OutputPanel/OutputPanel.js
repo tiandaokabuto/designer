@@ -323,7 +323,8 @@ export default memo(
       };
 
       const handleStopScroll = ({ key }) => {
-        if (key === '2') setStopScroll(true);
+        if(key === '0') event.emit(PYTHON_OUTPUT_CLEAR);
+        else if (key === '2') setStopScroll(true);
         else if (key === '3') setStopScroll(false);
         else if (key === '1') {
           getDownLoadPath(
@@ -340,6 +341,9 @@ export default memo(
 
       const menu = (
         <Menu onClick={handleStopScroll}>
+          <Menu.Item key="0">
+            清空日志
+          </Menu.Item>
           <Menu.Item key="1" disabled={!allLogMessage.value}>
             导出日志
           </Menu.Item>

@@ -11,18 +11,18 @@ export const PROCESS_NODE = {
 
 export const CONDITION_NODE = {
   getLabel: str =>
-    `<div class='rcomponent-content'><label class='rcomponent-content-icon'></label><span class='rcomponent-name' title='condition'>${str}</span></div>`,
+    `<div class='rcomponent-content'>${str}</div>`,
   label:
-    "<div class='rcomponent-content'><label class='rcomponent-content-icon'></label><span class='rcomponent-name' title='condition'>判断</span></div>",
-  style: 'shape=rhombus;perimeter=ellipsePerimeter;resizable=0;shadow=1;',
-  width: 100,
-  height: 100,
+    "<div class='rcomponent-content'>判断</div>",
+  style: 'shape=rhombus;perimeter=ellipsePerimeter;fillColor=#F2FAF7;strokeColor=#32A67F;resizable=0;shadow=1;',
+  width: 58,
+  height: 58,
 };
 
 export const START_NODE = {
   label: '开始',
   style:
-    'shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;align=center;shadow=1;',
+    'shape=ellipse;label;whiteSpace=wrap;html=1;resizable=0;fillColor=#F2FAF7;strokeColor=#32A67F;align=center;shadow=1;',
   width: 50,
   height: 50,
 };
@@ -30,7 +30,7 @@ export const START_NODE = {
 export const END_NODE = {
   label: '<span>结束</span>',
   style:
-    'ellipse;shape=doubleEllipse;label;whiteSpace=wrap;html=1;;resizable=0;align=center;shadow=1;',
+    'ellipse;shape=doubleEllipse;label;whiteSpace=wrap;html=1;resizable=0;fillColor=#F2FAF7;strokeColor=#32A67F;align=center;shadow=1;',
   width: 80,
   height: 55,
 };
