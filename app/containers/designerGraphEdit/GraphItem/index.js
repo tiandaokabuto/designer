@@ -19,6 +19,8 @@ export default ({ setShowLoadingLayer, createItem }) => {
   const changeProjectName = useChangeProjectName();
   const [editVisible, setEditVisible] = useState(false);
 
+  const [showTree, setShowTree] = useState('process');
+
   const getDesignergraphItemWidth = () => {
     const leftDom = document.querySelector('.designergraph-item');
     return parseFloat(window.getComputedStyle(leftDom).width);
@@ -122,17 +124,30 @@ export default ({ setShowLoadingLayer, createItem }) => {
           />
         </div>
         <div
-        // style={{
-        //   position: 'fixed',
-        //   bottom: '0',
-        //   maxWidth: '239px',
-        // }}
+          className="designergraph-item-tree"
+          style={{
+            height: 'calc(100vh - 155px)',
+            display: 'flex',
+            flexDirection: 'column',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+          }}
+          // style={{
+          //   position: 'fixed',
+          //   bottom: '0',
+          //   maxWidth: '239px',
+          // }}
         >
           <ProcessTree
-            type="process"
+            type={showTree === 'process' ? 'process' : 'processModule'}
             setShowLoadingLayer={setShowLoadingLayer}
             createItem={createItem}
           />
+          {/* <ProcessTree
+            type="processModule"
+            setShowLoadingLayer={setShowLoadingLayer}
+            createItem={createItem}
+          /> */}
           {/* <Tabs
             defaultActiveKey={treeTab}
             className="dragger-editor-container-tabs"
@@ -145,13 +160,47 @@ export default ({ setShowLoadingLayer, createItem }) => {
               
             </TabPane>
             <TabPane tab="流程块" key="processModule">
-              <ProcessTree
-                type="processModule"
-                setShowLoadingLayer={setShowLoadingLayer}
-                createItem={createItem}
-              />
+              
             </TabPane> */}
           {/* </Tabs> */}
+        </div>
+        <div className="designergraph-item-tabs">
+          <div
+            className="designergraph-item-tab"
+            onClick={() => setShowTree('process')}
+            style={{
+              color: showTree === 'process' ? 'rgba(50, 166, 127, 1)' : 'black',
+            }}
+          >
+            <div
+              className="tab-line"
+              style={{
+                border:
+                  showTree === 'process'
+                    ? '1px solid rgba(50, 166, 127, 1)'
+                    : '1px solid white',
+              }}
+            ></div>
+            <div className="tab-title">流程</div>
+          </div>
+          <div
+            className="designergraph-item-tab"
+            onClick={() => setShowTree('module')}
+            style={{
+              color: showTree === 'module' ? 'rgba(50, 166, 127, 1)' : 'black',
+            }}
+          >
+            <div
+              className="tab-line"
+              style={{
+                border:
+                  showTree === 'module'
+                    ? '1px solid rgba(50, 166, 127, 1)'
+                    : '1px solid white',
+              }}
+            ></div>
+            <div className="tab-title">流程块</div>
+          </div>
         </div>
       </div>
     </div>

@@ -559,14 +559,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
   }, [setExpandedKeys]);
 
   return (
-    <div
-      style={{
-        height: 'calc(100vh - 155px)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflowY: 'auto',
-      }}
-    >
+    <>
       <div className="tree-panel">
         <Tree
           className={
@@ -681,6 +674,6 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
           />
         </Dropdown>
       )}
-    </div>
+    </>
   );
 };

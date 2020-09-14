@@ -63,7 +63,7 @@
       overflow-y: auto;
       overflow-x: hidden;
       margin-top: 8px;
-      height: calc(100vh - 220px);
+      height: calc(100vh - 203px);
       .ant-tree-switcher-noop {
         display: none;
       }
@@ -89,11 +89,11 @@
     }
     &-tree {
       .ant-tree-switcher_open {
-        position: absolute !important;
+        // position: absolute !important;
         right: 0;
       }
       .ant-tree-switcher_close {
-        position: absolute !important;
+        // position: absolute !important;
         right: 0;
       }
       .ant-tree-switcher-noop {

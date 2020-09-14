@@ -100,6 +100,8 @@ export default useInjectContext(
 
     const [dragCard, setDragCard] = useState([]);
 
+    const [showTree, setShowTree] = useState('atomic');
+
     const filterTree = (treeData, filter, parent = [], expandedKeysTemp) => {
       if (!filter || !treeData) return treeData || [];
       treeData.forEach((child, index) => {
@@ -315,14 +317,104 @@ export default useInjectContext(
               />
             </div>
           </div>
-          <div
+          {/* <div
             style={{
-              // position: 'fixed',
+              position: 'fixed',
               bottom: '0',
-              // maxWidth: '239px',
+              maxWidth: '239px',
             }}
-          >
-            <Tabs
+          > */}
+          <div className="dragger-editor-item-search">
+            <Input
+              placeholder="请输入"
+              allowClear
+              onChange={e => searchKeyWord(e.target.value)}
+            />
+          </div>
+          <div className="dragger-editor-item-tree">
+            {blockTreeTab === 'atomic' ? (
+              <Tree
+                className="atomicCList-tree"
+                expandedKeys={expandedKeys}
+                onExpand={expandedKeys => {
+                  setExpandedKeys(expandedKeys);
+                }}
+                onRightClick={({ event, node }) => {
+                  setPosition({
+                    left: event.pageX + 40,
+                    top: event.pageY - 20,
+                    node: node.props,
+                  });
+                }}
+                // showIcon={true}
+                // switcherIcon={<MuluIcon></MuluIcon>}
+                onSelect={(_, e) => {
+                  const props = e.node.props;
+                  if (props.children) {
+                    setExpandedKeys(keys => {
+                      if (keys.includes(props.eventKey)) {
+                        return keys.filter(item => item !== props.eventKey);
+                      } else {
+                        return keys.concat(props.eventKey);
+                      }
+                    });
+                  }
+                }}
+                treeData={treeData}
+              />
+            ) : (
+              <ProcessTree type={'secondModule'}></ProcessTree>
+            )}
+
+            <ContextMenu
+              position={position}
+              addToLovedList={addToLovedList}
+              removeFromLovedList={removeFromLovedList}
+            />
+          </div>
+          <div className="designergraph-item-tabs">
+            <div
+              className="designergraph-item-tab"
+              onClick={() => changeBlockTreeTab('atomic')}
+              style={{
+                color:
+                  blockTreeTab === 'atomic' ? 'rgba(50, 166, 127, 1)' : 'black',
+              }}
+            >
+              <div
+                className="tab-line"
+                style={{
+                  border:
+                    blockTreeTab === 'atomic'
+                      ? '1px solid rgba(50, 166, 127, 1)'
+                      : '1px solid white',
+                }}
+              ></div>
+              <div className="tab-title">组件库</div>
+            </div>
+            <div
+              className="designergraph-item-tab"
+              onClick={() => changeBlockTreeTab('secondModule')}
+              style={{
+                color:
+                  blockTreeTab === 'secondModule'
+                    ? 'rgba(50, 166, 127, 1)'
+                    : 'black',
+              }}
+            >
+              <div
+                className="tab-line"
+                style={{
+                  border:
+                    blockTreeTab === 'secondModule'
+                      ? '1px solid rgba(50, 166, 127, 1)'
+                      : '1px solid white',
+                }}
+              ></div>
+              <div className="tab-title">流程块</div>
+            </div>
+          </div>
+          {/* <Tabs
               defaultActiveKey={blockTreeTab}
               className="dragger-editor-container-tabs"
               tabPosition="bottom"
@@ -336,54 +428,14 @@ export default useInjectContext(
                     height: 'calc(100vh - 170px)',
                   }}
                 >
-                  <div className="dragger-editor-item-search">
-                    <Input
-                      placeholder="请输入"
-                      allowClear
-                      onChange={e => searchKeyWord(e.target.value)}
-                    />
-                  </div>
-                  <Tree
-                    className="atomicCList-tree"
-                    expandedKeys={expandedKeys}
-                    onExpand={expandedKeys => {
-                      setExpandedKeys(expandedKeys);
-                    }}
-                    onRightClick={({ event, node }) => {
-                      setPosition({
-                        left: event.pageX + 40,
-                        top: event.pageY - 20,
-                        node: node.props,
-                      });
-                    }}
-                    showIcon={true}
-                    switcherIcon={<MuluIcon></MuluIcon>}
-                    onSelect={(_, e) => {
-                      const props = e.node.props;
-                      if (props.children) {
-                        setExpandedKeys(keys => {
-                          if (keys.includes(props.eventKey)) {
-                            return keys.filter(item => item !== props.eventKey);
-                          } else {
-                            return keys.concat(props.eventKey);
-                          }
-                        });
-                      }
-                    }}
-                    treeData={treeData}
-                  />
-                  <ContextMenu
-                    position={position}
-                    addToLovedList={addToLovedList}
-                    removeFromLovedList={removeFromLovedList}
-                  />
+                  
                 </div>
               </TabPane>
               <TabPane tab="流程块" key="secondModule">
                 <ProcessTree type={'secondModule'}></ProcessTree>
               </TabPane>
-            </Tabs>
-          </div>
+            </Tabs> */}
+          {/* </div> */}
         </div>
       </div>
     );
