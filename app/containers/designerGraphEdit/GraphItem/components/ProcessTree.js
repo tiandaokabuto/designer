@@ -114,23 +114,23 @@ const TreeNodeTitle = ({
           currentProject={currentProject}
         />
       ) : (
-        <Tooltip
-          placement="right"
-          title={title}
-          overlayStyle={{ paddingLeft: '68px' }}
+        // <Tooltip
+        //   placement="right"
+        //   title={title}
+        //   overlayStyle={{ paddingLeft: '68px' }}
+        // >
+        <div
+          style={{
+            display: 'block',
+            flexBasis: 150,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
         >
-          <div
-            style={{
-              display: 'block',
-              flexBasis: 150,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {title}
-          </div>
-        </Tooltip>
+          {title}
+        </div>
+        // </Tooltip>
       )}
 
       <span
