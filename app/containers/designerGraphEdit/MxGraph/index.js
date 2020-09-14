@@ -348,9 +348,9 @@ const MxgraphContainer = useInjectContext(
       //   }, 0);
       // }
       if (zoom > 9) {
-        handleZoomIn(zoom - 9);
+        zoomIn(zoom - 9);
       } else if (zoom < 9) {
-        handleZoomOut(9 - zoom);
+        zoomOut(9 - zoom);
       }
       // if (x && y) {
       //   graph.getView().setTranslate(x, y);
@@ -1810,10 +1810,30 @@ const MxgraphContainer = useInjectContext(
     // };
 
     const handleZoomIn = frequency => {
-      for (let i = 0; i < frequency; i += 1) graph.zoomIn();
+      changeModifyState(
+        processTreeRef.current,
+        currentCheckedTreeNodeRef.current,
+        true
+      );
+      zoomIn(frequency);
+      updateGraphDataAction(graph);
     };
 
     const handleZoomOut = frequency => {
+      changeModifyState(
+        processTreeRef.current,
+        currentCheckedTreeNodeRef.current,
+        true
+      );
+      zoomOut(frequency);
+      updateGraphDataAction(graph);
+    };
+
+    const zoomIn = frequency => {
+      for (let i = 0; i < frequency; i += 1) graph.zoomIn();
+    };
+
+    const zoomOut = frequency => {
       for (let i = 0; i < frequency; i += 1) graph.zoomOut();
     };
 
