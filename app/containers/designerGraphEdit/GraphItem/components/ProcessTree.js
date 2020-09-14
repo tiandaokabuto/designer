@@ -578,6 +578,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
           draggable={type === 'secondModule' ? false : true}
           blockNode
           onExpand={expandKeys => {
+            console.log('展开or收起');
             setExpandedKeys(expandKeys);
           }}
           onRightClick={({ event, node }) => {
@@ -613,10 +614,6 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
               : [currentCheckedModuleTreeNode]
           }
           onSelect={(selectedKey, e) => {
-            console.log(e.selectedNodes[0]);
-            console.log(
-              (e.nativeEvent.path[1].firstElementChild.children[0].src = MuluIcon)
-            );
             const node = findNodeByKey(processTree, selectedKey[0]);
             if (node.data === undefined) {
               // 目录

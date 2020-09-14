@@ -26,7 +26,21 @@ export default ({ setShowLoadingLayer, createItem }) => {
     return parseFloat(window.getComputedStyle(leftDom).width);
   };
 
+  const setGraphItemWidth = () => {
+    const leftDom = document.querySelector('.designergraph-item');
+    const leftWidth = localStorage.getItem('firstLeft');
+    if (leftWidth === '0px' || leftWidth === '0' || leftWidth === '-1') {
+      leftDom.style.display = 'none';
+      document.querySelector('.container-left').style.display = '';
+      leftDom.style.width = '0px';
+    } else {
+      document.querySelector('.container-left').style.display = 'none';
+      leftDom.style.width = leftWidth + 'px';
+    }
+  };
+
   useEffect(() => {
+    setGraphItemWidth();
     const handleAnchorMouseMove = useThrottle(e => {
       if (isMouseDown) {
         let offset = e.pageX - startOffset; // 偏移量
@@ -50,17 +64,39 @@ export default ({ setShowLoadingLayer, createItem }) => {
 
         // 输出面板位置调整
         outputDom.style.left = currentWidth + 'px';
-        // 工具栏位置调整
-        toolDom.style.left = currentWidth + 'px';
         // 输出面板宽度调整
-        outputDom.style.width = `calc(100% - ${paramDom.style.width} - ${leftDom.style.width})`;
-        // 工具栏宽度调整
-        toolDom.style.width = `calc(100% - ${paramDom.style.width} - ${leftDom.style.width})`;
+        outputDom.style.width = `calc(100vw - ${paramDom.style.width} - ${leftDom.style.width})`;
+        try {
+          // 工具栏位置调整
+          toolDom.style.left = currentWidth + 'px';
+
+          // 工具栏宽度调整
+          toolDom.style.width = `calc(100vw - ${paramDom.style.width} - ${leftDom.style.width})`;
+        } catch (e) {
+          console.log(e);
+        }
+
+        localStorage.setItem('firstLeft', currentWidth);
+
         // 工具栏位置调整
 
-        // if (currentWidth < 120) {
-        //   outputDom.style.display = 'none';
-        // }
+        if (currentWidth < 130) {
+          leftDom.style.display = 'none';
+          leftDom.style.width = '0px';
+          // 输出面板位置调整到最左侧
+          outputDom.style.left = 0 + 'px';
+          outputDom.style.width = `calc(100vw - ${paramDom.style.width})`;
+          // 工具栏位置调整到最左侧
+          try {
+            toolDom.style.left = 0 + 'px';
+            toolDom.style.width = `calc(100vw - ${paramDom.style.width})`;
+          } catch (e) {
+            console.log(e);
+          }
+
+          localStorage.setItem('firstLeft', '0px');
+          document.querySelector('.container-left').style.display = '';
+        }
       }
     }, 0);
 

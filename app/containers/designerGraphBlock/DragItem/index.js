@@ -10,6 +10,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import DragCard from './components/DragCard';
 import ContextMenu from './components/ContextMenu';
 import ProcessTree, {
+  LiuchengIcon,
   MuluIcon,
 } from '../../designerGraphEdit/GraphItem/components/ProcessTree';
 import event from '@/containers/eventCenter';
@@ -186,13 +187,16 @@ export default useInjectContext(
       traverseTree(treeData, node => {
         if (node.item) {
           node.title = (
-            <DragCard
-              item={node.item}
-              node={node}
-              filter={filter}
-              addToRecentList={addToRecentList}
-              updateCheckedBlockId={updateCheckedBlockId}
-            />
+            <>
+              <LiuchengIcon></LiuchengIcon>
+              <DragCard
+                item={node.item}
+                node={node}
+                filter={filter}
+                addToRecentList={addToRecentList}
+                updateCheckedBlockId={updateCheckedBlockId}
+              />
+            </>
           );
         }
       });
@@ -348,7 +352,7 @@ export default useInjectContext(
                   });
                 }}
                 // showIcon={true}
-                // switcherIcon={<MuluIcon></MuluIcon>}
+                switcherIcon={<MuluIcon></MuluIcon>}
                 onSelect={(_, e) => {
                   const props = e.node.props;
                   if (props.children) {

@@ -59,8 +59,8 @@ const defaultGraphData = {
       size: '40*40',
       type: 'node',
       version: 'mxgraph',
-      x: 436,
-      y: 30,
+      x: 600,
+      y: 200,
     },
   ],
 };
@@ -838,6 +838,7 @@ export const copyModule = () => {
 export const getChooseFilePath = (filePath, importType) => {
   const unzip = new adm_zip(filePath[0]);
   const manifestEntry = unzip.getEntry('manifest.json');
+  const entries = unzip.getEntries();
   const text = unzip.readAsText(manifestEntry, 'utf8');
   const data = getDecryptOrNormal(text);
 

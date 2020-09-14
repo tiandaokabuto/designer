@@ -14,7 +14,7 @@ export default props => {
         setText('close');
       }
     }
-  });
+  }, [iconRef.current]);
   return (
     <div
       className="toggle_switcher"

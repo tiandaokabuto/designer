@@ -5,6 +5,37 @@
   .dropContent {
     width: 100%;
     height: 100%;
+    position: relative;
+    .container-left {
+      background: white;
+      position: absolute;
+      width: 20px;
+      height: 40px;
+      top: 50%;
+      left: 0;
+      z-index: 3;
+      .anticon-double-right {
+        height: 40px;
+        svg {
+          height: 40px;
+        }
+      }
+    }
+    .container-right {
+      background: white;
+      position: absolute;
+      width: 20px;
+      height: 40px;
+      top: 50%;
+      right: 0;
+      z-index: 3;
+      .anticon-double-left {
+        height: 40px;
+        svg {
+          height: 40px;
+        }
+      }
+    }
     #graphContainer {
       height: calc(100vh - 72px);
       background: url(../../assets/images/grid5.gif);

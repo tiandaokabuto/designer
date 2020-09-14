@@ -25,6 +25,8 @@ const token = remote.getGlobal('sharedObject').token;
 const key = 'refresh';
 const codeblock_left = localStorage.getItem('secondLeft');
 const codeblock_right = localStorage.getItem('secondRight');
+const graph_left = localStorage.getItem('firstLeft');
+const graph_right = localStorage.getItem('firstRight');
 const zoom = localStorage.getItem('zoom');
 const electronLocalshortcut = require('electron-localshortcut');
 const win = remote.getCurrentWindow();
@@ -79,6 +81,12 @@ export default class App extends React.Component<Props> {
     }
     if (codeblock_right === null) {
       localStorage.setItem('secondRight', '288');
+    }
+    if (graph_left === null) {
+      localStorage.setItem('firstLeft', '288');
+    }
+    if (graph_right === null) {
+      localStorage.setItem('firstRight', '288');
     }
     if (zoom === null) {
       localStorage.setItem('zoom', 9);

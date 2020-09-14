@@ -28,7 +28,7 @@ const {
   mxDragSource,
 } = mxgraph;
 
-const MxGraphHeader = ({ graph, container, createItem }) => {
+const MxGraphHeader = ({ graph, container, createItem, conRight }) => {
   // const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
 
   // const onComponentDragStart = (e, componentName) => {
@@ -93,6 +93,21 @@ const MxGraphHeader = ({ graph, container, createItem }) => {
       }
     }
   }, [graph]);
+
+  useEffect(() => {
+    // 工具栏
+    // const toolDom = document.querySelector('.designergraph-container-header');
+    // 输出面板
+    const toolDom = document.querySelector('.designergraph-container-header');
+
+    const rightDom = document.querySelector('.designergraph-parampanel');
+    const rightWidth = localStorage.getItem('firstRight');
+    const leftDom = document.querySelector('.designergraph-item');
+    const leftWidth = localStorage.getItem('firstLeft');
+
+    toolDom.style.width = `calc(100vw - ${rightDom.style.width} - ${leftDom.style.width})`;
+    toolDom.style.left = leftDom.style.width;
+  }, [conRight]);
 
   return (
     <div className="designergraph-container-header">

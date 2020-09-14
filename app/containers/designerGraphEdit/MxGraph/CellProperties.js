@@ -10,11 +10,10 @@ export const PROCESS_NODE = {
 };
 
 export const CONDITION_NODE = {
-  getLabel: str =>
-    `<div class='rcomponent-content'>${str}</div>`,
-  label:
-    "<div class='rcomponent-content'>判断</div>",
-  style: 'shape=rhombus;perimeter=ellipsePerimeter;fillColor=#F2FAF7;strokeColor=#32A67F;resizable=0;shadow=1;',
+  getLabel: str => `<div class='rcomponent-content'>${str}</div>`,
+  label: "<div class='rcomponent-content'>判断</div>",
+  style:
+    'shape=rhombus;perimeter=ellipsePerimeter;fillColor=#F2FAF7;strokeColor=#32A67F;resizable=0;shadow=1;',
   width: 58,
   height: 58,
 };
@@ -55,15 +54,15 @@ export const TRY_NODE = {
 export const BREAK_NODE = {
   label: '跳出循环',
   style:
-    'shape=hexagon;whiteSpace=wrap;align=centerhtml=1;resizable=0;shadow=1;',
-  width: 186,
-  height: 55,
+    'shape=hexagon;whiteSpace=wrap;align=centerhtml=1;strokeColor=#32A67F;fillColor=#F2FAF7;resizable=0;shadow=1;',
+  width: 96,
+  height: 48,
 };
 
 export const CONTINUE_NODE = {
   label: '继续循环',
   style:
-    'shape=hexagon;whiteSpace=wrap;align=centerhtml=1;resizable=0;shadow=1;',
-  width: 186,
-  height: 55,
+    'shape=hexagon;whiteSpace=wrap;align=centerhtml=1;strokeColor=#32A67F;fillColor=#F2FAF7;resizable=0;shadow=1;',
+  width: 96,
+  height: 48,
 };

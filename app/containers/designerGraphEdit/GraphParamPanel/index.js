@@ -28,7 +28,21 @@ export default () => {
     return parseFloat(window.getComputedStyle(rightDom).width);
   };
 
+  const setGraphParamWidth = () => {
+    const rightDom = document.querySelector('.designergraph-parampanel');
+    const rightWidth = localStorage.getItem('firstRight');
+    if (rightWidth === '0px' || rightWidth === '0' || rightWidth === '-1') {
+      rightDom.style.display = 'none';
+      document.querySelector('.container-right').style.display = '';
+      rightDom.style.width = '0px';
+    } else {
+      document.querySelector('.container-right').style.display = 'none';
+      rightDom.style.width = rightWidth + 'px';
+    }
+  };
+
   useEffect(() => {
+    setGraphParamWidth();
     const handleAnchorMouseMove = useThrottle(e => {
       if (isMouseDown) {
         let offset = startOffset - e.pageX; // 偏移量
@@ -51,13 +65,28 @@ export default () => {
         const itemDom = document.querySelector('.designergraph-item');
 
         // 输出面板宽度调整
-        outputDom.style.width = `calc(100% - ${rightDom.style.width} - ${itemDom.style.width})`;
-        // 工具栏宽度调整
-        toolDom.style.width = `calc(100% - ${rightDom.style.width} - ${itemDom.style.width})`;
+        outputDom.style.width = `calc(100vw - ${rightDom.style.width} - ${itemDom.style.width})`;
+        try {
+          // 工具栏宽度调整
+          toolDom.style.width = `calc(100vw - ${rightDom.style.width} - ${itemDom.style.width})`;
+        } catch (e) {
+          console.log(e);
+        }
 
-        // if (currentWidth < 120) {
-        //   outputDom.style.display = 'none';
-        // }
+        localStorage.setItem('firstRight', currentWidth);
+
+        if (currentWidth < 130) {
+          rightDom.style.display = 'none';
+          rightDom.style.width = '0px';
+          // 输出面板宽度调整
+          console.log(`${itemDom.style.width}`);
+          outputDom.style.width = `calc(100vw - ${itemDom.style.width})`;
+          // 工具栏宽度调整
+          toolDom.style.width = `calc(100vw - ${itemDom.style.width})`;
+
+          localStorage.setItem('firstRight', '0px');
+          document.querySelector('.container-right').style.display = '';
+        }
       }
     }, 0);
 

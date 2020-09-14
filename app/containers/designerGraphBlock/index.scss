@@ -88,6 +88,10 @@
       width: 240px;
     }
     &-tree {
+      padding-left: 10px;
+      .ant-tree-switcher {
+        line-height: 32px !important;
+      }
       .ant-tree-switcher_open {
         // position: absolute !important;
         right: 0;
