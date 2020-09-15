@@ -82,15 +82,21 @@ export default () => {
           console.log(`${itemDom.style.width}`);
           outputDom.style.width = `calc(100vw - ${itemDom.style.width})`;
           // 工具栏宽度调整
-          toolDom.style.width = `calc(100vw - ${itemDom.style.width})`;
+          try {
+            toolDom.style.width = `calc(100vw - ${itemDom.style.width})`;
+          } catch (e) {
+            console.log(e);
+          }
 
           localStorage.setItem('firstRight', '0px');
           document.querySelector('.container-right').style.display = '';
+          handleMouseUp();
         }
       }
     }, 0);
 
     const handleMouseUp = () => {
+      console.log('松开鼠标');
       isMouseDown = false;
     };
     document.addEventListener('mouseup', handleMouseUp);
