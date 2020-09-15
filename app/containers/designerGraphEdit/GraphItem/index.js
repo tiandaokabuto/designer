@@ -96,11 +96,13 @@ export default ({ setShowLoadingLayer, createItem }) => {
 
           localStorage.setItem('firstLeft', '0px');
           document.querySelector('.container-left').style.display = '';
+          handleMouseUp();
         }
       }
     }, 0);
 
     const handleMouseUp = () => {
+      console.log('松开鼠标');
       isMouseDown = false;
     };
     document.addEventListener('mouseup', handleMouseUp);
