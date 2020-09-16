@@ -63,6 +63,8 @@ const ConditionalStatement = useInjectContext(props => {
     elseBackground,
     isIgnore,
     setIsIgnore,
+    isBreak,
+    setIsBreak,
   ] = useChangeCheckedBlockColor(id, card);
 
   const handleEmitCodeTransform = useTransformToPython();

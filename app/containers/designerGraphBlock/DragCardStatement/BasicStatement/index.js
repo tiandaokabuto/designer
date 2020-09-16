@@ -54,6 +54,7 @@ const style = {
   cursor: 'move',
   position: 'relative',
   marginRight: '8px',
+  // marginLeft: '32px',
 };
 
 const process = require('process');
@@ -107,10 +108,12 @@ const BasicStatement = useInjectContext(props => {
     elseBackground,
     isIgnore,
     setIsIgnore,
+    isBreakPoint,
+    setIsBreakPoint,
   ] = useChangeCheckedBlockColor(id, card, 'basic');
 
   // 打调试断点
-  const [isBreakPoint, setIsBreakPoint] = useChangeBreakPoint(id, card);
+  // const [isBreakPoint, setIsBreakPoint] = useChangeBreakPoint(id, card);
 
   const handleEmitCodeTransform = useTransformToPython();
 
@@ -344,6 +347,33 @@ const BasicStatement = useInjectContext(props => {
 
   // console.log(`!`, card, card.breakPoint);
 
+  // useEffect(() => {
+  //   if (ref.current) {
+  //     const cardInfo = ref.current.getBoundingClientRect();
+  //     console.log(cardInfo);
+  //     const left = localStorage.getItem('secondLeft');
+  //     if (localStorage.getItem('secondLeftHide') === 'true') {
+  //       console.log('左侧0px');
+  //     } else {
+  //       console.log('左侧宽度');
+  //     }
+  //   }
+  // }, [ref.current]);
+
+  const getDebugLeft = () => {
+    if (ref.current) {
+      const cardInfo = ref.current.getBoundingClientRect();
+      const left = localStorage.getItem('secondLeft');
+      if (localStorage.getItem('secondLeftHide') !== 'true') {
+        return cardInfo.x - parseInt(left) - 15;
+      } else {
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  };
+
   return (
     <div
       ref={readOnly ? null : ref}
@@ -357,13 +387,13 @@ const BasicStatement = useInjectContext(props => {
       <div
         className={isTail ? 'card-content card-content__tail' : 'card-content'}
         data-id={isTail ? '' : id}
-        style={{
-          borderLeft: isTail
-            ? ''
-            : isBreakPoint === true
-            ? '8px solid orangered'
-            : '',
-        }}
+        // style={{
+        //   borderLeft: isTail
+        //     ? ''
+        //     : isBreakPoint === true
+        //     ? '8px solid orangered'
+        //     : '',
+        // }}
       >
         {isTail ? (
           <div>{text}</div>
@@ -479,6 +509,21 @@ const BasicStatement = useInjectContext(props => {
                     </div>
                   )}
                 </div>
+                <div
+                  style={{
+                    background: isBreakPoint ? 'red' : 'pink',
+                    width: 10,
+                    height: 10,
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    left: -getDebugLeft(),
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => {
+                    setIsBreakPoint(id, card);
+                    card.breakPoint = !card.breakPoint;
+                  }}
+                ></div>
               </Fragment>
             ) : null}
           </Fragment>

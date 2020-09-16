@@ -1,11 +1,11 @@
-import React, { useMemo, useEffect } from 'react';
-import { Tabs } from 'antd';
+import React, { useMemo, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import GGEditor from 'gg-editor';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 
 import { useTransformToPython } from '../useHooks';
 import ParamPanel from './ParamPanel';
+import Tabs from '../../components/Tabs';
 import { findNodeById } from '../../../utils/GraphBlockUtils/utils';
 import VariablePanel from '../../designerGraphEdit/GraphParamPanel/components/VariablePanel';
 
@@ -40,6 +40,8 @@ export default ({ current }) => {
     state => state.grapheditor.checkedGraphBlockId
   );
   const graphDataMap = useSelector(state => state.grapheditor.graphDataMap);
+
+  const [panelKey, setPanelKey] = useState('properties');
 
   const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
   const inputParams = useMemo(
@@ -104,6 +106,67 @@ export default ({ current }) => {
     };
   }, []);
 
+  const tabDatas = [
+    {
+      key: 'properties',
+      name: '属性',
+      className: 'designergraph-item-tab',
+    },
+    {
+      key: 'variables',
+      name: '变量',
+      className: 'designergraph-item-tab',
+    },
+  ];
+
+  const showPanel = () => {
+    if (panelKey === 'properties') {
+      return (
+        checkedBlock && (
+          <ParamPanel
+            onMouseDown={e => {
+              console.log('aaaa');
+            }}
+            checkedBlock={checkedBlock}
+            handleEmitCodeTransform={handleEmitCodeTransform}
+            key={checkedBlock.id}
+            cards={cards}
+          />
+        )
+      );
+    } else if (panelKey === 'variables') {
+      return (
+        <div
+          style={{
+            overflowY: 'auto',
+            height: 'calc(100vh - 122px)',
+          }}
+        >
+          <VariablePanel
+            blockNode={{
+              variable: inputParams,
+            }}
+            handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+            label="输入参数"
+            disabled={true}
+          />
+          <VariablePanel
+            blockNode={{
+              variable: outputParams,
+            }}
+            handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+            label="输出参数"
+            disabled={false}
+          />
+          <VariablePanel
+            blockNode={blockNode}
+            handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
+          />
+        </div>
+      );
+    }
+  };
+
   return (
     <div
       className="dragger-editor-parampanel"
@@ -113,54 +176,22 @@ export default ({ current }) => {
       }}
     >
       <div
+        style={{
+          pointerEvents: 'auto',
+          // height: 'calc(100vh - 76px)',
+        }}
         onMouseDown={e => {
           e.stopPropagation();
         }}
       >
-        <Tabs className="dragger-editor-parampanel-tabs">
-          <TabPane tab="属性" key="1">
-            {checkedBlock && (
-              <ParamPanel
-                onMouseDown={e => {
-                  console.log('aaaa');
-                }}
-                checkedBlock={checkedBlock}
-                handleEmitCodeTransform={handleEmitCodeTransform}
-                key={checkedBlock.id}
-                cards={cards}
-              />
-            )}
-          </TabPane>
-          <TabPane tab="变量" key="2">
-            <VariablePanel
-              blockNode={{
-                variable: inputParams,
-              }}
-              handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
-              label="输入参数"
-              disabled={true}
-            />
-            <VariablePanel
-              blockNode={{
-                variable: outputParams,
-              }}
-              handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
-              label="输出参数"
-              disabled={false}
-            />
-            <VariablePanel
-              blockNode={blockNode}
-              handleEmitCodeTransform={() => handleEmitCodeTransform(cards)}
-            />
-          </TabPane>
-          {/* <TabPane tab="流程图" key="3">
-            <GGEditor>
-              <div style={{ height: 'calc(100vh - 116px)' }}>
-                <GraphContainer showHead />
-              </div>
-            </GGEditor>
-          </TabPane> */}
-        </Tabs>
+        <Tabs
+          tabDatas={tabDatas}
+          wrapperClass={'designergraph-item-tabs'}
+          variable={panelKey}
+          onChangeFunction={setPanelKey}
+          linePosition={'bottom'}
+        />
+        {showPanel()}
       </div>
     </div>
   );

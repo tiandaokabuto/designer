@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Tabs } from 'antd';
 
+import Tabs from '../../components/Tabs';
 import ProperitiesPanel from './components/ProperitiesPanel';
 import BlockCodePanel from './components/BlockCodePanel';
 import VariablePanel from './components/VariablePanel';
@@ -23,6 +23,8 @@ export default () => {
 
   const blockNode = graphDataMap.get(checkedGraphBlockId) || {};
 
+  const [panelKey, setPanelKey] = useState('properties');
+
   const getParamPanelWidth = () => {
     const rightDom = document.querySelector('.designergraph-parampanel');
     return parseFloat(window.getComputedStyle(rightDom).width);
@@ -38,6 +40,23 @@ export default () => {
     } else {
       document.querySelector('.container-right').style.display = 'none';
       rightDom.style.width = rightWidth + 'px';
+    }
+  };
+
+  const showPanel = () => {
+    if (panelKey === 'properties') {
+      return (
+        <ProperitiesPanel
+          checkedGraphBlockId={checkedGraphBlockId}
+          graphData={graphData}
+          graphDataMap={graphDataMap}
+          blockNode={blockNode}
+        />
+      );
+    } else if (panelKey === 'variables') {
+      return <VariablePanel blockNode={blockNode} />;
+    } else if (panelKey === 'blockcode') {
+      return <BlockCodePanel />;
     }
   };
 
@@ -96,7 +115,6 @@ export default () => {
     }, 0);
 
     const handleMouseUp = () => {
-      console.log('松开鼠标');
       isMouseDown = false;
     };
     document.addEventListener('mouseup', handleMouseUp);
@@ -107,6 +125,24 @@ export default () => {
     };
   }, []);
 
+  const tabDatas = [
+    {
+      key: 'properties',
+      name: '属性',
+      className: 'designergraph-item-tab',
+    },
+    {
+      key: 'variables',
+      name: '变量',
+      className: 'designergraph-item-tab',
+    },
+    {
+      key: 'blockcode',
+      name: '命令',
+      className: 'designergraph-item-tab',
+    },
+  ];
+
   return (
     <div
       className="designergraph-parampanel"
@@ -116,26 +152,36 @@ export default () => {
       }}
     >
       <div
+        style={{
+          pointerEvents: 'auto',
+          // height: 'calc(100vh - 76px)',
+        }}
         onMouseDown={e => {
           e.stopPropagation();
         }}
       >
-        <Tabs className="designergraph-parampanel-tabs">
-          <TabPane tab="属性" key="1">
-            <ProperitiesPanel
-              checkedGraphBlockId={checkedGraphBlockId}
-              graphData={graphData}
-              graphDataMap={graphDataMap}
-              blockNode={blockNode}
-            />
-          </TabPane>
-          <TabPane tab="变量" key="2">
-            <VariablePanel blockNode={blockNode} />
-          </TabPane>
-          <TabPane tab="命令" key="3">
-            <BlockCodePanel />
-          </TabPane>
-        </Tabs>
+        <Tabs
+          tabDatas={tabDatas}
+          wrapperClass={'designergraph-item-tabs'}
+          variable={panelKey}
+          onChangeFunction={setPanelKey}
+          linePosition={'bottom'}
+        />
+        <div
+          style={{
+            height: 'calc(100vh - 120px)',
+            overflowY: 'auto',
+            // marginTop: 10,
+          }}
+        >
+          {showPanel()}
+        </div>
+
+        {/* <Tabs className="designergraph-parampanel-tabs">
+          <TabPane tab="属性" key="1"></TabPane>
+          <TabPane tab="变量" key="2"></TabPane>
+          <TabPane tab="命令" key="3"></TabPane>
+        </Tabs> */}
       </div>
     </div>
   );

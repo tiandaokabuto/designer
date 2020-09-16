@@ -103,7 +103,7 @@
     padding: 10px 2px 10px 24px;
     // padding-left: 24px;
     // padding-right: 2px;
-    overflow: auto;
+    // overflow: inherit;
     transition: all 0.5s;
   }
   &::after {

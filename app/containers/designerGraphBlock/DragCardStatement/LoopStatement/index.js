@@ -65,6 +65,8 @@ const LoopStatement = useInjectContext(props => {
     noneBackground,
     isIgnore,
     setIsIgnore,
+    isBreak,
+    setIsBreak,
   ] = useChangeCheckedBlockColor(id, card);
 
   const [

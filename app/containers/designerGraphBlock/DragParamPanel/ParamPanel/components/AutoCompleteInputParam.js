@@ -58,8 +58,6 @@ const AutoCompleteInputParam = React.forwardRef(
     },
     ref
   ) => {
-    console.log(param, aiHintList);
-    console.log(cmdName);
     // 对密文进行解密
     const defaultValue = () => {
       const value = String(param.value || param.default);
