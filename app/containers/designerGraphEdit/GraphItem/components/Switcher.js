@@ -21,8 +21,8 @@ export default props => {
       ref={iconRef}
       style={{
         position: 'absolute',
-        left: '200px',
-        top: '4px',
+        right: 20,
+        // top: 6,
       }}
       onClick={() => {
         setText(t => (t === 'open' ? 'close' : 'open'));

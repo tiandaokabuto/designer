@@ -14,6 +14,7 @@ import ProcessTree, {
   LiuchengIcon,
   MuluIcon,
 } from '../../designerGraphEdit/GraphItem/components/ProcessTree';
+import Switcher from '../../designerGraphEdit/GraphItem/components/Switcher';
 import event from '@/containers/eventCenter';
 import {
   BasicStatementTag,
@@ -188,7 +189,14 @@ export default useInjectContext(
       traverseTree(treeData, node => {
         if (node.item) {
           node.title = (
-            <>
+            <div
+              className="treenode-title"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <LiuchengIcon></LiuchengIcon>
               <DragCard
                 item={node.item}
@@ -197,10 +205,50 @@ export default useInjectContext(
                 addToRecentList={addToRecentList}
                 updateCheckedBlockId={updateCheckedBlockId}
               />
-            </>
+            </div>
+          );
+        } else {
+          node.title = (
+            <div
+              className="treenode-title"
+              // style={{
+              //   display: 'flex',
+              //   justifyContent: 'space-between',
+              // }}
+            >
+              <MuluIcon
+                style={{
+                  marginRight: 8,
+                  marginLeft: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              />
+              <div
+                style={{
+                  display: 'block',
+                  flexBasis: 220,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {node.title}
+              </div>
+              <span
+                style={{
+                  visibility: 'hidden',
+                  display: 'inline-block',
+                  verticalAlign: 'sub',
+                }}
+              >
+                占位
+              </span>
+            </div>
           );
         }
       });
+      console.log(treeData);
       return treeData;
     };
 
@@ -366,7 +414,7 @@ export default useInjectContext(
                   });
                 }}
                 // showIcon={true}
-                switcherIcon={<MuluIcon></MuluIcon>}
+                switcherIcon={<Switcher />}
                 onSelect={(_, e) => {
                   const props = e.node.props;
                   if (props.children) {
