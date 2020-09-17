@@ -102,7 +102,13 @@ const LoopStatement = useInjectContext(props => {
   const handleStatementFlod = () => {
     const loopstatement = document.querySelector(`.loopstatement-fold-${id}`);
     const originalHeight = loopstatement.style.height;
+    const overflow = loopstatement.style.overflow;
+    const paddingTop = loopstatement.style.paddingTop;
+    const paddingBottom = loopstatement.style.paddingBottom;
     loopstatement.style.height = originalHeight ? '' : '0px';
+    loopstatement.style.overflow = overflow === 'hidden' ? 'inherit' : 'hidden';
+    loopstatement.style.paddingTop = paddingTop ? '' : '10px';
+    loopstatement.style.paddingBottom = paddingBottom ? '' : '10px';
     setFold(originalHeight ? false : true);
   };
 
@@ -210,6 +216,8 @@ const LoopStatement = useInjectContext(props => {
         className={`loopstatement-content loopstatement-fold-${id}`}
         style={{
           backgroundColor,
+          paddingTop: '10px',
+          paddingBottom: '10px',
         }}
       >
         {card.children.map((subChildren, i) => renderStatement(subChildren, i))}

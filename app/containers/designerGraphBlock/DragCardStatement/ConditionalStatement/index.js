@@ -82,7 +82,9 @@ const ConditionalStatement = useInjectContext(props => {
   const handleStatementFlod = () => {
     const ifstatement = document.querySelector(`.ifstatement-fold-${id}`);
     const originalHeight = ifstatement.style.height;
+    const overflow = ifstatement.style.overflow;
     ifstatement.style.height = originalHeight ? '' : '0px';
+    ifstatement.style.overflow = overflow === 'hidden' ? 'inherit' : 'hidden';
     setFold(originalHeight ? false : true);
   };
 
