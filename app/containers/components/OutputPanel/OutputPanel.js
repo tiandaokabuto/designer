@@ -423,7 +423,7 @@ export default memo(
 
             // console.log(`显示查询结果`, find, debug_dataStore);
 
-            set_debug_left_data(find.cards);
+            set_debug_left_data(find.cards.filter(item => item.ignore !== true));
           } catch (e) {
             console.log(e, '开发模式下避免问题');
           }
@@ -774,14 +774,14 @@ export default memo(
 
             <div
               style={{
-                marginTop: -38,
+                marginTop: -41,
                 display: tabSwicth === '调试' ? 'inline' : 'none',
               }}
               className="dragger-editor-container-output-tages"
             >
               {debug_switch === false ? (
                 <DebugBtn
-                  labelText="启动Debug模式"
+                  labelText="启动Ipython调试"
                   iconType="play-circle"
                   click={() => {
                     event.emit(DEBUG_OPEN_DEBUGSERVER);
@@ -791,7 +791,7 @@ export default memo(
               ) : (
                 <span>
                   <DebugBtn
-                    labelText="关闭Debug服务"
+                    labelText="关闭Ipython调试"
                     iconType="stop"
                     click={() => {
                       event.emit(DEBUG_CLOSE_DEBUGSERVER);
@@ -923,7 +923,7 @@ export default memo(
                       color: '#aaa',
                     }}
                   >
-                    Debug范围
+                    调试范围
                   </p>
                   <DirectoryTree
                     multiple
@@ -954,6 +954,7 @@ export default memo(
                     {currentPagePosition === 'block'
                       ? debug_left_data
                         ? debug_left_data.map((item, index) => {
+                            console.log(`debug_left_data`, debug_left_data);
                             return (
                               <TreeNode
                                 title={

@@ -35,7 +35,7 @@ import {
   //
   DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED,
   DEBUG_RUN_CARDS_CHANGE_STATE_END,
-  //
+  // 存入DEBUG的源代码
   DEBUG_PUT_SOURCECODE,
 } from '../../../constants/actions/debugInfos';
 import { changeDebugInfos } from '../../../containers/reduxActions';
@@ -287,7 +287,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-          '\n'
+            '\n'
         }` + result.output;
       // 判断一下当前的流程块结点是否有两个入点，那么就是循环相关 就需要包括在 while True: 的循环结构下边。
       // 同时解析的深度要 +1
@@ -319,6 +319,9 @@ export const transformEditorProcess = (
        */
       const findLabelName = graphData.nodes.find(item => item.id === currentId)
         .label;
+
+      console.log(`currentNode`, currentNode);
+
       tempCenter.push({
         currentId: currentId,
         pythonCode: `def ${funcName}(${params
@@ -327,7 +330,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-          '\n'
+            '\n'
         }`,
         funcName: funcName,
         params: params,
@@ -339,10 +342,12 @@ export const transformEditorProcess = (
           .filter(item => item.name)
           .map(item => item.name + ' = ' + item.value)
           .join(',')})\n`,
-        cards: cloneDeep(blockData.cards) || [],
+        cards:
+          cloneDeep(blockData.cards.filter(item => item.ignore !== true)) || [],
         titleName: findLabelName ? findLabelName : '未定义流程块名',
         blockData: blockData,
       });
+
       console.log(`tempCenter`, tempCenter);
 
       /**
@@ -823,7 +828,7 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
     writeFileRecursive(
       `${process.cwd()}/python/temp.py`,
       result.output,
-      function () {
+      function() {
         // console.log('保存成功');
       }
     );
