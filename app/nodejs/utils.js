@@ -77,7 +77,7 @@ export const issueFlowChart = (
   versionText,
   token
 ) => {
-  const targetDir = `${process.cwd()}/project/a/b`;
+  const targetDir = `${process.cwd()}/project/${projectName}/${processName}`;
   readDir(zip, targetDir);
   zip
     .generateAsync({
