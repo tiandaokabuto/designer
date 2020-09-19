@@ -64,14 +64,16 @@
       overflow-x: hidden;
       margin-top: 8px;
       height: calc(100vh - 203px);
+      // padding: 10px;
       .ant-tree-switcher-noop {
         display: none;
       }
       .ant-tree-node-content-wrapper {
-        line-height: 32px;
-        height: 32px;
+        line-height: 40px;
+        height: 40px;
+        width: 100%;
         // user-select: none;
-        width: -webkit-fill-available;
+        // width: -webkit-fill-available;
         .dragger-editor-item-statement {
           width: 100%;
         }
@@ -88,20 +90,49 @@
       width: 240px;
     }
     &-tree {
-      padding-left: 10px;
-      .ant-tree-switcher {
-        line-height: 32px !important;
+      .treenode-title {
+        display: flex;
+        justify-content: flex-start;
+        width: 100%;
+        i {
+          line-height: 40px;
+        }
       }
+      li {
+        padding-left: 8px;
+        padding-top: 0px !important;
+        position: relative;
+        .ant-tree-switcher {
+          // line-height: 32px !important;
+          position: static !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+        .ant-tree-node-content-wrapper {
+          margin-left: -10px;
+        }
+        .ant-tree-switcher-noop {
+          display: inline-block !important;
+        }
+        .toggle_switcher {
+          top: 10px;
+        }
+        ul {
+          padding: 0 0 0 18px;
+        }
+      }
+      // padding-left: 10px;
+
       .ant-tree-switcher_open {
         // position: absolute !important;
-        right: 0;
+        // right: 0;
       }
       .ant-tree-switcher_close {
         // position: absolute !important;
-        right: 0;
+        // right: 0;
       }
       .ant-tree-switcher-noop {
-        display: none !important;
+        // display: none !important;
       }
     }
     .sd-tree {

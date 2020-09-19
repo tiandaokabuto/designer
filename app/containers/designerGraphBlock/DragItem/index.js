@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect, Fragment } from 'react';
-import { Input, Icon, Tree, message, Tabs } from 'antd';
+import { Input, Icon, Tree, message } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
 import { useInjectContext } from 'react-hook-easier/lib/useInjectContext';
@@ -9,10 +9,12 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import DragCard from './components/DragCard';
 import ContextMenu from './components/ContextMenu';
+import Tabs from '../../components/Tabs';
 import ProcessTree, {
   LiuchengIcon,
   MuluIcon,
 } from '../../designerGraphEdit/GraphItem/components/ProcessTree';
+import Switcher from '../../designerGraphEdit/GraphItem/components/Switcher';
 import event from '@/containers/eventCenter';
 import {
   BasicStatementTag,
@@ -187,7 +189,14 @@ export default useInjectContext(
       traverseTree(treeData, node => {
         if (node.item) {
           node.title = (
-            <>
+            <div
+              className="treenode-title"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <LiuchengIcon></LiuchengIcon>
               <DragCard
                 item={node.item}
@@ -196,10 +205,50 @@ export default useInjectContext(
                 addToRecentList={addToRecentList}
                 updateCheckedBlockId={updateCheckedBlockId}
               />
-            </>
+            </div>
+          );
+        } else {
+          node.title = (
+            <div
+              className="treenode-title"
+              // style={{
+              //   display: 'flex',
+              //   justifyContent: 'space-between',
+              // }}
+            >
+              <MuluIcon
+                style={{
+                  marginRight: 8,
+                  marginLeft: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              />
+              <div
+                style={{
+                  display: 'block',
+                  flexBasis: 220,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {node.title}
+              </div>
+              <span
+                style={{
+                  visibility: 'hidden',
+                  display: 'inline-block',
+                  verticalAlign: 'sub',
+                }}
+              >
+                占位
+              </span>
+            </div>
           );
         }
       });
+      console.log(treeData);
       return treeData;
     };
 
@@ -278,6 +327,19 @@ export default useInjectContext(
 
     const searchKeyWord = useDebounce(keyword => setFilter(keyword), 300);
 
+    const tabDatas = [
+      {
+        key: 'atomic',
+        name: '组件库',
+        className: 'designergraph-item-tab',
+      },
+      {
+        key: 'secondModule',
+        name: '流程快',
+        className: 'designergraph-item-tab',
+      },
+    ];
+
     return (
       <div
         //style={{zIndex:9999}}
@@ -352,7 +414,7 @@ export default useInjectContext(
                   });
                 }}
                 // showIcon={true}
-                switcherIcon={<MuluIcon></MuluIcon>}
+                switcherIcon={<Switcher />}
                 onSelect={(_, e) => {
                   const props = e.node.props;
                   if (props.children) {
@@ -377,70 +439,13 @@ export default useInjectContext(
               removeFromLovedList={removeFromLovedList}
             />
           </div>
-          <div className="designergraph-item-tabs">
-            <div
-              className="designergraph-item-tab"
-              onClick={() => changeBlockTreeTab('atomic')}
-              style={{
-                color:
-                  blockTreeTab === 'atomic' ? 'rgba(50, 166, 127, 1)' : 'black',
-              }}
-            >
-              <div
-                className="tab-line"
-                style={{
-                  border:
-                    blockTreeTab === 'atomic'
-                      ? '1px solid rgba(50, 166, 127, 1)'
-                      : '1px solid white',
-                }}
-              ></div>
-              <div className="tab-title">组件库</div>
-            </div>
-            <div
-              className="designergraph-item-tab"
-              onClick={() => changeBlockTreeTab('secondModule')}
-              style={{
-                color:
-                  blockTreeTab === 'secondModule'
-                    ? 'rgba(50, 166, 127, 1)'
-                    : 'black',
-              }}
-            >
-              <div
-                className="tab-line"
-                style={{
-                  border:
-                    blockTreeTab === 'secondModule'
-                      ? '1px solid rgba(50, 166, 127, 1)'
-                      : '1px solid white',
-                }}
-              ></div>
-              <div className="tab-title">流程块</div>
-            </div>
-          </div>
-          {/* <Tabs
-              defaultActiveKey={blockTreeTab}
-              className="dragger-editor-container-tabs"
-              tabPosition="bottom"
-              onChange={key => {
-                changeBlockTreeTab(key);
-              }}
-            >
-              <TabPane tab="组件库" key="atomic">
-                <div
-                  style={{
-                    height: 'calc(100vh - 170px)',
-                  }}
-                >
-                  
-                </div>
-              </TabPane>
-              <TabPane tab="流程块" key="secondModule">
-                <ProcessTree type={'secondModule'}></ProcessTree>
-              </TabPane>
-            </Tabs> */}
-          {/* </div> */}
+          <Tabs
+            variable={blockTreeTab}
+            onChangeFunction={changeBlockTreeTab}
+            tabDatas={tabDatas}
+            wrapperClass={'designergraph-item-tabs'}
+            linePosition={'top'}
+          />
         </div>
       </div>
     );

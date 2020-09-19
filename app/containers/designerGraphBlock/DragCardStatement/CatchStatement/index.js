@@ -63,6 +63,8 @@ const CatchStatement = useInjectContext(props => {
     othersBackground,
     isIgnore,
     setIsIgnore,
+    isBreak,
+    setIsBreak,
   ] = useChangeCheckedBlockColor(id, card);
 
   const handleEmitCodeTransform = useTransformToPython();
@@ -78,9 +80,11 @@ const CatchStatement = useInjectContext(props => {
    * 组件整体折叠逻辑
    */
   const handleStatementFlod = () => {
-    const ifstatement = document.querySelector(`.ifstatement-fold-${id}`);
-    const originalHeight = ifstatement.style.height;
-    ifstatement.style.height = originalHeight ? '' : '0px';
+    const trystatement = document.querySelector(`.trystatement-fold-${id}`);
+    const originalHeight = trystatement.style.height;
+    const overflow = trystatement.style.overflow;
+    trystatement.style.height = originalHeight ? '' : '0px';
+    trystatement.style.overflow = overflow === 'hidden' ? 'inherit' : 'hidden';
     setFold(originalHeight ? false : true);
   };
 
@@ -200,7 +204,7 @@ const CatchStatement = useInjectContext(props => {
         </div>
       </div>
       <div
-        className={`CatchItem-content ifstatement-fold-${id}`}
+        className={`CatchItem-content trystatement-fold-${id}`}
         style={{
           backgroundColor,
         }}

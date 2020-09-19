@@ -1,6 +1,9 @@
 import { message } from 'antd';
 import { issueProcess } from './utils';
-import event, { PYTHON_OUTPUT, PYTHON_OUTPUT_CLEAR } from '@/containers/eventCenter';
+import event, {
+  PYTHON_OUTPUT,
+  PYTHON_OUTPUT_CLEAR,
+} from '@/containers/eventCenter';
 
 const fs = require('fs');
 const process = require('process');
@@ -64,7 +67,9 @@ export const startZIP = (
         versionText,
         taskDataNamesData,
         variableNamesData
-      );
+      ).then(value => {
+        console.log(value);
+      });
     });
 };
 

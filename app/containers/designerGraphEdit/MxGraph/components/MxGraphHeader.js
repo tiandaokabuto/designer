@@ -191,8 +191,8 @@ const MxGraphHeader = ({ graph, container, createItem, conRight }) => {
 
         <div
           className="mxgraph-cell designergraph-container-header-tool-process"
-          data-width="186"
-          data-height="55"
+          data-width="96"
+          data-height="48"
           data-style="shape=hexagon;whiteSpace=wrap;align=centerhtml=1;strokeColor=#32A67F;fillColor=#F2FAF7;resizable=0;shadow=1;" //image=../../../../images/icon.jpg"
           data-label="跳出循环"
         >
@@ -201,8 +201,8 @@ const MxGraphHeader = ({ graph, container, createItem, conRight }) => {
 
         <div
           className="mxgraph-cell designergraph-container-header-tool-process"
-          data-width="186"
-          data-height="55"
+          data-width="96"
+          data-height="48"
           data-style="shape=hexagon;whiteSpace=wrap;align=centerhtml=1;resizable=0;strokeColor=#32A67F;fillColor=#F2FAF7;shadow=1;" //image=../../../../images/icon.jpg"
           data-label="继续循环"
         >

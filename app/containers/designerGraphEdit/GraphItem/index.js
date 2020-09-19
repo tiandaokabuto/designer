@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Icon, Input, Tabs } from 'antd';
+import { Icon, Input } from 'antd';
 import { useSelector } from 'react-redux';
 import useThrottle from 'react-hook-easier/lib/useThrottle';
 
 import ProcessTree from './components/ProcessTree';
 import { useChangeProjectName } from '../useHooks';
 import { changeTreeTab } from '../../reduxActions';
+import Tabs from '../../components/Tabs';
 
 import './GraphContainer.scss';
 
@@ -102,7 +103,6 @@ export default ({ setShowLoadingLayer, createItem }) => {
     }, 0);
 
     const handleMouseUp = () => {
-      console.log('松开鼠标');
       isMouseDown = false;
     };
     document.addEventListener('mouseup', handleMouseUp);
@@ -112,6 +112,19 @@ export default ({ setShowLoadingLayer, createItem }) => {
       document.removeEventListener('mousemove', handleAnchorMouseMove);
     };
   }, []);
+
+  const tabDatas = [
+    {
+      key: 'process',
+      name: '流程',
+      className: 'designergraph-item-tab',
+    },
+    {
+      key: 'module',
+      name: '流程快',
+      className: 'designergraph-item-tab',
+    },
+  ];
 
   return (
     <div
@@ -170,76 +183,20 @@ export default ({ setShowLoadingLayer, createItem }) => {
             overflowY: 'auto',
             overflowX: 'hidden',
           }}
-          // style={{
-          //   position: 'fixed',
-          //   bottom: '0',
-          //   maxWidth: '239px',
-          // }}
         >
           <ProcessTree
             type={showTree === 'process' ? 'process' : 'processModule'}
             setShowLoadingLayer={setShowLoadingLayer}
             createItem={createItem}
           />
-          {/* <ProcessTree
-            type="processModule"
-            setShowLoadingLayer={setShowLoadingLayer}
-            createItem={createItem}
-          /> */}
-          {/* <Tabs
-            defaultActiveKey={treeTab}
-            className="dragger-editor-container-tabs"
-            tabPosition="bottom"
-            onChange={key => {
-              changeTreeTab(key);
-            }}
-          > */}
-          {/* <TabPane tab="流程" key="process">
-
-            </TabPane>
-            <TabPane tab="流程块" key="processModule">
-              
-            </TabPane> */}
-          {/* </Tabs> */}
         </div>
-        <div className="designergraph-item-tabs">
-          <div
-            className="designergraph-item-tab"
-            onClick={() => setShowTree('process')}
-            style={{
-              color: showTree === 'process' ? 'rgba(50, 166, 127, 1)' : 'black',
-            }}
-          >
-            <div
-              className="tab-line"
-              style={{
-                border:
-                  showTree === 'process'
-                    ? '1px solid rgba(50, 166, 127, 1)'
-                    : '1px solid white',
-              }}
-            ></div>
-            <div className="tab-title">流程</div>
-          </div>
-          <div
-            className="designergraph-item-tab"
-            onClick={() => setShowTree('module')}
-            style={{
-              color: showTree === 'module' ? 'rgba(50, 166, 127, 1)' : 'black',
-            }}
-          >
-            <div
-              className="tab-line"
-              style={{
-                border:
-                  showTree === 'module'
-                    ? '1px solid rgba(50, 166, 127, 1)'
-                    : '1px solid white',
-              }}
-            ></div>
-            <div className="tab-title">流程块</div>
-          </div>
-        </div>
+        <Tabs
+          tabDatas={tabDatas}
+          variable={showTree}
+          onChangeFunction={setShowTree}
+          wrapperClass={'designergraph-item-tabs'}
+          linePosition={'top'}
+        />
       </div>
     </div>
   );

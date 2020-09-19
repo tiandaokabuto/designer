@@ -2540,7 +2540,11 @@ const MxgraphContainer = useInjectContext(
           />
         </div>
 
-        <GraphParamPanel />
+        <GraphParamPanel
+          onClick={() => {
+            console.log('asdasdasd');
+          }}
+        />
       </div>
     );
   }

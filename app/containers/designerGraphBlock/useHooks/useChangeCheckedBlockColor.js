@@ -13,6 +13,7 @@ export default (id, card, statementType) => {
   );
 
   const [isIgnore, setIsIgnore] = useState(card.ignore);
+  const [isBreak, setIsBreak] = useState(card.breakPoint);
   const prevBackgroundColor = useRef('#fff');
   const preBorder = useRef('1px solid #F2F2F2');
 
@@ -35,8 +36,11 @@ export default (id, card, statementType) => {
     }
     if (!checkedId || !checkedId.includes(id)) {
       if (backgroundColor === '#DAF2ED' || backgroundColor === '#F2FAF7') {
-        // 选中
-        prevBackgroundColor.current = '#fff';
+        // 流程快或者特殊块选中
+        if (!card.breakPoint) {
+          prevBackgroundColor.current = '#fff';
+        }
+
         if (statementType === 'basic') {
           preBorder.current = '1px solid #F2F2F2';
         } else {
@@ -49,18 +53,21 @@ export default (id, card, statementType) => {
 
     if (isIgnore) {
       setBackgroundColor('#eee');
-      setBorder('1px solid #F2F2F2');
+      // setBorder('1px solid #F2F2F2');
+    } else if (isBreak) {
+      setBackgroundColor('#FFF2F2');
+      // setBorder('1px solid #F2F2F2');
     } else {
       setBackgroundColor(prevBackgroundColor.current);
       setBorder(preBorder.current);
       setMainHeadBackgroundColor(preMainHeadBackgroundColor.current);
       setOthersHeadBackgroundColor(preOthersHeadBackgroundColor.current);
     }
-  }, [checkedId, id, backgroundColor, isIgnore]);
+  }, [checkedId, id, backgroundColor, isIgnore, isBreak]);
 
-  useEffect(() => {
-    setIsIgnore(card.ignore);
-  }, [card.ignore]);
+  // useEffect(() => {
+  //   setIsIgnore(card.ignore);
+  // }, [card.ignore]);
   return [
     backgroundColor,
     border,
@@ -68,5 +75,7 @@ export default (id, card, statementType) => {
     othersHeadBackgroundColor,
     isIgnore,
     () => setIsIgnore(ignore => !ignore),
+    isBreak,
+    () => setIsBreak(isBreak => !isBreak),
   ];
 };

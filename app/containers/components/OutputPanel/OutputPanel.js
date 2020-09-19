@@ -140,11 +140,11 @@ export default memo(
             // originHeight = originHeight < 74 ? 74 : originHeight;
             const currentHeight = originHeight + offset;
             outputDom.style.height = currentHeight + 'px';
-            if (currentHeight >= 40) {
+            if (currentHeight >= 42) {
               localStorage.setItem('outputHeight', outputDom.style.height);
             }
 
-            if (currentHeight > 40) {
+            if (currentHeight > 42) {
               setNewOutputTip(false);
               setOpenFlag(true);
             } else {
@@ -323,7 +323,7 @@ export default memo(
       };
 
       const handleStopScroll = ({ key }) => {
-        if(key === '0') event.emit(PYTHON_OUTPUT_CLEAR);
+        if (key === '0') event.emit(PYTHON_OUTPUT_CLEAR);
         else if (key === '2') setStopScroll(true);
         else if (key === '3') setStopScroll(false);
         else if (key === '1') {
@@ -341,9 +341,7 @@ export default memo(
 
       const menu = (
         <Menu onClick={handleStopScroll}>
-          <Menu.Item key="0">
-            清空日志
-          </Menu.Item>
+          <Menu.Item key="0">清空日志</Menu.Item>
           <Menu.Item key="1" disabled={!allLogMessage.value}>
             导出日志
           </Menu.Item>

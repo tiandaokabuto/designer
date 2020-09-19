@@ -3,8 +3,10 @@ export const config = {
 };
 
 const apiList = {
-  /** 发布流程接口 */
+  /** 发布流程的python文件接口 */
   issueProcess: '/controller/designer/issueProcess',
+  /** 发布流程的json文件 */
+  issueFlowChart: '/controller/designer/issueFlowChart',
   getProcessVersion: '/controller/designer/getProcessVersion',
   /** 设计器登录接口 */
   signIn: '/controller/designerLogin/signIn',

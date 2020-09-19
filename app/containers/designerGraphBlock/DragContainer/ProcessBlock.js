@@ -44,7 +44,7 @@ import {
 
 const style = {
   // width: 900,
-  padding: '16px 8px 16px 16px',
+  padding: '16px 8px 16px 32px',
   overflowY: 'auto',
   height: '100%',
 };
@@ -270,7 +270,7 @@ export default memo(({ readOnly = false }) => {
   );
 
   const renderStatement = (card, index) => {
-    console.log(`renderStatement`,card)
+    console.log(`renderStatement`, card);
     switch (card.$$typeof) {
       case BasicStatementTag:
         return (
