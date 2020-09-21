@@ -10,8 +10,6 @@ import Tags from './Tags';
 import ZoomToolBar from './ZoomToolBar';
 import useGetDownloadPath from '../../common/DragEditorHeader/useHooks/useGetDownloadPath';
 
-import DebugBtn from './DebugBtn/DebugBtn';
-
 import './OutputPanel.scss';
 
 // liuqi
@@ -28,6 +26,7 @@ import {
   clearPause,
 } from '../../designerGraphEdit/RPAcore';
 import { PYTHON_OUTPUT, PYTHON_OUTPUT_CLEAR } from '@/containers/eventCenter';
+import DebugBtns from './OutputPanelDetails/DebugBtns';
 
 // liuqi-new
 import event from '../../eventCenter';
@@ -409,21 +408,72 @@ export default memo(
             set_debug_lastPointer(getDebugIndex().nowIndex);
           set_debug_left_data(debug_dataStore);
         } else if (currentPagePosition === 'block') {
+          // 开始改造
+
           if (debug_lastPointer < getDebugIndex().nowIndexCards)
             set_debug_lastPointer(getDebugIndex().nowIndexCards);
           try {
+            const types = [
+              'children',
+              'ifChildren',
+              'elseChildren',
+              'tryChildren',
+              'catchChildren',
+              'finallyChildren',
+            ];
+
+            // 找到对应流程块
             const find = debug_dataStore.find(
               item => item.currentId === checkedGraphBlockId
             );
-            // if (debug_dataStore.stepLog) {
-            //   debug_dataStore.stepLog.forEach((log, index) => {
-            //     find.cards[index].hasLog = log;
-            //   });
-            // }
+            // 函数 转换到tree组件用的结构
+            const toTreeData = (item, index, callback) => {
+              // 假如是原子能力，直接结束
+              if (item.$$typeof === 0 || item.$$typeof === 1) {
+                return {
+                  title: item.userDesc ? item.userDesc : item.cmdName,
+                  key: index,
+                  item: item,
+                  isLeaf: true,
+                };
+              } else if (
+                item.$$typeof === 2 ||
+                item.$$typeof === 4 ||
+                item.$$typeof === 7
+              ) {
+                const children = types.reduce((pre, type, typeIndex) => {
+                  if (item[type]) {
+                    const childs = item[type].map((item2, index2) => {
+                      return {
+                        ...callback(item2, `${index}-${index2}`, callback),
+                        item: item2,
+                      };
+                    });
 
-            // console.log(`显示查询结果`, find, debug_dataStore);
+                    console.log(`childs`, childs);
+                    return [...pre, ...childs];
+                  } else {
+                    return pre;
+                  }
+                }, []);
+                console.log(`children`, children);
 
-            set_debug_left_data(find.cards.filter(item => item.ignore !== true));
+                return {
+                  title: item.userDesc ? item.userDesc : item.cmdName,
+                  key: index,
+                  children,
+                };
+              } else {
+              }
+            };
+            // 转换
+            const treeData = find.cards.map((item, index) =>
+              toTreeData(item, index, toTreeData)
+            );
+
+
+            console.log(`TMD右侧树`, treeData);
+            set_debug_left_data(treeData);
           } catch (e) {
             console.log(e, '开发模式下避免问题');
           }
@@ -472,7 +522,7 @@ export default memo(
       });
 
       const signVariableChange = (value, var_name, var_value) => {
-        console.clear();
+
         console.log(value, var_name, var_value);
         if (!value) {
           console.log(tempVariables.current);
@@ -499,6 +549,7 @@ export default memo(
           const index = parseInt(selectedTreeNode[0]);
           if (!debug_left_data[index]) return;
           if (!debug_left_data[index].hasLog) return;
+          if (!debug_left_data[index].hasLog.var_datas) return;
           return Object.keys(debug_left_data[index].hasLog.var_datas).map(
             key => {
               console.log(debug_left_data[index].hasLog.var_datas);
@@ -592,12 +643,6 @@ export default memo(
           if (!debug_dataStore.stepLog[index].var_datas) return;
           return Object.keys(debug_dataStore.stepLog[index].var_datas).map(
             key => {
-              //console.log(debug_left_data[index].hasLog.var_datas);
-              console.log(
-                `WHAT???`,
-                debug_dataStore.stepLog[index].var_datas,
-                key
-              );
               return (
                 <TreeNode title={`作用域 ${key}`} defaultExpandAll={true}>
                   {debug_dataStore.stepLog[index].var_datas[key].map(
@@ -771,101 +816,14 @@ export default memo(
                 }
               }}
             />
-
-            <div
-              style={{
-                marginTop: -41,
-                display: tabSwicth === '调试' ? 'inline' : 'none',
-              }}
-              className="dragger-editor-container-output-tages"
-            >
-              {debug_switch === false ? (
-                <DebugBtn
-                  labelText="启动Ipython调试"
-                  iconType="play-circle"
-                  click={() => {
-                    event.emit(DEBUG_OPEN_DEBUGSERVER);
-                    event.emit(PYTHON_OUTPUT_CLEAR);
-                  }}
-                />
-              ) : (
-                <span>
-                  <DebugBtn
-                    labelText="关闭Ipython调试"
-                    iconType="stop"
-                    click={() => {
-                      event.emit(DEBUG_CLOSE_DEBUGSERVER);
-                    }}
-                  />
-                </span>
-              )}
-
-              {/** DEBUG服务器开启后，这些按钮才出现 */}
-              {debug_switch === false ? (
-                ''
-              ) : (
-                <span>
-                  {/** 单步调试时，上述所有的按钮都不能显示 */}
-                  {debug_oneRunning === true ? (
-                    <DebugBtn
-                      labelText="正在进行单步调试"
-                      iconType="loading"
-                      disabled={true}
-                    />
-                  ) : (
-                    <span>
-                      {/** 没有操作时，可以进行按序调试 */}
-                      {debug_running === false ? (
-                        <DebugBtn
-                          labelText="从头按序调试"
-                          iconType="play-circle"
-                          click={() => {
-                            event.emit(DEBUG_RUN_STEP_BY_STEP);
-                          }}
-                        />
-                      ) : (
-                        <span>
-                          {debug_pause === false ? (
-                            <DebugBtn
-                              labelText="暂停"
-                              iconType="loading"
-                              click={() => {
-                                event.emit(DEBUG_SET_PAUSE);
-                              }}
-                            />
-                          ) : (
-                            <span>
-                              <DebugBtn
-                                labelText="继续"
-                                iconType="play-circle"
-                                click={() => {
-                                  event.emit(DEBUG_CONTINUE);
-                                }}
-                              />
-                              <DebugBtn
-                                labelText="下一步"
-                                iconType="vertical-align-bottom"
-                                click={() => {
-                                  event.emit(DEBUG_CONTINUE_ONESTEP_NEXT);
-                                }}
-                              />
-                              <DebugBtn
-                                labelText="重新生成代码"
-                                iconType="issues-close"
-                                click={() => {
-                                  resetDebugIndex();
-                                  event.emit(DEBUG_RESET_CODE);
-                                }}
-                              />
-                            </span>
-                          )}
-                        </span>
-                      )}
-                    </span>
-                  )}
-                </span>
-              )}
-            </div>
+            {/** DEBUG按钮组 */}
+            <DebugBtns
+              tabSwicth={tabSwicth}
+              debug_switch={debug_switch}
+              debug_running={debug_running}
+              debug_oneRunning={debug_oneRunning}
+              debug_pause={debug_pause}
+            />
           </div>
           <div
             style={{
@@ -935,55 +893,8 @@ export default memo(
                       setSelectedTreeNode(selectedKeys);
                     }}
                     // onExpand={this.onExpand}
-                  >
-                    {currentPagePosition === 'editor'
-                      ? debug_left_data
-                        ? debug_left_data.map((item, index) => {
-                            return (
-                              <TreeNode
-                                title={item.titleName}
-                                key={`${index}`}
-                                isLeaf
-                                disabled={item.hasLog ? false : true}
-                              />
-                            );
-                          })
-                        : ''
-                      : ''}
-
-                    {currentPagePosition === 'block'
-                      ? debug_left_data
-                        ? debug_left_data.map((item, index) => {
-                            console.log(`debug_left_data`, debug_left_data);
-                            return (
-                              <TreeNode
-                                title={
-                                  item.userDesc ? item.userDesc : item.cmdName
-                                }
-                                key={`${index}`}
-                                isLeaf
-                                disabled={
-                                  debug_dataStore.stepLog
-                                    ? debug_dataStore.stepLog[index]
-                                      ? false
-                                      : true
-                                    : true
-                                }
-                              />
-                            );
-                          })
-                        : ''
-                      : ''}
-                    {/**
-                <TreeNode title="leaf 0-0" key="0-0-0" isLeaf />
-                  <TreeNode title="parent 0" key="0-0">
-                    <TreeNode title="leaf 0-0" key="0-0-0" isLeaf />
-                  </TreeNode>
-                  <TreeNode title="parent 1" key="0-1">
-                    <TreeNode title="leaf 1-0" key="0-1-0" isLeaf />
-                  </TreeNode>
-                   */}
-                  </DirectoryTree>
+                    treeData={debug_left_data}
+                  ></DirectoryTree>
                 </div>
                 <div className="right">
                   <p

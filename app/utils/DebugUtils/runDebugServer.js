@@ -26,6 +26,7 @@ import { getDebugIndex } from '../../containers/designerGraphEdit/RPAcore';
 import { changeDebugInfos } from '../../containers/reduxActions';
 
 import { getUTF8 } from './getUTF8';
+import { words } from 'lodash';
 const net = require('net');
 const path = require('path');
 const process = require('process');
@@ -39,6 +40,12 @@ let worker;
 let tempLength = 0;
 
 export const runDebugServer = async () => {
+  try{
+    worker.kill()
+  }catch(e){
+    console.log("没得杀了")
+  }
+
   // 打开python Debug服务器
   worker = await spawn(`${process.cwd()}/../Python/python3_lib/python.exe`, [
     `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/debug/DebugServer.py`,
@@ -77,6 +84,7 @@ export const runDebugServer = async () => {
   socket.on('error', function(err) {
     //message.warning('Debug功能遇到通讯错误');
 
+    //event.emit(DEBUG_CLOSE_DEBUGSERVER);
     console.log(err);
   });
 

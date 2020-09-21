@@ -45,10 +45,6 @@ const padding = length => '    '.repeat(length);
 let tempCenter = [];
 let nowIndex = 0;
 let nowIndexCards = 0;
-
-// 卡片的指针
-let pointOfCard = [];
-
 let nowLevel = 'block';
 let pass = false;
 let isPause = false;
@@ -57,66 +53,16 @@ let isPause = false;
 export const claerTempCenter = () => {
   tempCenter = [];
   nowIndex = 0;
-  nowIndexCards = [];
-
-  pointOfCard = [];
-
+  nowIndexCards = 0;
   pass = false;
   isPause = false;
   nowLevel = 'block';
 };
 
-// 传入pk卡片指针值为 pointOfCard
-const getNextIndexCards = (cards, pk) => {
-  let nextPk = [];
-  if(pk.length == 0){
-    if(cards.lenght >0){
-      return [0];
-    }else{
-      message.info("未检测到代码")
-      return [];
-    }
-  }else{
-    // 假如是1,3,5,7...位置的返回的是数组
-    if(pk.length %2 === 1){
-      const nextArray = getCardsByPk(cards, pk)
-      if(nextArray && nextArray.length>0){
-        nextPk = [...pk,0]
-      }else{
-
-      }
-    }
-  }
-};
-
-const getCardsByPk = (cards, pk) => {
-  let temp = undefined;
-  try {
-    if (pk.length === 1) {
-      return cards[pk[0]];
-    }
-
-    for (let pos = 0; pos < pk.length; pos++) {
-      if (pos === 0) {
-        temp = cards[pk[0]];
-      } else {
-        if (pos % 2 === 1) {
-          temp = temp[temp.hasChildren[pk[pos]]]; // 中
-        } else {
-          temp = temp[pk[pos]]; // 尾
-        }
-      }
-    }
-  } catch (e) {
-    message.info('指针异常');
-  }
-  return temp;
-};
-
 export const getDebugIndex = () => {
   return {
     nowIndex: nowIndex,
-    nowIndexCards: [],
+    nowIndexCards: nowIndexCards,
     nowLevel: nowLevel,
   };
 };
@@ -377,33 +323,97 @@ export const transformEditorProcess = (
       // 改造card结构为有循环体头的结构
       // 1 移除掉ignore注释的部分
       const clearIgnoreCard = (cards, callback) => {
-        const types = [
-          'children',
-          'ifChildren',
-          'elseChildren',
-          'tryChildren',
-          'catchChildren',
-          'finallyChildren',
-        ];
         return cards.reduce(
           (pre, item) => {
             // 忽略的不加入cards
             if (item && item.ignore !== true) {
               // 有儿子的拆分打平卡片
-              types.forEach(type => {
-                if (item[type]) {
-                  // 追加索引池
-                  if (!item.hasChildren) {
-                    item.hasChildren = [type];
-                  } else {
-                    item.hasChildren.push(type);
-                  }
+              // 判断是哪种块
+              console.log(`> 是不是循环块，判断，tryCatchFinally`, item);
+              // pos01 循环块 加入 { for while }， 判断块加入 { if } , tryCatch 加入 { try }
+              let pos01 = [];
+              // pos02  循环块END , 判断块加入 { else } , tryCatch 加入 { catch }
+              let pos02 = [];
+              // pos03  判断块加入 END , tryCatch 加入 { finaly }
+              let pos03 = [];
+              // pos04  tryCatch 加入 END
+              let pos04 = [];
 
-                  item[type] = callback(item[type], clearIgnoreCard);
-                }
-              });
-
-              return [...pre, item];
+              switch (item.$$typeof) {
+                case 2:
+                  let pos01 = [
+                    {
+                      ...item,
+                      cmdName: `> ${item.cmdName} < 开始`,
+                      pid: item.id,
+                      debugType: '循环',
+                      step: 'start',
+                      sp: true,
+                    },
+                  ];
+                  let pos02 = [
+                    {
+                      ...item,
+                      cmdName: `> ${item.cmdName} < 结束`,
+                      pid: item.id,
+                      debugType: '循环',
+                      step: 'end',
+                      sp: true,
+                    },
+                  ];
+                  return [
+                    ...pre,
+                    ...pos01,
+                    ...callback(item.children, clearIgnoreCard),
+                    ...pos02,
+                  ];
+                //[...pre, {tag:"查到children"} , item];
+                case 4:
+                  let pos01 = [
+                    {
+                      ...item,
+                      cmdName: `? ${item.cmdName} ? 开始`,
+                      pid: item.id,
+                      debugType: '循环',
+                      step: 'start',
+                      sp: true,
+                    },
+                  ];
+                  let pos02 = [
+                    {
+                      ...item,
+                      cmdName: `? ${item.cmdName} ? 结束`,
+                      pid: item.id,
+                      debugType: '循环',
+                      step: 'end',
+                      sp: true,
+                    },
+                  ];
+                  let pos03 = [
+                    {
+                      ...item,
+                      cmdName: `? ${item.cmdName} ? 结束`,
+                      pid: item.id,
+                      debugType: '循环',
+                      step: 'end',
+                      sp: true,
+                    },
+                  ];
+                  console.log(`条件`, item);
+                  return [
+                    ...pre,
+                    ...pos01,
+                    ...callback(item.ifChildren, clearIgnoreCard),
+                    ...pos02,
+                    ...callback(item.elseChildren, clearIgnoreCard),
+                    ...pos03
+                  ];
+                case 7:
+                  console.log(`try`, item);
+                  return [...pre, item];
+                default:
+                  return [...pre, item];
+              }
             } else {
               return pre;
             }
@@ -413,23 +423,17 @@ export const transformEditorProcess = (
         );
       };
 
-      // console.log(`[重点]`, blockData.cards || []);
-      // console.log(
-      //   `[重点]`,
-      //   clearIgnoreCard(cloneDeep(blockData.cards), clearIgnoreCard) || []
-      // );
+      console.log(`[重点]`, blockData.cards || []);
+      console.log(
+        `[重点]`,
+        clearIgnoreCard(cloneDeep(blockData.cards), clearIgnoreCard) || []
+      );
 
-      // // 清理注释后的blockData
-      // const afterClearBlockData =
-      //   clearIgnoreCard(cloneDeep(blockData.cards), clearIgnoreCard) || [];
-
-      0;
+      // 清理注释后的blockData
+      const afterClearBlockData =
+        clearIgnoreCard(cloneDeep(blockData.cards), clearIgnoreCard) || [];
 
       tempCenter.push({
-        // title: item.userDesc ? item.userDesc : item.cmdName,
-        // level: 'block',
-        // key: currentId, // 层级关系
-        // item: {
         currentId: currentId,
         pythonCode: `def ${funcName}(${params
           .filter(item => item.name)
@@ -449,11 +453,9 @@ export const transformEditorProcess = (
           .filter(item => item.name)
           .map(item => item.name + ' = ' + item.value)
           .join(',')})\n`,
-        cards:
-          clearIgnoreCard(cloneDeep(blockData.cards), clearIgnoreCard) || [],
+        cards: afterClearBlockData,
         titleName: findLabelName ? findLabelName : '未定义流程块名',
         blockData: blockData,
-        // },
       });
 
       console.log(`tempCenter`, tempCenter);
