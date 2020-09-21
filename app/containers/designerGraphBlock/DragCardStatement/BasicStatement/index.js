@@ -83,6 +83,8 @@ const BasicStatement = useInjectContext(props => {
     breakPoint,
   } = props;
 
+  console.log(card);
+
   const dispatch = useDispatch();
 
   // 当前卡片信息
@@ -400,11 +402,21 @@ const BasicStatement = useInjectContext(props => {
         ) : (
           <Fragment>
             <div className="card-content-description">
-              <div className="card-content-description-header">
+              <div
+                className="card-content-description-header"
+                style={{
+                  color: card.cmdName === '注释' ? 'white' : '',
+                }}
+              >
                 <Icon type="home" className="card-content-icon" />
                 {text}
                 {cmdDesc && (
-                  <span style={{ color: '#b1aeb2', marginLeft: 8 }}>
+                  <span
+                    style={{
+                      color: card.cmdName === '注释' ? 'white' : '#b1aeb2',
+                      marginLeft: 8,
+                    }}
+                  >
                     ({cmdDesc || ''})
                   </span>
                 )}
@@ -429,40 +441,47 @@ const BasicStatement = useInjectContext(props => {
                     save(e);
                   }
                 }}
+                style={{
+                  color: card.cmdName === '注释' ? 'white' : '',
+                }}
                 dangerouslySetInnerHTML={{ __html: templateVisible }}
               />
             </div>
             {!readOnly ? (
               <Fragment>
                 <div className="card-content-operation">
-                  <Icon
+                  {/* <Icon
                     type="bug"
                     onClick={() => {
                       // console.log(card);
                       setIsBreakPoint(id, card);
                       card.breakPoint = !card.breakPoint;
                     }}
-                  />
-                  <Icon
-                    type="play-circle"
-                    onClick={() => {
-                      event.emit(DEBUG_ONE_STEP, {
-                        isIgnore: card.ignore,
-                        cards,
-                        id,
-                      });
-                    }}
-                  />
-                  <Icon
-                    type={isIgnore ? 'eye-invisible' : 'eye'}
-                    theme="filled"
-                    onClick={() => {
-                      setIsIgnore();
-                      card.ignore = !card.ignore;
-                      card.hasModified = true;
-                      handleEmitCodeTransform(cards);
-                    }}
-                  />
+                  /> */}
+                  {card.cmdName !== '注释' ? (
+                    <>
+                      <Icon
+                        type="play-circle"
+                        onClick={() => {
+                          event.emit(DEBUG_ONE_STEP, {
+                            isIgnore: card.ignore,
+                            cards,
+                            id,
+                          });
+                        }}
+                      />
+                      <Icon
+                        type={isIgnore ? 'eye-invisible' : 'eye'}
+                        theme="filled"
+                        onClick={() => {
+                          setIsIgnore();
+                          card.ignore = !card.ignore;
+                          card.hasModified = true;
+                          handleEmitCodeTransform(cards);
+                        }}
+                      />
+                    </>
+                  ) : null}
                   <Icon
                     type="delete"
                     theme="filled"
@@ -509,21 +528,23 @@ const BasicStatement = useInjectContext(props => {
                     </div>
                   )}
                 </div>
-                <div
-                  style={{
-                    background: isBreakPoint ? 'red' : 'pink',
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    position: 'absolute',
-                    left: -getDebugLeft(),
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => {
-                    setIsBreakPoint(id, card);
-                    card.breakPoint = !card.breakPoint;
-                  }}
-                ></div>
+                {card.cmdName === '注释' ? null : (
+                  <div
+                    style={{
+                      background: isBreakPoint ? 'red' : 'pink',
+                      width: 10,
+                      height: 10,
+                      borderRadius: '50%',
+                      position: 'absolute',
+                      left: -getDebugLeft(),
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      setIsBreakPoint(id, card);
+                      card.breakPoint = !card.breakPoint;
+                    }}
+                  ></div>
+                )}
               </Fragment>
             ) : null}
           </Fragment>
@@ -532,11 +553,18 @@ const BasicStatement = useInjectContext(props => {
       <div
         className={isTail ? 'card-mask card-mask__tail' : 'card-mask'}
         data-id={isTail ? '' : id}
-        style={{
-          backgroundColor,
-          border,
-          borderColor,
-        }}
+        style={
+          card.cmdName === '注释'
+            ? {
+                background: 'rgb(156, 148, 148)',
+                color: 'white',
+              }
+            : {
+                backgroundColor,
+                border,
+                borderColor,
+              }
+        }
         ref={dragImage}
       />
       <CodeBlock
