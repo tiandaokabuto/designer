@@ -335,7 +335,11 @@ const MxgraphContainer = useInjectContext(
 
       loadGraph(graphDataRef.current);
 
-      console.log(graph);
+      const cell = find_id(checkedGraphBlockId, graph);
+
+      if (cell) {
+        graph.setSelectionCell(cell);
+      }
 
       // graph.getView().setTranslate(-519, 32);
 
@@ -2540,11 +2544,7 @@ const MxgraphContainer = useInjectContext(
           />
         </div>
 
-        <GraphParamPanel
-          onClick={() => {
-            console.log('asdasdasd');
-          }}
-        />
+        <GraphParamPanel />
       </div>
     );
   }
