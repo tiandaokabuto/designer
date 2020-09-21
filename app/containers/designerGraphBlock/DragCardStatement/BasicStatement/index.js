@@ -528,7 +528,7 @@ const BasicStatement = useInjectContext(props => {
                     </div>
                   )}
                 </div>
-                {card.cmdName === '注释' ? null : (
+                {card.cmdName === '注释' || card.ignore ? null : (
                   <div
                     style={{
                       background: isBreakPoint ? 'red' : 'pink',

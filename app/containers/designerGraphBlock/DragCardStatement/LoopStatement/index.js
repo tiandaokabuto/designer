@@ -216,6 +216,7 @@ const LoopStatement = useInjectContext(props => {
         className={`loopstatement-content loopstatement-fold-${id}`}
         style={{
           backgroundColor,
+          border,
           paddingTop: '10px',
           paddingBottom: '10px',
         }}
