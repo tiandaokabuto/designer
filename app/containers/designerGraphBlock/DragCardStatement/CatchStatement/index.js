@@ -207,6 +207,7 @@ const CatchStatement = useInjectContext(props => {
         className={`CatchItem-content trystatement-fold-${id}`}
         style={{
           backgroundColor,
+          border,
         }}
       >
         <div className="CatchItem-try">

@@ -206,6 +206,7 @@ const ConditionalStatement = useInjectContext(props => {
         className={`IFItem-content ifstatement-fold-${id}`}
         style={{
           backgroundColor,
+          border,
         }}
       >
         <div className="IFItem-if">

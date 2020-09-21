@@ -3,8 +3,8 @@ import { persistentStorage } from '_utils/utils';
 
 import store from '../../../../store';
 
-export default arr => {
-  return arr => {
+export default () => {
+  return (path, arr) => {
     const {
       grapheditor: { processTree, currentProject, currentCheckedTreeNode },
     } = store.getState();
@@ -12,7 +12,8 @@ export default arr => {
       arr ? arr : currentCheckedTreeNode ? [currentCheckedTreeNode] : [],
       processTree,
       currentProject,
-      currentCheckedTreeNode
+      currentCheckedTreeNode,
+      path
     );
   };
 };
