@@ -21,6 +21,7 @@ const {
   ipcMain,
   dialog,
   globalShortcut,
+  shell,
 } = require('electron');
 const log = require('electron-log');
 const MenuBuilder = require('./menu');
@@ -35,30 +36,31 @@ appexpress.use(bodyParser.urlencoded({ extended: false }));
 
 // 本地监听8888端口 获取动态的xpath元素回填
 
-
 appexpress.all('*', function(req, res, next) {
-  console.log(req.headers.origin)
-  console.log(req.environ)
+  console.log(req.headers.origin);
+  console.log(req.environ);
   //res.header("Access-Control-Allow-Origin", req.headers.origin);
-  res.header("Access-Control-Allow-Origin", '*');
-  res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
-  res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-  res.header("Access-Control-Allow-Credentials","true");
-  res.header("X-Powered-By",' 3.2.1')
-  if(req.method === "OPTIONS") res.send(200);/*让options请求快速返回*/
-  else  next();
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Content-Type,Content-Length, Authorization, Accept,X-Requested-With'
+  );
+  res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('X-Powered-By', ' 3.2.1');
+  if (req.method === 'OPTIONS') res.send(200);
+  /*让options请求快速返回*/ else next();
 });
 
-
 // --------------------------- express版本
-appexpress.post('/query', function (req, res) {
+appexpress.post('/query', function(req, res) {
   if (targetId === undefined) {
     res.sendStatus(500);
   } else {
     res.sendStatus(200);
   }
 });
-appexpress.post('/upload', function (req, res) {
+appexpress.post('/upload', function(req, res) {
   try {
     const finallyResult = req.body;
 
@@ -86,7 +88,7 @@ appexpress.post('/upload', function (req, res) {
   res.sendStatus(200);
 });
 
-appexpress.post('/win_get_xpath', function (req, res) {
+appexpress.post('/win_get_xpath', function(req, res) {
   try {
     const finallyResult = req.body;
 
@@ -115,7 +117,7 @@ appexpress.post('/win_get_xpath', function (req, res) {
 });
 
 // let count = 0;
-appexpress.post('/xpathStatus', function (rea, res) {
+appexpress.post('/xpathStatus', function(rea, res) {
   // count++;
   // console.log(
   //   '/xpathStatus' + count + '_____' + global.sharedObject.xpathStatus
@@ -128,7 +130,7 @@ appexpress.post('/xpathStatus', function (rea, res) {
   }
 });
 
-appexpress.post('/position', function (req, res) {
+appexpress.post('/position', function(req, res) {
   try {
     const finallyResult = req.body;
 
@@ -157,7 +159,7 @@ appexpress.post('/position', function (req, res) {
   res.sendStatus(200);
 });
 
-appexpress.post('/windowArray', function (req, res) {
+appexpress.post('/windowArray', function(req, res) {
   // console.log('windowArray');
   try {
     const finallyResult = req.body;
@@ -187,7 +189,7 @@ appexpress.post('/windowArray', function (req, res) {
   res.sendStatus(200);
 });
 
-appexpress.post('/clickImage', function (req, res) {
+appexpress.post('/clickImage', function(req, res) {
   try {
     const finallyResult = req.body;
 
@@ -276,7 +278,7 @@ const createLoginWindow = () => {
   loginWindow.loadURL(`file://${__dirname}/login.html`);
 
   // loginWindow.webContents.openDevTools();
-  loginWindow.on('ready-to-show', function () {
+  loginWindow.on('ready-to-show', function() {
     loginWindow.show();
   });
 };
@@ -367,7 +369,7 @@ const createWindow = async () => {
   });
 
   // 选择文件存储路径
-  ipcMain.on('open-directory-dialog', function (
+  ipcMain.on('open-directory-dialog', function(
     event,
     func,
     label = '存储',
@@ -390,7 +392,7 @@ const createWindow = async () => {
       .catch(err => console.log(err));
   });
 
-  ipcMain.on('choose-directory-dialog', function (
+  ipcMain.on('choose-directory-dialog', function(
     event,
     func,
     label = '存储',
@@ -412,6 +414,12 @@ const createWindow = async () => {
       });
   });
 
+  //打开控制台
+  ipcMain.on('open_control', (event, url) => {
+    console.log('调用成功');
+    shell.openExternal(url);
+  });
+
   // 创建登录窗口
 
   ipcMain.on('min', e => mainWindow.minimize());
@@ -431,7 +439,7 @@ const createWindow = async () => {
     targetId = id;
     if (isNetStart) return;
 
-    appexpress.listen(8888, function () {
+    appexpress.listen(8888, function() {
       console.log('8888服务器已启动');
     });
     isNetStart = true;
@@ -441,7 +449,7 @@ const createWindow = async () => {
     targetId = id;
     if (isBrowserNetStart) return;
 
-    appexpress.listen(8889, function () {
+    appexpress.listen(8889, function() {
       console.log('8889服务器已启动');
     });
     isBrowserNetStart = true;

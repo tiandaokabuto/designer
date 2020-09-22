@@ -3,7 +3,13 @@ import { useSelector } from 'react-redux';
 import { message } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqueId from 'lodash/uniqueId';
-
+import event from '@/containers/eventCenter';
+import {
+  CUT_COMMAND,
+  COPY_COMMAND,
+  PASTE_COMMAND,
+  DELETE_COMMAND,
+} from '@/containers/eventCenter/eventTags';
 import {
   updateCheckedBlockId,
   updateClipBoardData,
@@ -174,6 +180,85 @@ export default () => {
   const isShiftKeyDown = () => {
     return keyDownMap.isShiftDown;
   };
+  const handleCut = () => {
+    const selected = window.getSelection().toString();
+    if (selected) {
+      updateClipBoardData({
+        dep: [],
+        content: undefined,
+      });
+      return;
+    }
+    if (checkedId.length) {
+      // 生成待保存的数据结构
+      updateClipBoardData({
+        dep: checkedId,
+        content: extractDelCheckedData(cards, checkedId),
+      });
+      clipboard.writeText('copy-cardData', 'selection');
+      // 删除选中的元素
+      deleteCheckedNode(cards, checkedId);
+      message.success('剪切成功');
+    }
+  };
+  // 复制操作
+  const handleCopy = () => {
+    setTimeout(() => {
+      const selected = window.getSelection().toString();
+      if (selected) {
+        updateClipBoardData({
+          dep: [],
+          content: undefined,
+        });
+        return;
+      }
+      if (checkedId.length) {
+        // 生成待保存的数据结构
+        updateClipBoardData({
+          dep: checkedId,
+          content: extractCheckedData(cards, checkedId),
+        });
+        clipboard.writeText('copy-cardData', 'selection');
+        message.success('复制成功');
+      }
+    }, 0);
+  };
+  // 粘贴操作
+  const handlePaste = () => {
+    if (!clipboardData.content) {
+      return;
+    }
+    if (clipboard.readText('selection') !== 'copy-cardData') return;
+    if (checkedId.length === 1 || !cards.length) {
+      // 生成待保存的数据结构
+      const append = cloneDeep(clipboardData.content || []);
+      attachedNodeId(cards, append);
+      const result = insertAfter(cards, checkedId[0], append);
+      if (result) {
+        updateCardData([...cards]);
+        updateCheckedBlockId(getOrderedNodeList(append));
+        message.success('粘贴成功');
+      } else {
+        message.info('请选择粘贴位置');
+      }
+    } else {
+      message.info('多选粘贴时，请选择需要粘贴位置上方的单个原子能力');
+    }
+  };
+  const handleDelete = () => {
+    const selected = window.getSelection().toString();
+    if (selected) {
+      updateClipBoardData({
+        dep: [],
+        content: undefined,
+      });
+      return;
+    }
+    if (checkedId.length) {
+      deleteCheckedNode(cards, checkedId);
+      message.success('删除成功');
+    }
+  };
   useEffect(() => {
     const handleKeyDown = e => {
       setKeyState('ctrl', e.ctrlKey);
@@ -223,10 +308,18 @@ export default () => {
         return;
       }
     };
+    event.addListener(CUT_COMMAND, handleCut);
+    event.addListener(COPY_COMMAND, handleCopy);
+    event.addListener(PASTE_COMMAND, handlePaste);
+    event.addListener(DELETE_COMMAND, handleDelete);
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
     document.addEventListener('mousedown', handleMouseDown);
     return () => {
+      event.removeListener(CUT_COMMAND, handleCut);
+      event.removeListener(COPY_COMMAND, handleCopy);
+      event.removeListener(PASTE_COMMAND, handlePaste);
+      event.removeListener(DELETE_COMMAND, handleDelete);
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keyup', handleKeyUp);
       document.removeEventListener('mousedown', handleMouseDown);
@@ -237,46 +330,10 @@ export default () => {
     const win = remote.getCurrentWindow();
     if (!win || !win.webContents) return;
     electronLocalshortcut.register(win, 'Ctrl+C', () => {
-      setTimeout(() => {
-        const selected = window.getSelection().toString();
-        if (selected) {
-          updateClipBoardData({
-            dep: [],
-            content: undefined,
-          });
-          return;
-        }
-        if (checkedId.length) {
-          // 生成待保存的数据结构
-          updateClipBoardData({
-            dep: checkedId,
-            content: extractCheckedData(cards, checkedId),
-          });
-          clipboard.writeText('copy-cardData', 'selection');
-          message.success('复制成功');
-        }
-      }, 0);
+      handleCopy();
     });
     electronLocalshortcut.register(win, 'Ctrl+V', () => {
-      if (!clipboardData.content) {
-        return;
-      }
-      if (clipboard.readText('selection') !== 'copy-cardData') return;
-      if (checkedId.length === 1 || !cards.length) {
-        // 生成待保存的数据结构
-        const append = cloneDeep(clipboardData.content || []);
-        attachedNodeId(cards, append);
-        const result = insertAfter(cards, checkedId[0], append);
-        if (result) {
-          updateCardData([...cards]);
-          updateCheckedBlockId(getOrderedNodeList(append));
-          message.success('粘贴成功');
-        } else {
-          message.info('请选择粘贴位置');
-        }
-      } else {
-        message.info('多选粘贴时，请选择需要粘贴位置上方的单个原子能力');
-      }
+      handlePaste();
     });
     // 支持批量剪切的操作
     // 注释原因：在普通的input框内剪切后selected为空字符串，不会被return，触发原子能力的剪切
@@ -307,38 +364,28 @@ export default () => {
     // 支持删除,批量剪切
     const handleKeyDown = e => {
       if (e.keyCode === 46) {
-        const selected = window.getSelection().toString();
-        if (selected) {
-          updateClipBoardData({
-            dep: [],
-            content: undefined,
-          });
-          return;
-        }
-        if (checkedId.length) {
-          deleteCheckedNode(cards, checkedId);
-          message.success('删除成功');
-        }
+        handleDelete();
       } else if (e.ctrlKey && e.keyCode === 88) {
-        const selected = window.getSelection().toString();
-        if (selected) {
-          updateClipBoardData({
-            dep: [],
-            content: undefined,
-          });
-          return;
-        }
-        if (checkedId.length) {
-          // 生成待保存的数据结构
-          updateClipBoardData({
-            dep: checkedId,
-            content: extractDelCheckedData(cards, checkedId),
-          });
-          clipboard.writeText('copy-cardData', 'selection');
-          // 删除选中的元素
-          deleteCheckedNode(cards, checkedId);
-          message.success('剪切成功');
-        }
+        // const selected = window.getSelection().toString();
+        // if (selected) {
+        //   updateClipBoardData({
+        //     dep: [],
+        //     content: undefined,
+        //   });
+        //   return;
+        // }
+        // if (checkedId.length) {
+        //   // 生成待保存的数据结构
+        //   updateClipBoardData({
+        //     dep: checkedId,
+        //     content: extractDelCheckedData(cards, checkedId),
+        //   });
+        //   clipboard.writeText('copy-cardData', 'selection');
+        //   // 删除选中的元素
+        //   deleteCheckedNode(cards, checkedId);
+        //   message.success('剪切成功');
+        // }
+        handleCut();
       }
     };
     document.addEventListener('keydown', handleKeyDown);

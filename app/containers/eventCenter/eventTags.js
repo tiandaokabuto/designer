@@ -64,3 +64,20 @@ export const PYTHOH_DEBUG_BLOCK_ALL_RUN_CONTINUE = /** DEBUG 第一层 继续 */
 export const PYTHOH_DEBUG_CARDS_ALL_RUN = /** DEBUG 第二层 所有CARDS传送 */ Symbol(
   'python_debug_cards_all_run_run'
 );
+
+export const SHOW_EXPORT_MODAL = /** 展示导出模态框 */ Symbol(
+  'show_export_modal'
+);
+export const REVOKE_ACTION = /** 撤销指令 */ Symbol('revoke_action');
+export const RECOVERY_ACTION = /** 恢复指令 */ Symbol('recovery_action');
+export const SAVE_FILE = /** CTRL+S 保存文件 */ Symbol('save_file');
+export const CUT_COMMAND = /** 剪切指令 */ Symbol('cut_command');
+export const COPY_COMMAND = /** 复制指令 */ Symbol('copy_command');
+export const COPY_PROCESS_COMMAND = /** 复制流程块指令 */ Symbol(
+  'copy_process_command'
+);
+export const PASTE_COMMAND = /** 粘贴指令 */ Symbol('paste_command');
+export const DELETE_COMMAND = /** 删除指令 */ Symbol('delete_command');
+export const RELEASE_PROCESS_COMMAND = /** 发布流程 */ Symbol(
+  'release_process_command'
+);

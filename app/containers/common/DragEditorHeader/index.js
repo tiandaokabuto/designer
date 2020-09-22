@@ -16,7 +16,12 @@ import axios from 'axios';
 import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 
 import event, { STOP_RUNNING, START_POINT } from '@/containers/eventCenter';
-import { PYTHON_OUTPUT_CLEAR } from '@/containers/eventCenter/eventTags';
+import {
+  PYTHON_OUTPUT_CLEAR,
+  SHOW_EXPORT_MODAL,
+  SAVE_FILE,
+  RELEASE_PROCESS_COMMAND,
+} from '@/containers/eventCenter/eventTags';
 import {
   UNDO_CARDSDATA,
   REDO_CARDSDATA,
@@ -274,6 +279,18 @@ export default memo(
       setIsRunCode(false);
     };
 
+    // 发布流程
+    const handleRelease = () => {
+      if (isEffectProcess()) {
+        getProcessVersion(getProcessName());
+        getTaskDataNames();
+        getVariableNames();
+        setModalVisible(true);
+      } else {
+        message.error('未选择流程');
+      }
+    };
+
     const exportProcess = filePath => {
       const zip = new adm_zip();
       fs.writeFileSync(
@@ -289,6 +306,16 @@ export default memo(
       //   `${process.cwd()}/project/${projectName}/${getProcessName()}/designerVersion.json`
       // );
       zip.writeZip(`${filePath}.zip`);
+    };
+
+    const handleExportModal = () => {
+      console.log('弹出导出');
+      if (isEffectProcess()) {
+        setIsExport(true);
+        setModalVisible(true);
+      } else {
+        message.error('请选中流程再导出');
+      }
     };
 
     const handleRunPoint = fromOrTo => {
@@ -333,12 +360,29 @@ export default memo(
     const selectVariableNameData = value => {
       setVariableNamesData(value);
     };
+    const handleSave = () => {
+      changeModifyState(
+        processTreeRef.current,
+        currentCheckedTreeNodeRef.current,
+        false
+      );
+      persistentStorage();
+      message.success('保存成功');
+    };
 
     useEffect(() => {
       setTaskDataNames([1, 2, 3]);
       event.addListener(START_POINT, handleRunPoint);
+      event.addListener(STOP_RUNNING, handleStopProcess);
+      event.addListener(SHOW_EXPORT_MODAL, handleExportModal);
+      event.addListener(SAVE_FILE, handleSave);
+      event.addListener(RELEASE_PROCESS_COMMAND, handleRelease);
       return () => {
         event.removeListener(START_POINT, handleRunPoint);
+        event.removeListener(STOP_RUNNING, handleStopProcess);
+        event.removeListener(SHOW_EXPORT_MODAL, handleExportModal);
+        event.removeListener(SAVE_FILE, handleSave);
+        event.removeListener(RELEASE_PROCESS_COMMAND, handleRelease);
       };
     }, []);
 
@@ -358,48 +402,48 @@ export default memo(
             history.goBack();
           },
         },
-        {
-          description: '撤销',
-          iconImg: true,
-          type: UndoPNG,
-          // disabled: true,
-          onClick: () => {
-            dispatch({
-              type: CHANGE_FORCEUPDATE_TAG,
-              payload: !forceUpdateTag,
-            });
-            dispatch({
-              type: UNDO_CARDSDATA,
-            });
-            // setTimeout(() => {
-            //   dispatch({
-            //     type: CHANGE_FORCEUPDATE_TAG,
-            //     payload: false,
-            //   });
-            // }, 0);
-          },
-        },
-        {
-          description: '恢复',
-          iconImg: true,
-          type: RedoPNG,
-          // disabled: true,
-          onClick: () => {
-            dispatch({
-              type: CHANGE_FORCEUPDATE_TAG,
-              payload: !forceUpdateTag,
-            });
-            dispatch({
-              type: REDO_CARDSDATA,
-            });
-            // setTimeout(() => {
-            //   dispatch({
-            //     type: CHANGE_FORCEUPDATE_TAG,
-            //     payload: false,
-            //   });
-            // }, 0);
-          },
-        },
+        // {
+        //   description: '撤销',
+        //   iconImg: true,
+        //   type: UndoPNG,
+        //   // disabled: true,
+        //   onClick: () => {
+        //     dispatch({
+        //       type: CHANGE_FORCEUPDATE_TAG,
+        //       payload: !forceUpdateTag,
+        //     });
+        //     dispatch({
+        //       type: UNDO_CARDSDATA,
+        //     });
+        //     // setTimeout(() => {
+        //     //   dispatch({
+        //     //     type: CHANGE_FORCEUPDATE_TAG,
+        //     //     payload: false,
+        //     //   });
+        //     // }, 0);
+        //   },
+        // },
+        // {
+        //   description: '恢复',
+        //   iconImg: true,
+        //   type: RedoPNG,
+        //   // disabled: true,
+        //   onClick: () => {
+        //     dispatch({
+        //       type: CHANGE_FORCEUPDATE_TAG,
+        //       payload: !forceUpdateTag,
+        //     });
+        //     dispatch({
+        //       type: REDO_CARDSDATA,
+        //     });
+        //     // setTimeout(() => {
+        //     //   dispatch({
+        //     //     type: CHANGE_FORCEUPDATE_TAG,
+        //     //     payload: false,
+        //     //   });
+        //     // }, 0);
+        //   },
+        // },
         {
           description: '运行',
           type: 'code',
@@ -422,13 +466,14 @@ export default memo(
           description: '保存',
           type: 'save',
           onClick: () => {
-            changeModifyState(
-              processTreeRef.current,
-              currentCheckedTreeNodeRef.current,
-              false
-            );
-            persistentStorage();
-            message.success('保存成功');
+            handleSave();
+            // changeModifyState(
+            //   processTreeRef.current,
+            //   currentCheckedTreeNodeRef.current,
+            //   false
+            // );
+            // persistentStorage();
+            // message.success('保存成功');
           },
         },
         /*  {
@@ -437,27 +482,27 @@ export default memo(
           disabled: true,
           IconFont: true,
         }, */
-        {
-          description: '发布',
-          type: 'cloud-upload',
-          disabled: true,
-        },
-        {
-          description: '导入',
-          disabled: true,
-          type: 'login',
-          rotate: 180,
-        },
-        {
-          description: '导出',
-          disabled: true,
-          type: 'logout',
-        },
-        {
-          description: '控制台',
-          disabled: true,
-          type: 'desktop',
-        },
+        // {
+        //   description: '发布',
+        //   type: 'cloud-upload',
+        //   disabled: true,
+        // },
+        // {
+        //   description: '导入',
+        //   disabled: true,
+        //   type: 'login',
+        //   rotate: 180,
+        // },
+        // {
+        //   description: '导出',
+        //   disabled: true,
+        //   type: 'logout',
+        // },
+        // {
+        //   description: '控制台',
+        //   disabled: true,
+        //   type: 'desktop',
+        // },
       ];
       const toolsDescriptionForProcess = [
         {
@@ -475,22 +520,22 @@ export default memo(
             setVisible('newprocess');
           },
         },
-        {
-          description: '撤销',
-          iconImg: true,
-          type: UndoPNG,
-          onClick: () => {
-            event.emit('undo');
-          },
-        },
-        {
-          description: '恢复',
-          iconImg: true,
-          type: RedoPNG,
-          onClick: () => {
-            event.emit('redo');
-          },
-        },
+        // {
+        //   description: '撤销',
+        //   iconImg: true,
+        //   type: UndoPNG,
+        //   onClick: () => {
+        //     event.emit('undo');
+        //   },
+        // },
+        // {
+        //   description: '恢复',
+        //   iconImg: true,
+        //   type: RedoPNG,
+        //   onClick: () => {
+        //     event.emit('redo');
+        //   },
+        // },
         {
           description: '运行',
           type: 'code',
@@ -513,14 +558,15 @@ export default memo(
           description: '保存',
           type: 'save',
           onClick: () => {
-            // 保存到本地
-            changeModifyState(
-              processTreeRef.current,
-              currentCheckedTreeNodeRef.current,
-              false
-            );
-            persistentStorage();
-            message.success('保存成功');
+            handleSave();
+            // // 保存到本地
+            // changeModifyState(
+            //   processTreeRef.current,
+            //   currentCheckedTreeNodeRef.current,
+            //   false
+            // );
+            // persistentStorage();
+            // message.success('保存成功');
             // saveAsXML();
           },
         },
@@ -529,51 +575,44 @@ export default memo(
           type: 'cloud-upload',
           disabled: remote.getGlobal('sharedObject').userName === '',
           onClick: () => {
-            if (isEffectProcess()) {
-              getProcessVersion(getProcessName());
-              getTaskDataNames();
-              getVariableNames();
-              setModalVisible(true);
-            } else {
-              message.error('未选择流程');
-            }
+            handleRelease();
           },
         },
-        {
-          description: '导入',
-          type: 'login',
-          rotate: 180,
-          // disabled: true,
-          onClick: () => {
-            ipcRenderer.removeAllListeners('chooseItem');
-            ipcRenderer.send(
-              'choose-directory-dialog',
-              'showOpenDialog',
-              '选择',
-              ['openFile']
-            );
-            ipcRenderer.on('chooseItem', (e, filePath) => {
-              getChooseFilePath(filePath, 'process');
-            });
-          },
-        },
-        {
-          description: '导出',
-          type: 'logout',
-          onClick: () => {
-            if (isEffectProcess()) {
-              setIsExport(true);
-              setModalVisible(true);
-            } else {
-              message.error('请选中流程再导出');
-            }
-          },
-        },
-        {
-          description: '控制台',
-          type: 'desktop',
-          disabled: true,
-        },
+        // {
+        //   description: '导入',
+        //   type: 'login',
+        //   rotate: 180,
+        //   // disabled: true,
+        //   onClick: () => {
+        //     ipcRenderer.removeAllListeners('chooseItem');
+        //     ipcRenderer.send(
+        //       'choose-directory-dialog',
+        //       'showOpenDialog',
+        //       '选择',
+        //       ['openFile']
+        //     );
+        //     ipcRenderer.on('chooseItem', (e, filePath) => {
+        //       getChooseFilePath(filePath, 'process');
+        //     });
+        //   },
+        // },
+        // {
+        //   description: '导出',
+        //   type: 'logout',
+        //   onClick: () => {
+        //     if (isEffectProcess()) {
+        //       setIsExport(true);
+        //       setModalVisible(true);
+        //     } else {
+        //       message.error('请选中流程再导出');
+        //     }
+        //   },
+        // },
+        // {
+        //   description: '控制台',
+        //   type: 'desktop',
+        //   disabled: true,
+        // },
         {
           description: '校验',
           disabled: false,

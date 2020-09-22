@@ -2,15 +2,20 @@ import './index.scss';
 import React, { useState, Fragment, useRef, memo, useEffect } from 'react';
 import { Icon, Dropdown, Menu, Tag, message } from 'antd';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
-
+import { useSelector, useDispatch } from 'react-redux';
 import NewProject from './NewProject';
 import api from '../../../api';
 import { getModifiedNodes } from '_utils/utils';
 import { changeTreeTab } from '../../reduxActions/index';
 import HelpModel from './HelpModel';
+import ShortcutModel from './ShortcutModel';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
 import SaveConfirmModel from '../../designerGraphEdit/GraphItem/components/SaveConfirmModel';
+import {
+  UNDO_CARDSDATA,
+  REDO_CARDSDATA,
+  CHANGE_FORCEUPDATE_TAG,
+} from '../../../constants/actions/codeblock';
 
 // *新 DEBUG liuqi
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
@@ -27,7 +32,17 @@ import {
   killTask,
 } from '../../../utils/DebugUtils/runDebugServer';
 import { clickOneStepRun } from '../../../utils/DebugUtils/clickOneStepRun';
-import event from '../../eventCenter';
+// import event from '../../eventCenter';
+import event, {
+  SHOW_EXPORT_MODAL,
+  REVOKE_ACTION,
+  RECOVERY_ACTION,
+  CUT_COMMAND,
+  COPY_COMMAND,
+  PASTE_COMMAND,
+  DELETE_COMMAND,
+  RELEASE_PROCESS_COMMAND,
+} from '@/containers/eventCenter';
 import {
   CHANGE_DEBUG_INFOS,
   DEBUG_RESET_ALL_INFO,
@@ -60,22 +75,12 @@ import {
   DEBUG_ONE_STEP_FINISHED_STARTED,
 } from '../../../constants/actions/debugInfos';
 import { changeDebugInfos } from '../../reduxActions';
-
+import { generateMenu, TOOLS } from './Menu/index';
+import { RELEASE_PROCESS } from '../../eventCenter/index';
 const { ipcRenderer, remote } = require('electron');
-
-const generateMenu = arr => {
-  return (
-    <Menu>
-      {arr.map((subMenu, index) => {
-        return (
-          <Menu.Item key={index}>
-            <a onClick={subMenu.onClick || (() => {})}>{subMenu.title}</a>
-          </Menu.Item>
-        );
-      })}
-    </Menu>
-  );
-};
+const { SubMenu } = Menu;
+const fs = require('fs');
+const process = require('process');
 
 /**
  * 处理窗口的缩小、全屏、关闭操作
@@ -89,8 +94,12 @@ export default memo(({ history, tag }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [visible, setVisible] = useState(undefined);
   const [helpModelVisible, setHelpModelVisible] = useState(false);
+  const [shortcutModelVisible, setShortcutModelVisible] = useState(false);
   const [saveEvent, setSaveEvent] = useState('');
   const globalUserName = remote.getGlobal('sharedObject').userName;
+
+  const dispatch = useDispatch();
+  const forceUpdateTag = useSelector(state => state.blockcode.forceUpdateTag);
 
   const resetVisible = () => {
     setVisible(undefined);
@@ -113,6 +122,7 @@ export default memo(({ history, tag }) => {
     });
   };
 
+  // const TOOLS_DESCRIPTION = TOOLS;
   const TOOLS_DESCRIPTION = [
     {
       title: '项目',
@@ -129,25 +139,156 @@ export default memo(({ history, tag }) => {
     },
     {
       title: '编辑',
-      disabled: true,
-    },
-    {
-      title: '运行',
-      disabled: true,
-    },
-    {
-      title: '调试',
-      disabled: true,
+      // disabled: true,
+      children: [
+        {
+          title: '剪切',
+          shortcut: 'CTRL+X',
+          onClick: () => {
+            handleCut();
+          },
+        },
+        {
+          title: '复制',
+          shortcut: 'CTRL+C',
+          onClick: () => {
+            handleCopy();
+          },
+        },
+        {
+          title: '粘贴',
+          shortcut: 'CTRL+V',
+          onClick: () => {
+            handlePaste();
+          },
+        },
+        {
+          title: '删除',
+          shortcut: 'Delete',
+          onClick: () => {
+            handleDelete();
+          },
+        },
+        {
+          title: '撤销',
+          shortcut: 'CTRL+Z',
+          onClick: () => {
+            handleRevoke();
+          },
+        },
+        {
+          title: '恢复',
+          shortcut: 'CTRL+Y',
+          onClick: () => {
+            handleRecovery();
+          },
+        },
+      ],
     },
     {
       title: '工具',
-      disabled: true,
+      children: [
+        {
+          title: '流程',
+          subMenu: [
+            {
+              title: '导入',
+              onClick: () => {
+                ipcRenderer.removeAllListeners('chooseItem');
+                ipcRenderer.send(
+                  'choose-directory-dialog',
+                  'showOpenDialog',
+                  '选择',
+                  ['openFile']
+                );
+                ipcRenderer.on('chooseItem', (e, filePath) => {
+                  getChooseFilePath(filePath, 'process');
+                });
+              },
+            },
+            {
+              title: '导出',
+              onClick: () => {
+                event.emit(SHOW_EXPORT_MODAL);
+              },
+            },
+            {
+              title: '发布',
+              onClick: () => {
+                event.emit(RELEASE_PROCESS_COMMAND);
+              },
+            },
+          ],
+        },
+        {
+          title: '流程块',
+          subMenu: [
+            {
+              title: '导入',
+              onClick: () => {
+                ipcRenderer.removeAllListeners('chooseItem');
+                ipcRenderer.send(
+                  'choose-directory-dialog',
+                  'showOpenDialog',
+                  '选择',
+                  ['openFile']
+                );
+                ipcRenderer.on('chooseItem', (e, filePath) => {
+                  getChooseFilePath(filePath, 'processModule');
+                });
+              },
+            },
+            {
+              title: '导出',
+              onClick: () => {
+                console.log('下载');
+              },
+            },
+          ],
+        },
+      ],
     },
     {
       title: '帮助',
-      onClick: () => {
-        setHelpModelVisible(true);
-      },
+      children: [
+        {
+          title: '新手教程',
+          disabled: true,
+          onClick: () => {
+            console.log('新手教程');
+          },
+        },
+        {
+          title: '快捷键说明',
+          onClick: () => {
+            setShortcutModelVisible(true);
+          },
+        },
+        {
+          title: '安装扩展',
+          disabled: true,
+          onClick: () => {
+            console.log('安装扩展');
+          },
+        },
+        {
+          title: '打开控制台',
+          onClick: () => {
+            console.log('打开控制台');
+            ipcRenderer.removeAllListeners('open_control');
+            ipcRenderer.send(
+              'open_control',
+              'https://localhost:8000/sd_rpa/login?uid=lijg&pwd=1234'
+            );
+          },
+        },
+        {
+          title: '关于',
+          onClick: () => {
+            setHelpModelVisible(true);
+          },
+        },
+      ],
     },
   ];
 
@@ -182,6 +323,7 @@ export default memo(({ history, tag }) => {
 
   const handleCancel = () => {
     setHelpModelVisible(false);
+    setShortcutModelVisible(false);
   };
 
   const handleSaveModelCancelOk = () => {
@@ -203,6 +345,72 @@ export default memo(({ history, tag }) => {
       }, 100);
     } else if (saveEvent === 'exit') {
       signOut();
+    }
+  };
+
+  // 处理撤销事件
+  const handleRevoke = () => {
+    if (currentPagePosition_ref.current === 'editor') {
+      event.emit('undo');
+    } else if (currentPagePosition_ref.current === 'block') {
+      dispatch({
+        type: CHANGE_FORCEUPDATE_TAG,
+        payload: !forceUpdateTag,
+      });
+      dispatch({
+        type: UNDO_CARDSDATA,
+      });
+    }
+  };
+  // 处理恢复事件
+  const handleRecovery = () => {
+    if (currentPagePosition_ref.current === 'editor') {
+      event.emit('redo');
+    } else if (currentPagePosition_ref.current === 'block') {
+      dispatch({
+        type: CHANGE_FORCEUPDATE_TAG,
+        payload: !forceUpdateTag,
+      });
+      dispatch({
+        type: REDO_CARDSDATA,
+      });
+    }
+  };
+  // 处理复制事件
+  const handleCopy = () => {
+    if (currentPagePosition_ref.current === 'editor') {
+      event.emit('copyProcess');
+      return;
+    } else if (currentPagePosition_ref.current === 'block') {
+      event.emit(COPY_COMMAND);
+    }
+  };
+  // 处理粘贴事件
+  const handlePaste = () => {
+    if (currentPagePosition_ref.current === 'editor') {
+      event.emit('pasteProcess');
+      return;
+    } else if (currentPagePosition_ref.current === 'block') {
+      event.emit(PASTE_COMMAND);
+    }
+  };
+
+  // 处理剪切事件
+  const handleCut = () => {
+    if (currentPagePosition_ref.current === 'editor') {
+      message.info('没有剪切目标');
+      return;
+    } else if (currentPagePosition_ref.current === 'block') {
+      event.emit(CUT_COMMAND);
+    }
+  };
+  // 处理删除事件
+  const handleDelete = () => {
+    if (currentPagePosition_ref.current === 'editor') {
+      event.emit('deleteProcess');
+      return;
+    } else if (currentPagePosition_ref.current === 'block') {
+      event.emit(DELETE_COMMAND);
     }
   };
 
@@ -240,6 +448,9 @@ export default memo(({ history, tag }) => {
     event.addListener(DEBUG_RESET_CODE, resetPythonCode);
     event.addListener(DEBUG_ONE_STEP, oneStepRun);
     event.addListener(DEBUG_ONE_STEP_FINISHED, oneStepFinished);
+    // 添加撤销恢复监听
+    event.addListener(REVOKE_ACTION, handleRevoke);
+    event.addListener(RECOVERY_ACTION, handleRecovery);
 
     return () => {
       event.removeListener(DEBUG_OPEN_DEBUGSERVER, debug_switch_open);
@@ -256,6 +467,8 @@ export default memo(({ history, tag }) => {
       event.removeListener(DEBUG_RESET_CODE, resetPythonCode);
       event.removeListener(DEBUG_ONE_STEP, oneStepRun);
       event.removeListener(DEBUG_ONE_STEP_FINISHED, oneStepFinished);
+      event.removeListener(REVOKE_ACTION, handleRevoke);
+      event.removeListener(RECOVERY_ACTION, handleRecovery);
 
       // 当返回时，自动杀死debug进程
       killTask();
@@ -292,7 +505,6 @@ export default memo(({ history, tag }) => {
   const currentCheckedTreeNode = useSelector(
     state => state.grapheditor.currentCheckedTreeNode
   );
-
 
   // 切换树时，直接挂掉debug
   useEffect(() => {
@@ -488,13 +700,23 @@ export default memo(({ history, tag }) => {
         {TOOLS_DESCRIPTION.map((tool, index) => {
           if (typeof tool === 'object' && tool.children) {
             return (
-              <Dropdown
-                key={index}
-                overlay={generateMenu(tool.children || [])}
-                placement="bottomLeft"
-              >
-                <span>{tool.title}</span>
-              </Dropdown>
+              <Fragment key={index}>
+                <Dropdown
+                  key={index}
+                  overlay={generateMenu(tool.children || [])}
+                  placement="bottomLeft"
+                >
+                  <span>{tool.title}</span>
+                </Dropdown>
+                <HelpModel
+                  visible={helpModelVisible}
+                  handleCancel={handleCancel}
+                />
+                <ShortcutModel
+                  visible={shortcutModelVisible}
+                  handleCancel={handleCancel}
+                />
+              </Fragment>
             );
           }
           if (typeof tool === 'object') {
@@ -506,12 +728,6 @@ export default memo(({ history, tag }) => {
                 >
                   {tool.title}
                 </span>
-                {tool.title === '帮助' && !tool.disabled ? (
-                  <HelpModel
-                    visible={helpModelVisible}
-                    handleCancel={handleCancel}
-                  />
-                ) : null}
               </Fragment>
             );
           }
