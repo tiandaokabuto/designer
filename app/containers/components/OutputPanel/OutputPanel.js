@@ -71,8 +71,8 @@ export default memo(
       updateExecuteOutput,
       zoomIn,
       zoomOut,
-      // zoomLevel,
-      // setZoomLevel,
+      zoomLevel,
+      setZoomLevel,
     }) => {
       const executeOutput = useSelector(
         state => state.temporaryvariable.executeOutput
@@ -718,8 +718,8 @@ export default memo(
               <ZoomToolBar
                 zoomIn={zoomIn}
                 zoomOut={zoomOut}
-                // zoomLevel={zoomLevel}
-                // setZoomLevel={setZoomLevel}
+                zoomLevel={zoomLevel}
+                setZoomLevel={setZoomLevel}
               />
             )}
             <span
