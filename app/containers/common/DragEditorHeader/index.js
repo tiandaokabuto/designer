@@ -391,9 +391,6 @@ export default memo(
         event.removeListener(SHOW_EXPORT_MODAL, handleExportModal);
         event.removeListener(SAVE_FILE, handleSave);
         event.removeListener(RELEASE_PROCESS_COMMAND, handleRelease);
-
-      
-      return () => {
         event.removeListener(START_POINT, handleRunPoint);
         clearInterval(timer);
       };
