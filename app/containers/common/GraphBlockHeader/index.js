@@ -281,16 +281,19 @@ export default memo(({ history, tag }) => {
                 })
               )
             );
-            ipcRenderer.removeAllListeners('open_control');
-            ipcRenderer.send(
-              'open_control',
-              'https://' +
+            console.log('打开控制台', data);
+            let url = 'https://' + data.ip + ':44388/sd_rpa/login';
+            if (data.offLine === false) {
+              url =
+                'https://' +
                 data.ip +
                 ':44388/sd_rpa/login?uid=' +
                 fs.readFileSync(`${process.cwd()}/globalconfig/login.json`, {
                   encoding: 'utf-8',
-                })
-            );
+                });
+            }
+            ipcRenderer.removeAllListeners('open_control');
+            ipcRenderer.send('open_control', url);
           },
         },
         {
