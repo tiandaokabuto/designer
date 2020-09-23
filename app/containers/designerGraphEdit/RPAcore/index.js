@@ -21,6 +21,13 @@ import { transformBlockToCode } from '../../designerGraphBlock/RPAcore';
 import { updateEditorBlockPythonCode } from '../../reduxActions';
 
 // liuqi
+// 循环
+import transformLoopStatement from '../../designerGraphBlock/RPAcore/graphBlockToCode/transformLoopStatement';
+// 判断
+import transformConditionalStatement from '../../designerGraphBlock/RPAcore/graphBlockToCode/transformConditionalStatement';
+// 异常
+//import {transformCatchStatement} from '../../designerGraphBlock/RPAcore/graphBlockToCode/transformCatchStatement';
+
 import { sendPythonCodeByLine } from '../../../utils/DebugUtils/runDebugServer';
 import event from '../../eventCenter';
 import { clickOneStepRun } from '../../../utils/DebugUtils/clickOneStepRun';
@@ -47,7 +54,9 @@ let nowIndex = 0;
 let nowIndexCards = 0;
 
 // 卡片的指针
-let pointOfCard = [];
+let pointOfCard = undefined;
+let spPointer = [];
+let spResult = { pk: undefined, tempLine: '', result: undefined };
 
 let nowLevel = 'block';
 let pass = false;
@@ -59,7 +68,10 @@ export const claerTempCenter = () => {
   nowIndex = 0;
   nowIndexCards = [];
 
-  pointOfCard = [];
+  // 新版指针
+  pointOfCard = undefined;
+  spPointer = [];
+  spResult = { pk: undefined, result: undefined };
 
   pass = false;
   isPause = false;
@@ -69,27 +81,112 @@ export const claerTempCenter = () => {
 // 传入pk卡片指针值为 pointOfCard
 const getNextIndexCards = (cards, pk) => {
   let nextPk = [];
-  if(pk.length == 0){
-    if(cards.lenght >0){
-      return [0];
-    }else{
-      message.info("未检测到代码")
-      return [];
-    }
-  }else{
-    // 假如是1,3,5,7...位置的返回的是数组
-    if(pk.length %2 === 1){
-      const nextArray = getCardsByPk(cards, pk)
-      if(nextArray && nextArray.length>0){
-        nextPk = [...pk,0]
-      }else{
+  let nowCard; // 单数层，卡片
+  let nowCards; // 双数层，儿子组
+  let nowIndex;
+  let fatherPk;
+  let fatherCards;
 
+  if (!pk) {
+    if (cards.length > 0) {
+      return [0];
+    } else {
+      message.info('未检测到代码');
+      return undefined;
+    }
+  }
+
+  // 假如是指针长度为1,3,5,7,则指针在卡片上
+  // 详情见说明文档
+
+  if (pk.length % 2 === 1) {
+    nowCard = getCardsByPk(cards, pk);
+    nowIndex = pk[0];
+
+    if (pk.length === 1 && !nowCard.hasChildren) {
+      // 假如只有一层，则fatherCard不存在
+      // 直接检查cards
+      if (pk < cards.length - 1) {
+        return [nowIndex + 1];
+      } else {
+        return [];
       }
+    }
+
+    // 01 取出当前层下标
+    nowIndex = pk.slice(-1)[0];
+    // 01-1 当前卡片
+    nowCard = getCardsByPk(cards, pk);
+
+    // 02 取出父级层下标
+    fatherPk = pk.slice(0, -1);
+    // 02-2 父级卡组
+    fatherCards = getCardsByPk(cards, fatherPk);
+
+    // 条件1  假如这个指针指向的没有元素，例如 ifChildren=[]
+    //        则指正切回上层
+    if (!nowCard) {
+      nowIndex = fatherPk.slice(-1)[0];
+      fatherPk = fatherPk.slice(0, -1);
+      return [...fatherPk, nowIndex + 1];
+    }
+
+    // [卡片层] 分辨  B,  A
+    // B 嵌套容器
+    // ---------------------------则直接进下一层第一个卡片
+    if (nowCard.hasChildren && nowCard.hasChildren.length > 0) {
+      return [...pk, 0];
+    }
+
+    // A 正常卡片
+    // ---------------------------正常卡片是下一个是下标+1
+
+    // 条件2  判断父层下标是否到达该层尾部
+    //        假如没有到尾部，则下标+1
+    if (nowIndex < fatherCards.length - 1) {
+      return [...fatherPk, nowIndex + 1];
+    }
+    // 否则条件3  指针到达尾部，则需要跳出这一层
+    //            和上面条件1同理
+    else {
+      nowIndex = fatherPk.slice(-1)[0];
+      fatherPk = fatherPk.slice(0, -1);
+      return [...fatherPk, nowIndex + 1];
+    }
+  }
+  // 假如是 0,2,4,6,8...位置
+  else {
+    // 03 取出当前层下标
+    nowIndex = pk.slice(-1)[0];
+    // 03-1 当前卡儿子组
+    nowCards = getCardsByPk(cards, pk);
+
+    // // 04 取出父级层下标
+    fatherPk = pk.slice(0, -1);
+    // // 04-1 父级卡组
+    // fatherCards = getCardsByPk(fatherPk);
+
+    // 条件1  假如这个指针指向的没有这个儿子组
+    //        则说明已经到嵌套体的尾部，则要调用首条
+    if (!nowCards) {
+      return [...fatherPk, 0];
+    } else {
+      return [...pk, 0];
     }
   }
 };
 
+// 用指针获取card/cards
 const getCardsByPk = (cards, pk) => {
+  try {
+    if (pk.length < 1) {
+      return undefined;
+    }
+  } catch (e) {
+    message.info('指针异常');
+    return undefined;
+  }
+
   let temp = undefined;
   try {
     if (pk.length === 1) {
@@ -108,7 +205,8 @@ const getCardsByPk = (cards, pk) => {
       }
     }
   } catch (e) {
-    message.info('指针异常');
+    //message.info('指针异常');
+    console.log(e);
   }
   return temp;
 };
@@ -150,6 +248,19 @@ export const clearPause = () => {
   };
 };
 
+// 设置拦截器判断结果
+export const set_spResult = result => {
+  if (result) {
+    spResult.result = '通过';
+  } else {
+    spResult.result = '不通过';
+  }
+};
+
+export const get_spResult = () => {
+  return spResult;
+};
+
 // 【 editor的单步调试 - 01 】开始第一层块级，逐步发送
 export const handleDebugBlockAllRun = () => {
   nowLevel = 'block';
@@ -188,6 +299,7 @@ export const handleDebugBlockAllRun = () => {
         varNames: running.return_string,
         // varNames: findVarNames ? findVarNames.value : '',
         output: running.__main__,
+        pk: [],
       });
       nowIndex += 1;
       message.info(`当前运行${nowIndex} of ${tempCenter.length}`);
@@ -200,105 +312,244 @@ export const handleDebugBlockAllRun = () => {
         varNames: '', //running.return_string,
         //varNames: findVarNames ? findVarNames.value : '',
         output: running.pythonCode,
+        pk: [],
       });
     }, 300);
     return (pass = true);
   }
 };
 
-// 【 editor的单步调试 - 02 】开始第二层卡片级，逐步发送
-export const handleDebugCardsAllRun = checkedGraphBlockId => {
+// 双数层的操作 0.2 [只管执行]
+const cardsRun_0_2_doubleFloor_pointRun = (cards, nextPk) => {
+  return new Promise((resolve, reject) => {
+    let fatherCard = getCardsByPk(cards, nextPk.slice(0, -1)); // 找到这个容器的属性
+    let nowIndex = nextPk.slice(-1)[0];
+    let tempLine;
+
+    setTimeout(() => {
+      // 设置判别点信息
+      let saveObj = {
+        pk: nextPk,
+        line: tempLine,
+        //type: 'for',
+        check: undefined,
+      };
+      switch (fatherCard.$$typeof) {
+        case 2:
+          tempLine = transformLoopStatement('', fatherCard, { output: '' }, {});
+          saveObj.type = 'for';
+          break;
+        case 4:
+          tempLine = transformConditionalStatement(
+            '',
+            fatherCard,
+            { output: '' },
+            {}
+          );
+          saveObj.type = 'if';
+          break;
+        case 7:
+          break;
+      }
+
+      console.log(`[[重要]]`, tempLine);
+      clickOneStepRun({}, nextPk, tempLine);
+      pointOfCard = nextPk; // 更新指针
+
+      // 存储拦截器
+      if (!spPointer.find(item => item.pk === nextPk.slice(0, -1))) {
+        spPointer.push(saveObj);
+      }
+
+      spResult.pk = [...nextPk, 0];
+      spResult.tempLine = tempLine;
+      spResult.result = undefined;
+
+      let tempString = [...nextPk]
+        .reduce((pre, no) => {
+          return pre + (no + 1).toString() + `-`;
+        }, '')
+        .slice(0, -1);
+      message.info(`当前运行${tempString}  ,  ${tempLine}`);
+      resolve('成功！');
+    }, 300);
+  });
+};
+
+// 单数层的操作 0.2
+const cardsRun_0_2_singleFloor_pointRun = (cards, nextPk, nextCard) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      clickOneStepRun(nextCard, nextPk);
+      pointOfCard = nextPk;
+      let tempString = [...nextPk]
+        .reduce((pre, no) => {
+          return pre + (no + 1).toString() + `-`;
+        }, '')
+        .slice(0, -1);
+      message.info(`当前运行${tempString}`);
+      resolve('成功');
+    }, 300);
+  });
+};
+
+// // 【 editor的单步调试 - 0.2版 】开始第二层卡片级，逐步发送
+export const cardsRun_0_2_ver = async (
+  checkedGraphBlockId,
+  callback,
+  withoutNext = false
+) => {
   nowLevel = 'cards';
+  // 01 检查暂停
   if (isPause) {
     changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
     changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
     return message.info('进程被暂停');
   }
-  const cardsIndex = tempCenter.findIndex(block => {
+
+  // 02-1 找到当前使用的流程块
+  const findProcess = tempCenter.find(block => {
     return block.currentId === checkedGraphBlockId;
   });
-  if (cardsIndex === -1) {
+  // 02-2 假如没有找到流程块，则转义失败，不执行
+  if (!findProcess) {
     changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
     return message.warning('这个流程块没有被正确连线到流程中，请检查连线关系');
   }
+  // 02-3 （假如有代码）把流程块中的卡片组取出来
+  const cards = findProcess.cards;
 
-  const needRunBlock = tempCenter[cardsIndex].cards;
-
-  if (tempCenter.length < 1) {
+  // 03 流程块内没有卡片
+  if (cards.length < 1) {
     changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
     return message.warning('无代码块可以运行');
   }
-  if (nowIndexCards >= needRunBlock.length) {
-    nowIndexCards = 0;
+
+  // 准备阶段： A 拿下一个指针  B 取这个指针的卡片
+  let nextPk = withoutNext
+    ? pointOfCard
+    : getNextIndexCards(cards, pointOfCard);
+  let nextCard = getCardsByPk(cards, nextPk);
+  let fatherCard = undefined;
+  let nowIndex = undefined;
+
+  // 04 结束：下一个指针属于第一层，而且已经没有卡片，
+  if (nextPk.length === 1 && !nextCard) {
+    pointOfCard = undefined;
     changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
     return message.success('流程块已完成');
   }
 
-  // 断点检查
-  if (nowIndexCards === 0) {
-    if (needRunBlock[nowIndexCards].breakPoint === true) {
-      message.info('流程块第1条遇到断点');
-      // localStorage.setItem(
-      //   'running_mode',
-      //   'blockAll_pause'
-      // );
-      setPause();
-      needRunBlock[nowIndexCards].breakPoint = false;
-      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
-      changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
-      return; // event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
-      //needRunBlock[cardsIndex].breakPoint === false;
-    }
-  }
-  if (nowIndexCards + 1 < needRunBlock.length) {
-    // 他有下一条存在
-    if (needRunBlock[nowIndexCards + 1].breakPoint === true) {
-      message.info('发现了1个断点');
-      setPause();
-    }
-  }
+  // 05-1 假如指针是奇数，则指向的是card卡片
+  if (nextPk.length % 2 === 1) {
+    // 05-1-0 判断拦截器
+    // 取出两者指针
+    console.log(`spResult`, spResult, nextPk);
+    const spResult_pk_string = spResult.pk
+      ? spResult.pk.reduce((pre, index) => (pre += index.toString()), '')
+      : 'no';
+    const nextPk_string = nextPk
+      ? nextPk.reduce((pre, index) => (pre += index.toString()), '')
+      : 'empty';
 
-  setTimeout(() => {
-    //console.clear();
-    console.log(needRunBlock);
-    clickOneStepRun(needRunBlock, needRunBlock[nowIndexCards].id);
-    nowIndexCards += 1;
-    message.info(`当前运行${nowIndexCards} of ${needRunBlock.length}`);
-  }, 300);
+    if (spResult_pk_string === nextPk_string) {
+      console.log(
+        '检查拦截器',
+        spResult_pk_string,
+        nextPk_string,
+        nextPk,
+        spResult.result
+      );
+
+      if (spResult.result === '通过') {
+        // for 通过的话，继续执行
+        // if 通过的话，继续执行
+        spResult.result = undefined;
+      } else if (spResult.result === '不通过') {
+        fatherCard = getCardsByPk(cards, nextPk.slice(0, -2));
+        console.log(`检查拦截器`, fatherCard);
+        // for 不通过的话，跳出循环体，father指针的下一个
+        if (fatherCard.$$typeof === 2) {
+          pointOfCard = [...nextPk.slice(0, -3), nextPk.slice(-3, -2)[0] + 1];
+          console.log('errorPoint', pointOfCard);
+
+          return callback(checkedGraphBlockId, cardsRun_0_2_ver, true);
+        }
+        // if 不通过的话，则跳转指针到[...xxx,1,0] 就是else指针上的第1个元素，同时
+        // 重新取一下nextCard用于下面判断
+        else if (fatherCard.$$typeof === 4) {
+          pointOfCard = [...nextPk.slice(0, -2), 1, 0];
+
+          console.log('errorPoint', pointOfCard);
+
+          return callback(checkedGraphBlockId, cardsRun_0_2_ver, true);
+        } else if (fatherCard.$$typeof === 7) {
+        }
+
+        spResult.result = undefined;
+      }
+    }
+
+    // 05-1-1 先判断卡片是否存在
+    if (!nextCard) {
+      // 假如卡片不存在，则改下一个指针回调
+      pointOfCard = nextPk;
+      return callback(checkedGraphBlockId, cardsRun_0_2_ver);
+    }
+
+    // 05-1-2 判断有无children
+    // 05-1-2-1 假如没有children，则是一个正常的card
+    if (!nextCard.hasChildren) {
+      await cardsRun_0_2_singleFloor_pointRun(cards, nextPk, nextCard);
+    }
+    // 05-1-2-1 假如有children，执行判断语句
+    else {
+      // 跳过有children的父指针，这里赋值与否无关系，重点是要取这个father的下一层指针
+      pointOfCard = nextPk;
+      nextPk = getNextIndexCards(cards, pointOfCard);
+      await cardsRun_0_2_doubleFloor_pointRun(cards, nextPk);
+    }
+  }
+  // 05-2 否则偶数，则指向的是 体 的children组，要执行的是发送判断体信息
+  else {
+    // 05-2-1 找到这个双层卡的父Card，就是循环体或者判断体的本体card
+    fatherCard = getCardsByPk(cards, nextPk.slice(0, -1));
+    nowIndex = nextPk.slice(-1)[0];
+
+    // 05-2-2 特殊判断
+    // 05-2-2-1 循环体
+    if (fatherCard.$$typeof === 2) {
+      // 05-2-2-1-1 假如已经到底，则回去重新执行循环头
+      if (nowIndex === 1) {
+        // 改指针到头部
+        pointOfCard = nextPk;
+        return callback(checkedGraphBlockId, cardsRun_0_2_ver);
+      }
+    }
+    // 05-2-2-2 判断体
+    if (fatherCard.$$typeof === 4) {
+      // 05-2-2-2-1 假如已经到 if 或者 else 的底部
+      if (nowIndex === 1 || nowIndex === 2) {
+        // 跳出判断体
+        pointOfCard = [...nextPk.slice(0, -2), nextPk.slice(-2, -1) + 1];
+        // withoutNext 指针已经跳转到下一个了，不需要开始的时候再重新获取指针
+        return callback(checkedGraphBlockId, cardsRun_0_2_ver, true);
+      }
+    }
+
+    if (fatherCard.$$typeof === 7) {
+      // 05-2-2-2-1 假如已经到 tryCatch
+      if (nowIndex === 1 || nowIndex === 2 || nowIndex === 3) {
+        // 跳出tryCatch体
+        pointOfCard = [...nextPk.slice(0, -2), nextPk.slice(-2, -1) + 1];
+        // withoutNext 指针已经跳转到下一个了，不需要开始的时候再重新获取指针
+        return callback(checkedGraphBlockId, cardsRun_0_2_ver, true);
+      }
+    }
+
+    await cardsRun_0_2_doubleFloor_pointRun(cards, nextPk);
+  }
 };
-
-// export const handleRunNextStep = () => {
-//   if (localStorage.getItem('running_mode') === 'blockAll_running') {
-//     // event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN);
-//     //message.info("暂不支持流程图的单步调试")
-//     setPause();
-//   } else if (localStorage.getItem('running_mode') === 'cardsAll_running') {
-//     setPause();
-//     //event.emit(PYTHOH_DEBUG_CARDS_ALL_RUN);
-//   }
-
-//   // 断点检查
-//   if (nowIndexCards === 0) {
-//     if (needRunBlock[nowIndexCards].breakPoint === true) {
-//       message.info('流程块第1条遇到断点');
-//       // localStorage.setItem(
-//       //   'running_mode',
-//       //   'cardsAll_pause'
-//       // );
-//       setPause();
-//       needRunBlock[nowIndexCards].breakPoint = false;
-//       return event.emit(PYTHOH_DEBUG_BLOCK_ALL_RUN_PAUSE);
-//       //needRunBlock[cardsIndex].breakPoint === false;
-//     }
-//   } else if (nowIndexCards + 1 < needRunBlock.length) {
-//     // 他有下一条存在
-//     if (needRunBlock[nowIndexCards + 1].breakPoint === true) {
-//       console.log(needRunBlock);
-//       message.info('发现了1个断点');
-//       setPause();
-//     }
-//   }
-// };
 
 /**
  *

@@ -20,6 +20,7 @@ import {
   clearPause,
   handleDebugBlockAllRun,
   handleDebugCardsAllRun,
+  cardsRun_0_2_ver,
 } from '../../designerGraphEdit/RPAcore';
 import {
   runDebugServer,
@@ -60,6 +61,7 @@ import {
   DEBUG_ONE_STEP_FINISHED_STARTED,
 } from '../../../constants/actions/debugInfos';
 import { changeDebugInfos } from '../../reduxActions';
+import { fetchCard } from '../../../utils/DebugUtils/fetchCard';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -293,7 +295,6 @@ export default memo(({ history, tag }) => {
     state => state.grapheditor.currentCheckedTreeNode
   );
 
-
   // 切换树时，直接挂掉debug
   useEffect(() => {
     killTask();
@@ -372,7 +373,8 @@ export default memo(({ history, tag }) => {
     else if (currentPagePosition_ref.current === 'block') {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_RUNNING); // 'cardsAll_running'
-      handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+      //handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+      cardsRun_0_2_ver(checkedGraphBlockId_ref.current, cardsRun_0_2_ver);
     }
   };
 
@@ -388,7 +390,8 @@ export default memo(({ history, tag }) => {
     } else if (running === 'cardsAll_pause') {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_RUNNING); // 'cardsAll_running'
-      handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+      //handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+      cardsRun_0_2_ver(checkedGraphBlockId_ref.current, cardsRun_0_2_ver);
     }
     setPause();
   };
@@ -400,7 +403,8 @@ export default memo(({ history, tag }) => {
 
   // 03-2 继续下一步
   const debug_continueRun_Cards = () => {
-    handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+    //handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+    cardsRun_0_2_ver(checkedGraphBlockId_ref.current, cardsRun_0_2_ver);
   };
 
   // 03-3 暂停
@@ -453,7 +457,9 @@ export default memo(({ history, tag }) => {
       changeDebugInfos(DEBUG_ONE_STEP_RUN_STARTED, {});
     }
 
-    clickOneStepRun(cards, id);
+    const card = fetchCard(cards, id);
+    console.log(`卡片`,card)
+    clickOneStepRun(card, []);
   };
 
   // 05 单步结束

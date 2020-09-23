@@ -432,7 +432,7 @@ export default memo(
               if (item.$$typeof === 0 || item.$$typeof === 1) {
                 return {
                   title: item.userDesc ? item.userDesc : item.cmdName,
-                  key: index,
+                  key: `${index}`,
                   item: item,
                   isLeaf: true,
                 };
@@ -441,26 +441,104 @@ export default memo(
                 item.$$typeof === 4 ||
                 item.$$typeof === 7
               ) {
-                const children = types.reduce((pre, type, typeIndex) => {
-                  if (item[type]) {
-                    const childs = item[type].map((item2, index2) => {
-                      return {
-                        ...callback(item2, `${index}-${index2}`, callback),
-                        item: item2,
-                      };
-                    });
+                let children;
+                console.log("展示",item)
+                if (item.$$typeof === 2) {
+                  children = [
+                    {
+                      title: '循环体',
+                      key: `${index}0`,
+                      children: item.children.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                        };
+                      }),
+                    },
+                  ];
+                }else if (item.$$typeof === 4) {
+                  children = [
+                    {
+                      title: '条件满足执行',
+                      key: `${index}0`,
+                      children: item.ifChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                        };
+                      }),
+                    },
+                    {
+                      title: '否则',
+                      key: `${index}1`,
+                      children: item.elseChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}1${index2}`, callback),
+                          item: child,
+                        };
+                      }),
+                    },
+                  ];
 
-                    console.log(`childs`, childs);
-                    return [...pre, ...childs];
-                  } else {
-                    return pre;
-                  }
-                }, []);
+                }else if (item.$$typeof === 7) {
+                  children = [
+                    {
+                      title: '异常捕获',
+                      key: `${index}0`,
+                      children: item.tryChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                        };
+                      }),
+                    },
+                    {
+                      title: '异常处理',
+                      key: `${index}1`,
+                      children: item.catchChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}1${index2}`, callback),
+                          item: child,
+                        };
+                      }),
+                    },{
+                      title: '异常处理',
+                      key: `${index}1`,
+                      children: item.finallyChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}1${index2}`, callback),
+                          item: child,
+                        };
+                      }),
+                    },
+                  ];
+
+                }
+
+
+                // const children = types.reduce((pre, type, typeIndex) => {
+                //   if (item[type]) {
+                //     const childs = item[type].map((item2, index2) => {
+                //       console.log(type,item2, index2)
+
+                //       return {
+                //         ...callback(item2, `${index}-${index2}`, callback),
+                //         item: item2,
+                //       };
+                //     });
+
+                //     console.log(`childs`, childs);
+                //     return [...pre, ...childs];
+                //   } else {
+                //     return pre;
+                //   }
+                // }, []);
                 console.log(`children`, children);
 
                 return {
                   title: item.userDesc ? item.userDesc : item.cmdName,
                   key: index,
+                  item: item,
                   children,
                 };
               } else {
@@ -470,7 +548,6 @@ export default memo(
             const treeData = find.cards.map((item, index) =>
               toTreeData(item, index, toTreeData)
             );
-
 
             console.log(`TMD右侧树`, treeData);
             set_debug_left_data(treeData);
@@ -522,7 +599,6 @@ export default memo(
       });
 
       const signVariableChange = (value, var_name, var_value) => {
-
         console.log(value, var_name, var_value);
         if (!value) {
           console.log(tempVariables.current);
