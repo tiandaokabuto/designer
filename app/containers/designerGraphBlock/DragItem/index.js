@@ -14,6 +14,7 @@ import ProcessTree, {
   LiuchengIcon,
   MuluIcon,
 } from '../../designerGraphEdit/GraphItem/components/ProcessTree';
+import Switcher from '../../designerGraphEdit/GraphItem/components/Switcher';
 import event from '@/containers/eventCenter';
 import {
   BasicStatementTag,
@@ -188,7 +189,14 @@ export default useInjectContext(
       traverseTree(treeData, node => {
         if (node.item) {
           node.title = (
-            <>
+            <div
+              className="treenode-title"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <LiuchengIcon></LiuchengIcon>
               <DragCard
                 item={node.item}
@@ -197,10 +205,51 @@ export default useInjectContext(
                 addToRecentList={addToRecentList}
                 updateCheckedBlockId={updateCheckedBlockId}
               />
-            </>
+            </div>
+          );
+        } else {
+          node.title = (
+            <div
+              data-nodekey={node.key}
+              className="treenode-title"
+              // style={{
+              //   display: 'flex',
+              //   justifyContent: 'space-between',
+              // }}
+            >
+              <MuluIcon
+                style={{
+                  marginRight: 8,
+                  marginLeft: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              />
+              <div
+                style={{
+                  display: 'block',
+                  flexBasis: 220,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {node.title}
+              </div>
+              <span
+                style={{
+                  visibility: 'hidden',
+                  display: 'inline-block',
+                  verticalAlign: 'sub',
+                }}
+              >
+                占位
+              </span>
+            </div>
           );
         }
       });
+      console.log(treeData);
       return treeData;
     };
 
@@ -292,6 +341,12 @@ export default useInjectContext(
       },
     ];
 
+    const getArrDifference = (arr1, arr2) => {
+      return arr1.concat(arr2).filter(function (v, i, arr) {
+        return arr.indexOf(v) === arr.lastIndexOf(v);
+      });
+    };
+
     return (
       <div
         //style={{zIndex:9999}}
@@ -355,8 +410,35 @@ export default useInjectContext(
               <Tree
                 className="atomicCList-tree"
                 expandedKeys={expandedKeys}
-                onExpand={expandedKeys => {
-                  setExpandedKeys(expandedKeys);
+                onExpand={(treeExpandedKeys, { expanded, node }) => {
+                  console.log(treeExpandedKeys);
+                  console.log(node);
+                  // 收起来的操作
+                  if (!expanded) {
+                    const props = node.props;
+
+                    if (props.children.length !== 0) {
+                      const newArr = [];
+                      // children中的项不能在expandedKeys中出现
+                      treeExpandedKeys.forEach(item => {
+                        let tag = false;
+                        props.children.forEach(child => {
+                          // 已展开的是否存在于收起的那一项里
+                          if (child.key === item) {
+                            tag = true;
+                          }
+                        });
+                        if (tag) {
+                          newArr.push(item);
+                        }
+                      });
+                      setExpandedKeys(
+                        getArrDifference(treeExpandedKeys, newArr)
+                      );
+                    }
+                  } else {
+                    setExpandedKeys(treeExpandedKeys);
+                  }
                 }}
                 onRightClick={({ event, node }) => {
                   setPosition({
@@ -366,18 +448,19 @@ export default useInjectContext(
                   });
                 }}
                 // showIcon={true}
-                switcherIcon={<MuluIcon></MuluIcon>}
+                switcherIcon={<Switcher expandedKeys={expandedKeys} />}
                 onSelect={(_, e) => {
-                  const props = e.node.props;
-                  if (props.children) {
-                    setExpandedKeys(keys => {
-                      if (keys.includes(props.eventKey)) {
-                        return keys.filter(item => item !== props.eventKey);
-                      } else {
-                        return keys.concat(props.eventKey);
-                      }
-                    });
-                  }
+                  // console.log(e);
+                  // const props = e.node.props;
+                  // if (props.children) {
+                  // setExpandedKeys(keys => {
+                  //   if (keys.includes(props.eventKey)) {
+                  //     return keys.filter(item => item !== props.eventKey);
+                  //   } else {
+                  //     return keys.concat(props.eventKey);
+                  //   }
+                  // });
+                  // }
                 }}
                 treeData={treeData}
               />

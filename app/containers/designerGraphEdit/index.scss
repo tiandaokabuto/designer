@@ -97,6 +97,12 @@
     }
     .ant-tree li {
       position: relative;
+      .ant-tree-switcher {
+        position: static;
+        .toggle_switcher {
+          top: 6px;
+        }
+      }
     }
     .sd-tree {
       overflow: auto;

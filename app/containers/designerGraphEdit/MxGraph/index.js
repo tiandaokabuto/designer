@@ -137,6 +137,8 @@ const MxgraphContainer = useInjectContext(
 
     const [conRight, setConRight] = useState(1);
 
+    const [zoomLevel, setZoomLevel] = useState(9);
+
     // const [zoomLevel, setZoomLevel] = useState(
     //   localStorage.getItem('zoom') ? localStorage.getItem('zoom') : 9
     // );
@@ -331,27 +333,25 @@ const MxgraphContainer = useInjectContext(
     useEffect(() => {
       if (!graph) return;
 
+      // 清空
       graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
 
       loadGraph(graphDataRef.current);
 
-      console.log(graph);
+      // try {
+      //   const cell = find_id(checkedGraphBlockId, graph);
 
-      // graph.getView().setTranslate(-519, 32);
+      //   if (cell) {
+      //
+      //   }
+      // } catch (e) {
+      //   console.log(e);
+      // }
 
       const zoom =
         localStorage.getItem('zoom') !== null
           ? parseInt(localStorage.getItem('zoom'))
           : 9;
-      // const x = localStorage.getItem('graphX');
-      // const y = localStorage.getItem('graphY');
-
-      // if (x && y) {
-      //   console.log('a');
-      //   setTimeout(() => {
-      //     graph.getView().setTranslate(parseInt(x), parseInt(y));
-      //   }, 0);
-      // }
       if (zoom > 9) {
         zoomIn(zoom - 9);
       } else if (zoom < 9) {
@@ -368,6 +368,19 @@ const MxgraphContainer = useInjectContext(
         redoSteps: [], // 可以用来
         counter: 0,
       });
+
+      const cell = find_id(checkedGraphBlockId, graph);
+
+      // 如果cell是个空对象会引发cell.getParent报错的问题
+      if (cell.hasOwnProperty('parent')) {
+        graph.setSelectionCell(cell);
+      }
+      // if(cell.has)
+      // try {
+      //   graph.setSelectionCell(cell);
+      // } catch (e) {
+      //   console.log(e);
+      // }
     }, [currentCheckedTreeNodeRef.current, resetTag]);
 
     // 有坑
@@ -1799,6 +1812,10 @@ const MxgraphContainer = useInjectContext(
       const writeCodec = new MxCodec(xmlDoc);
       writeCodec.decode(xmlDoc.documentElement, graph.getModel());
 
+      const zoom = graphData.zoom ? parseInt(graphData.zoom) : 9;
+      setZoomLevel(zoom);
+      localStorage.setItem('zoom', zoom);
+
       if (graphData.translate) {
         if (graphData.translate.x && graphData.translate.y) {
           console.log(
@@ -2536,15 +2553,13 @@ const MxgraphContainer = useInjectContext(
             tag="graph"
             zoomIn={handleZoomIn}
             zoomOut={handleZoomOut}
+            zoomLevel={zoomLevel}
+            setZoomLevel={setZoomLevel}
             // zoomLevel={zoomLevel}
           />
         </div>
 
-        <GraphParamPanel
-          onClick={() => {
-            console.log('asdasdasd');
-          }}
-        />
+        <GraphParamPanel />
       </div>
     );
   }

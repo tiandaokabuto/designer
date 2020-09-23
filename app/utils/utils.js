@@ -318,16 +318,30 @@ export const persistentStorage = (
   modifiedNodesArr,
   processTree,
   name,
-  node
+  node,
+  path
 ) => {
   const tree = cloneDeep(processTree);
+
   if (modifiedNodesArr) {
     traverseTree(tree, treeItem => {
       if (treeItem.type === 'process') {
         const find = modifiedNodesArr.find(item => item === treeItem.key);
         if (find) {
+          console.log(path);
+          checkAndMakeDir(
+            PATH_CONFIG('project', `${name}/${treeItem.title}_副本`)
+          );
           fs.writeFileSync(
-            PATH_CONFIG('project', `${name}/${treeItem.title}/manifest.json`),
+            path
+              ? PATH_CONFIG(
+                  'project',
+                  `${name}/${treeItem.title}_副本/manifest.json`
+                )
+              : PATH_CONFIG(
+                  'project',
+                  `${name}/${treeItem.title}/manifest.json`
+                ),
             encrypt.argEncryptByDES(JSON.stringify(treeItem.data))
           );
         }
@@ -955,7 +969,13 @@ export const getChooseFilePath = (filePath, importType) => {
     }
     changeProcessTree(newProcessTree);
     changeCheckedTreeNode(uniqueid);
-    persistentStorage([uniqueid], newProcessTree, currentProject, uniqueid);
+    persistentStorage(
+      [uniqueid],
+      newProcessTree,
+      currentProject,
+      uniqueid,
+      undefined
+    );
     try {
       const numImport = Number(importVersion.split('.').join(''));
       const numLocal = Number(designerVersion.split('.').join(''));

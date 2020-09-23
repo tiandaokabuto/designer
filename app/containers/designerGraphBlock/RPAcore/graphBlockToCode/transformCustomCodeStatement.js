@@ -7,14 +7,15 @@ import memoize from './reselect';
  */
 const transformCustomCodeStatement = (padding, dataStructure, result) => {
   if (dataStructure.codeValue) {
-    const ignore = dataStructure.ignore ? "'''" : '';
+    const ignore = dataStructure.ignore ? '# ' : '';
+    console.log(dataStructure.codeValue);
     const buf = dataStructure.codeValue
       .split('\n')
-      .map(item => padding + item)
+      .map(item => padding + ignore + item)
       .join('\n');
-    result.output += `${padding}${ignore}\n`;
+    // result.output += `${padding}${ignore}\n`;
     result.output += buf;
-    result.output += `\n${padding}${ignore}`;
+    // result.output += `\n${padding}${ignore}`;
   }
   return result.output;
 };

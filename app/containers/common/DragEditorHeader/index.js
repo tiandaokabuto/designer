@@ -40,6 +40,7 @@ import {
   getChooseFilePath,
   transformPythonWithPoint,
   deleteFolderRecursive,
+  persistentStorage as persistentStorageFromUtils,
 } from '_utils/utils';
 import {
   updateCurrentPagePosition,
@@ -337,8 +338,17 @@ export default memo(
     useEffect(() => {
       setTaskDataNames([1, 2, 3]);
       event.addListener(START_POINT, handleRunPoint);
+
+      const timer = setInterval(() => {
+        if (projectName && currentCheckedTreeNodeRef.current) {
+          console.log('自动保存');
+          persistentStorage('copy');
+        }
+        // persistentStorage('copy');
+      }, 60 * 1000);
       return () => {
         event.removeListener(START_POINT, handleRunPoint);
+        clearInterval(timer);
       };
     }, []);
 

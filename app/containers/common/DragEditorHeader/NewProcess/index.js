@@ -68,7 +68,13 @@ export default ({ resetVisible, tag }) => {
       );
       setVisible(false);
       resetVisible(undefined);
-      persistentStorage([uniqueid], newProcessTree, currentProject, uniqueid);
+      persistentStorage(
+        [uniqueid],
+        newProcessTree,
+        currentProject,
+        uniqueid,
+        undefined
+      );
     } else if (tag !== 'newprocess') {
       const [newModuleTree, uniqueid] = newProcessOrDir(
         '',

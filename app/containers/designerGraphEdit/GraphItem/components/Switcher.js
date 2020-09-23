@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Icon } from 'antd';
 
-export default props => {
+export default ({ expandedKeys }) => {
   const [text, setText] = useState('open');
   const iconRef = useRef(null);
   useEffect(() => {
-    const offsetParent = iconRef.current.offsetParent; // ant-tree-switcher_open
+    const offsetParent = iconRef.current; // ant-tree-switcher_open
     if (
       offsetParent &&
       offsetParent.classList.contains('ant-tree-switcher_open')
@@ -14,15 +14,15 @@ export default props => {
         setText('close');
       }
     }
-  }, [iconRef.current]);
+  }, [expandedKeys]);
   return (
     <div
       className="toggle_switcher"
       ref={iconRef}
       style={{
         position: 'absolute',
-        left: '200px',
-        top: '4px',
+        right: 20,
+        // top: 6,
       }}
       onClick={() => {
         setText(t => (t === 'open' ? 'close' : 'open'));

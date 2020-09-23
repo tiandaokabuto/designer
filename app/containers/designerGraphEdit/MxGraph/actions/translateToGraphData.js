@@ -92,6 +92,8 @@ export function translateToGraphData(sender, graph) {
     y: view.translate.y,
   };
 
+  output.zoom = localStorage.getItem('zoom');
+
   // console.log(`[liuqi] action/translateToGraphData.js 转换后的`, output);
 
   return output;

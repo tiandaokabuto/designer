@@ -45,7 +45,7 @@ const transformBlockToCodeImpl = (
   const padding = paddingStart(depth);
   let ignore = '';
   dataStructure.forEach((statement, index) => {
-    //console.log(`statement`,statement)
+    console.log(`statement`, statement);
     switch (statement.$$typeof) {
       case 1: // 基础语句
         /* 处理基础语句下的子语句 */
@@ -203,22 +203,26 @@ const transformBlockToCodeImpl = (
         ) {
           transformCustomCodeStatement(padding, statement, result, moduleMap);
         } else {
-          if (!statement.transformBasicStatement) {
-            statement.transformBasicStatement = memoize(
-              transformBasicStatement
-            );
-          }
-          const buffer = statement.transformBasicStatement(
-            padding,
-            statement,
-            { output: '' },
-            moduleMap,
-            options
-          );
-          if (Array.isArray(buffer)) {
-            result.output += buffer[0];
+          if (statement.cmdName === '注释') {
+            result.output += `${padding}# ${statement.userDesc}`;
           } else {
-            result.output += buffer;
+            if (!statement.transformBasicStatement) {
+              statement.transformBasicStatement = memoize(
+                transformBasicStatement
+              );
+            }
+            const buffer = statement.transformBasicStatement(
+              padding,
+              statement,
+              { output: '' },
+              moduleMap,
+              options
+            );
+            if (Array.isArray(buffer)) {
+              result.output += buffer[0];
+            } else {
+              result.output += buffer;
+            }
           }
         }
         result.output += '\n';

@@ -38,7 +38,7 @@ export default function SaveConfirmModel({
           persistentStorage(); // 保存currentCheckedTreeNode的内容
         } else if (type === 'saveAll') {
           setAllModifiedState(processTree); // 把所有已修改的状态改为false
-          persistentStorage(modifiedNodes); // 保存当前正在修改的
+          persistentStorage(undefined, modifiedNodes); // 保存当前正在修改的
         }
         if (onOk) {
           onOk();
