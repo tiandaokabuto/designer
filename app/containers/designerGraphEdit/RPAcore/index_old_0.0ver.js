@@ -406,7 +406,7 @@ export const transformEditorProcess = (
                     ...callback(item.ifChildren, clearIgnoreCard),
                     ...pos02,
                     ...callback(item.elseChildren, clearIgnoreCard),
-                    ...pos03
+                    ...pos03,
                   ];
                 case 7:
                   console.log(`try`, item);

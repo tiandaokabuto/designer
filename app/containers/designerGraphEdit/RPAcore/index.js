@@ -628,6 +628,7 @@ export const transformEditorProcess = (
       // 改造card结构为有循环体头的结构
       // 1 移除掉ignore注释的部分
       const clearIgnoreCard = (cards, callback) => {
+        if (!cards) return [];
         const types = [
           'children',
           'ifChildren',

@@ -44,6 +44,11 @@ import {
 
 import { sendChangeVariable } from '../../../utils/DebugUtils/runDebugServer';
 
+// 循环
+import transformLoopStatement from '../../designerGraphBlock/RPAcore/graphBlockToCode/transformLoopStatement';
+// 判断
+import transformConditionalStatement from '../../designerGraphBlock/RPAcore/graphBlockToCode/transformConditionalStatement';
+
 const fs = require('fs');
 const { TabPane } = Tabs;
 
@@ -426,6 +431,7 @@ export default memo(
             const find = debug_dataStore.find(
               item => item.currentId === checkedGraphBlockId
             );
+            console.log(`debug_dataStore`, debug_dataStore);
             // 函数 转换到tree组件用的结构
             const toTreeData = (item, index, callback) => {
               // 假如是原子能力，直接结束
@@ -435,6 +441,11 @@ export default memo(
                   key: `${index}`,
                   item: item,
                   isLeaf: true,
+                  disabled: debug_dataStore.stepLog
+                    ? debug_dataStore.stepLog[`${index}`]
+                      ? false
+                      : true
+                    : true,
                 };
               } else if (
                 item.$$typeof === 2 ||
@@ -442,79 +453,154 @@ export default memo(
                 item.$$typeof === 7
               ) {
                 let children;
-                console.log("展示",item)
+                console.log('展示', item);
                 if (item.$$typeof === 2) {
                   children = [
                     {
-                      title: '循环体',
+                      title: transformLoopStatement(
+                        '',
+                        item,
+                        { output: '' },
+                        {}
+                      ),
                       key: `${index}0`,
+                      item: item,
                       children: item.children.map((child, index2) => {
                         return {
                           ...callback(child, `${index}0${index2}`, callback),
                           item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
                         };
                       }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
                     },
                   ];
-                }else if (item.$$typeof === 4) {
+                } else if (item.$$typeof === 4) {
                   children = [
                     {
-                      title: '条件满足执行',
+                      title: transformConditionalStatement(
+                        '',
+                        item,
+                        { output: '' },
+                        {}
+                      ),
                       key: `${index}0`,
+                      item: item,
+                      showIcon:false,
                       children: item.ifChildren.map((child, index2) => {
                         return {
                           ...callback(child, `${index}0${index2}`, callback),
                           item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
                         };
                       }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
                     },
                     {
                       title: '否则',
                       key: `${index}1`,
+                      item: item,
                       children: item.elseChildren.map((child, index2) => {
                         return {
                           ...callback(child, `${index}1${index2}`, callback),
                           item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                              ? false
+                              : true
+                            : true,
                         };
                       }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}1`]
+                          ? false
+                          : true
+                        : true,
                     },
                   ];
-
-                }else if (item.$$typeof === 7) {
+                } else if (item.$$typeof === 7) {
                   children = [
                     {
                       title: '异常捕获',
                       key: `${index}0`,
+                      item: item,
                       children: item.tryChildren.map((child, index2) => {
                         return {
                           ...callback(child, `${index}0${index2}`, callback),
                           item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
                         };
                       }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
                     },
                     {
                       title: '异常处理',
                       key: `${index}1`,
+                      item: item,
                       children: item.catchChildren.map((child, index2) => {
                         return {
                           ...callback(child, `${index}1${index2}`, callback),
                           item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                              ? false
+                              : true
+                            : true,
                         };
                       }),
-                    },{
-                      title: '异常处理',
-                      key: `${index}1`,
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}1`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                    {
+                      title: '最后',
+                      key: `${index}2`.toString(),
+                      item: item,
                       children: item.finallyChildren.map((child, index2) => {
                         return {
                           ...callback(child, `${index}1${index2}`, callback),
                           item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                              ? false
+                              : true
+                            : true,
                         };
                       }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}2`]
+                          ? false
+                          : true
+                        : true,
                     },
                   ];
-
                 }
-
 
                 // const children = types.reduce((pre, type, typeIndex) => {
                 //   if (item[type]) {
@@ -537,9 +623,15 @@ export default memo(
 
                 return {
                   title: item.userDesc ? item.userDesc : item.cmdName,
-                  key: index,
+                  key: `${index}`,
                   item: item,
                   children,
+
+                  disabled: debug_dataStore.stepLog
+                    ? debug_dataStore.stepLog[`${index}`]
+                      ? false
+                      : true
+                    : true,
                 };
               } else {
               }
@@ -549,13 +641,42 @@ export default memo(
               toTreeData(item, index, toTreeData)
             );
 
-            console.log(`TMD右侧树`, treeData);
+            console.log(`TMD右侧树`, treeData, debug_dataStore.stepLog);
+            setExpandedKeys(getExpandedKeys(treeData, getExpandedKeys));
+            console.log(getExpandedKeys(treeData, getExpandedKeys));
             set_debug_left_data(treeData);
           } catch (e) {
             console.log(e, '开发模式下避免问题');
           }
         }
       }, [debug_dataStore, updater]);
+
+      const [expandedKeys, setExpandedKeys] = useState([]);
+
+      const getExpandedKeys = (data, callback) => {
+        return data.reduce((pre, item) => {
+          // console.log(`item`, item);
+          if (item.children) {
+            // console.log(`data.children`,item.children)
+            // console.log(`callback`,callback(item.children, callback))
+            // item.children.map(child => {
+            //   //console.log(`child`, child,child.key);
+            //   callback()
+            // })
+            return [
+              ...pre,
+              item.key,
+              ...callback(item.children, callback),
+              // ...item.children.map(child => {
+              //   console.log(`child`, child);
+              //   return callback(child, callback);
+              // }),
+            ];
+          } else {
+            return [...pre, item.key];
+          }
+        }, []);
+      };
 
       const handleSendVariable = (var_name, key) => {
         if (!tempVariables.current.var_name) {
@@ -712,108 +833,113 @@ export default memo(
             debug_left_data,
             debug_dataStore.stepLog
           );
-          const index = parseInt(selectedTreeNode[0]);
+          const index = selectedTreeNode[0]; //parseInt(selectedTreeNode[0]);
 
           if (!debug_dataStore.stepLog) return;
           if (!debug_dataStore.stepLog[index]) return;
           if (!debug_dataStore.stepLog[index].var_datas) return;
-          return Object.keys(debug_dataStore.stepLog[index].var_datas).map(
-            key => {
-              return (
-                <TreeNode title={`作用域 ${key}`} defaultExpandAll={true}>
-                  {debug_dataStore.stepLog[index].var_datas[key].map(
-                    variable => {
-                      return (
-                        <TreeNode
-                          title={`${variable.var_name} = ${variable.var_value}`}
-                          key={uniqueId()}
-                          defaultExpandAll={true}
-                        >
-                          <TreeNode
-                            title={
-                              <span>
-                                <span className="outputPanel-normalTag">
-                                  变量名
-                                </span>
-                                {`${variable.var_name}`}
-                              </span>
-                            }
-                            key={uniqueId()}
-                            isLeaf
-                          />
-                          <TreeNode
-                            title={
-                              <span>
-                                <span className="outputPanel-spTag">
-                                  变量值
-                                </span>
-                                <Input
-                                  type="text"
-                                  defaultValue={`${variable.var_value}`}
-                                  className="outputPanel-spTag-input"
-                                  onFocus={value => {
-                                    signVariableChange(
-                                      null,
-                                      variable.var_name,
-                                      variable.var_value
-                                    );
-                                  }}
-                                  onChange={value => {
-                                    signVariableChange(
-                                      value,
-                                      variable.var_name,
-                                      variable.var_value
-                                    );
-                                  }}
-                                ></Input>
-                                <span
-                                  className="outputPanel-spTag-pushBtn"
-                                  onClick={() => {
-                                    //alert('发送');
-                                    handleSendVariable(variable.var_name, key);
-                                  }}
-                                >
-                                  <Icon type="export" />
-                                  修改变量
-                                </span>
-                              </span>
-                            }
-                            //title={`变量值 ${variable.var_value}`}
-                            key={uniqueId()}
-                            isLeaf
-                          />
-                          <TreeNode
-                            title={
-                              <span>
-                                <span className="outputPanel-normalTag">
-                                  变量类型
-                                </span>
-                                {`${variable.var_type}`}
-                              </span>
-                            }
-                            key={uniqueId()}
-                            isLeaf
-                          />
-                          <TreeNode
-                            title={
-                              <span>
-                                <span className="outputPanel-normalTag">
-                                  变量长度
-                                </span>
-                                {`${variable.var_length}`}
-                              </span>
-                            }
-                            key={uniqueId()}
-                            isLeaf
-                          />
-                        </TreeNode>
-                      );
-                    }
-                  )}
-                </TreeNode>
-              );
-            }
+
+          //return
+          console.log(
+            `debug_dataStore.stepLog[index].var_datas`,
+            debug_dataStore.stepLog[index].var_datas
           );
+
+          return Object.keys(
+            Array.isArray(debug_dataStore.stepLog[index].var_datas)
+              ? {} //{ "result": debug_dataStore.stepLog[index].var_datas }
+              : debug_dataStore.stepLog[index].var_datas
+          ).map(key => {
+            return (
+              <TreeNode title={`作用域 ${key}`} defaultExpandAll={true}>
+                {debug_dataStore.stepLog[index].var_datas[key].map(variable => {
+                  return (
+                    <TreeNode
+                      title={`${variable.var_name} = ${variable.var_value}`}
+                      key={uniqueId()}
+                      defaultExpandAll={true}
+                    >
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-normalTag">
+                              变量名
+                            </span>
+                            {`${variable.var_name}`}
+                          </span>
+                        }
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-spTag">变量值</span>
+                            <Input
+                              type="text"
+                              defaultValue={`${variable.var_value}`}
+                              className="outputPanel-spTag-input"
+                              onFocus={value => {
+                                signVariableChange(
+                                  null,
+                                  variable.var_name,
+                                  variable.var_value
+                                );
+                              }}
+                              onChange={value => {
+                                signVariableChange(
+                                  value,
+                                  variable.var_name,
+                                  variable.var_value
+                                );
+                              }}
+                            ></Input>
+                            <span
+                              className="outputPanel-spTag-pushBtn"
+                              onClick={() => {
+                                //alert('发送');
+                                handleSendVariable(variable.var_name, key);
+                              }}
+                            >
+                              <Icon type="export" />
+                              修改变量
+                            </span>
+                          </span>
+                        }
+                        //title={`变量值 ${variable.var_value}`}
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-normalTag">
+                              变量类型
+                            </span>
+                            {`${variable.var_type}`}
+                          </span>
+                        }
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-normalTag">
+                              变量长度
+                            </span>
+                            {`${variable.var_length}`}
+                          </span>
+                        }
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                    </TreeNode>
+                  );
+                })}
+              </TreeNode>
+            );
+          });
         }
       };
 
@@ -969,6 +1095,8 @@ export default memo(
                       setSelectedTreeNode(selectedKeys);
                     }}
                     // onExpand={this.onExpand}
+                    //defaultExpandAll={true}
+                    expandedKeys={expandedKeys}
                     treeData={debug_left_data}
                   ></DirectoryTree>
                 </div>

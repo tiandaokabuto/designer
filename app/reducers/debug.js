@@ -172,7 +172,9 @@ export default (state = defaultState, action) => {
         dataStore: action.payload,
       };
     case DEBUG_SOURCECODE_INSERT:
-      const { nowIndex, nowIndexCards, nowLevel } = action.payload.index;
+      //const { nowIndex, nowIndexCards, nowLevel } = action.payload.index;
+      const pk = action.payload.pk.reduce((pre, index) => (pre += index.toString()), '');
+      const { nowIndex, nowLevel } = action.payload.index;
       const log = action.payload.log;
       if (nowLevel === 'block') {
         let temp = state.dataStore;
@@ -193,20 +195,24 @@ export default (state = defaultState, action) => {
         if (!temp.stepLog) {
           temp.stepLog = {};
         }
+        temp.stepLog[pk] = log
+
 
         const stepLog = state.stepLog;
+        stepLog[pk] = log;
 
-        if (nowIndexCards - 1 === -1) {
-          // console.clear();
-          console.log(Object.keys(temp.stepLog).length)
-          temp.stepLog[Object.keys(temp.stepLog).length - 1] = log;
-        }else{
-          temp.stepLog[nowIndexCards - 1] = log;
-        }
+        // if (nowIndexCards - 1 === -1) {
+        //   // console.clear();
+        //   console.log(Object.keys(temp.stepLog).length)
+        //   temp.stepLog[Object.keys(temp.stepLog).length - 1] = log;
+        // }else{
+        //   temp.stepLog[nowIndexCards - 1] = log;
+        // }
 
 
 
-        stepLog[nowIndexCards - 1] = log;
+
+
 
         return {
           ...state,
