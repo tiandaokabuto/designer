@@ -137,6 +137,8 @@ const MxgraphContainer = useInjectContext(
 
     const [conRight, setConRight] = useState(1);
 
+    const [zoomLevel, setZoomLevel] = useState(9);
+
     // const [zoomLevel, setZoomLevel] = useState(
     //   localStorage.getItem('zoom') ? localStorage.getItem('zoom') : 9
     // );
@@ -1839,6 +1841,10 @@ const MxgraphContainer = useInjectContext(
       const writeCodec = new MxCodec(xmlDoc);
       writeCodec.decode(xmlDoc.documentElement, graph.getModel());
 
+      const zoom = graphData.zoom ? parseInt(graphData.zoom) : 9;
+      setZoomLevel(zoom);
+      localStorage.setItem('zoom', zoom);
+
       if (graphData.translate) {
         if (graphData.translate.x && graphData.translate.y) {
           console.log(
@@ -2571,6 +2577,8 @@ const MxgraphContainer = useInjectContext(
             tag="graph"
             zoomIn={handleZoomIn}
             zoomOut={handleZoomOut}
+            zoomLevel={zoomLevel}
+            setZoomLevel={setZoomLevel}
             // zoomLevel={zoomLevel}
           />
         </div>
