@@ -14,10 +14,10 @@ for (let i = 0; i < zoomCount; i += 1) {
   zoomOptions.push([`${zoomStep * (i + 1)}%`]);
 }
 
-const Zoom = ({ zoomIn, zoomOut }) => {
-  const [zoomLevel, setZoomLevel] = useState(
-    localStorage.getItem('zoom') ? localStorage.getItem('zoom') : 9
-  );
+const Zoom = ({ zoomIn, zoomOut, zoomLevel, setZoomLevel }) => {
+  // const [zoomLevel, setZoomLevel] = useState(
+  //   localStorage.getItem('zoom') ? localStorage.getItem('zoom') : 9
+  // );
   // const graphData = useSelector(state => state.grapheditor.graphData) || {
   //   nodes: [],
   // };

@@ -210,6 +210,7 @@ export default useInjectContext(
         } else {
           node.title = (
             <div
+              data-nodekey={node.key}
               className="treenode-title"
               // style={{
               //   display: 'flex',
@@ -340,6 +341,12 @@ export default useInjectContext(
       },
     ];
 
+    const getArrDifference = (arr1, arr2) => {
+      return arr1.concat(arr2).filter(function (v, i, arr) {
+        return arr.indexOf(v) === arr.lastIndexOf(v);
+      });
+    };
+
     return (
       <div
         //style={{zIndex:9999}}
@@ -403,8 +410,35 @@ export default useInjectContext(
               <Tree
                 className="atomicCList-tree"
                 expandedKeys={expandedKeys}
-                onExpand={expandedKeys => {
-                  setExpandedKeys(expandedKeys);
+                onExpand={(treeExpandedKeys, { expanded, node }) => {
+                  console.log(treeExpandedKeys);
+                  console.log(node);
+                  // 收起来的操作
+                  if (!expanded) {
+                    const props = node.props;
+
+                    if (props.children.length !== 0) {
+                      const newArr = [];
+                      // children中的项不能在expandedKeys中出现
+                      treeExpandedKeys.forEach(item => {
+                        let tag = false;
+                        props.children.forEach(child => {
+                          // 已展开的是否存在于收起的那一项里
+                          if (child.key === item) {
+                            tag = true;
+                          }
+                        });
+                        if (tag) {
+                          newArr.push(item);
+                        }
+                      });
+                      setExpandedKeys(
+                        getArrDifference(treeExpandedKeys, newArr)
+                      );
+                    }
+                  } else {
+                    setExpandedKeys(treeExpandedKeys);
+                  }
                 }}
                 onRightClick={({ event, node }) => {
                   setPosition({
@@ -414,18 +448,19 @@ export default useInjectContext(
                   });
                 }}
                 // showIcon={true}
-                switcherIcon={<Switcher />}
+                switcherIcon={<Switcher expandedKeys={expandedKeys} />}
                 onSelect={(_, e) => {
-                  const props = e.node.props;
-                  if (props.children) {
-                    setExpandedKeys(keys => {
-                      if (keys.includes(props.eventKey)) {
-                        return keys.filter(item => item !== props.eventKey);
-                      } else {
-                        return keys.concat(props.eventKey);
-                      }
-                    });
-                  }
+                  // console.log(e);
+                  // const props = e.node.props;
+                  // if (props.children) {
+                  // setExpandedKeys(keys => {
+                  //   if (keys.includes(props.eventKey)) {
+                  //     return keys.filter(item => item !== props.eventKey);
+                  //   } else {
+                  //     return keys.concat(props.eventKey);
+                  //   }
+                  // });
+                  // }
                 }}
                 treeData={treeData}
               />

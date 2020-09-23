@@ -4,11 +4,7 @@ import useForceUpdate from 'react-hook-easier/lib/useForceUpdate';
 export default (card, isTail) => {
   const [_, forceUpdate] = useForceUpdate();
 
-  const borderColor = card.isCompatable
-    ? 'red'
-    : isTail
-    ? '#eeeeee'
-    : '#32a67f';
+  const borderColor = card.isCompatable ? 'red' : '#F2F2F2';
   return [
     id => {
       if (id === card.id) {
