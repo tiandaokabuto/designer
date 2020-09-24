@@ -18,6 +18,11 @@ import './MxGraphHeader.scss';
 import { Action_findNode } from '../actions/findNode';
 import { updateGraphDataAction } from '../mxgraphAction';
 
+import LiuchengImage from '../images/liuchengkuai.png';
+import JieshuImage from '../images/jieshu.png';
+import PanduanImage from '../images/panduan.png';
+import JixutiaochuImage from '../images/jixutiaochu.png';
+
 const {
   mxCell: MxCell,
   mxGeometry: MxGeometry,
@@ -155,8 +160,7 @@ const MxGraphHeader = ({ graph, container, createItem, conRight }) => {
           data-style="shape=rhombus;perimeter=ellipsePerimeter;resizable=0;fillColor=#F2FAF7;strokeColor=#32A67F;shadow=1;"
           data-label="<div class='rcomponent-content'>判断</div>"
         >
-          <p></p>
-          <span>判断</span>
+          判断
         </div>
 
         <div
@@ -176,7 +180,27 @@ const MxGraphHeader = ({ graph, container, createItem, conRight }) => {
           data-style="group;html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;shadow=1;"
           data-label="<span class='group-content'>循环</span>"
         >
-          循环容器
+          循环
+        </div>
+
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-break"
+          data-width="96"
+          data-height="48"
+          data-style="shape=hexagon;whiteSpace=wrap;align=centerhtml=1;strokeColor=#32A67F;fillColor=#F2FAF7;resizable=0;shadow=1;" //image=../../../../images/icon.jpg"
+          data-label="跳出循环"
+        >
+          跳出循环
+        </div>
+
+        <div
+          className="mxgraph-cell designergraph-container-header-tool-break"
+          data-width="96"
+          data-height="48"
+          data-style="shape=hexagon;whiteSpace=wrap;align=centerhtml=1;resizable=0;strokeColor=#32A67F;fillColor=#F2FAF7;shadow=1;" //image=../../../../images/icon.jpg"
+          data-label="继续循环"
+        >
+          继续循环
         </div>
 
         <div
@@ -187,26 +211,6 @@ const MxGraphHeader = ({ graph, container, createItem, conRight }) => {
           data-label="<span>结束</span>"
         >
           结束
-        </div>
-
-        <div
-          className="mxgraph-cell designergraph-container-header-tool-process"
-          data-width="96"
-          data-height="48"
-          data-style="shape=hexagon;whiteSpace=wrap;align=centerhtml=1;strokeColor=#32A67F;fillColor=#F2FAF7;resizable=0;shadow=1;" //image=../../../../images/icon.jpg"
-          data-label="跳出循环"
-        >
-          跳出循环
-        </div>
-
-        <div
-          className="mxgraph-cell designergraph-container-header-tool-process"
-          data-width="96"
-          data-height="48"
-          data-style="shape=hexagon;whiteSpace=wrap;align=centerhtml=1;resizable=0;strokeColor=#32A67F;fillColor=#F2FAF7;shadow=1;" //image=../../../../images/icon.jpg"
-          data-label="继续循环"
-        >
-          继续循环
         </div>
 
         {/* <div

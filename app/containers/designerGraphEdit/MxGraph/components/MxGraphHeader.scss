@@ -2,9 +2,9 @@
   display: inline-block;
   font-size: 12px;
   color: #39af8a;
-  height: 28px;
+  height: 40px;
   margin-left: 32px;
-  line-height: 28px;
+  line-height: 40px;
   text-align: center;
   // border: 1px solid #eee;
   vertical-align: middle;
@@ -21,102 +21,126 @@
 
     &-process,
     &-ground {
-      background: #39af8a;
+      background: url('../images/liuchengkuai.png') no-repeat;
+      background-size: 76px 38px;
+      color: white;
+      width: 76px;
+      height: 40px;
+      line-height: 40px;
+      position: relative;
+      top: -2px;
+    }
+
+    // &-start,
+    &-end {
+      background: url('../images/jieshu.png') no-repeat;
+      color: white;
+      width: 41px;
+      line-height: 39px;
+      height: 40px;
+      background-size: 40px 40px;
+      position: relative;
+      top: -1px;
+    }
+    // &-start {
+    //   background: #39af8a;
+    //   color: white;
+    //   margin-left: 24px;
+    // }
+    &-condition {
+      background: url('../images/panduan.png') no-repeat;
       color: white;
       width: 60px;
-      border-radius: 2px;
-    }
-
-    // &-condition {
-    //   position: relative;
-    //   width: 60px;
-    //   border: none;
-    //   border-radius: 2px;
-    //   &-left {
-    //     position: absolute;
-    //     left: 0;
-    //     width: 0;
-    //     height: 0;
-    //     border-top: 16px solid transparent;
-    //     border-right: 30px solid #eee;
-    //     border-bottom: 16px solid transparent;
-    //     span {
-    //       position: absolute;
-    //       left: 2px;
-    //       top: -16px;
-    //       width: 0;
-    //       height: 0;
-    //       border-top: 16px solid transparent;
-    //       border-right: 30px solid white;
-    //       border-bottom: 16px solid transparent;
-    //     }
-    //   }
-    //   &-right {
-    //     position: absolute;
-    //     right: 0;
-    //     width: 0;
-    //     height: 0;
-    //     border-top: 16px solid transparent;
-    //     border-left: 30px solid #eee;
-    //     border-bottom: 16px solid transparent;
-    //     span {
-    //       position: absolute;
-    //       right: 2px;
-    //       top: -16px;
-    //       width: 0;
-    //       height: 0;
-    //       border-top: 16px solid transparent;
-    //       border-left: 30px solid white;
-    //       border-bottom: 16px solid transparent;
-    //     }
-    //   }
-    // }
-
-    &-start,
-    &-end {
-      background: #39af8a;
-      color: white;
-      width: 32px;
-      border-radius: 50%;
-    }
-    &-start {
-      background: #39af8a;
-      color: white;
-      margin-left: 24px;
-    }
-    &-condition {
-      position: relative;
+      background-size: 60px 30px;
+      height: 33px;
+      line-height: 31px;
       // margin-bottom: 5px;
-      p {
-        width: 24px;
-        height: 24px;
-        background-color: #39af8a;
-        transform: rotate(45deg);
-        -ms-transform: rotate(45deg); /* Internet Explorer */
-        -moz-transform: rotate(45deg); /* Firefox */
-        -webkit-transform: rotate(45deg); /* Safari 和 Chrome */
-        -o-transform: rotate(45deg);
-      }
-      span {
-        height: 20px;
-        width: 60px;
-        font-size: 12px;
-        // font-family: PingFangSC;
-        font-weight: 400;
-        color: rgba(65, 68, 69, 1);
-        line-height: 25px;
-        position: absolute;
-        color: white;
-        top: 0;
-        left: -18px;
-        display: inline-block;
-        text-align: center;
-      }
+      // p {
+      //   width: 24px;
+      //   height: 24px;
+      //   background-color: #39af8a;
+      //   transform: rotate(45deg);
+      //   -ms-transform: rotate(45deg); /* Internet Explorer */
+      //   -moz-transform: rotate(45deg); /* Firefox */
+      //   -webkit-transform: rotate(45deg); /* Safari 和 Chrome */
+      //   -o-transform: rotate(45deg);
+      // }
+      // span {
+      //   height: 20px;
+      //   width: 60px;
+      //   font-size: 12px;
+      //   // font-family: PingFangSC;
+      //   font-weight: 400;
+      //   color: rgba(65, 68, 69, 1);
+      //   line-height: 25px;
+      //   position: absolute;
+      //   color: white;
+      //   top: 0;
+      //   left: -18px;
+      //   display: inline-block;
+      //   text-align: center;
+      // }
+    }
+
+    &-break {
+      background: url('../images/jixutiaochu.png') no-repeat;
+      background-size: 76px 38px;
+      color: white;
+      width: 76px;
+      height: 40px;
+      line-height: 36px;
+      // position: relative;
+      // top: -2px;
     }
   }
 }
 
-.rcomponent-content{
+.rcomponent-content {
   position: relative;
-  left:-12px;
+  left: -12px;
 }
+
+// &-condition {
+//   position: relative;
+//   width: 60px;
+//   border: none;
+//   border-radius: 2px;
+//   &-left {
+//     position: absolute;
+//     left: 0;
+//     width: 0;
+//     height: 0;
+//     border-top: 16px solid transparent;
+//     border-right: 30px solid #eee;
+//     border-bottom: 16px solid transparent;
+//     span {
+//       position: absolute;
+//       left: 2px;
+//       top: -16px;
+//       width: 0;
+//       height: 0;
+//       border-top: 16px solid transparent;
+//       border-right: 30px solid white;
+//       border-bottom: 16px solid transparent;
+//     }
+//   }
+//   &-right {
+//     position: absolute;
+//     right: 0;
+//     width: 0;
+//     height: 0;
+//     border-top: 16px solid transparent;
+//     border-left: 30px solid #eee;
+//     border-bottom: 16px solid transparent;
+//     span {
+//       position: absolute;
+//       right: 2px;
+//       top: -16px;
+//       width: 0;
+//       height: 0;
+//       border-top: 16px solid transparent;
+//       border-left: 30px solid white;
+//       border-bottom: 16px solid transparent;
+//     }
+//   }
+// }
