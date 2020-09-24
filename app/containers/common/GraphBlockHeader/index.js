@@ -250,7 +250,9 @@ export default memo(({ history, tag }) => {
             },
             {
               title: '发布',
-              disabled: globalUserName === '',
+              disabled:
+                globalUserName === '' ||
+                currentPagePosition_ref.current === 'block',
               onClick: () => {
                 event.emit(RELEASE_PROCESS_COMMAND);
               },
