@@ -776,6 +776,9 @@ export default memo(
                 </Radio.Group>
               </FormItem>
             )}
+            <FormItem label="流程名" className="versionInput">
+              <span style={{ paddingLeft: '12px' }}>{getProcessName()}</span>
+            </FormItem>
             <FormItem label="描述">
               <TextArea
                 placeholder="请输入流程描述"
