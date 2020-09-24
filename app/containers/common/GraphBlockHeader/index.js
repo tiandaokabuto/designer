@@ -5,7 +5,11 @@ import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import NewProject from './NewProject';
 import api from '../../../api';
-import { getModifiedNodes } from '_utils/utils';
+import {
+  getModifiedNodes,
+  getDecryptOrNormal,
+  getChooseFilePath,
+} from '_utils/utils';
 import { changeTreeTab } from '../../reduxActions/index';
 import HelpModel from './HelpModel';
 import ShortcutModel from './ShortcutModel';
@@ -16,7 +20,7 @@ import {
   REDO_CARDSDATA,
   CHANGE_FORCEUPDATE_TAG,
 } from '../../../constants/actions/codeblock';
-
+import { encrypt } from '../../../login/utils';
 // *新 DEBUG liuqi
 import { useTransformProcessToPython } from '../../designerGraphEdit/useHooks';
 import {
@@ -214,6 +218,7 @@ export default memo(({ history, tag }) => {
             },
             {
               title: '发布',
+              disabled: globalUserName === '',
               onClick: () => {
                 event.emit(RELEASE_PROCESS_COMMAND);
               },
@@ -238,12 +243,12 @@ export default memo(({ history, tag }) => {
                 });
               },
             },
-            {
-              title: '导出',
-              onClick: () => {
-                console.log('下载');
-              },
-            },
+            // {
+            //   title: '导出',
+            //   onClick: () => {
+            //     console.log('导出');
+            //   },
+            // },
           ],
         },
       ],
@@ -274,12 +279,7 @@ export default memo(({ history, tag }) => {
         {
           title: '打开控制台',
           onClick: () => {
-            console.log('打开控制台');
-            ipcRenderer.removeAllListeners('open_control');
-            ipcRenderer.send(
-              'open_control',
-              'https://localhost:8000/sd_rpa/login?uid=lijg&pwd=1234'
-            );
+            handleOpenControl();
           },
         },
         {
@@ -321,6 +321,29 @@ export default memo(({ history, tag }) => {
     }
   };
 
+  // 打开控制台
+  const handleOpenControl = () => {
+    const data = JSON.parse(
+      encrypt.argDecryptByDES(
+        fs.readFileSync(`${process.cwd()}/globalconfig/login.json`, {
+          encoding: 'utf-8',
+        })
+      )
+    );
+    let url = 'https://' + data.ip + ':44388/sd_rpa/login';
+    if (data.offLine === false) {
+      url =
+        'https://' +
+        data.ip +
+        ':44388/sd_rpa/login?uid=' +
+        fs.readFileSync(`${process.cwd()}/globalconfig/login.json`, {
+          encoding: 'utf-8',
+        });
+    }
+    ipcRenderer.removeAllListeners('open_control');
+    ipcRenderer.send('open_control', url);
+  };
+
   const handleCancel = () => {
     setHelpModelVisible(false);
     setShortcutModelVisible(false);
@@ -353,6 +376,7 @@ export default memo(({ history, tag }) => {
     if (currentPagePosition_ref.current === 'editor') {
       event.emit('undo');
     } else if (currentPagePosition_ref.current === 'block') {
+      console.log('第二层撤销');
       dispatch({
         type: CHANGE_FORCEUPDATE_TAG,
         payload: !forceUpdateTag,

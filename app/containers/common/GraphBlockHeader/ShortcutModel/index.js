@@ -59,6 +59,11 @@ export default function ShortcutModel({ visible, handleCancel }) {
       description: '删除',
       shortcut: 'Delete',
     },
+    {
+      key: '10',
+      description: '关闭弹窗',
+      shortcut: 'ESC',
+    },
   ];
   return (
     <Modal

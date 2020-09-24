@@ -68,8 +68,12 @@ export const PYTHOH_DEBUG_CARDS_ALL_RUN = /** DEBUG 第二层 所有CARDS传送 
 export const SHOW_EXPORT_MODAL = /** 展示导出模态框 */ Symbol(
   'show_export_modal'
 );
-export const REVOKE_ACTION = /** 撤销指令 */ Symbol('revoke_action');
-export const RECOVERY_ACTION = /** 恢复指令 */ Symbol('recovery_action');
+export const REVOKE_ACTION = /** 撤销流程块指令（第一层） */ Symbol(
+  'revoke_action'
+);
+export const RECOVERY_ACTION = /** 恢复流程块指令（第一层） */ Symbol(
+  'recovery_action'
+);
 export const SAVE_FILE = /** CTRL+S 保存文件 */ Symbol('save_file');
 export const CUT_COMMAND = /** 剪切指令 */ Symbol('cut_command');
 export const COPY_COMMAND = /** 复制指令 */ Symbol('copy_command');
