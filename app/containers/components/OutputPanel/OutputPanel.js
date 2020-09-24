@@ -24,6 +24,8 @@ import {
   getTempCenter,
   setPause,
   clearPause,
+
+  getMxgraphTempCenter
 } from '../../designerGraphEdit/RPAcore';
 import { PYTHON_OUTPUT, PYTHON_OUTPUT_CLEAR } from '@/containers/eventCenter';
 import DebugBtns from './OutputPanelDetails/DebugBtns';
@@ -404,29 +406,250 @@ export default memo(
 
       const [selectedTreeNode, setSelectedTreeNode] = useState([]);
 
+      const types = [
+        'children',
+        'ifChildren',
+        'elseChildren',
+        'tryChildren',
+        'catchChildren',
+        'finallyChildren',
+      ];
+
       useEffect(() => {
         if (Object.keys(debug_dataStore).length === 0) return;
         console.log('有更新', debug_dataStore, getDebugIndex());
 
         if (currentPagePosition === 'editor') {
-          if (debug_lastPointer < getDebugIndex().nowIndex)
-            set_debug_lastPointer(getDebugIndex().nowIndex);
-          set_debug_left_data(debug_dataStore);
-        } else if (currentPagePosition === 'block') {
-          // 开始改造
-
-          if (debug_lastPointer < getDebugIndex().nowIndexCards)
-            set_debug_lastPointer(getDebugIndex().nowIndexCards);
           try {
-            const types = [
-              'children',
-              'ifChildren',
-              'elseChildren',
-              'tryChildren',
-              'catchChildren',
-              'finallyChildren',
-            ];
+            // 找到对应流程块
+            const find = getMxgraphTempCenter()
 
+            console.log(find)
+
+            console.log(`debug_dataStore`, debug_dataStore);
+            // 函数 转换到tree组件用的结构
+            const toTreeData = (item, index, callback) => {
+              // 假如是原子能力，直接结束
+              if (item.$$typeof === 0 || item.$$typeof === 1) {
+                return {
+                  title: item.currentNode.label,//item.userDesc ? item.userDesc : item.cmdName,
+                  key: `${index}`,
+                  item: item,
+                  isLeaf: true,
+                  disabled: debug_dataStore.stepLog
+                    ? debug_dataStore.stepLog[`${index}`]
+                      ? false
+                      : true
+                    : true,
+                };
+              } else if (
+                item.$$typeof === 2 ||
+                item.$$typeof === 4 ||
+                item.$$typeof === 7
+              ) {
+                let children;
+                console.log('展示', item);
+                if (item.$$typeof === 2) {
+                  children = [
+                    {
+                      title: item.tempLine ? item.tempLine : item.currentNode.label,
+                      // transformLoopStatement(
+                      //   '',
+                      //   item,
+                      //   { output: '' },
+                      //   {}
+                      // ),
+                      key: `${index}0`,
+                      item: item,
+                      children: item.children.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                  ];
+                } else if (item.$$typeof === 4) {
+                  console.log(`这里的Item`,item)
+                  children = [
+                    {
+                      title: item.tempLine ? item.tempLine : item.currentNode.label,
+                      // transformConditionalStatement(
+                      //   '',
+                      //   item,
+                      //   { output: '' },
+                      //   {}
+                      // ),
+                      key: `${index}0`,
+                      item: item,
+                      showIcon:false,
+                      children: item.ifChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                    {
+                      title: '否则',
+                      key: `${index}1`,
+                      item: item,
+                      children: item.elseChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}1${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}1`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                  ];
+                } else if (item.$$typeof === 7) {
+                  children = [
+                    {
+                      title: '异常捕获',
+                      key: `${index}0`,
+                      item: item,
+                      children: item.tryChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                    {
+                      title: '异常处理',
+                      key: `${index}1`,
+                      item: item,
+                      children: item.catchChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}1${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}1`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                    {
+                      title: '最后',
+                      key: `${index}2`.toString(),
+                      item: item,
+                      children: item.finallyChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}1${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}2`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                  ];
+                }
+
+                // const children = types.reduce((pre, type, typeIndex) => {
+                //   if (item[type]) {
+                //     const childs = item[type].map((item2, index2) => {
+                //       console.log(type,item2, index2)
+
+                //       return {
+                //         ...callback(item2, `${index}-${index2}`, callback),
+                //         item: item2,
+                //       };
+                //     });
+
+                //     console.log(`childs`, childs);
+                //     return [...pre, ...childs];
+                //   } else {
+                //     return pre;
+                //   }
+                // }, []);
+                console.log(`children`, children);
+
+                return {
+                  title: item.$$typeof === 4 ? '条件判断' :item.currentNode.label,//item.userDesc ? item.userDesc : item.cmdName,
+                  key: `${index}`,
+                  item: item,
+                  children,
+
+                  disabled: debug_dataStore.stepLog
+                    ? debug_dataStore.stepLog[`${index}`]
+                      ? false
+                      : true
+                    : true,
+                };
+              }
+            };
+            // 转换
+            const treeData = find.map((item, index) =>
+              toTreeData(item, index, toTreeData)
+            );
+
+            console.log(`TMD右侧树`, treeData, debug_dataStore.stepLog);
+            setExpandedKeys(getExpandedKeys(treeData, getExpandedKeys));
+            // console.log(getExpandedKeys(treeData, getExpandedKeys));
+            set_debug_left_data(treeData);
+          } catch (e) {
+            console.log(e, '开发模式下避免问题');
+          }
+          // if (debug_lastPointer < getDebugIndex().nowIndex)
+          //   set_debug_lastPointer(getDebugIndex().nowIndex);
+         //set_debug_left_data(debug_dataStore.stepLog);
+        } else if (currentPagePosition === 'block') {
+          try {
             // 找到对应流程块
             const find = debug_dataStore.find(
               item => item.currentId === checkedGraphBlockId
@@ -579,15 +802,15 @@ export default memo(
                         : true,
                     },
                     {
-                      title: '最后',
+                      title: '结束',
                       key: `${index}2`.toString(),
                       item: item,
                       children: item.finallyChildren.map((child, index2) => {
                         return {
-                          ...callback(child, `${index}1${index2}`, callback),
+                          ...callback(child, `${index}2${index2}`, callback),
                           item: child,
                           disabled: debug_dataStore.stepLog
-                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                            ? debug_dataStore.stepLog[`${index}2${index2}`]
                               ? false
                               : true
                             : true,
@@ -633,7 +856,6 @@ export default memo(
                       : true
                     : true,
                 };
-              } else {
               }
             };
             // 转换
@@ -742,11 +964,17 @@ export default memo(
 
       // 显示的变量详情
       const showDetails = () => {
-        if (currentPagePosition === 'editor') {
-          const index = parseInt(selectedTreeNode[0]);
-          if (!debug_left_data[index]) return;
-          if (!debug_left_data[index].hasLog) return;
-          if (!debug_left_data[index].hasLog.var_datas) return;
+        if (false) {
+          console.log(
+            `block状态下的右侧面板`,
+            debug_left_data,
+            debug_dataStore.stepLog
+          );
+          const index = selectedTreeNode[0]; //parseInt(selectedTreeNode[0]);
+
+          if (!debug_dataStore.stepLog) return;
+          if (!debug_dataStore.stepLog[index]) return;
+          if (!debug_dataStore.stepLog[index].var_datas) return;
           return Object.keys(debug_left_data[index].hasLog.var_datas).map(
             key => {
               console.log(debug_left_data[index].hasLog.var_datas);
@@ -827,7 +1055,10 @@ export default memo(
               );
             }
           );
-        } else if (currentPagePosition === 'block') {
+        } else if (
+          true
+          //currentPagePosition === 'block'
+          ) {
           console.log(
             `block状态下的右侧面板`,
             debug_left_data,
@@ -1111,6 +1342,7 @@ export default memo(
                     变量
                   </p>
                   <DirectoryTree
+                  //expandedKeys={expandedKeysVariables}
                     multiple
                     defaultExpandAll
                     // onSelect={this.onSelect}

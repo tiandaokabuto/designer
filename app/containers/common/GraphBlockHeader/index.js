@@ -18,8 +18,9 @@ import {
   getTempCenter,
   setPause,
   clearPause,
-  handleDebugBlockAllRun,
-  handleDebugCardsAllRun,
+  // handleDebugBlockAllRun,
+  // handleDebugCardsAllRun,
+  blockRun_0_2_ver,
   cardsRun_0_2_ver,
 } from '../../designerGraphEdit/RPAcore';
 import {
@@ -367,7 +368,8 @@ export default memo(({ history, tag }) => {
     if (currentPagePosition_ref.current === 'editor') {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_RUNNING); // 'blockAll_running'
-      handleDebugBlockAllRun();
+      // handleDebugBlockAllRun();
+      blockRun_0_2_ver(blockRun_0_2_ver)
     }
     // 原子能力级运行
     else if (currentPagePosition_ref.current === 'block') {
@@ -386,7 +388,8 @@ export default memo(({ history, tag }) => {
     if (running === 'blockAll_pause') {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_RUNNING); // 'blockAll_running'
-      handleDebugBlockAllRun();
+      // handleDebugBlockAllRun();
+      blockRun_0_2_ver(blockRun_0_2_ver)
     } else if (running === 'cardsAll_pause') {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_RUNNING); // 'cardsAll_running'
@@ -398,7 +401,8 @@ export default memo(({ history, tag }) => {
 
   // 03-1 继续下一步
   const debug_continueRun_Block = () => {
-    handleDebugBlockAllRun();
+    // handleDebugBlockAllRun();
+    blockRun_0_2_ver(blockRun_0_2_ver)
   };
 
   // 03-2 继续下一步

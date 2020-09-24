@@ -26,6 +26,10 @@ export const clickOneStepRun = (card, pk ,spLine = null) => {
           item => item.cnName === '输出到' || item.cnName === '变量名称'
         );
 
+    if(!card){
+      card = {funcName:"debug_main"}
+    }
+
     sendPythonCodeByLine({
       running: card,
       varNames: findVarNames ? findVarNames.value : '',

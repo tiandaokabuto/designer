@@ -88,7 +88,13 @@ export const runDebugServer = async () => {
 
   socket.on('error', function(err) {
     //message.warning('Debug功能遇到通讯错误');
+    // try{
+    //   worker.close()
+    //   socket.close()
+    //   changeDebugInfos(DEBUG_CLOSE_DEBUGSERVER, {});
+    // }catch(e){
 
+    // }
     //event.emit(DEBUG_CLOSE_DEBUGSERVER);
     console.log(err);
   });
