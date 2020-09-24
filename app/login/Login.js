@@ -85,8 +85,8 @@ const Login = () => {
           key: 'serialNumber',
           inputValue: serialNumber,
           handleInputVauleChange: setSerialNumber,
-          label: '序列号',
-          placeholder: '请输入序列号',
+          label: '许可证',
+          placeholder: '请输入许可证',
           formItemClassName: 'login-right-serial',
         },
       ];
