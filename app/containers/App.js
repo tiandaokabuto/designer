@@ -121,11 +121,11 @@ export default class App extends React.Component<Props> {
       event.emit(SAVE_FILE);
     });
     // 运行快捷键
-    electronLocalshortcut.register(win, 'F3', () => {
+    electronLocalshortcut.register(win, 'F5', () => {
       event.emit(START_POINT);
     });
     // 暂停快捷键
-    electronLocalshortcut.register(win, 'F4', () => {
+    electronLocalshortcut.register(win, 'F12', () => {
       event.emit(STOP_RUNNING);
     });
     // 撤销快捷键
