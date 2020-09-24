@@ -336,13 +336,13 @@ export default useInjectContext(
       },
       {
         key: 'secondModule',
-        name: '流程快',
+        name: '流程块',
         className: 'designergraph-item-tab',
       },
     ];
 
     const getArrDifference = (arr1, arr2) => {
-      return arr1.concat(arr2).filter(function (v, i, arr) {
+      return arr1.concat(arr2).filter(function(v, i, arr) {
         return arr.indexOf(v) === arr.lastIndexOf(v);
       });
     };

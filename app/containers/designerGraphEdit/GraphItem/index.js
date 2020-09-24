@@ -121,7 +121,7 @@ export default ({ setShowLoadingLayer, createItem }) => {
     },
     {
       key: 'module',
-      name: '流程快',
+      name: '流程块',
       className: 'designergraph-item-tab',
     },
   ];
