@@ -214,16 +214,21 @@ div.mxTooltip {
   padding: 4px;
   color: black;
 }
+
 div.mxPopupMenu {
-  -webkit-box-shadow: 3px 3px 12px #c0c0c0;
-  -moz-box-shadow: 3px 3px 12px #c0c0c0;
-  box-shadow: 3px 3px 12px #c0c0c0;
-  background: url(data:image/gif;base64,R0lGODlhGgAUAIAAAOzs7PDw8CH5BAAAAAAALAAAAAAaABQAAAIijI+py70Ao5y02lud3lzhD4ZUR5aPiKajyZbqq7YyB9dhAQA7);
-  _background: url('./images/window.gif');
+  -webkit-box-shadow: 0px 2px 8px rgba(170, 170, 170, 0.3);
+  -moz-box-shadow: 0px 2px 8px rgba(170, 170, 170, 0.3);
+  box-shadow: 0px 2px 8px rgba(170, 170, 170, 0.3);
+
+  background: rgba(255, 255, 255, 0.95);
+  // background: url(data:image/gif;base64,R0lGODlhGgAUAIAAAOzs7PDw8CH5BAAAAAAALAAAAAAaABQAAAIijI+py70Ao5y02lud3lzhD4ZUR5aPiKajyZbqq7YyB9dhAQA7);
+  // _background: url('./images/window.gif');
   position: absolute;
   border-style: solid;
   border-width: 1px;
-  border-color: black;
+  // border-color: black;
+
+  border-radius: 3px;
 }
 table.mxPopupMenu {
   border-collapse: collapse;
@@ -235,8 +240,8 @@ tr.mxPopupMenuItem {
   cursor: pointer;
 }
 tr.mxPopupMenuItemHover {
-  background-color: #006;
-  color: #fff;
+  background-color: #f2faf8;
+  color: black;
   cursor: pointer;
 }
 td.mxPopupMenuItem {
@@ -246,8 +251,8 @@ td.mxPopupMenuItem {
   font-size: 8pt;
 }
 td.mxPopupMenuIcon {
-  background-color: #d0d0d0;
-  padding: 2px 4px 2px 4px;
+  // background-color: #d0d0d0;
+  // padding: 2px 4px 2px 4px;
 }
 .mxDisabled {
   opacity: 0.2 !important;
