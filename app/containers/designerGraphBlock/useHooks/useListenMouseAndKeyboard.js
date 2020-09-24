@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { message } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqueId from 'lodash/uniqueId';
@@ -17,10 +17,14 @@ import {
 } from '../../reduxActions';
 import { insertAfter } from '../../../utils/GraphBlockUtils/utils';
 import { PREFIX_ID } from '../constants/statementTypes';
+import {
+  UNDO_CARDSDATA,
+  REDO_CARDSDATA,
+  CHANGE_FORCEUPDATE_TAG,
+} from '../../../constants/actions/codeblock';
 const remote = require('electron').remote;
 const { clipboard } = require('electron');
 const electronLocalshortcut = require('electron-localshortcut');
-
 const KEYCODEMAP = {
   shift: 16,
   ctrl: 17,
@@ -166,7 +170,8 @@ export default () => {
   const checkedId = useSelector(state => state.blockcode.checkedId);
   const cards = useSelector(state => state.blockcode.cards);
   const clipboardData = useSelector(state => state.blockcode.clipboardData);
-
+  const dispatch = useDispatch();
+  const forceUpdateTag = useSelector(state => state.blockcode.forceUpdateTag);
   const setKeyState = useCallback((key, bool) => {
     if (key === 'ctrl') {
       keyDownMap.isCtrlDown = bool;
@@ -258,6 +263,29 @@ export default () => {
       deleteCheckedNode(cards, checkedId);
       message.success('删除成功');
     }
+  };
+
+  // 撤销操作
+  const handleRevoke = () => {
+    console.log('撤销指令');
+    dispatch({
+      type: CHANGE_FORCEUPDATE_TAG,
+      payload: !forceUpdateTag,
+    });
+    dispatch({
+      type: UNDO_CARDSDATA,
+    });
+  };
+  // 恢复操作
+  const handleRecovery = () => {
+    console.log('恢复指令');
+    dispatch({
+      type: CHANGE_FORCEUPDATE_TAG,
+      payload: !forceUpdateTag,
+    });
+    dispatch({
+      type: REDO_CARDSDATA,
+    });
   };
   useEffect(() => {
     const handleKeyDown = e => {
@@ -386,6 +414,10 @@ export default () => {
         //   message.success('剪切成功');
         // }
         handleCut();
+      } else if (e.ctrlKey && e.keyCode === 89) {
+        handleRecovery();
+      } else if (e.ctrlKey && e.keyCode === 90) {
+        handleRevoke();
       }
     };
     document.addEventListener('keydown', handleKeyDown);

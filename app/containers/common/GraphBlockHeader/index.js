@@ -376,6 +376,7 @@ export default memo(({ history, tag }) => {
     if (currentPagePosition_ref.current === 'editor') {
       event.emit('undo');
     } else if (currentPagePosition_ref.current === 'block') {
+      console.log('第二层撤销');
       dispatch({
         type: CHANGE_FORCEUPDATE_TAG,
         payload: !forceUpdateTag,
