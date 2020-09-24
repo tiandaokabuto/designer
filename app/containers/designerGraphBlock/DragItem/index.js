@@ -29,6 +29,7 @@ import { saveAutomicList } from './utils';
 
 import './index.scss';
 
+const { remote } = require('electron');
 const { TabPane } = Tabs;
 const { TreeNode } = Tree;
 const { Search } = Input;
@@ -365,8 +366,20 @@ export default useInjectContext(
             <div className="dragger-editor-item-title-text">组件库</div>
             <div className="dragger-editor-item-title-icons">
               <Icon
+                style={{
+                  marginRight: '10px',
+                  visibility:
+                    remote.getGlobal('sharedObject').userName === ''
+                      ? 'hidden'
+                      : 'visible',
+                }}
+                type="redo"
+                onClick={() => {
+                  event.emit('update_list');
+                }}
+              />
+              <Icon
                 type={isAllExpand ? 'minus-square' : 'plus-square'}
-                style={{ marginRight: '10px' }}
                 onClick={() => {
                   const data = [];
                   traverseTree(treeData, item => {
@@ -381,12 +394,6 @@ export default useInjectContext(
                     setExpandedKeys([]);
                     setIsAllExpand(false);
                   }
-                }}
-              />
-              <Icon
-                type="redo"
-                onClick={() => {
-                  event.emit('update_list');
                 }}
               />
             </div>
