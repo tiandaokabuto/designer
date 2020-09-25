@@ -270,7 +270,6 @@ export default memo(({ readOnly = false }) => {
   );
 
   const renderStatement = (card, index) => {
-    console.log(`renderStatement`, card);
     switch (card.$$typeof) {
       case BasicStatementTag:
         return (
