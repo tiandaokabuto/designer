@@ -125,6 +125,36 @@ export default memo(({ history, tag }) => {
       },
     });
   };
+  // 开关
+  const debug_switch = useSelector(state => state.debug.switch);
+  const debug_switch_ref = useRef();
+  debug_switch_ref.current = debug_switch;
+  // 暂停
+  const debug_pause = useSelector(state => state.debug.pause);
+  // 运行中状态
+  const debug_runningState = useSelector(state => state.debug.runningState);
+  const debug_runningState_ref = useRef();
+  debug_runningState_ref.current = debug_runningState;
+
+  // 数据仓库
+  const debug_dataStore = useSelector(state => state.debug.dataStore);
+  // 当前选中的流程块
+  const checkedGraphBlockId = useSelector(
+    state => state.grapheditor.checkedGraphBlockId
+  );
+  const checkedGraphBlockId_ref = useRef();
+  checkedGraphBlockId_ref.current = checkedGraphBlockId;
+  // 当前层级
+  const currentPagePosition = useSelector(
+    state => state.temporaryvariable.currentPagePosition
+  );
+  const currentPagePosition_ref = useRef();
+  currentPagePosition_ref.current = currentPagePosition;
+
+  // 树改变时
+  const currentCheckedTreeNode = useSelector(
+    state => state.grapheditor.currentCheckedTreeNode
+  );
 
   // const TOOLS_DESCRIPTION = TOOLS;
   const TOOLS_DESCRIPTION = [
@@ -197,6 +227,7 @@ export default memo(({ history, tag }) => {
           subMenu: [
             {
               title: '导入',
+              disabled: currentPagePosition_ref.current === 'block',
               onClick: () => {
                 ipcRenderer.removeAllListeners('chooseItem');
                 ipcRenderer.send(
@@ -212,13 +243,16 @@ export default memo(({ history, tag }) => {
             },
             {
               title: '导出',
+              disabled: currentPagePosition_ref.current === 'block',
               onClick: () => {
                 event.emit(SHOW_EXPORT_MODAL);
               },
             },
             {
               title: '发布',
-              disabled: globalUserName === '',
+              disabled:
+                globalUserName === '' ||
+                currentPagePosition_ref.current === 'block',
               onClick: () => {
                 event.emit(RELEASE_PROCESS_COMMAND);
               },
@@ -498,37 +532,6 @@ export default memo(({ history, tag }) => {
       killTask();
     };
   }, []);
-
-  // 开关
-  const debug_switch = useSelector(state => state.debug.switch);
-  const debug_switch_ref = useRef();
-  debug_switch_ref.current = debug_switch;
-  // 暂停
-  const debug_pause = useSelector(state => state.debug.pause);
-  // 运行中状态
-  const debug_runningState = useSelector(state => state.debug.runningState);
-  const debug_runningState_ref = useRef();
-  debug_runningState_ref.current = debug_runningState;
-
-  // 数据仓库
-  const debug_dataStore = useSelector(state => state.debug.dataStore);
-  // 当前选中的流程块
-  const checkedGraphBlockId = useSelector(
-    state => state.grapheditor.checkedGraphBlockId
-  );
-  const checkedGraphBlockId_ref = useRef();
-  checkedGraphBlockId_ref.current = checkedGraphBlockId;
-  // 当前层级
-  const currentPagePosition = useSelector(
-    state => state.temporaryvariable.currentPagePosition
-  );
-  const currentPagePosition_ref = useRef();
-  currentPagePosition_ref.current = currentPagePosition;
-
-  // 树改变时
-  const currentCheckedTreeNode = useSelector(
-    state => state.grapheditor.currentCheckedTreeNode
-  );
 
   // 切换树时，直接挂掉debug
   useEffect(() => {
