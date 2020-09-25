@@ -1,17 +1,21 @@
 import { message } from 'antd';
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
-import transformEditorGraphData, { claerTempCenter } from '../RPAcore';
+import transformEditorGraphData, { claerTempCenter, sortEditorTree } from '../RPAcore';
 
 const transformProcessToPython = (graphDataRef, graphDataMapRef) => () => {
   claerTempCenter();
   // 转化代码
-  return transformEditorGraphData(
+  const temp = transformEditorGraphData(
     graphDataRef.current,
     graphDataMapRef.current,
     undefined,
     undefined
   );
+
+  sortEditorTree();
+
+  return temp;
 };
 
 // 将流程（整个第一层）转换为python代码

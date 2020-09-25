@@ -9,7 +9,7 @@ export default useInjectContext(({ labelText, iconType, click, disabled }) => {
       className={
         disabled ? 'outputPanel-debug-btn-disabled' : 'outputPanel-debug-btn'
       }
-      onClick={click}
+      onClick={disabled ? () => {} : click}
     >
       <Icon type={iconType} spin={iconType === 'loading' ? true : false} />
       {` `}

@@ -21,11 +21,17 @@ import {
 
 import store from '@/store';
 
-import { getDebugIndex } from '../../containers/designerGraphEdit/RPAcore';
+import {
+  getDebugIndex,
+  set_spResult,
+  get_spResult,
+} from '../../containers/designerGraphEdit/RPAcore';
 
 import { changeDebugInfos } from '../../containers/reduxActions';
 
+
 import { getUTF8 } from './getUTF8';
+import { words } from 'lodash';
 const net = require('net');
 const path = require('path');
 const process = require('process');
@@ -39,6 +45,12 @@ let worker;
 let tempLength = 0;
 
 export const runDebugServer = async () => {
+  try {
+    worker.kill();
+  } catch (e) {
+    console.log('没得杀了');
+  }
+
   // 打开python Debug服务器
   worker = await spawn(`${process.cwd()}/../Python/python3_lib/python.exe`, [
     `${process.cwd()}/../Python/python3_lib/Lib/site-packages/sendiRPA/debug/DebugServer.py`,
@@ -76,7 +88,14 @@ export const runDebugServer = async () => {
 
   socket.on('error', function(err) {
     //message.warning('Debug功能遇到通讯错误');
+    // try{
+    //   worker.close()
+    //   socket.close()
+    //   changeDebugInfos(DEBUG_CLOSE_DEBUGSERVER, {});
+    // }catch(e){
 
+    // }
+    //event.emit(DEBUG_CLOSE_DEBUGSERVER);
     console.log(err);
   });
 
@@ -85,21 +104,38 @@ export const runDebugServer = async () => {
     const log = getUTF8(msg);
     try {
       const getLogToJSON = JSON.parse(log);
-      console.log('[收到soket—data]', getLogToJSON);
+      console.log('[收到soket—data]', getLogToJSON, getLogToJSON.pk);
       let temp = '';
-      Object.keys(getLogToJSON).forEach(array => {
-        console.log(array);
-        // array.forEach(item =>{
-        //   if(item.source.length > 0){
-        //     temp += `发送的代码：\n` + item.source[0
-        //     ]
-        //   }
-        // })
-        //temp = `发送的代码：\n` + array.sources[0];
-      });
+
+      let spResult = get_spResult();
+      console.log(`spResult`,spResult, getLogToJSON.pk)
+      if (getLogToJSON.pk && spResult && spResult.pk) {
+        if (
+          spResult.pk.slice(0,-1).reduce((pre, index) => (pre += index.toString()), '') ===
+          getLogToJSON.pk.reduce((pre, index) => (pre += index.toString()), '')
+        ){
+          set_spResult(getLogToJSON.is_continue);
+        }else{
+          console.log('pk不一致')
+        }
+      }
+
+      // Object.keys(getLogToJSON).forEach(array => {
+      //   console.log(array);
+      //   // array.forEach(item =>{
+      //   //   if(item.source.length > 0){
+      //   //     temp += `发送的代码：\n` + item.source[0
+      //   //     ]
+      //   //   }
+      //   // })
+      //   //temp = `发送的代码：\n` + array.sources[0];
+      // });
       //event.emit(PYTHON_OUTPUT, log);
+
+      console.log("执行了",getLogToJSON.pk)
       event.emit(DEBUG_SOURCECODE_INSERT, {
         log: getLogToJSON,
+        pk: getLogToJSON.pk ? getLogToJSON.pk : [],
         index: getDebugIndex(),
       });
     } catch (e) {
@@ -214,7 +250,7 @@ export const sendPythonCodeByLine = sendMsg => {
     grapheditor: { checkedGraphBlockId },
   } = store.getState();
 
-  const { running, varNames, output } = sendMsg;
+  const { running, varNames, output, pk } = sendMsg;
 
   let find_funcName = null;
   if (!running.funcName) {
@@ -238,6 +274,7 @@ export const sendPythonCodeByLine = sendMsg => {
         var_value: '',
       },
     ],
+    pk: pk,
   };
   const sendText = JSON.stringify(jsonObj); //.replace(/'/g, '"')
   console.log(`【实际发送到socket的字符串】\n`, sendText);

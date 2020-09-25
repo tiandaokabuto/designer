@@ -27,8 +27,10 @@ import {
   getTempCenter,
   setPause,
   clearPause,
-  handleDebugBlockAllRun,
-  handleDebugCardsAllRun,
+  // handleDebugBlockAllRun,
+  // handleDebugCardsAllRun,
+  blockRun_0_2_ver,
+  cardsRun_0_2_ver,
 } from '../../designerGraphEdit/RPAcore';
 import {
   runDebugServer,
@@ -79,6 +81,8 @@ import {
   DEBUG_ONE_STEP_FINISHED_STARTED,
 } from '../../../constants/actions/debugInfos';
 import { changeDebugInfos } from '../../reduxActions';
+import { fetchCard } from '../../../utils/DebugUtils/fetchCard';
+
 import { generateMenu, TOOLS } from './Menu/index';
 import { RELEASE_PROCESS } from '../../eventCenter/index';
 const { ipcRenderer, remote } = require('electron');
@@ -605,13 +609,15 @@ export default memo(({ history, tag }) => {
     if (currentPagePosition_ref.current === 'editor') {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_RUNNING); // 'blockAll_running'
-      handleDebugBlockAllRun();
+      // handleDebugBlockAllRun();
+      blockRun_0_2_ver(blockRun_0_2_ver)
     }
     // 原子能力级运行
     else if (currentPagePosition_ref.current === 'block') {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_RUNNING); // 'cardsAll_running'
-      handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+      //handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+      cardsRun_0_2_ver(checkedGraphBlockId_ref.current, cardsRun_0_2_ver);
     }
   };
 
@@ -623,23 +629,27 @@ export default memo(({ history, tag }) => {
     if (running === 'blockAll_pause') {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_RUNNING); // 'blockAll_running'
-      handleDebugBlockAllRun();
+      // handleDebugBlockAllRun();
+      blockRun_0_2_ver(blockRun_0_2_ver)
     } else if (running === 'cardsAll_pause') {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_RUNNING); // 'cardsAll_running'
-      handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+      //handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+      cardsRun_0_2_ver(checkedGraphBlockId_ref.current, cardsRun_0_2_ver);
     }
     setPause();
   };
 
   // 03-1 继续下一步
   const debug_continueRun_Block = () => {
-    handleDebugBlockAllRun();
+    // handleDebugBlockAllRun();
+    blockRun_0_2_ver(blockRun_0_2_ver)
   };
 
   // 03-2 继续下一步
   const debug_continueRun_Cards = () => {
-    handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+    //handleDebugCardsAllRun(checkedGraphBlockId_ref.current);
+    cardsRun_0_2_ver(checkedGraphBlockId_ref.current, cardsRun_0_2_ver);
   };
 
   // 03-3 暂停
@@ -692,7 +702,9 @@ export default memo(({ history, tag }) => {
       changeDebugInfos(DEBUG_ONE_STEP_RUN_STARTED, {});
     }
 
-    clickOneStepRun(cards, id);
+    const card = fetchCard(cards, id);
+    console.log(`卡片`,card)
+    clickOneStepRun(card, []);
   };
 
   // 05 单步结束

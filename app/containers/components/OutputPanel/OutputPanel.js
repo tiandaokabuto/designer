@@ -10,8 +10,6 @@ import Tags from './Tags';
 import ZoomToolBar from './ZoomToolBar';
 import useGetDownloadPath from '../../common/DragEditorHeader/useHooks/useGetDownloadPath';
 
-import DebugBtn from './DebugBtn/DebugBtn';
-
 import './OutputPanel.scss';
 
 // liuqi
@@ -26,8 +24,11 @@ import {
   getTempCenter,
   setPause,
   clearPause,
+
+  getMxgraphTempCenter
 } from '../../designerGraphEdit/RPAcore';
 import { PYTHON_OUTPUT, PYTHON_OUTPUT_CLEAR } from '@/containers/eventCenter';
+import DebugBtns from './OutputPanelDetails/DebugBtns';
 
 // liuqi-new
 import event from '../../eventCenter';
@@ -44,6 +45,11 @@ import {
 } from '../../../constants/actions/debugInfos';
 
 import { sendChangeVariable } from '../../../utils/DebugUtils/runDebugServer';
+
+// 循环
+import transformLoopStatement from '../../designerGraphBlock/RPAcore/graphBlockToCode/transformLoopStatement';
+// 判断
+import transformConditionalStatement from '../../designerGraphBlock/RPAcore/graphBlockToCode/transformConditionalStatement';
 
 const fs = require('fs');
 const { TabPane } = Tabs;
@@ -400,35 +406,499 @@ export default memo(
 
       const [selectedTreeNode, setSelectedTreeNode] = useState([]);
 
+      const types = [
+        'children',
+        'ifChildren',
+        'elseChildren',
+        'tryChildren',
+        'catchChildren',
+        'finallyChildren',
+      ];
+
       useEffect(() => {
         if (Object.keys(debug_dataStore).length === 0) return;
         console.log('有更新', debug_dataStore, getDebugIndex());
 
         if (currentPagePosition === 'editor') {
-          if (debug_lastPointer < getDebugIndex().nowIndex)
-            set_debug_lastPointer(getDebugIndex().nowIndex);
-          set_debug_left_data(debug_dataStore);
-        } else if (currentPagePosition === 'block') {
-          if (debug_lastPointer < getDebugIndex().nowIndexCards)
-            set_debug_lastPointer(getDebugIndex().nowIndexCards);
           try {
+            // 找到对应流程块
+            const find = getMxgraphTempCenter()
+
+            console.log(find)
+
+            console.log(`debug_dataStore`, debug_dataStore);
+            // 函数 转换到tree组件用的结构
+            const toTreeData = (item, index, callback) => {
+              // 假如是原子能力，直接结束
+              if (item.$$typeof === 0 || item.$$typeof === 1) {
+                return {
+                  title: item.currentNode.label,//item.userDesc ? item.userDesc : item.cmdName,
+                  key: `${index}`,
+                  item: item,
+                  isLeaf: true,
+                  disabled: debug_dataStore.stepLog
+                    ? debug_dataStore.stepLog[`${index}`]
+                      ? false
+                      : true
+                    : true,
+                };
+              } else if (
+                item.$$typeof === 2 ||
+                item.$$typeof === 4 ||
+                item.$$typeof === 7
+              ) {
+                let children;
+                console.log('展示', item);
+                if (item.$$typeof === 2) {
+                  children = [
+                    {
+                      title: item.tempLine ? item.tempLine : item.currentNode.label,
+                      // transformLoopStatement(
+                      //   '',
+                      //   item,
+                      //   { output: '' },
+                      //   {}
+                      // ),
+                      key: `${index}0`,
+                      item: item,
+                      children: item.children.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                  ];
+                } else if (item.$$typeof === 4) {
+                  console.log(`这里的Item`,item)
+                  children = [
+                    {
+                      title: item.tempLine ? item.tempLine : item.currentNode.label,
+                      // transformConditionalStatement(
+                      //   '',
+                      //   item,
+                      //   { output: '' },
+                      //   {}
+                      // ),
+                      key: `${index}0`,
+                      item: item,
+                      showIcon:false,
+                      children: item.ifChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                    {
+                      title: '否则',
+                      key: `${index}1`,
+                      item: item,
+                      children: item.elseChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}1${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}1`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                  ];
+                } else if (item.$$typeof === 7) {
+                  children = [
+                    {
+                      title: '异常捕获',
+                      key: `${index}0`,
+                      item: item,
+                      children: item.tryChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                    {
+                      title: '异常处理',
+                      key: `${index}1`,
+                      item: item,
+                      children: item.catchChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}1${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}1`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                    {
+                      title: '最后',
+                      key: `${index}2`.toString(),
+                      item: item,
+                      children: item.finallyChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}1${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}2`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                  ];
+                }
+
+                // const children = types.reduce((pre, type, typeIndex) => {
+                //   if (item[type]) {
+                //     const childs = item[type].map((item2, index2) => {
+                //       console.log(type,item2, index2)
+
+                //       return {
+                //         ...callback(item2, `${index}-${index2}`, callback),
+                //         item: item2,
+                //       };
+                //     });
+
+                //     console.log(`childs`, childs);
+                //     return [...pre, ...childs];
+                //   } else {
+                //     return pre;
+                //   }
+                // }, []);
+                console.log(`children`, children);
+
+                return {
+                  title: item.$$typeof === 4 ? '条件判断' :item.currentNode.label,//item.userDesc ? item.userDesc : item.cmdName,
+                  key: `${index}`,
+                  item: item,
+                  children,
+
+                  disabled: debug_dataStore.stepLog
+                    ? debug_dataStore.stepLog[`${index}`]
+                      ? false
+                      : true
+                    : true,
+                };
+              }
+            };
+            // 转换
+            const treeData = find.map((item, index) =>
+              toTreeData(item, index, toTreeData)
+            );
+
+            console.log(`TMD右侧树`, treeData, debug_dataStore.stepLog);
+            setExpandedKeys(getExpandedKeys(treeData, getExpandedKeys));
+            // console.log(getExpandedKeys(treeData, getExpandedKeys));
+            set_debug_left_data(treeData);
+          } catch (e) {
+            console.log(e, '开发模式下避免问题');
+          }
+          // if (debug_lastPointer < getDebugIndex().nowIndex)
+          //   set_debug_lastPointer(getDebugIndex().nowIndex);
+         //set_debug_left_data(debug_dataStore.stepLog);
+        } else if (currentPagePosition === 'block') {
+          try {
+            // 找到对应流程块
             const find = debug_dataStore.find(
               item => item.currentId === checkedGraphBlockId
             );
-            // if (debug_dataStore.stepLog) {
-            //   debug_dataStore.stepLog.forEach((log, index) => {
-            //     find.cards[index].hasLog = log;
-            //   });
-            // }
+            console.log(`debug_dataStore`, debug_dataStore);
+            // 函数 转换到tree组件用的结构
+            const toTreeData = (item, index, callback) => {
+              // 假如是原子能力，直接结束
+              if (item.$$typeof === 0 || item.$$typeof === 1) {
+                return {
+                  title: item.userDesc ? item.userDesc : item.cmdName,
+                  key: `${index}`,
+                  item: item,
+                  isLeaf: true,
+                  disabled: debug_dataStore.stepLog
+                    ? debug_dataStore.stepLog[`${index}`]
+                      ? false
+                      : true
+                    : true,
+                };
+              } else if (
+                item.$$typeof === 2 ||
+                item.$$typeof === 4 ||
+                item.$$typeof === 7
+              ) {
+                let children;
+                console.log('展示', item);
+                if (item.$$typeof === 2) {
+                  children = [
+                    {
+                      title: transformLoopStatement(
+                        '',
+                        item,
+                        { output: '' },
+                        {}
+                      ),
+                      key: `${index}0`,
+                      item: item,
+                      children: item.children.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                  ];
+                } else if (item.$$typeof === 4) {
+                  children = [
+                    {
+                      title: transformConditionalStatement(
+                        '',
+                        item,
+                        { output: '' },
+                        {}
+                      ),
+                      key: `${index}0`,
+                      item: item,
+                      showIcon:false,
+                      children: item.ifChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                    {
+                      title: '否则',
+                      key: `${index}1`,
+                      item: item,
+                      children: item.elseChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}1${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}1`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                  ];
+                } else if (item.$$typeof === 7) {
+                  children = [
+                    {
+                      title: '异常捕获',
+                      key: `${index}0`,
+                      item: item,
+                      children: item.tryChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}0${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}0${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}0`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                    {
+                      title: '异常处理',
+                      key: `${index}1`,
+                      item: item,
+                      children: item.catchChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}1${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}1${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}1`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                    {
+                      title: '结束',
+                      key: `${index}2`.toString(),
+                      item: item,
+                      children: item.finallyChildren.map((child, index2) => {
+                        return {
+                          ...callback(child, `${index}2${index2}`, callback),
+                          item: child,
+                          disabled: debug_dataStore.stepLog
+                            ? debug_dataStore.stepLog[`${index}2${index2}`]
+                              ? false
+                              : true
+                            : true,
+                        };
+                      }),
+                      disabled: debug_dataStore.stepLog
+                        ? debug_dataStore.stepLog[`${index}2`]
+                          ? false
+                          : true
+                        : true,
+                    },
+                  ];
+                }
 
-            // console.log(`显示查询结果`, find, debug_dataStore);
+                // const children = types.reduce((pre, type, typeIndex) => {
+                //   if (item[type]) {
+                //     const childs = item[type].map((item2, index2) => {
+                //       console.log(type,item2, index2)
 
-            set_debug_left_data(find.cards);
+                //       return {
+                //         ...callback(item2, `${index}-${index2}`, callback),
+                //         item: item2,
+                //       };
+                //     });
+
+                //     console.log(`childs`, childs);
+                //     return [...pre, ...childs];
+                //   } else {
+                //     return pre;
+                //   }
+                // }, []);
+                console.log(`children`, children);
+
+                return {
+                  title: item.userDesc ? item.userDesc : item.cmdName,
+                  key: `${index}`,
+                  item: item,
+                  children,
+
+                  disabled: debug_dataStore.stepLog
+                    ? debug_dataStore.stepLog[`${index}`]
+                      ? false
+                      : true
+                    : true,
+                };
+              }
+            };
+            // 转换
+            const treeData = find.cards.map((item, index) =>
+              toTreeData(item, index, toTreeData)
+            );
+
+            console.log(`TMD右侧树`, treeData, debug_dataStore.stepLog);
+            setExpandedKeys(getExpandedKeys(treeData, getExpandedKeys));
+            console.log(getExpandedKeys(treeData, getExpandedKeys));
+            set_debug_left_data(treeData);
           } catch (e) {
             console.log(e, '开发模式下避免问题');
           }
         }
       }, [debug_dataStore, updater]);
+
+      const [expandedKeys, setExpandedKeys] = useState([]);
+
+      const getExpandedKeys = (data, callback) => {
+        return data.reduce((pre, item) => {
+          // console.log(`item`, item);
+          if (item.children) {
+            // console.log(`data.children`,item.children)
+            // console.log(`callback`,callback(item.children, callback))
+            // item.children.map(child => {
+            //   //console.log(`child`, child,child.key);
+            //   callback()
+            // })
+            return [
+              ...pre,
+              item.key,
+              ...callback(item.children, callback),
+              // ...item.children.map(child => {
+              //   console.log(`child`, child);
+              //   return callback(child, callback);
+              // }),
+            ];
+          } else {
+            return [...pre, item.key];
+          }
+        }, []);
+      };
 
       const handleSendVariable = (var_name, key) => {
         if (!tempVariables.current.var_name) {
@@ -472,7 +942,6 @@ export default memo(
       });
 
       const signVariableChange = (value, var_name, var_value) => {
-        console.clear();
         console.log(value, var_name, var_value);
         if (!value) {
           console.log(tempVariables.current);
@@ -495,10 +964,17 @@ export default memo(
 
       // 显示的变量详情
       const showDetails = () => {
-        if (currentPagePosition === 'editor') {
-          const index = parseInt(selectedTreeNode[0]);
-          if (!debug_left_data[index]) return;
-          if (!debug_left_data[index].hasLog) return;
+        if (false) {
+          console.log(
+            `block状态下的右侧面板`,
+            debug_left_data,
+            debug_dataStore.stepLog
+          );
+          const index = selectedTreeNode[0]; //parseInt(selectedTreeNode[0]);
+
+          if (!debug_dataStore.stepLog) return;
+          if (!debug_dataStore.stepLog[index]) return;
+          if (!debug_dataStore.stepLog[index].var_datas) return;
           return Object.keys(debug_left_data[index].hasLog.var_datas).map(
             key => {
               console.log(debug_left_data[index].hasLog.var_datas);
@@ -579,120 +1055,122 @@ export default memo(
               );
             }
           );
-        } else if (currentPagePosition === 'block') {
+        } else if (
+          true
+          //currentPagePosition === 'block'
+          ) {
           console.log(
             `block状态下的右侧面板`,
             debug_left_data,
             debug_dataStore.stepLog
           );
-          const index = parseInt(selectedTreeNode[0]);
+          const index = selectedTreeNode[0]; //parseInt(selectedTreeNode[0]);
 
           if (!debug_dataStore.stepLog) return;
           if (!debug_dataStore.stepLog[index]) return;
           if (!debug_dataStore.stepLog[index].var_datas) return;
-          return Object.keys(debug_dataStore.stepLog[index].var_datas).map(
-            key => {
-              //console.log(debug_left_data[index].hasLog.var_datas);
-              console.log(
-                `WHAT???`,
-                debug_dataStore.stepLog[index].var_datas,
-                key
-              );
-              return (
-                <TreeNode title={`作用域 ${key}`} defaultExpandAll={true}>
-                  {debug_dataStore.stepLog[index].var_datas[key].map(
-                    variable => {
-                      return (
-                        <TreeNode
-                          title={`${variable.var_name} = ${variable.var_value}`}
-                          key={uniqueId()}
-                          defaultExpandAll={true}
-                        >
-                          <TreeNode
-                            title={
-                              <span>
-                                <span className="outputPanel-normalTag">
-                                  变量名
-                                </span>
-                                {`${variable.var_name}`}
-                              </span>
-                            }
-                            key={uniqueId()}
-                            isLeaf
-                          />
-                          <TreeNode
-                            title={
-                              <span>
-                                <span className="outputPanel-spTag">
-                                  变量值
-                                </span>
-                                <Input
-                                  type="text"
-                                  defaultValue={`${variable.var_value}`}
-                                  className="outputPanel-spTag-input"
-                                  onFocus={value => {
-                                    signVariableChange(
-                                      null,
-                                      variable.var_name,
-                                      variable.var_value
-                                    );
-                                  }}
-                                  onChange={value => {
-                                    signVariableChange(
-                                      value,
-                                      variable.var_name,
-                                      variable.var_value
-                                    );
-                                  }}
-                                ></Input>
-                                <span
-                                  className="outputPanel-spTag-pushBtn"
-                                  onClick={() => {
-                                    //alert('发送');
-                                    handleSendVariable(variable.var_name, key);
-                                  }}
-                                >
-                                  <Icon type="export" />
-                                  修改变量
-                                </span>
-                              </span>
-                            }
-                            //title={`变量值 ${variable.var_value}`}
-                            key={uniqueId()}
-                            isLeaf
-                          />
-                          <TreeNode
-                            title={
-                              <span>
-                                <span className="outputPanel-normalTag">
-                                  变量类型
-                                </span>
-                                {`${variable.var_type}`}
-                              </span>
-                            }
-                            key={uniqueId()}
-                            isLeaf
-                          />
-                          <TreeNode
-                            title={
-                              <span>
-                                <span className="outputPanel-normalTag">
-                                  变量长度
-                                </span>
-                                {`${variable.var_length}`}
-                              </span>
-                            }
-                            key={uniqueId()}
-                            isLeaf
-                          />
-                        </TreeNode>
-                      );
-                    }
-                  )}
-                </TreeNode>
-              );
-            }
+
+          //return
+          console.log(
+            `debug_dataStore.stepLog[index].var_datas`,
+            debug_dataStore.stepLog[index].var_datas
           );
+
+          return Object.keys(
+            Array.isArray(debug_dataStore.stepLog[index].var_datas)
+              ? {} //{ "result": debug_dataStore.stepLog[index].var_datas }
+              : debug_dataStore.stepLog[index].var_datas
+          ).map(key => {
+            return (
+              <TreeNode title={`作用域 ${key}`} defaultExpandAll={true}>
+                {debug_dataStore.stepLog[index].var_datas[key].map(variable => {
+                  return (
+                    <TreeNode
+                      title={`${variable.var_name} = ${variable.var_value}`}
+                      key={uniqueId()}
+                      defaultExpandAll={true}
+                    >
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-normalTag">
+                              变量名
+                            </span>
+                            {`${variable.var_name}`}
+                          </span>
+                        }
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-spTag">变量值</span>
+                            <Input
+                              type="text"
+                              defaultValue={`${variable.var_value}`}
+                              className="outputPanel-spTag-input"
+                              onFocus={value => {
+                                signVariableChange(
+                                  null,
+                                  variable.var_name,
+                                  variable.var_value
+                                );
+                              }}
+                              onChange={value => {
+                                signVariableChange(
+                                  value,
+                                  variable.var_name,
+                                  variable.var_value
+                                );
+                              }}
+                            ></Input>
+                            <span
+                              className="outputPanel-spTag-pushBtn"
+                              onClick={() => {
+                                //alert('发送');
+                                handleSendVariable(variable.var_name, key);
+                              }}
+                            >
+                              <Icon type="export" />
+                              修改变量
+                            </span>
+                          </span>
+                        }
+                        //title={`变量值 ${variable.var_value}`}
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-normalTag">
+                              变量类型
+                            </span>
+                            {`${variable.var_type}`}
+                          </span>
+                        }
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                      <TreeNode
+                        title={
+                          <span>
+                            <span className="outputPanel-normalTag">
+                              变量长度
+                            </span>
+                            {`${variable.var_length}`}
+                          </span>
+                        }
+                        key={uniqueId()}
+                        isLeaf
+                      />
+                    </TreeNode>
+                  );
+                })}
+              </TreeNode>
+            );
+          });
         }
       };
 
@@ -771,101 +1249,14 @@ export default memo(
                 }
               }}
             />
-
-            <div
-              style={{
-                marginTop: -38,
-                display: tabSwicth === '调试' ? 'inline' : 'none',
-              }}
-              className="dragger-editor-container-output-tages"
-            >
-              {debug_switch === false ? (
-                <DebugBtn
-                  labelText="启动Debug模式"
-                  iconType="play-circle"
-                  click={() => {
-                    event.emit(DEBUG_OPEN_DEBUGSERVER);
-                    event.emit(PYTHON_OUTPUT_CLEAR);
-                  }}
-                />
-              ) : (
-                <span>
-                  <DebugBtn
-                    labelText="关闭Debug服务"
-                    iconType="stop"
-                    click={() => {
-                      event.emit(DEBUG_CLOSE_DEBUGSERVER);
-                    }}
-                  />
-                </span>
-              )}
-
-              {/** DEBUG服务器开启后，这些按钮才出现 */}
-              {debug_switch === false ? (
-                ''
-              ) : (
-                <span>
-                  {/** 单步调试时，上述所有的按钮都不能显示 */}
-                  {debug_oneRunning === true ? (
-                    <DebugBtn
-                      labelText="正在进行单步调试"
-                      iconType="loading"
-                      disabled={true}
-                    />
-                  ) : (
-                    <span>
-                      {/** 没有操作时，可以进行按序调试 */}
-                      {debug_running === false ? (
-                        <DebugBtn
-                          labelText="从头按序调试"
-                          iconType="play-circle"
-                          click={() => {
-                            event.emit(DEBUG_RUN_STEP_BY_STEP);
-                          }}
-                        />
-                      ) : (
-                        <span>
-                          {debug_pause === false ? (
-                            <DebugBtn
-                              labelText="暂停"
-                              iconType="loading"
-                              click={() => {
-                                event.emit(DEBUG_SET_PAUSE);
-                              }}
-                            />
-                          ) : (
-                            <span>
-                              <DebugBtn
-                                labelText="继续"
-                                iconType="play-circle"
-                                click={() => {
-                                  event.emit(DEBUG_CONTINUE);
-                                }}
-                              />
-                              <DebugBtn
-                                labelText="下一步"
-                                iconType="vertical-align-bottom"
-                                click={() => {
-                                  event.emit(DEBUG_CONTINUE_ONESTEP_NEXT);
-                                }}
-                              />
-                              <DebugBtn
-                                labelText="重新生成代码"
-                                iconType="issues-close"
-                                click={() => {
-                                  resetDebugIndex();
-                                  event.emit(DEBUG_RESET_CODE);
-                                }}
-                              />
-                            </span>
-                          )}
-                        </span>
-                      )}
-                    </span>
-                  )}
-                </span>
-              )}
-            </div>
+            {/** DEBUG按钮组 */}
+            <DebugBtns
+              tabSwicth={tabSwicth}
+              debug_switch={debug_switch}
+              debug_running={debug_running}
+              debug_oneRunning={debug_oneRunning}
+              debug_pause={debug_pause}
+            />
           </div>
           <div
             style={{
@@ -923,7 +1314,7 @@ export default memo(
                       color: '#aaa',
                     }}
                   >
-                    Debug范围
+                    调试范围
                   </p>
                   <DirectoryTree
                     multiple
@@ -935,54 +1326,10 @@ export default memo(
                       setSelectedTreeNode(selectedKeys);
                     }}
                     // onExpand={this.onExpand}
-                  >
-                    {currentPagePosition === 'editor'
-                      ? debug_left_data
-                        ? debug_left_data.map((item, index) => {
-                            return (
-                              <TreeNode
-                                title={item.titleName}
-                                key={`${index}`}
-                                isLeaf
-                                disabled={item.hasLog ? false : true}
-                              />
-                            );
-                          })
-                        : ''
-                      : ''}
-
-                    {currentPagePosition === 'block'
-                      ? debug_left_data
-                        ? debug_left_data.map((item, index) => {
-                            return (
-                              <TreeNode
-                                title={
-                                  item.userDesc ? item.userDesc : item.cmdName
-                                }
-                                key={`${index}`}
-                                isLeaf
-                                disabled={
-                                  debug_dataStore.stepLog
-                                    ? debug_dataStore.stepLog[index]
-                                      ? false
-                                      : true
-                                    : true
-                                }
-                              />
-                            );
-                          })
-                        : ''
-                      : ''}
-                    {/**
-                <TreeNode title="leaf 0-0" key="0-0-0" isLeaf />
-                  <TreeNode title="parent 0" key="0-0">
-                    <TreeNode title="leaf 0-0" key="0-0-0" isLeaf />
-                  </TreeNode>
-                  <TreeNode title="parent 1" key="0-1">
-                    <TreeNode title="leaf 1-0" key="0-1-0" isLeaf />
-                  </TreeNode>
-                   */}
-                  </DirectoryTree>
+                    //defaultExpandAll={true}
+                    expandedKeys={expandedKeys}
+                    treeData={debug_left_data}
+                  ></DirectoryTree>
                 </div>
                 <div className="right">
                   <p
@@ -995,6 +1342,7 @@ export default memo(
                     变量
                   </p>
                   <DirectoryTree
+                  //expandedKeys={expandedKeysVariables}
                     multiple
                     defaultExpandAll
                     // onSelect={this.onSelect}
