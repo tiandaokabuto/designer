@@ -83,8 +83,6 @@ const BasicStatement = useInjectContext(props => {
     breakPoint,
   } = props;
 
-  console.log(card);
-
   const dispatch = useDispatch();
 
   // 当前卡片信息
@@ -120,6 +118,8 @@ const BasicStatement = useInjectContext(props => {
   const handleEmitCodeTransform = useTransformToPython();
 
   const [className, setClassName, resetClassName] = useSetClassName();
+
+  const anotherRef = useRef(null);
 
   const opacity = useToggleOpacity({
     isDraggingNode,
@@ -363,8 +363,10 @@ const BasicStatement = useInjectContext(props => {
   // }, [ref.current]);
 
   const getDebugLeft = () => {
-    if (ref.current) {
-      const cardInfo = ref.current.getBoundingClientRect();
+    console.log(anotherRef.current);
+    if (anotherRef.current) {
+      const cardInfo = anotherRef.current.getBoundingClientRect();
+      console.log(cardInfo);
       const left = localStorage.getItem('secondLeft');
       if (localStorage.getItem('secondLeftHide') !== 'true') {
         return cardInfo.x - parseInt(left) - 15;
@@ -372,7 +374,7 @@ const BasicStatement = useInjectContext(props => {
         return 0;
       }
     } else {
-      return 0;
+      return 19;
     }
   };
 
@@ -387,6 +389,7 @@ const BasicStatement = useInjectContext(props => {
       onClick={() => handleClick(id)}
     >
       <div
+        ref={isTail ? null : anotherRef}
         className={isTail ? 'card-content card-content__tail' : 'card-content'}
         data-id={isTail ? '' : id}
         // style={{

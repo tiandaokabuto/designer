@@ -4,7 +4,13 @@ import { message, Button } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 import { withRouter } from 'react-router';
-
+import event, {
+  SAVE_FILE,
+  START_POINT,
+  STOP_RUNNING,
+  REVOKE_ACTION,
+  RECOVERY_ACTION,
+} from '@/containers/eventCenter';
 import api, { config } from '../api';
 import { hex_sha1, readLoginConfig } from '../login/utils';
 
@@ -109,6 +115,26 @@ export default class App extends React.Component<Props> {
 
     electronLocalshortcut.register(win, 'Ctrl+F12', () => {
       win.webContents.openDevTools();
+    });
+    // 保存文件快捷键
+    electronLocalshortcut.register(win, 'Ctrl+S', () => {
+      event.emit(SAVE_FILE);
+    });
+    // 运行快捷键
+    electronLocalshortcut.register(win, 'F5', () => {
+      event.emit(START_POINT);
+    });
+    // 暂停快捷键
+    electronLocalshortcut.register(win, 'F12', () => {
+      event.emit(STOP_RUNNING);
+    });
+    // 撤销快捷键
+    electronLocalshortcut.register(win, 'Ctrl+Z', () => {
+      event.emit(REVOKE_ACTION);
+    });
+    // 恢复快捷键
+    electronLocalshortcut.register(win, 'Ctrl+Y', () => {
+      event.emit(RECOVERY_ACTION);
     });
     // 初始化用户数据，用于断网重连
     const callback = (ip, port, userName, password, serialNumber, offLine) => {

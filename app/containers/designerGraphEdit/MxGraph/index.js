@@ -194,6 +194,30 @@ const MxgraphContainer = useInjectContext(
       goHandleRedo(graph, undoAndRedoRef.current, updateGraphDataAction);
     };
 
+    // 复制流程块
+    const handleCopyProcess = () => {
+      console.log('触发复制');
+      Action_CopyCell(graph, { mxClipboard, changeSavingModuleData });
+    };
+    // 粘贴流程块
+    const handlePasteProcess = () => {
+      Action_PasteCell(graph, {
+        mxClipboard,
+        setGraphDataMap,
+        changeCheckedGraphBlockId,
+        graphData: graphDataRef.current,
+        undoAndRedoRef,
+      });
+    };
+    // 删除流程块
+    const handleDeleteProcess = () => {
+      Action_DeleteCell(graph, {
+        deleteGraphDataMap,
+        changeCheckedGraphBlockId,
+        graphData: graphDataRef.current,
+      });
+    };
+
     useEffect(() => {
       const container = graphContainer.current;
       // setGraph(new mxGraph(container));
@@ -203,10 +227,12 @@ const MxgraphContainer = useInjectContext(
       layoutManagerRef.current = new mxLayoutManager(graph);
 
       undoMng = new mxUndoManager();
-
       event.addListener('undo', handleUndo);
       event.addListener('redo', handleRedo);
       event.addListener('resetGraph', resetGraph);
+      event.addListener('copyProcess', handleCopyProcess);
+      event.addListener('pasteProcess', handlePasteProcess);
+      event.addListener('deleteProcess', handleDeleteProcess);
 
       // 地表最强监听   实属牛逼
       // Object.keys(mxEvent).forEach(item => {
@@ -230,6 +256,9 @@ const MxgraphContainer = useInjectContext(
         event.removeListener('undo', handleUndo);
         event.removeListener('redo', handleRedo);
         event.removeListener('resetGraph', resetGraph);
+        event.removeListener('copyProcess', handleCopyProcess);
+        event.removeListener('pasteProcess', handlePasteProcess);
+        event.removeListener('deleteProcess', handleDeleteProcess);
       };
     }, []);
 
@@ -936,7 +965,7 @@ const MxgraphContainer = useInjectContext(
       graph.addListener(mxEvent.CLICK, (sender, evt) => {
         console.log('点击');
         const cell = evt.getProperty('cell');
-
+        console.log(cell);
         if (cell != null) {
           if (!cell.vertex) return;
 
@@ -978,6 +1007,8 @@ const MxgraphContainer = useInjectContext(
           ) {
             changeCheckedGraphBlockId(cellId);
             synchroCodeBlock(graphDataMapRef.current.get(cellId));
+          } else {
+            changeCheckedGraphBlockId('');
           }
 
           if (overlays == null && !isPort) {
@@ -998,6 +1029,8 @@ const MxgraphContainer = useInjectContext(
           } else {
             // graph.removeCellOverlays(cell);
           }
+        } else {
+          changeCheckedGraphBlockId('');
         }
       });
 

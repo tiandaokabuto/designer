@@ -60,7 +60,7 @@ const defaultGraphData = {
       type: 'node',
       version: 'mxgraph',
       x: 600,
-      y: 200,
+      y: 100,
     },
   ],
 };

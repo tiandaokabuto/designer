@@ -77,9 +77,12 @@ const TreeNodeTitle = ({
   dragModule,
 }) => {
   return (
+    // mulu-${node.key.replace('key_', '')}
     <div
       className={`${
-        dragModule ? 'treenode-title process-module-drag' : 'treenode-title'
+        dragModule
+          ? `treenode-title process-module-drag mulu-${node.key}`
+          : `treenode-title mulu-${node.key}`
       }`}
       style={{
         display: 'flex',
@@ -573,12 +576,18 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
           // className="draggable-tree"
           expandedKeys={expandedKeys}
           defaultExpandAll
-          switcherIcon={type === 'secondModule' ? false : <Switcher />}
+          switcherIcon={
+            type === 'secondModule' ? (
+              false
+            ) : (
+              <Switcher expandedKeys={expandedKeys} level={1} />
+            )
+          }
           showIcon={type === 'secondModule' ? false : true}
           draggable={type === 'secondModule' ? false : true}
           blockNode
           onExpand={expandKeys => {
-            console.log('展开or收起');
+            console.log(expandKeys);
             setExpandedKeys(expandKeys);
           }}
           onRightClick={({ event, node }) => {

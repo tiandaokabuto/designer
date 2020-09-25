@@ -29,6 +29,7 @@ import { saveAutomicList } from './utils';
 
 import './index.scss';
 
+const { remote } = require('electron');
 const { TabPane } = Tabs;
 const { TreeNode } = Tree;
 const { Search } = Input;
@@ -210,8 +211,7 @@ export default useInjectContext(
         } else {
           node.title = (
             <div
-              data-nodekey={node.key}
-              className="treenode-title"
+              className={`treenode-title mulu-${node.key}`}
               // style={{
               //   display: 'flex',
               //   justifyContent: 'space-between',
@@ -249,7 +249,6 @@ export default useInjectContext(
           );
         }
       });
-      console.log(treeData);
       return treeData;
     };
 
@@ -336,13 +335,13 @@ export default useInjectContext(
       },
       {
         key: 'secondModule',
-        name: '流程快',
+        name: '流程块',
         className: 'designergraph-item-tab',
       },
     ];
 
     const getArrDifference = (arr1, arr2) => {
-      return arr1.concat(arr2).filter(function (v, i, arr) {
+      return arr1.concat(arr2).filter(function(v, i, arr) {
         return arr.indexOf(v) === arr.lastIndexOf(v);
       });
     };
@@ -365,8 +364,20 @@ export default useInjectContext(
             <div className="dragger-editor-item-title-text">组件库</div>
             <div className="dragger-editor-item-title-icons">
               <Icon
+                style={{
+                  marginRight: '10px',
+                  visibility:
+                    remote.getGlobal('sharedObject').userName === ''
+                      ? 'hidden'
+                      : 'visible',
+                }}
+                type="redo"
+                onClick={() => {
+                  event.emit('update_list');
+                }}
+              />
+              <Icon
                 type={isAllExpand ? 'minus-square' : 'plus-square'}
-                style={{ marginRight: '10px' }}
                 onClick={() => {
                   const data = [];
                   traverseTree(treeData, item => {
@@ -381,12 +392,6 @@ export default useInjectContext(
                     setExpandedKeys([]);
                     setIsAllExpand(false);
                   }
-                }}
-              />
-              <Icon
-                type="redo"
-                onClick={() => {
-                  event.emit('update_list');
                 }}
               />
             </div>
@@ -411,34 +416,33 @@ export default useInjectContext(
                 className="atomicCList-tree"
                 expandedKeys={expandedKeys}
                 onExpand={(treeExpandedKeys, { expanded, node }) => {
-                  console.log(treeExpandedKeys);
-                  console.log(node);
                   // 收起来的操作
-                  if (!expanded) {
-                    const props = node.props;
+                  // if (!expanded) {
+                  //   const props = node.props;
 
-                    if (props.children.length !== 0) {
-                      const newArr = [];
-                      // children中的项不能在expandedKeys中出现
-                      treeExpandedKeys.forEach(item => {
-                        let tag = false;
-                        props.children.forEach(child => {
-                          // 已展开的是否存在于收起的那一项里
-                          if (child.key === item) {
-                            tag = true;
-                          }
-                        });
-                        if (tag) {
-                          newArr.push(item);
-                        }
-                      });
-                      setExpandedKeys(
-                        getArrDifference(treeExpandedKeys, newArr)
-                      );
-                    }
-                  } else {
-                    setExpandedKeys(treeExpandedKeys);
-                  }
+                  //   if (props.children.length !== 0) {
+                  //     const newArr = [];
+                  //     // children中的项不能在expandedKeys中出现
+                  //     treeExpandedKeys.forEach(item => {
+                  //       let tag = false;
+                  //       props.children.forEach(child => {
+                  //         // 已展开的是否存在于收起的那一项里
+                  //         if (child.key === item) {
+                  //           tag = true;
+                  //         }
+                  //       });
+                  //       if (tag) {
+                  //         newArr.push(item);
+                  //       }
+                  //     });
+                  //     setExpandedKeys(
+                  //       getArrDifference(treeExpandedKeys, newArr)
+                  //     );
+                  //   }
+                  // } else {
+
+                  // }
+                  setExpandedKeys(treeExpandedKeys);
                 }}
                 onRightClick={({ event, node }) => {
                   setPosition({
@@ -448,7 +452,9 @@ export default useInjectContext(
                   });
                 }}
                 // showIcon={true}
-                switcherIcon={<Switcher expandedKeys={expandedKeys} />}
+                switcherIcon={
+                  <Switcher expandedKeys={expandedKeys} level={2} />
+                }
                 onSelect={(_, e) => {
                   // console.log(e);
                   // const props = e.node.props;

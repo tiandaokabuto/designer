@@ -1,7 +1,7 @@
 import './login.scss';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Checkbox, message } from 'antd';
+import { Button, Checkbox, message, Modal } from 'antd';
 import axios from 'axios';
 
 import api, { config } from '../api';
@@ -13,7 +13,7 @@ import {
   getUserDay,
 } from './utils';
 import LoginFromInput from './components/LoginFromInput';
-
+import AgreementModal from './components/agreementModal';
 const { ipcRenderer, remote } = require('electron');
 
 let userDay = getUserDay();
@@ -41,6 +41,7 @@ const Login = () => {
 
   // 文件数据
   const [originFileData, setOriginFileData] = useState({});
+  const [agreementVisible, setAgreementVisible] = useState(false);
 
   // 登录按钮是否可用
   const memoizedDisable = useMemo(() => {
@@ -85,8 +86,8 @@ const Login = () => {
           key: 'serialNumber',
           inputValue: serialNumber,
           handleInputVauleChange: setSerialNumber,
-          label: '序列号',
-          placeholder: '请输入序列号',
+          label: '许可证',
+          placeholder: '请输入许可证',
           formItemClassName: 'login-right-serial',
         },
       ];
@@ -184,6 +185,10 @@ const Login = () => {
     }
   };
 
+  const handleCancel = e => {
+    setAgreementVisible(false);
+  };
+
   useEffect(() => {
     // 点击离线登录，使用已用的序列号进行自动登录
     if (
@@ -240,7 +245,7 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    document.onkeydown = function (e) {
+    document.onkeydown = function(e) {
       if (e.keyCode === 13) {
         handleClickSignIn();
       }
@@ -274,7 +279,7 @@ const Login = () => {
           />
         ))}
         {offLine && (
-          <p className="login-right-liscense">
+          <div className="login-right-liscense">
             <Checkbox
               defaultChecked
               checked={liscense}
@@ -283,11 +288,31 @@ const Login = () => {
                 fontSize: 12,
                 color: '#999',
               }}
+            ></Checkbox>
+            <div
+              style={{
+                display: 'inline-block',
+                fontSize: 12,
+                color: '#999',
+                marginLeft: '5px',
+              }}
             >
               我已阅读并接受
-              <span className="login-right-liscense-file">《许可协议》</span>
-            </Checkbox>
-          </p>
+              <a
+                className="login-right-liscense-file"
+                onClick={() => {
+                  console.log('许可协议');
+                  setAgreementVisible(true);
+                }}
+              >
+                《许可协议》
+              </a>
+            </div>
+            <AgreementModal
+              visible={agreementVisible}
+              handleCancel={handleCancel}
+            ></AgreementModal>
+          </div>
         )}
         <span
           className="login-right-tip"
