@@ -179,8 +179,6 @@ export default useInjectContext(
           [],
           expandedKeysTemp
         );
-        console.log(treeData);
-        console.log(expandedKeysTemp);
         // 拼接原来的可用和收藏列表
         treeData = originTreeData
           .filter(item => item.title !== '可用')
@@ -251,7 +249,6 @@ export default useInjectContext(
           );
         }
       });
-      console.log(treeData);
       return treeData;
     };
 
@@ -419,8 +416,6 @@ export default useInjectContext(
                 className="atomicCList-tree"
                 expandedKeys={expandedKeys}
                 onExpand={(treeExpandedKeys, { expanded, node }) => {
-                  console.log(treeExpandedKeys);
-                  console.log(node);
                   // 收起来的操作
                   // if (!expanded) {
                   //   const props = node.props;
