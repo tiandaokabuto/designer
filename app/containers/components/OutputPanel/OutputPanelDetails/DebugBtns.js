@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+import { useSelector } from 'react-redux';
 
 import event from '../../../eventCenter';
 import DebugBtn from '../DebugBtn/DebugBtn';
@@ -23,6 +25,11 @@ export default ({
   debug_oneRunning,
   debug_pause,
 }) => {
+  const [disabledBtn, setDisabledBtn] = useState(false);
+  const currentPagePosition = useSelector(
+    state => state.temporaryvariable.currentPagePosition
+  );
+
   return (
     <div
       style={{
@@ -33,20 +40,26 @@ export default ({
     >
       {debug_switch === false ? (
         <DebugBtn
-          labelText="启动Ipython调试"
-          iconType="play-circle"
+          labelText={disabledBtn ? '正在切换状态' : '启动调试'}
+          iconType="experiment"
+          disabled={disabledBtn}
           click={() => {
+            setDisabledBtn(true);
             event.emit(DEBUG_OPEN_DEBUGSERVER);
             event.emit(PYTHON_OUTPUT_CLEAR);
+            setTimeout(() => setDisabledBtn(false), 2800);
           }}
         />
       ) : (
         <span>
           <DebugBtn
-            labelText="关闭Ipython调试"
-            iconType="stop"
+            labelText={disabledBtn ? '关闭调试' : '关闭调试'}
+            iconType="experiment"
+            disabled={disabledBtn}
             click={() => {
+              setDisabledBtn(true);
               event.emit(DEBUG_CLOSE_DEBUGSERVER);
+              setTimeout(() => setDisabledBtn(false), 2800);
             }}
           />
         </span>
@@ -68,13 +81,27 @@ export default ({
             <span>
               {/** 没有操作时，可以进行按序调试 */}
               {debug_running === false ? (
-                <DebugBtn
-                  labelText="从头按序调试"
-                  iconType="play-circle"
-                  click={() => {
-                    event.emit(DEBUG_RUN_STEP_BY_STEP);
-                  }}
-                />
+                <span>
+                  <DebugBtn
+                    labelText="运行"
+                    iconType="play-circle"
+                    click={() => {
+                      event.emit(DEBUG_RUN_STEP_BY_STEP);
+                    }}
+                  />
+                  {currentPagePosition === 'block' ? (
+                    <DebugBtn
+                      labelText="下一步"
+                      iconType="vertical-align-bottom"
+                      click={() => {
+                        event.emit(DEBUG_RUN_STEP_BY_STEP);
+                        event.emit(DEBUG_SET_PAUSE);
+                      }}
+                    />
+                  ) : (
+                    ''
+                  )}
+                </span>
               ) : (
                 <span>
                   {debug_pause === false ? (
@@ -94,13 +121,17 @@ export default ({
                           event.emit(DEBUG_CONTINUE);
                         }}
                       />
-                      <DebugBtn
-                        labelText="下一步"
-                        iconType="vertical-align-bottom"
-                        click={() => {
-                          event.emit(DEBUG_CONTINUE_ONESTEP_NEXT);
-                        }}
-                      />
+                      {currentPagePosition === 'block' ? (
+                        <DebugBtn
+                          labelText="下一步"
+                          iconType="vertical-align-bottom"
+                          click={() => {
+                            event.emit(DEBUG_CONTINUE_ONESTEP_NEXT);
+                          }}
+                        />
+                      ) : (
+                        ''
+                      )}
                       <DebugBtn
                         labelText="重新生成代码"
                         iconType="issues-close"
