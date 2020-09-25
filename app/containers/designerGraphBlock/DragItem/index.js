@@ -179,6 +179,8 @@ export default useInjectContext(
           [],
           expandedKeysTemp
         );
+        console.log(treeData);
+        console.log(expandedKeysTemp);
         // 拼接原来的可用和收藏列表
         treeData = originTreeData
           .filter(item => item.title !== '可用')
@@ -211,8 +213,7 @@ export default useInjectContext(
         } else {
           node.title = (
             <div
-              data-nodekey={node.key}
-              className="treenode-title"
+              className={`treenode-title mulu-${node.key}`}
               // style={{
               //   display: 'flex',
               //   justifyContent: 'space-between',
@@ -337,7 +338,7 @@ export default useInjectContext(
       },
       {
         key: 'secondModule',
-        name: '流程快',
+        name: '流程块',
         className: 'designergraph-item-tab',
       },
     ];
@@ -421,31 +422,32 @@ export default useInjectContext(
                   console.log(treeExpandedKeys);
                   console.log(node);
                   // 收起来的操作
-                  if (!expanded) {
-                    const props = node.props;
+                  // if (!expanded) {
+                  //   const props = node.props;
 
-                    if (props.children.length !== 0) {
-                      const newArr = [];
-                      // children中的项不能在expandedKeys中出现
-                      treeExpandedKeys.forEach(item => {
-                        let tag = false;
-                        props.children.forEach(child => {
-                          // 已展开的是否存在于收起的那一项里
-                          if (child.key === item) {
-                            tag = true;
-                          }
-                        });
-                        if (tag) {
-                          newArr.push(item);
-                        }
-                      });
-                      setExpandedKeys(
-                        getArrDifference(treeExpandedKeys, newArr)
-                      );
-                    }
-                  } else {
-                    setExpandedKeys(treeExpandedKeys);
-                  }
+                  //   if (props.children.length !== 0) {
+                  //     const newArr = [];
+                  //     // children中的项不能在expandedKeys中出现
+                  //     treeExpandedKeys.forEach(item => {
+                  //       let tag = false;
+                  //       props.children.forEach(child => {
+                  //         // 已展开的是否存在于收起的那一项里
+                  //         if (child.key === item) {
+                  //           tag = true;
+                  //         }
+                  //       });
+                  //       if (tag) {
+                  //         newArr.push(item);
+                  //       }
+                  //     });
+                  //     setExpandedKeys(
+                  //       getArrDifference(treeExpandedKeys, newArr)
+                  //     );
+                  //   }
+                  // } else {
+
+                  // }
+                  setExpandedKeys(treeExpandedKeys);
                 }}
                 onRightClick={({ event, node }) => {
                   setPosition({
@@ -455,7 +457,9 @@ export default useInjectContext(
                   });
                 }}
                 // showIcon={true}
-                switcherIcon={<Switcher expandedKeys={expandedKeys} />}
+                switcherIcon={
+                  <Switcher expandedKeys={expandedKeys} level={2} />
+                }
                 onSelect={(_, e) => {
                   // console.log(e);
                   // const props = e.node.props;
