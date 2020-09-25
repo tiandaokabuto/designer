@@ -678,6 +678,9 @@ export default memo(({ history, tag }) => {
   // 04 单步发送
   const oneStepRun = data => {
     const { isIgnore, cards, id } = data;
+
+    console.log(cards)
+
     const running = debug_runningState_ref.current;
 
     if (debug_switch_ref.current === false) {
@@ -702,8 +705,8 @@ export default memo(({ history, tag }) => {
       changeDebugInfos(DEBUG_ONE_STEP_RUN_STARTED, {});
     }
 
-    const card = fetchCard(cards, id);
-    console.log(`卡片`,card)
+    let card = fetchCard(cards, id);
+    console.log(`卡片`,card, id)
     clickOneStepRun(card, []);
   };
 

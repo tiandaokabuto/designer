@@ -427,6 +427,7 @@ export const blockRun_0_2_ver = async (callback, withoutNext = false) => {
       return;
     }
   }
+
   if (nextCard) {
     const next_nextCard = getNextIndexCards(
       cards,
@@ -442,7 +443,7 @@ export const blockRun_0_2_ver = async (callback, withoutNext = false) => {
   }
 
   // 04 结束：下一个指针属于第一层，而且已经没有卡片，
-  if (nextPk.length === 1 && !nextCard) {
+  if (nextPk.length === 0 || (nextPk.length === 1 && !nextCard)) {
     pointOfBlock = undefined;
     changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
     return message.success('流程块已完成');
@@ -712,8 +713,9 @@ export const cardsRun_0_2_ver = async (
     }
   }
 
+  console.log(`[到底了]nextPk`,nextPk, nextCard)
   // 04 结束：下一个指针属于第一层，而且已经没有卡片，
-  if (nextPk.length === 1 && !nextCard) {
+  if (nextPk.length === 0 || (nextPk.length === 1 && !nextCard)) {
     pointOfCard = undefined;
     changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
     return message.success('流程块已完成');
