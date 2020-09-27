@@ -33,7 +33,7 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
     };
 
     if (cells[0].value === '开始') {
-      return message.info("开始不能删除");
+      return message.info('开始不能删除');
     }
 
     if (cells[0].value === '异常捕获') {
@@ -82,7 +82,7 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
   cells.forEach(cell => {
     for (const [key, item] of Object.entries(graph.getModel().cells)) {
       if (cell.id === item.id) {
-        deleteGraphDataMap(item.id);
+        // deleteGraphDataMap(item.id);
         delete graph.getModel().cells[key];
       }
     }

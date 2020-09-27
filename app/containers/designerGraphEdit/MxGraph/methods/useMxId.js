@@ -17,12 +17,17 @@ export default () => {
     }
     return false;
   };
-  return graphData => {
+
+  const hasDataMap = (dataMap, id) => {
+    const result = dataMap.get(id);
+    return result;
+  };
+  return (graphData, graphDataMap) => {
     const nodes = graphData ? graphData.nodes : [];
     let id = uniqueId('mx_');
-
+    // hasDataMap(graphDataMap, id);
     while (true) {
-      if (isDuplicat(nodes, id)) {
+      if (isDuplicat(nodes, id) || hasDataMap(graphDataMap, id)) {
         id = uniqueId('mx_');
         continue;
       } else {

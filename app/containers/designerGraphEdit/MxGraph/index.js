@@ -2186,7 +2186,11 @@ const MxgraphContainer = useInjectContext(
                 // if (!select) return;
                 if (select.length !== 0) {
                   select.forEach((item, index) => {
-                    item.id = getMxId(graphDataRef.current);
+                    console.log(graphDataMapRef);
+                    item.id = getMxId(
+                      graphDataRef.current,
+                      graphDataMapRef.current
+                    );
                     if (item.value.indexOf("class='compoent-content'") > -1) {
                       setGraphDataMap(item.id, {
                         shape: 'processblock',
