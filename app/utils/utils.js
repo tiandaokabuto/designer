@@ -349,9 +349,14 @@ export const persistentStorage = (
       }
     });
   }
-  updateProjextModifyTime(name);
+
   // 重新覆写processTree
-  persistentManifest(tree, name, 'processTree');
+  if (!path) {
+    console.log('覆写tree');
+    updateProjextModifyTime(name);
+    persistentManifest(tree, name, 'processTree');
+  }
+
   return tree;
 };
 

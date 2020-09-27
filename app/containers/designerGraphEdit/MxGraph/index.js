@@ -1845,11 +1845,17 @@ const MxgraphContainer = useInjectContext(
       const writeCodec = new MxCodec(xmlDoc);
       writeCodec.decode(xmlDoc.documentElement, graph.getModel());
 
-      const zoom = graphData.zoom ? parseInt(graphData.zoom) : 9;
-      setZoomLevel(zoom);
-      localStorage.setItem('zoom', zoom);
+      try {
+        const zoom = graphData.zoom ? parseInt(graphData.zoom) : 9;
+        setZoomLevel(zoom);
+        localStorage.setItem('zoom', zoom);
+      } catch (e) {
+        console.log(e);
+        setZoomLevel(9);
+        localStorage.setItem('zoom', 9);
+      }
 
-      if (graphData.translate) {
+      if (graphData && graphData.translate) {
         if (graphData.translate.x && graphData.translate.y) {
           console.log(
             parseInt(graphData.translate.x),
