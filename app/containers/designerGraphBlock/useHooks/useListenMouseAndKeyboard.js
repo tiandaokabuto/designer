@@ -363,6 +363,7 @@ export default () => {
     electronLocalshortcut.register(win, 'Ctrl+V', () => {
       handlePaste();
     });
+    console.log(electronLocalshortcut);
     // 支持批量剪切的操作
     // 注释原因：在普通的input框内剪切后selected为空字符串，不会被return，触发原子能力的剪切
     /* electronLocalshortcut.register(win, 'Ctrl+X', () => {
@@ -424,7 +425,8 @@ export default () => {
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      electronLocalshortcut.unregisterAll(win);
+      electronLocalshortcut.unregister(win, 'Ctrl+C');
+      electronLocalshortcut.unregister(win, 'Ctrl+V');
     };
   }, [checkedId, cards, clipboardData]);
 };
