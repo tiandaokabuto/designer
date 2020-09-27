@@ -1,0 +1,163 @@
+  /*****
+   *   1 拿指针
+   *
+   *   2-1 偶数                      2-2 奇数
+   *
+   *   3-1 特殊判断                  判断是否应该被拦截（拦截的话就跳指针，调会掉）
+   *
+   *
+   *                                3-2 取card
+   *     （改指针）
+   *          ||
+   *
+   *
+   *   4-1 执行双层                 4-2 有children                      4-3 无children
+   *          ||
+   *
+   *                               5-1 执行双层                         5-2 执行单层
+   *                                                                （检查到无card则回调）
+   *                                      ||                                  ||
+   */
+
+
+
+
+
+// 测试用
+
+
+
+
+
+// 传入pk卡片指针值为 pointOfCard
+const getNextIndexCards = (cards, pk) => {
+  let nextPk = [];
+  let nowCard; // 单数层，卡片
+  let nowCards; // 双数层，儿子组
+  let nowIndex;
+  let fatherPk;
+  let fatherCards;
+
+  if (!pk) {
+    if (cards.length > 0) {
+      return [0];
+    } else {
+      message.info('未检测到代码');
+      return undefined;
+    }
+  }
+
+  // 假如是指针长度为1,3,5,7,则指针在卡片上
+  // 详情见说明文档
+
+  if (pk.length % 2 === 1) {
+    nowCard = getCardsByPk(cards, pk);
+    nowIndex = pk[0];
+
+    if (pk.length === 1 && !nowCard.hasChildren) {
+      // 假如只有一层，则fatherCard不存在
+      // 直接检查cards
+      if (pk < cards.length - 1) {
+        return [nowIndex + 1];
+      } else {
+        return [];
+      }
+    }
+
+    // 01 取出当前层下标
+    nowIndex = pk.slice(-1)[0];
+    // 01-1 当前卡片
+    nowCard = getCardsByPk(cards, pk);
+
+    // 02 取出父级层下标
+    fatherPk = pk.slice(0, -1);
+    // 02-2 父级卡组
+    fatherCards = getCardsByPk(cards, fatherPk);
+
+    // 条件1  假如这个指针指向的没有元素，例如 ifChildren=[]
+    //        则指正切回上层
+    if (!nowCard) {
+      nowIndex = fatherPk.slice(-1)[0];
+      fatherPk = fatherPk.slice(0, -1);
+      return [...fatherPk, nowIndex + 1];
+    }
+
+    // [卡片层] 分辨  B,  A
+    // B 嵌套容器
+    // ---------------------------则直接进下一层第一个卡片
+    if (nowCard.hasChildren && nowCard.hasChildren.length > 0) {
+      return [...pk, 0];
+    }
+
+    // A 正常卡片
+    // ---------------------------正常卡片是下一个是下标+1
+
+    // 条件2  判断父层下标是否到达该层尾部
+    //        假如没有到尾部，则下标+1
+    if (nowIndex < fatherCards.length - 1) {
+      return [...fatherPk, nowIndex + 1];
+    }
+    // 否则条件3  指针到达尾部，则需要跳出这一层
+    //            和上面条件1同理
+    else {
+      nowIndex = fatherPk.slice(-1)[0];
+      fatherPk = fatherPk.slice(0, -1);
+      return [...fatherPk, nowIndex + 1];
+    }
+  }
+  // 假如是 0,2,4,6,8...位置
+  else {
+    // 03 取出当前层下标
+    nowIndex = pk.slice(-1)[0];
+    // 03-1 当前卡儿子组
+    nowCards = getCardsByPk(cards, pk);
+
+    // // 04 取出父级层下标
+    fatherPk = pk.slice(0, -1);
+    // // 04-1 父级卡组
+    // fatherCards = getCardsByPk(fatherPk);
+
+    // 条件1  假如这个指针指向的没有这个儿子组
+    //        则说明已经到嵌套体的尾部，则要调用首条
+    if (!nowCards) {
+      return [...fatherPk, 0];
+    } else {
+      return [...pk, 0];
+    }
+  }
+};
+
+// 用指针获取card/cards
+const getCardsByPk = (cards, pk) => {
+  try{
+    if (pk.length < 1) {
+      return undefined;
+    }
+  }catch(e){
+    message.info("指针异常")
+    return undefined;
+  }
+
+  let temp = undefined;
+  try {
+    if (pk.length === 1) {
+      return cards[pk[0]];
+    }
+
+    for (let pos = 0; pos < pk.length; pos++) {
+      if (pos === 0) {
+        temp = cards[pk[0]];
+      } else {
+        if (pos % 2 === 1) {
+          temp = temp[temp.hasChildren[pk[pos]]]; // 中
+        } else {
+          temp = temp[pk[pos]]; // 尾
+        }
+      }
+    }
+  } catch (e) {
+    //message.info('指针异常');
+    console.log(e);
+  }
+  return temp;
+};

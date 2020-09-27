@@ -21,9 +21,10 @@
   .left {
     margin-top: 38px;
     float: left;
-    width: 223px;
+    min-width: 223px;
     height: calc(100% - 38px);
     display: block;
+    overflow: auto;
   }
   .right {
     margin-top: 38px;
@@ -33,6 +34,7 @@
     width: calc(100% - 223px - 4px);
     height: calc(100% - 38px);
     display: block;
+    overflow: auto;
   }
 }
 

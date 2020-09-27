@@ -172,41 +172,78 @@ export default (state = defaultState, action) => {
         dataStore: action.payload,
       };
     case DEBUG_SOURCECODE_INSERT:
-      const { nowIndex, nowIndexCards, nowLevel } = action.payload.index;
+      //const { nowIndex, nowIndexCards, nowLevel } = action.payload.index;
+      const pk = action.payload.pk.reduce((pre, index) => (pre += index.toString()), '');
+      const { nowIndex, nowLevel } = action.payload.index;
       const log = action.payload.log;
       if (nowLevel === 'block') {
         let temp = state.dataStore;
+        if (!temp.stepLog) {
+          temp.stepLog = {};
+        }
+        temp.stepLog[pk] = log
 
-        // if (nowIndex - 1 === -1) {
-        //   temp[Object.keys(temp).length - 1].hasLog = log;
+
+        const stepLog = state.stepLog;
+        stepLog[pk] = log;
+
+        // if (nowIndexCards - 1 === -1) {
+        //   // console.clear();
+        //   console.log(Object.keys(temp.stepLog).length)
+        //   temp.stepLog[Object.keys(temp.stepLog).length - 1] = log;
         // }else{
-          temp[nowIndex - 1].hasLog = log;
+        //   temp.stepLog[nowIndexCards - 1] = log;
         // }
+
+
+
+
+
 
         return {
           ...state,
           dataStore: temp,
+          stepLog: stepLog,
           updater: state.updater + 1,
         };
+
+
+        // let temp = state.dataStore;
+
+        // // if (nowIndex - 1 === -1) {
+        // //   temp[Object.keys(temp).length - 1].hasLog = log;
+        // // }else{
+        //   temp[nowIndex - 1].hasLog = log;
+        // // }
+
+        // return {
+        //   ...state,
+        //   dataStore: temp,
+        //   updater: state.updater + 1,
+        // };
       } else if (nowLevel === 'cards') {
         let temp = state.dataStore;
         if (!temp.stepLog) {
           temp.stepLog = {};
         }
+        temp.stepLog[pk] = log
+
 
         const stepLog = state.stepLog;
+        stepLog[pk] = log;
 
-        if (nowIndexCards - 1 === -1) {
-          // console.clear();
-          console.log(Object.keys(temp.stepLog).length)
-          temp.stepLog[Object.keys(temp.stepLog).length - 1] = log;
-        }else{
-          temp.stepLog[nowIndexCards - 1] = log;
-        }
+        // if (nowIndexCards - 1 === -1) {
+        //   // console.clear();
+        //   console.log(Object.keys(temp.stepLog).length)
+        //   temp.stepLog[Object.keys(temp.stepLog).length - 1] = log;
+        // }else{
+        //   temp.stepLog[nowIndexCards - 1] = log;
+        // }
 
 
 
-        stepLog[nowIndexCards - 1] = log;
+
+
 
         return {
           ...state,
