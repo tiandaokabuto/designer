@@ -342,7 +342,7 @@ const blockRun_0_2_singleFloor_pointRun = (cards, nextPk, nextCard) => {
     }
 
     running.funcName = 'debug_main';
-    console.log(`running`,running)
+    console.log(`running`, running);
 
     let tempString = [...nextPk]
       .reduce((pre, no) => {
@@ -361,7 +361,7 @@ const blockRun_0_2_singleFloor_pointRun = (cards, nextPk, nextCard) => {
           pk: nextPk,
         });
         //nowIndex += 1;
-        pointOfBlock = [...nextPk]
+        pointOfBlock = [...nextPk];
 
         message.info(`当前运行${tempString}`);
       }, 300);
@@ -713,7 +713,7 @@ export const cardsRun_0_2_ver = async (
     }
   }
 
-  console.log(`[到底了]nextPk`,nextPk, nextCard)
+  console.log(`[到底了]nextPk`, nextPk, nextCard);
   // 04 结束：下一个指针属于第一层，而且已经没有卡片，
   if (nextPk.length === 0 || (nextPk.length === 1 && !nextCard)) {
     pointOfCard = undefined;
@@ -1032,7 +1032,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-            '\n'
+          '\n'
         }` + result.output;
       // 判断一下当前的流程块结点是否有两个入点，那么就是循环相关 就需要包括在 while True: 的循环结构下边。
       // 同时解析的深度要 +1
@@ -1123,7 +1123,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-            '\n'
+          '\n'
         }`,
         funcName: funcName,
         params: params,
@@ -1302,16 +1302,16 @@ export const transformEditorProcess = (
           // nodes: graphData.nodes,
         });
 
-        // breakPoint &&
-        //   transformEditorProcess(
-        //     graphData,
-        //     graphDataMap,
-        //     breakPoint,
-        //     result,
-        //     depth,
-        //     null,
-        //     true
-        //   );
+        breakPoint &&
+          transformEditorProcess(
+            graphData,
+            graphDataMap,
+            breakPoint,
+            result,
+            depth,
+            null,
+            true
+          );
       }
       //  else if (hasTwoEntryPoint(graphData.edges, currentId)) {
       //   result.output += `${padding(depth)}while ( True ):\n`;
@@ -1334,6 +1334,7 @@ export const transformEditorProcess = (
       //       currentId,
       //       false
       //     );
+
       //   let breakLabel = isYesCircleExist ? '否' : '是';
       //   const breakNode = findNodeByLabelAndId(
       //     graphData.edges,
@@ -1350,7 +1351,8 @@ export const transformEditorProcess = (
       //       null,
       //       false
       //     );
-      // } else {
+      // }
+      // else {
       //   // 处理存在循环的情况
       //   result.output += `${padding(depth)}if${
       //     isYesCircleExist ? ' not' : ''
@@ -1704,7 +1706,7 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
     writeFileRecursive(
       `${process.cwd()}/python/temp.py`,
       result.output,
-      function() {
+      function () {
         // console.log('保存成功');
       }
     );
