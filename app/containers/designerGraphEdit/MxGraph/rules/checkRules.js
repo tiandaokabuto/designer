@@ -11,7 +11,10 @@ export const Rule_checkConnection = (graph, option = {}, callback) => {
 
   console.log(evt, source, target, `\n\n\n\n输入，输出\n\n\n`);
 
-  if (evt.properties.edge.source.parent.id !== evt.properties.edge.target.parent.id) {
+  if (
+    evt.properties.edge.source.parent.id !==
+    evt.properties.edge.target.parent.id
+  ) {
     message.warning('不能跨层级连线');
     return false;
   }
@@ -36,12 +39,12 @@ export const Rule_checkConnection = (graph, option = {}, callback) => {
       return false;
     }
   }
-  if (target.shape === 'processblock') {
-    if (target.edges.input.length >= 1) {
-      message.warning('流程块只能有一条输入线');
-      return false;
-    }
-  }
+  // if (target.shape === 'processblock') {
+  //   if (target.edges.input.length >= 1) {
+  //     message.warning('流程块只能有一条输入线');
+  //     return false;
+  //   }
+  // }
 
   // 03 结束只能输入，不限输入个数
   if (source.shape === 'end-block') {
@@ -109,12 +112,9 @@ export const Rule_checkConnection = (graph, option = {}, callback) => {
   return returnData;
 };
 
-
 // 用id找对应的Cell
-export const getNodeInfo =  (id, graphData) => {
-  const index = graphData.nodes.findIndex(
-    item => item.id === id
-  );
+export const getNodeInfo = (id, graphData) => {
+  const index = graphData.nodes.findIndex(item => item.id === id);
   let edges = {
     input: [], // 输入线
     output: [], // 输出线
@@ -131,4 +131,4 @@ export const getNodeInfo =  (id, graphData) => {
     shape: graphData.nodes[index].shape,
     edges: edges,
   };
-}
+};
