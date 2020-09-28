@@ -9,7 +9,8 @@ import BasicStatement from '../DragCardStatement/BasicStatement';
 import LoopStatement from '../DragCardStatement/LoopStatement';
 import ConditionalStatement from '../DragCardStatement/ConditionalStatement';
 import CatchStatement from '../DragCardStatement/CatchStatement';
-import Interactive from '../DragCardStatement/BasicStatement/components/Interactive';
+// import Interactive from '../DragCardStatement/BasicStatement/components/Interactive';
+import Interactive from '../DragCardStatement/BasicStatement/components/PVC';
 import {
   BasicStatementTag,
   LoopStatementTag,
@@ -343,10 +344,14 @@ export default memo(({ readOnly = false }) => {
     //
   }, [cards]);
 
-  const saveLayoutChange = layout => {
-    if (!layout) return;
+  const saveChange = (layout, dataList) => {
+    if (!layout || !dataList) return;
     // console.log(card);
-    Object.assign(interactiveCard.layout, layout);
+    // interactiveCard.layout = layout;
+    console.log('datalist', dataList);
+    interactiveCard.layout = layout;
+    interactiveCard.properties.required[1].value = JSON.stringify(dataList);
+    // Object.assign(interactiveCard.properties.required[1].value, dataList);
     // card.properties.required[1].updateId = true;
     handleEmitCodeTransform(cards);
   };
@@ -373,7 +378,7 @@ export default memo(({ readOnly = false }) => {
         {cards.map((card, i) => renderStatement(card, i))}
         {interactiveCard && (
           <Interactive
-            saveLayoutChange={saveLayoutChange}
+            saveChange={saveChange}
             interactiveCard={interactiveCard}
             visible={visible}
             setVisible={setVisible}

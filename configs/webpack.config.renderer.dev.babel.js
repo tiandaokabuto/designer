@@ -233,6 +233,7 @@ module.exports = merge.smart(baseConfig, {
         use: {
           loader: 'url-loader',
           options: {
+            esModule: false,
             limit: 10000,
             mimetype: 'image/svg+xml',
           },
