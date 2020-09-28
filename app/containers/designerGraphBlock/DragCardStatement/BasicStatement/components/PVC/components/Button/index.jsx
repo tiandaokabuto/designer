@@ -1,15 +1,21 @@
-import React from 'react';
-import { Button } from 'antd';
+import React from "react";
+import { Button } from "antd";
 import {
   DeleteOutlined,
   VerticalAlignBottomOutlined,
   VerticalAlignTopOutlined,
-} from '@ant-design/icons';
-import '../public.less';
-import { CANCEL_COMPONENT } from '../componentTypes';
+  CheckCircleOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+} from "@ant-design/icons";
+import "../public.less";
+import { CANCEL_COMPONENT } from "../componentTypes";
 
-const SubmitButtonComponent = props => {
+import "./button.less";
+
+const SubmitButtonComponent = (props) => {
   let {
+    width,
     item,
     setDataList,
     handleDeleteComponent,
@@ -18,71 +24,66 @@ const SubmitButtonComponent = props => {
     moveUp,
     moveDown,
   } = props;
-  let buttonValue = '提交';
-  let buttonType = 'primary';
+  let buttonValue = "提交";
+  let buttonType = "primary";
 
   if (item.type === CANCEL_COMPONENT) {
-    buttonValue = '取消';
-    buttonType = 'danger';
+    buttonValue = "取消";
+    buttonType = "danger";
   }
 
   return (
-    <div
-      style={{ flexBasis: `${item.attribute.width}%` }}
-      className="panel-content-row-col"
-    >
+    <div style={{ flexBasis: width }} className="panel-content-row-col">
       <div
-        className={`component-contain ${
-          focusItemId === item.id ? 'item-selected' : ''
+        className={`pvc-btn component-contain ${
+          focusItemId === item.id ? "item-selected" : ""
         }`}
         onClick={() => setFocusItemId(item.id)}
       >
-        <div>{item.attribute.label}</div>
-        <div style={{ textAlign: 'center' }}>
-          <Button type={buttonType}>{buttonValue}</Button>
+        {/** 
+        <div className="pvc-input-label"  style={{
+            display: item.attribute.desc ? "block" : "none",
+          }}>
+          <CheckCircleOutlined /> {item.attribute.label}
+        </div>
+        */}
+        <div style={{ textAlign: "left" }}>
+          <Button className="pvc-btn-button" type={buttonType} block>
+            {item.attribute.label}
+          </Button>
+        </div>
+        <div
+          className="move-component-btn-up"
+          style={{ display: focusItemId === item.id ? "block" : "none" }}
+          onClick={() => {
+            item.float = "left";
+            moveUp(focusItemId);
+          }}
+        >
+          <ArrowUpOutlined />
+        </div>
+        <div
+          className="move-component-btn-down"
+          style={{ display: focusItemId === item.id ? "block" : "none" }}
+          onClick={() => {
+            item.float = "left";
+            moveDown(focusItemId);
+          }}
+        >
+          <ArrowDownOutlined />
         </div>
 
         <div
-          className="delete-component-btn "
+          className="delete-component-btn"
           style={{
-            display: focusItemId === item.id ? 'block' : 'none',
+            display: focusItemId === item.id ? "block" : "none",
           }}
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation();
             handleDeleteComponent(item.id);
           }}
         >
           <DeleteOutlined />
-        </div>
-        <div
-          className="move-component-btn"
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 24,
-            display: focusItemId === item.id ? 'block' : 'none',
-          }}
-          onClick={() => {
-            item.float = 'left';
-            moveUp(focusItemId);
-          }}
-        >
-          <VerticalAlignTopOutlined />
-        </div>
-        <div
-          className="move-component-btn"
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 48,
-            display: focusItemId === item.id ? 'block' : 'none',
-          }}
-          onClick={() => {
-            item.float = 'left';
-            moveDown(focusItemId);
-          }}
-        >
-          <VerticalAlignBottomOutlined />
         </div>
       </div>
     </div>

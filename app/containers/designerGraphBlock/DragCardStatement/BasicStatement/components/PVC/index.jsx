@@ -1,5 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Tabs, Row, Col, List, Button, Input, Divider, Modal } from 'antd';
+import {
+  Tabs,
+  Row,
+  Col,
+  List,
+  Button,
+  Input,
+  Divider,
+  Slider,
+  Modal,
+} from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import uniqueId from 'lodash/uniqueId';
@@ -8,6 +18,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import ComponentChoice from './components/ComponentChoice';
 
 // import { Page } from 'sdcube';
+
+import { device as deviceList } from './components/DeviceConfig';
 
 import { PhoneOutlined, TabletOutlined } from '@ant-design/icons';
 
@@ -28,30 +40,43 @@ import PanelRight from './PanelRight';
 import PanelLeft from './layout/PanelLeft';
 
 import './layout.less';
-import { json } from 'body-parser';
-
-const deviceTypes = {
-  'device-mobile': { name: '手机', icon: <PhoneOutlined /> },
-  'device-ipad': { name: '平板', icon: <TabletOutlined /> },
-};
 
 const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
   // 表单元素数据
   const [dataList, setDataList] = useState([]);
 
+  //scaleRate
+  const [scaleRate, setScaleRate] = useState(1.0);
+
+  // 当前选中的模式
+  const [device, setDevice] = useState('device-pc-small');
+
   // 表单的布局信息
   const [layout, setLayout] = useState({
     // 移动
-    'device-mobile': {
+    // "device-mobile-iphone678": {
+    //   grid: [],
+    // },
+
+    'device-pc-small': {
       grid: [],
     },
   });
+
   useEffect(() => {
-    const test = JSON.parse(interactiveCard.properties.required[1].value);
-    setDataList(test);
-    console.log('查看test', test);
-    // setLayout(interactiveCard.dataList);
-  }, []);
+    const data = JSON.parse(interactiveCard.properties.required[1].value);
+    setDataList(Array.isArray(data) ? data : []);
+    if (interactiveCard.layout) {
+      setLayout(interactiveCard.layout);
+    }
+  }, [interactiveCard.layout]);
+
+  const [deviceConfig, setDeviceConfig] = useState({});
+
+  useEffect(() => {
+    console.log(deviceList);
+    setDeviceConfig(deviceList.find(item => item.key === device));
+  }, [device]);
 
   const getUniqueIdForPVC = (device, str) => {
     let id = uniqueId(str);
@@ -93,9 +118,6 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
   // 当前选中的表单元素id
   const [focusItemId, setFocusItemId] = useState('');
 
-  // 当前选中的模式
-  const [device, setDevice] = useState('device-mobile');
-
   const handleAddComponent = itemData => {
     // 插入元素
     const newItem = cloneDeep(itemData);
@@ -114,12 +136,15 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
     //   setMobileLayout(newLayout);
     // }
     // // 布局中对应插入元素
-    layout[device].grid.push([
-      {
-        id: newItem.id,
-        width: '100%',
-      },
-    ]);
+    Object.keys(layout).forEach(device => {
+      layout[device].grid.push([
+        {
+          id: newItem.id,
+          width: newItem.attribute.width + `%`,
+        },
+      ]);
+    });
+
     setLayout({ ...layout });
   };
 
@@ -128,7 +153,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
 
   // layout清除已删除组件的元素
   const deleteLayoutCellById = id => {
-    console.log(id);
+    console.log(`将要删除的`, id);
     const newArr = layout[device].grid.map(row => {
       return row.filter(item => item.id !== id);
     });
@@ -278,6 +303,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
       centered
       closable={false}
       maskClosable={false}
+      destroyOnClose={true}
       footer={
         <div>
           <Button
@@ -289,13 +315,13 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
             取消
           </Button>
           {/* <Button
-            onClick={() => {
-              handleProview(!isPreview);
-              setIsPreview(preview => !preview);
-            }}
-          >
-            {isPreview ? '取消预览' : '预览'}
-          </Button> */}
+          onClick={() => {
+            handleProview(!isPreview);
+            setIsPreview(preview => !preview);
+          }}
+        >
+          {isPreview ? '取消预览' : '预览'}
+        </Button> */}
           <Button
             type="primary"
             onClick={() => {
@@ -314,27 +340,48 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
       <div className="pvc-designer">
         <div className="panel-height">人机交互界面设计器</div>
         <div className="panel-left">
-          <PanelLeft handleAddComponent={handleAddComponent} />
+          <PanelLeft
+            handleAddComponent={handleAddComponent}
+            device={device}
+            setDevice={setDevice}
+            layout={layout}
+            setLayout={setLayout}
+          />
         </div>
         <div className="panel-middle">
-          <div className={device}>
+          <div
+            className={`device-mobile`}
+            style={{
+              width: deviceConfig.width,
+              height: deviceConfig.height,
+              transform: `scale(${scaleRate})`,
+              position: 'relative',
+              top: `${deviceConfig.width * 0.3 * (scaleRate - 0.9)}px`,
+            }}
+          >
             <div className="panel-title">
               <Input
                 placeholder="流程配置单名称"
-                defaultValue="表单名称"
+                defaultValue="默认表单标题"
                 style={{
                   width: '80%',
                   display: 'block',
                   margin: '10px auto',
+                  fontSize: '15px',
+                  color: '#32a680',
                   border: 'none',
                   textAlign: 'center',
+                  boxShadow: '0px 2px 8px #ececec',
                 }}
               ></Input>
             </div>
 
             {getLayoutGrid().map((row, index) => {
               return (
-                <div className="panel-content-row" key={index}>
+                <div
+                  className="panel-content-row"
+                  key={`${device}_${index}_` + uniqueId()}
+                >
                   {row.map(col => {
                     return ComponentChoice({
                       id: col.id,
@@ -345,6 +392,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
                       deleteLayoutCellById,
                       moveUp,
                       moveDown,
+                      width: col.width,
                     });
                   })}
                 </div>
@@ -366,15 +414,16 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
               </Row>
             );
           })} */}
-
-            {/* <div className="submit-btn">
-              <Button
-                style={{ display: dataList.length > 0 ? 'inline' : 'none' }}
-                icon={<CheckOutlined />}
-              >
-                保存
-              </Button>
-            </div> */}
+            {/*
+          <div className="submit-btn">
+            <Button
+              style={{ display: dataList.length > 0 ? 'inline' : 'none' }}
+              icon={<CheckOutlined />}
+            >
+              保存
+            </Button>
+          </div>
+        */}
           </div>
         </div>
         <div className="panel-right">
@@ -392,6 +441,29 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
           ) : (
             ''
           )}
+        </div>
+
+        <div class="pvc-slider">
+          <div style={{ float: 'left', paddingRight: 30 }}>
+            <span> 缩放比率 </span>
+          </div>
+          <div style={{ float: 'left', width: 180 }}>
+            <Slider
+              value={scaleRate * 100}
+              min={10}
+              max={150}
+              step={5}
+              onChange={value => {
+                setScaleRate((value / 100).toFixed(2));
+              }}
+              marks={{
+                10: '10',
+                50: '50',
+                100: '100',
+                150: '150',
+              }}
+            />
+          </div>
         </div>
       </div>
     </Modal>

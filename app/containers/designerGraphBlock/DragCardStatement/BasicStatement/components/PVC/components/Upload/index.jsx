@@ -4,14 +4,17 @@ import {
   CloudUploadOutlined,
   CloudDownloadOutlined,
   DeleteOutlined,
-  VerticalAlignBottomOutlined,
-  VerticalAlignTopOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
 } from '@ant-design/icons';
 import '../public.less';
 import { DOWNLOAD_COMPONENT } from '../componentTypes';
 
+import './upload.less';
+
 const UploadComponent = props => {
   let {
+    width,
     item,
     setDataList,
     handleDeleteComponent,
@@ -30,20 +33,25 @@ const UploadComponent = props => {
   }
 
   return (
-    <div
-      style={{ flexBasis: `${item.attribute.width}%` }}
-      className="panel-content-row-col"
-    >
+    <div style={{ flexBasis: width }} className="panel-content-row-col">
       <div
-        className={`component-contain ${
+        className={`pvc-upload component-contain ${
           focusItemId === item.id ? 'item-selected' : ''
         }`}
         onClick={() => setFocusItemId(item.id)}
       >
-        <div>{item.attribute.label}</div>
+        <div
+          className="pvc-input-desc"
+          style={{
+            display: item.attribute.desc ? 'block' : 'none',
+          }}
+        >
+          {item.attribute.desc}
+        </div>
         <div style={{ textAlign: 'center' }}>
-          <Button type="primary" shape="round">
-            {iconType} {buttonValue}
+          <Button type="primary" block shape="round">
+            {iconType}
+            {item.attribute.label}
           </Button>
         </div>
         <div
@@ -59,34 +67,24 @@ const UploadComponent = props => {
           <DeleteOutlined />
         </div>
         <div
-          className="move-component-btn"
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 24,
-            display: focusItemId === item.id ? 'block' : 'none',
-          }}
+          className="move-component-btn-up"
+          style={{ display: focusItemId === item.id ? 'block' : 'none' }}
           onClick={() => {
             item.float = 'left';
             moveUp(focusItemId);
           }}
         >
-          <VerticalAlignTopOutlined />
+          <ArrowUpOutlined />
         </div>
         <div
-          className="move-component-btn"
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 48,
-            display: focusItemId === item.id ? 'block' : 'none',
-          }}
+          className="move-component-btn-down"
+          style={{ display: focusItemId === item.id ? 'block' : 'none' }}
           onClick={() => {
             item.float = 'left';
             moveDown(focusItemId);
           }}
         >
-          <VerticalAlignBottomOutlined />
+          <ArrowDownOutlined />
         </div>
       </div>
     </div>

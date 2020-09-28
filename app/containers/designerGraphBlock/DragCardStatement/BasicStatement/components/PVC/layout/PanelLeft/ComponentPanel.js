@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { List } from 'antd';
+import React, { useState } from "react";
+import { List } from "antd";
 import {
   FormOutlined,
   BuildOutlined,
@@ -16,7 +16,7 @@ import {
   uploadImgsType,
   submitType,
   cancelType,
-} from '../../components/DefautlConfig';
+} from "../../components/DefautlConfig";
 
 const formComponentList = [inputType, selectType];
 const beautyComponentList = [imageType];
@@ -27,13 +27,12 @@ export default ({ handleAddComponent }) => {
   return (
     <div class="panel-left-componentPanel">
       <p className="frontTag">
-        <FormOutlined />{' '}
-        表单组件
+        <FormOutlined /> 表单组件
       </p>
       <List
         grid={{ gutter: 16, column: 2 }}
         dataSource={formComponentList}
-        renderItem={item => (
+        renderItem={(item) => (
           <List.Item>
             <div
               className="panel-add-btn"
@@ -46,32 +45,32 @@ export default ({ handleAddComponent }) => {
         )}
       />
       <p className="frontTag">
-        <BuildOutlined />{' '}
-        按钮组件
+        <BuildOutlined /> 按钮组件
       </p>
       <List
         grid={{ gutter: 16, column: 2 }}
         dataSource={comandCompomentList}
         renderItem={(item) => (
-          <List.Item>{' '}
+          <List.Item>
+            {" "}
             <div
               className="panel-add-btn"
               onClick={() => handleAddComponent(item)}
             >
               {item.icon}
-              {item.attribute.label}
+              {item.label}
+              
             </div>
           </List.Item>
         )}
       />
       <p className="frontTag">
-        <FileAddOutlined />{' '}
-        文件组件
+        <FileAddOutlined /> 文件组件
       </p>
       <List
         grid={{ gutter: 16, column: 2 }}
         dataSource={fileComponentList}
-        renderItem={item => (
+        renderItem={(item) => (
           <List.Item>
             <div
               className="panel-add-btn"
@@ -84,20 +83,19 @@ export default ({ handleAddComponent }) => {
         )}
       />
       <p className="frontTag">
-        <SkinOutlined />{' '}
-        美化组件
+        <SkinOutlined /> 美化组件
       </p>
       <List
         grid={{ gutter: 16, column: 2 }}
         dataSource={beautyComponentList}
-        renderItem={item => (
+        renderItem={(item) => (
           <List.Item>
             <div
               className="panel-add-btn"
               onClick={() => handleAddComponent(item)}
             >
               {item.icon}
-              {item.attribute.label}
+              {item.label}
             </div>
           </List.Item>
         )}

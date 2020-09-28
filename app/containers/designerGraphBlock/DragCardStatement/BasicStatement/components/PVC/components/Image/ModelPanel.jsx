@@ -1,17 +1,23 @@
-import React from 'react';
-import { Image } from 'antd';
+import React from "react";
+import { Image } from "antd";
 import {
   CloudUploadOutlined,
   CloudDownloadOutlined,
   DeleteOutlined,
   VerticalAlignBottomOutlined,
   VerticalAlignTopOutlined,
-} from '@ant-design/icons';
-import '../public.less';
-import { DOWNLOAD_COMPONENT } from '../componentTypes';
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+  PictureOutlined,
+} from "@ant-design/icons";
+import "../public.less";
+import { DOWNLOAD_COMPONENT } from "../componentTypes";
 
-const ImageComponent = props => {
+import "./image.less";
+
+const ImageComponent = (props) => {
   let {
+    width,
     item,
     setDataList,
     handleDeleteComponent,
@@ -22,64 +28,76 @@ const ImageComponent = props => {
   } = props;
 
   return (
-    <div
-      style={{ flexBasis: `${item.attribute.width}%` }}
-      className="panel-content-row-col"
-    >
+    <div style={{ flexBasis: width }} className="panel-content-row-col">
       <div
-        className={`component-contain ${
-          focusItemId === item.id ? 'item-selected' : ''
+        className={`pvc-image component-contain ${
+          focusItemId === item.id ? "item-selected" : ""
         }`}
         onClick={() => setFocusItemId(item.id)}
       >
-        <div>{item.attribute.label}</div>
-        <div style={{ textAlign: 'center' }}>
-          <img
-            width={100}
-            src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-          />
+        <div
+          className="pvc-input-label"
+          style={{
+            display: item.attribute.label ? "block" : "none",
+          }}
+        >
+          <PictureOutlined /> {item.attribute.label}
+        </div>
+
+        <div
+          className="pvc-input-desc"
+          style={{
+            display: item.attribute.desc ? "block" : "none",
+          }}
+        >
+          {item.attribute.desc}
+        </div>
+        <div style={{ textAlign: "center" }}>
+          {/^http[s]*:/.test(item.attribute.value) ||
+          /^data:/.test(item.attribute.value) ? (
+            <img src={item.attribute.value} />
+          ) : (
+            <div className="demo-pic">
+              示例图片
+              <br />
+              {item.attribute.width}%<br />
+              <span>以http或data的图片可预览</span>
+              <br />
+            </div>
+          )}
         </div>
         <div
-          className="delete-component-btn "
-          style={{
-            display: focusItemId === item.id ? 'block' : 'none',
+          className="move-component-btn-up"
+          style={{ display: focusItemId === item.id ? "block" : "none" }}
+          onClick={() => {
+            item.float = "left";
+            moveUp(focusItemId);
           }}
-          onClick={e => {
+        >
+          <ArrowUpOutlined />
+        </div>
+        <div
+          className="move-component-btn-down"
+          style={{ display: focusItemId === item.id ? "block" : "none" }}
+          onClick={() => {
+            item.float = "left";
+            moveDown(focusItemId);
+          }}
+        >
+          <ArrowDownOutlined />
+        </div>
+
+        <div
+          className="delete-component-btn"
+          style={{
+            display: focusItemId === item.id ? "block" : "none",
+          }}
+          onClick={(e) => {
             e.stopPropagation();
             handleDeleteComponent(item.id);
           }}
         >
           <DeleteOutlined />
-        </div>
-        <div
-          className="move-component-btn"
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 24,
-            display: focusItemId === item.id ? 'block' : 'none',
-          }}
-          onClick={() => {
-            item.float = 'left';
-            moveUp(focusItemId);
-          }}
-        >
-          <VerticalAlignTopOutlined />
-        </div>
-        <div
-          className="move-component-btn"
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 48,
-            display: focusItemId === item.id ? 'block' : 'none',
-          }}
-          onClick={() => {
-            item.float = 'left';
-            moveDown(focusItemId);
-          }}
-        >
-          <VerticalAlignBottomOutlined />
         </div>
       </div>
     </div>

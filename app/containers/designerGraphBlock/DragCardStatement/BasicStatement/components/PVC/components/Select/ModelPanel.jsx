@@ -2,15 +2,17 @@ import React from 'react';
 import { Select, Divider } from 'antd';
 import {
   DeleteOutlined,
-  VerticalAlignTopOutlined,
-  VerticalAlignBottomOutlined,
+  UnorderedListOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
 } from '@ant-design/icons';
-import '../public.less';
+import './select.less';
 
 const { Option } = Select;
 
 const SelectComponent = props => {
   let {
+    width,
     item,
     setDataList,
     handleDeleteComponent,
@@ -36,17 +38,31 @@ const SelectComponent = props => {
   };
 
   return (
-    <div
-      style={{ flexBasis: `${item.attribute.width}%` }}
-      className="panel-content-row-col"
-    >
+    <div style={{ flexBasis: width }} className="panel-content-row-col">
       <div
-        className={`component-contain ${
+        className={`pvc-select component-contain ${
           focusItemId === item.id ? 'item-selected' : ''
         }`}
         onClick={() => setFocusItemId(item.id)}
       >
-        <div>{item.attribute.label}</div>
+        <div
+          className="pvc-input-label"
+          style={{
+            display: item.attribute.label ? 'block' : 'none',
+          }}
+        >
+          <UnorderedListOutlined /> {item.attribute.label}
+        </div>
+
+        <div
+          className="pvc-input-desc"
+          style={{
+            display: item.attribute.desc ? 'block' : 'none',
+          }}
+        >
+          {item.attribute.desc}
+        </div>
+
         <Select
           size="small"
           style={{ width: '100%' }}
@@ -55,13 +71,35 @@ const SelectComponent = props => {
           onChange={onChange}
           onFocus={onFocus}
         >
-          <Option value="tom">Tom</Option>;
-          {/* {item.attribute.dataSource
+          {/* 
+            <Option value="tom">Tom</Option>;
+            {item.attribute.dataSource
             ? item.attribute.dataSource.map((Subitem, index) => {
                 return <Option value="tom">Tom</Option>;
               })
             : ""} */}
         </Select>
+        <div
+          className="move-component-btn-up"
+          style={{ display: focusItemId === item.id ? 'block' : 'none' }}
+          onClick={() => {
+            item.float = 'left';
+            moveUp(focusItemId);
+          }}
+        >
+          <ArrowUpOutlined />
+        </div>
+        <div
+          className="move-component-btn-down"
+          style={{ display: focusItemId === item.id ? 'block' : 'none' }}
+          onClick={() => {
+            item.float = 'left';
+            moveDown(focusItemId);
+          }}
+        >
+          <ArrowDownOutlined />
+        </div>
+
         <div
           className="delete-component-btn "
           style={{
@@ -73,36 +111,6 @@ const SelectComponent = props => {
           }}
         >
           <DeleteOutlined />
-        </div>
-        <div
-          className="move-component-btn"
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 24,
-            display: focusItemId === item.id ? 'block' : 'none',
-          }}
-          onClick={() => {
-            item.float = 'left';
-            moveUp(focusItemId);
-          }}
-        >
-          <VerticalAlignTopOutlined />
-        </div>
-        <div
-          className="move-component-btn"
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 48,
-            display: focusItemId === item.id ? 'block' : 'none',
-          }}
-          onClick={() => {
-            item.float = 'left';
-            moveDown(focusItemId);
-          }}
-        >
-          <VerticalAlignBottomOutlined />
         </div>
       </div>
     </div>

@@ -22,8 +22,8 @@ export const device = [
     icon: <MobileOutlined />,
     name: "5.5' iPhone6/7/8Plus",
     key: "device-mobile-iphone678Plus",
-    width: 375,
-    height: 667,
+    width: 414,
+    height: 736,
   },
   {
     type: "手机",

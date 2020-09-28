@@ -89,6 +89,11 @@
     }
 
     .panel-content {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+
       width: 100%;
       display: flex;
       flex-direction: column;
@@ -187,6 +192,18 @@
     width: 100%;
     color: rebeccapurple;
   }
+
+  .pvc-slider {
+    color: #32a680;
+    // width: 200px;
+    display: block;
+    padding: 0 20px;
+    position: fixed;
+    bottom: 0;
+    background: #fff;
+    box-shadow: 0px 0px 2px #666;
+    left: 500px;
+  }
 }
 
 .pvc-btn-icon {
@@ -198,3 +215,60 @@
 // .pvc-btn-icon path {
 //   fill: #32a680
 // }
+
+// 移动按钮
+.move-component-btn-up,
+.move-component-btn-down,
+.delete-component-btn {
+  position: absolute;
+  top: -6px;
+  right: 78px;
+  font-size: 18px;
+  color: #aaa;
+  background: #fff;
+
+  width: 28px;
+  height: 28px;
+  border: 1px solid #eee;
+  box-shadow: 2px 2px 2px #ddd;
+  border-radius: 50%;
+
+  span {
+    position: relative;
+    left: 4px;
+    top: -6px;
+  }
+}
+
+.move-component-btn-up:hover,
+.move-component-btn-down:hover,
+.delete-component-btn:hover {
+  color: #fff;
+  background: #32a680;
+  border: 1px solid #32a680;
+
+  box-shadow: 2px 2px 2px #32a680;
+}
+
+.move-component-btn-up {
+  span {
+    top: -6px;
+  }
+}
+
+.move-component-btn-down {
+  right: 43px;
+
+  span {
+    top: -5px;
+  }
+}
+
+.delete-component-btn {
+  right: 8px;
+}
+
+.device-pc-small {
+  width: 1000px !important;
+  height: 750px !important;
+}

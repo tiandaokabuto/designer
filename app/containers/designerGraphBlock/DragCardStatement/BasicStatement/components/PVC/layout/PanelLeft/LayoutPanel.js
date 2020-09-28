@@ -2,18 +2,42 @@ import React, { useState, useEffect } from "react";
 import { List, Select, Tag, Radio, Input, Button, message } from "antd";
 import { LayoutOutlined, CheckSquareOutlined } from "@ant-design/icons";
 import { options } from "less";
+import cloneDeep from "lodash/cloneDeep";
 
 import { device } from "../../components/DeviceConfig";
 import "./layoutPanel.less";
 
 const { Option } = Select;
 
-export default ({ handleAddComponent }) => {
+export default (props) => {
+  const {
+    handleAddComponent,
+    currentDevice,
+    setCurrentDevice,
+    layout,
+    setLayout,
+  } = props;
+
   // 当前选中的设备
-  const [currentDevice, setCurrentDevice] = useState("device-mobile-iphone678");
+  //const [currentDevice, setCurrentDevice] = useState("device-mobile-iphone678");
 
   // 启用的布局方案
-  const [usedLayout, setUsedLayout] = useState(["device-mobile-iphone678"]);
+  const [usedLayout, setUsedLayout] = useState([]);
+
+  useEffect(() => {
+    setUsedLayout(Object.keys(layout));
+    // console.log(item.grid);
+  }, [layout]);
+
+  useEffect(() => {
+    console.log(layout);
+    usedLayout.forEach((device) => {
+      if (!layout[device]) {
+        layout[device] = cloneDeep(layout[Object.keys(layout)[0]]);
+      }
+      setLayout(layout);
+    });
+  }, [usedLayout]);
 
   // 当前的属性参数
   const [options, setOptions] = useState({
@@ -23,7 +47,7 @@ export default ({ handleAddComponent }) => {
 
   // useEffect(() => {
   //   // 假如把当前的layout都删了，就加回去
-    
+
   //   return () => {};
   // }, [usedLayout]);
 
@@ -154,7 +178,10 @@ export default ({ handleAddComponent }) => {
           style={{ width: 38 }}
           onClick={(e) => {
             if (options.rowsNumber > 1) {
-              return setOptions({ ...options, rowsNumber: (options.rowsNumber -= 1) });
+              return setOptions({
+                ...options,
+                rowsNumber: (options.rowsNumber -= 1),
+              });
             }
           }}
         >
@@ -221,10 +248,10 @@ export default ({ handleAddComponent }) => {
         value={usedLayout}
         onChange={(e) => {
           if (e.indexOf(currentDevice) < 0) {
-            message.info("当前编辑的方案不能被删除")
+            message.info("当前编辑的方案不能被删除");
             return setUsedLayout([...e, currentDevice]);
           }
-      
+
           if (e.length < 1) {
             return message.info("不能删除所有布局方式");
           }
