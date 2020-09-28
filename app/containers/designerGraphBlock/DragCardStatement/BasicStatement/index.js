@@ -168,7 +168,12 @@ const BasicStatement = useInjectContext(props => {
           <div
             className="cmd-operation"
             onClick={() => {
-              !card.layout && (card.layout = {});
+              !card.layout &&
+                (card.layout = {
+                  'device-pc-small': {
+                    grid: [],
+                  },
+                });
               setInteractiveCard(card);
               setVisible(true);
             }}

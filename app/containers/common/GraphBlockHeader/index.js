@@ -610,7 +610,7 @@ export default memo(({ history, tag }) => {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_RUNNING); // 'blockAll_running'
       // handleDebugBlockAllRun();
-      blockRun_0_2_ver(blockRun_0_2_ver)
+      blockRun_0_2_ver(blockRun_0_2_ver);
     }
     // 原子能力级运行
     else if (currentPagePosition_ref.current === 'block') {
@@ -630,7 +630,7 @@ export default memo(({ history, tag }) => {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_BLOCK_CHANGE_STATE_RUNNING); // 'blockAll_running'
       // handleDebugBlockAllRun();
-      blockRun_0_2_ver(blockRun_0_2_ver)
+      blockRun_0_2_ver(blockRun_0_2_ver);
     } else if (running === 'cardsAll_pause') {
       changeDebugInfos(DEBUG_SET_BTN_CAN_BE_PASUE, {});
       changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_RUNNING); // 'cardsAll_running'
@@ -643,7 +643,7 @@ export default memo(({ history, tag }) => {
   // 03-1 继续下一步
   const debug_continueRun_Block = () => {
     // handleDebugBlockAllRun();
-    blockRun_0_2_ver(blockRun_0_2_ver)
+    blockRun_0_2_ver(blockRun_0_2_ver);
   };
 
   // 03-2 继续下一步
@@ -679,7 +679,7 @@ export default memo(({ history, tag }) => {
   const oneStepRun = data => {
     const { isIgnore, cards, id } = data;
 
-    console.log(cards)
+    console.log(cards);
 
     const running = debug_runningState_ref.current;
 
@@ -706,7 +706,7 @@ export default memo(({ history, tag }) => {
     }
 
     let card = fetchCard(cards, id);
-    console.log(`卡片`,card, id)
+    console.log(`卡片`, card, id);
     clickOneStepRun(card, []);
   };
 

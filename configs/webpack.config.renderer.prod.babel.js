@@ -65,21 +65,21 @@ module.exports = merge.smart(baseConfig, {
         test: /\.less$/,
         use: [
           {
-            loader: "style-loader",
+            loader: 'style-loader',
           },
           {
-            loader: "css-loader",
+            loader: 'css-loader',
             options: {
               sourceMap: true,
             },
           },
           {
-            loader: "less-loader",
+            loader: 'less-loader',
             options: {
               modifyVars: {
-                "primary-color": "#32A680",
-                "link-color": "#006633",
-                "border-radius-base": "2px",
+                'primary-color': '#32A680',
+                'link-color': '#006633',
+                'border-radius-base': '2px',
               },
               javascriptEnabled: true,
             },
@@ -196,6 +196,7 @@ module.exports = merge.smart(baseConfig, {
         use: {
           loader: 'url-loader',
           options: {
+            esModule: false,
             limit: 10000,
             mimetype: 'image/svg+xml',
           },
