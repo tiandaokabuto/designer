@@ -37,7 +37,7 @@ export default ({
   }, [left, top]);
 
   const isVisible = () => {
-    if (visible && node.children.length === 0) {
+    if (visible && node && node.children.length === 0) {
       if (
         node.eventKey === 'recent' ||
         node.eventKey === 'aviable' ||

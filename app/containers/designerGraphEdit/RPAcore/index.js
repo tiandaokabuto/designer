@@ -1541,7 +1541,6 @@ export const transformEditorProcess = (
         ''
       );
       const groupTrans = translateGroup(blockData);
-      console.log(groupTrans);
       result.output += `${padding(depth)}${groupTrans}:\n`;
 
       mxgraphTempCenter.push({
