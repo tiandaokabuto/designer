@@ -340,11 +340,11 @@ export default useInjectContext(
       },
     ];
 
-    const getArrDifference = (arr1, arr2) => {
-      return arr1.concat(arr2).filter(function(v, i, arr) {
-        return arr.indexOf(v) === arr.lastIndexOf(v);
-      });
-    };
+    // const getArrDifference = (arr1, arr2) => {
+    //   return arr1.concat(arr2).filter(function (v, i, arr) {
+    //     return arr.indexOf(v) === arr.lastIndexOf(v);
+    //   });
+    // };
 
     return (
       <div
@@ -457,16 +457,17 @@ export default useInjectContext(
                 }
                 onSelect={(_, e) => {
                   // console.log(e);
-                  // const props = e.node.props;
-                  // if (props.children) {
-                  // setExpandedKeys(keys => {
-                  //   if (keys.includes(props.eventKey)) {
-                  //     return keys.filter(item => item !== props.eventKey);
-                  //   } else {
-                  //     return keys.concat(props.eventKey);
-                  //   }
-                  // });
-                  // }
+                  const props = e.node.props;
+                  if (props.children) {
+                    setExpandedKeys(keys => {
+                      if (keys.includes(props.eventKey)) {
+                        return keys.filter(item => item !== props.eventKey);
+                      } else {
+                        return keys.concat(props.eventKey);
+                      }
+                    });
+                    event.emit('click_without_icon', props.eventKey);
+                  }
                 }}
                 treeData={treeData}
               />
