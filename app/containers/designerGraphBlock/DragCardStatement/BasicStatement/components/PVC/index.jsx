@@ -74,7 +74,6 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
   const [deviceConfig, setDeviceConfig] = useState({});
 
   useEffect(() => {
-    console.log(deviceList);
     setDeviceConfig(deviceList.find(item => item.key === device));
   }, [device]);
 
@@ -313,6 +312,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
             onClick={() => {
               setVisible(false);
               setLayout(interactiveCard.layout);
+              setFocusItemId('');
             }}
           >
             取消
@@ -332,6 +332,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
                 saveChange(layout, dataList);
               }
               interactiveCard.hasModified = true;
+              setFocusItemId('');
               setVisible(false);
             }}
           >
