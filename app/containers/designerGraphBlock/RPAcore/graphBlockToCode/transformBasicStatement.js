@@ -1,3 +1,4 @@
+import { json } from 'express';
 import moment from 'moment';
 import { uuid } from '_utils/utils';
 import memoize from './reselect';
@@ -67,6 +68,7 @@ const handleNote = (cmdDesc, result, padding, dataStructure) => {
 };
 
 const handleFormJsonGenerate = dataStructure => {
+  console.log(dataStructure);
   if (
     dataStructure.layout &&
     dataStructure.layout.data &&
@@ -76,6 +78,10 @@ const handleFormJsonGenerate = dataStructure => {
     data.sort((preValue, nextValue) => preValue.y - nextValue.y);
     const { dataMap } = dataStructure.layout;
     return JSON.stringify(data.map(item => dataMap[item.i]));
+  } else if (dataStructure.PVCVersion) {
+    const dataJson = dataStructure.properties.required[1].value;
+    if (dataJson === '""') return 'None';
+    return dataJson;
   }
   return 'None';
 };
@@ -280,7 +286,12 @@ const transformBasicStatement = (
 
             if (formJson !== 'None') {
               // 返回值
-              const temp = JSON.parse(formJson);
+              let temp = [];
+              if (dataStructure.PVCVersion) {
+                temp = JSON.parse(formJson).map(item => item.attribute);
+              } else {
+                temp = JSON.parse(formJson);
+              }
               result.output +=
                 `[${temp
                   .filter(
