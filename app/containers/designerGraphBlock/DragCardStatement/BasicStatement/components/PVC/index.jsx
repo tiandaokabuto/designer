@@ -299,6 +299,9 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
       width="90%"
       bodyStyle={{
         padding: '0px',
+        marginTop: '15px',
+        // overflowX: 'hidden';
+        overflowY: 'auto',
       }}
       centered
       closable={false}
@@ -338,7 +341,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
       }
     >
       <div className="pvc-designer">
-        <div className="panel-height">人机交互界面设计器</div>
+        {/* <div className="panel-height">人机交互界面设计器</div> */}
         <div className="panel-left">
           <PanelLeft
             handleAddComponent={handleAddComponent}
