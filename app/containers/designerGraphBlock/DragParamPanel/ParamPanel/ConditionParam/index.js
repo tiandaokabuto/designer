@@ -9,6 +9,7 @@ const { Option } = Select;
 
 export default ({ cards, param, handleEmitCodeTransform }) => {
   console.log(param);
+  console.log(cards);
 
   const [flag, forceUpdate] = useForceUpdate();
   const [tag, setTag] = useState(param.tag);
@@ -42,7 +43,7 @@ export default ({ cards, param, handleEmitCodeTransform }) => {
         v1: '',
         v2: '',
         rule: '',
-        connect: '',
+        connect: 'and',
         id: maxId + 1,
       });
       forceUpdate();
@@ -135,7 +136,15 @@ export default ({ cards, param, handleEmitCodeTransform }) => {
                     }}
                   />
                 </div>
-                <div className="condition-param-ifcondition">
+                <div
+                  className="condition-param-ifcondition"
+                  style={{
+                    visibility:
+                      param.valueList.length === index + 1
+                        ? 'hidden'
+                        : 'visible',
+                  }}
+                >
                   <Radio.Group
                     defaultValue={item.connect}
                     onChange={e => {

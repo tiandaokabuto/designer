@@ -266,7 +266,7 @@ const ShowCondition = ({
         v1: '',
         v2: '',
         rule: '',
-        connect: '',
+        connect: 'and',
         id: maxId + 1,
       });
       setTranslateTag && setTranslateTag(translateTag + 1);
@@ -365,7 +365,15 @@ const ShowCondition = ({
                       }}
                     />
                   </div>
-                  <div className="condition-param-ifcondition">
+                  <div
+                    className="condition-param-ifcondition"
+                    style={{
+                      visibility:
+                        param.valueList.length === index + 1
+                          ? 'hidden'
+                          : 'visible',
+                    }}
+                  >
                     <Radio.Group
                       defaultValue={item.connect}
                       onChange={e => {
