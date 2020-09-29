@@ -1,7 +1,10 @@
 import { message } from 'antd';
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
-import transformEditorGraphData, { claerTempCenter, sortEditorTree } from '../RPAcore';
+import transformEditorGraphData, {
+  claerTempCenter,
+  sortEditorTree,
+} from '../RPAcore';
 
 const transformProcessToPython = (graphDataRef, graphDataMapRef) => () => {
   claerTempCenter();
@@ -13,7 +16,11 @@ const transformProcessToPython = (graphDataRef, graphDataMapRef) => () => {
     undefined
   );
 
-  sortEditorTree();
+  try {
+    sortEditorTree();
+  } catch (e) {
+    console.log(e);
+  }
 
   return temp;
 };

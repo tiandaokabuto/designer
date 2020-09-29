@@ -1,18 +1,29 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Icon } from 'antd';
 
+import event from '@/containers/eventCenter';
+
 export default ({ expandedKeys, level }) => {
-  console.log(level);
   const [text, setText] = useState('plus');
   const iconRef = useRef(null);
-  useEffect(() => {
+  const getTitleNode = () => {
     const offsetParent = iconRef.current.offsetParent; // ant-tree-switcher_open
     const titleNode =
       level === 2
         ? offsetParent.childNodes[1].firstElementChild.firstElementChild // 第二层目录
         : offsetParent.childNodes[1].childNodes[1].firstElementChild; // 第一层目录
-    // console.log(titleNode);
-    // console.log(offsetParent);
+    return titleNode;
+  };
+  const handleChangeIcon = key => {
+    const titleNode = getTitleNode();
+    if (titleNode) {
+      if (titleNode.classList.contains(`mulu-${key}`)) {
+        setText(t => (t === 'plus' ? 'minus' : 'plus'));
+      }
+    }
+  };
+  useEffect(() => {
+    const titleNode = getTitleNode();
     if (titleNode) {
       expandedKeys.forEach(item => {
         if (titleNode.classList.contains(`mulu-${item}`)) {
@@ -29,7 +40,10 @@ export default ({ expandedKeys, level }) => {
         }
       }
     }
-
+    event.addListener('click_without_icon', handleChangeIcon);
+    return () => {
+      event.removeListener('click_without_icon', handleChangeIcon);
+    };
     // if (
     //   offsetParent &&
     //   offsetParent.classList.contains('ant-tree-switcher_open')

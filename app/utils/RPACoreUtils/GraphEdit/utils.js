@@ -219,7 +219,7 @@ export const translateGroup = (blockData, type) => {
     }
     // loopcondition += ' 成立时';
   }
-  console.log(`${looptype} ${loopcondition}`);
+  // console.log(`${looptype} ${loopcondition}`);
   return type === 'chinese'
     ? `${loopcondition}`
     : `${looptype} ${loopcondition}`;

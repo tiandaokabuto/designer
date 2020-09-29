@@ -35,12 +35,29 @@ export default ({
       document.removeEventListener('click', handleClose);
     };
   }, [left, top]);
+
+  const isVisible = () => {
+    if (visible && node && node.children.length === 0) {
+      if (
+        node.eventKey === 'recent' ||
+        node.eventKey === 'aviable' ||
+        node.eventKey === 'favorite'
+      ) {
+        return 'hidden';
+      } else {
+        return 'visible';
+      }
+    } else {
+      return 'hidden';
+    }
+  };
   return (
     <div
       className="rightClickMenu"
       style={{
         position: 'fixed',
-        visibility: visible ? 'visible' : 'hidden',
+        visibility: isVisible(),
+        // visible && node.children.length === 0 ? 'visible' : 'hidden',
         left: left,
         zIndex: 1,
         top: top,

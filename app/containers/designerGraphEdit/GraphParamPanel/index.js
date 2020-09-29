@@ -173,6 +173,12 @@ export default () => {
             overflowY: 'auto',
             // marginTop: 10,
           }}
+          onKeyDown={e => {
+            if (e.keyCode === 46) {
+              e.nativeEvent.stopImmediatePropagation();
+              e.stopPropagation();
+            }
+          }}
         >
           {showPanel()}
         </div>
