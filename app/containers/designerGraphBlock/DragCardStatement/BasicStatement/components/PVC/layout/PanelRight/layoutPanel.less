@@ -1,6 +1,21 @@
-.panel-right-config{
-    color: #32a680;
-    width: 101px;
-    border-bottom:2px solid #32a680;
-    margin: 0 auto;
+.panel-right-config {
+  color: #32a680;
+  width: 100%;
+  border-bottom: 2px solid #32a680;
+  margin: 0 auto;
+  position: -webkit-sticky;
+  position: sticky;
+  top: -12px;
+  z-index: 9999;
+  background-color: #fff;
+}
+.panel-left-layoutPanel {
+  .rightpanel-item {
+    display: flex;
+    flex-direction: column;
+    margin-top: 12px;
+    input {
+      height: 32px;
+    }
+  }
 }
