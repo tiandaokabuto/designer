@@ -64,10 +64,18 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
   });
 
   useEffect(() => {
+    console.log(interactiveCard);
     const data = JSON.parse(interactiveCard.properties.required[1].value);
     setDataList(Array.isArray(data) ? data : []);
     if (interactiveCard.layout) {
-      setLayout(interactiveCard.layout);
+      let afterFilter = cloneDeep(interactiveCard.layout);
+      ['cols', 'data', 'dataMap'].forEach(key => {
+        if (afterFilter[key]) {
+          delete afterFilter[key];
+        }
+      });
+      setLayout(afterFilter);
+      setDevice(Object.keys(afterFilter)[0]);
     }
   }, [interactiveCard.layout]);
 

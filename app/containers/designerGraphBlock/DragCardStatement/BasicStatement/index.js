@@ -164,6 +164,35 @@ const BasicStatement = useInjectContext(props => {
   const generateEditOperation = card => {
     switch (card.cmdName) {
       case '人机交互':
+        if (!card.PVCVersion) {
+          if (card.layout) {
+            const dataArr = [];
+            const layoutArr = [];
+            if (card.layout.dataMap) {
+              Object.keys(card.layout.dataMap).forEach(item => {
+                if (card.layout.dataMap[item]) {
+                  // card.layout.dataMap[item].id = item;
+
+                  dataArr.push({
+                    id: item,
+                    type: card.layout.dataMap[item].type,
+                    attribute: card.layout.dataMap[item],
+                  });
+                  layoutArr.push([
+                    {
+                      id: item,
+                      width: '100%',
+                    },
+                  ]);
+                }
+              });
+              card.properties.required[1].value = JSON.stringify(dataArr);
+              card.layout['device-pc-small'] = {};
+              card.layout['device-pc-small'].grid = layoutArr;
+            }
+          }
+          card.PVCVersion = 'new';
+        }
         return (
           <div
             className="cmd-operation"

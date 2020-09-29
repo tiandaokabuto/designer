@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { List, Select, Tag, Radio, Input, Button, message } from "antd";
-import { LayoutOutlined, CheckSquareOutlined } from "@ant-design/icons";
-import { options } from "less";
-import cloneDeep from "lodash/cloneDeep";
+import React, { useState, useEffect } from 'react';
+import { List, Select, Tag, Radio, Input, Button, message } from 'antd';
+import { LayoutOutlined, CheckSquareOutlined } from '@ant-design/icons';
+import { options } from 'less';
+import cloneDeep from 'lodash/cloneDeep';
 
-import { device } from "../../components/DeviceConfig";
-import "./layoutPanel.less";
+import { device } from '../../components/DeviceConfig';
+import './layoutPanel.less';
 
 const { Option } = Select;
 
-export default (props) => {
+export default props => {
   const {
     handleAddComponent,
     currentDevice,
@@ -31,17 +31,27 @@ export default (props) => {
 
   useEffect(() => {
     console.log(layout);
-    usedLayout.forEach((device) => {
+
+    // 新增一个设备，把列表第一个元素的设备参数，拷贝到新设备上
+    usedLayout.forEach(device => {
       if (!layout[device]) {
         layout[device] = cloneDeep(layout[Object.keys(layout)[0]]);
       }
       setLayout(layout);
     });
+
+    // // 假如移出了设备，清理多余layout
+    // let afterFilter = {};
+    // usedLayout.forEach(key => {
+    //   afterFilter[key] = cloneDeep(layout[key]);
+    // });
+
+    // setLayout(afterFilter);
   }, [usedLayout]);
 
   // 当前的属性参数
   const [options, setOptions] = useState({
-    layoutPadding: "double",
+    layoutPadding: 'double',
     rowsNumber: 1,
   });
 
@@ -58,10 +68,10 @@ export default (props) => {
       </p>
       <Select
         showSearch
-        style={{ width: "100%" }}
+        style={{ width: '100%' }}
         placeholder="选择当前配置的视图"
         optionFilterProp="children"
-        onChange={(e) => setCurrentDevice(e)}
+        onChange={e => setCurrentDevice(e)}
         // onFocus={onFocus}
         // onBlur={onBlur}
         // onSearch={onSearch}
@@ -71,8 +81,8 @@ export default (props) => {
         value={currentDevice}
         listHeight={600}
       >
-        {device.map((item) => {
-          if (usedLayout.find((used) => item.key === used)) {
+        {device.map(item => {
+          if (usedLayout.find(used => item.key === used)) {
             return (
               <Option value={item.key}>
                 <Tag>
@@ -86,35 +96,35 @@ export default (props) => {
         })}
       </Select>
       <p style={{ marginTop: 12 }}>
-        {" "}
+        {' '}
         <span style={{ paddingRight: 20 }}>布局间隔</span>
         <Radio.Group
           value={options.layoutPadding}
-          onChange={(e) => {
+          onChange={e => {
             setOptions({ ...options, layoutPadding: e.target.value });
           }}
           options={[
-            { label: "宽松", value: "double" },
-            { label: "紧凑", value: "tiny" },
+            { label: '宽松', value: 'double' },
+            { label: '紧凑', value: 'tiny' },
           ]}
           optionType="button"
           buttonStyle="solid"
           size="small"
         />
       </p>
-      <hr style={{ borderTop: "1px solid #32a680" }} />
+      <hr style={{ borderTop: '1px solid #32a680' }} />
 
       <div
         class="layoutPreview"
-        style={{ marginTop: 12, paddingBottom: 10, display: "block" }}
+        style={{ marginTop: 12, paddingBottom: 10, display: 'block' }}
       >
-        {" "}
+        {' '}
         <div class="left">
           <span style={{ paddingRight: 20 }}>布局缩略</span>
         </div>
         <div class="right">
           {options.rowsNumber
-            ? new Array(6 * options.rowsNumber).fill(1).map((i) => {
+            ? new Array(6 * options.rowsNumber).fill(1).map(i => {
                 return (
                   <div
                     class="box"
@@ -126,12 +136,12 @@ export default (props) => {
                   </div>
                 );
               })
-            : ""}
+            : ''}
         </div>
       </div>
 
       <p style={{ marginTop: 12 }}>
-        {" "}
+        {' '}
         <span style={{ paddingRight: 20 }}>最大列数</span>
         <Input
           value={options.rowsNumber}
@@ -141,7 +151,7 @@ export default (props) => {
           max={24}
           min={1}
           style={{ width: 88 }}
-          onChange={(e) => {
+          onChange={e => {
             console.log(e.currentTarget.value);
             if (parseInt(e.currentTarget.value) > 24) {
               setOptions({ ...options, rowsNumber: 24 });
@@ -149,7 +159,7 @@ export default (props) => {
               setOptions({ ...options, rowsNumber: e.currentTarget.value });
             }
           }}
-          onBlur={(e) => {
+          onBlur={e => {
             let num;
             if (e.currentTarget.value) {
               num = parseInt(e.currentTarget.value);
@@ -176,7 +186,7 @@ export default (props) => {
           // type="primary"
           size="small"
           style={{ width: 38 }}
-          onClick={(e) => {
+          onClick={e => {
             if (options.rowsNumber > 1) {
               return setOptions({
                 ...options,
@@ -189,50 +199,50 @@ export default (props) => {
         </Button>
       </p>
 
-      <hr style={{ borderTop: "1px solid #32a680" }} />
+      <hr style={{ borderTop: '1px solid #32a680' }} />
 
       <p style={{ marginTop: 12 }}>
-        {" "}
+        {' '}
         <span style={{ paddingRight: 20 }}>像素宽度</span>
         <Input
           value={
-            device.find((d) => d.key === currentDevice)
-              ? device.find((d) => d.key === currentDevice).width
-              : "未知"
+            device.find(d => d.key === currentDevice)
+              ? device.find(d => d.key === currentDevice).width
+              : '未知'
           }
           size="small"
           style={{ width: 88 }}
           disabled
-        />{" "}
+        />{' '}
         px
       </p>
 
       <p style={{ marginTop: 12 }}>
-        {" "}
+        {' '}
         <span style={{ paddingRight: 20 }}>像素高度</span>
         <Input
           value={
-            device.find((d) => d.key === currentDevice)
-              ? device.find((d) => d.key === currentDevice).height
-              : "未知"
+            device.find(d => d.key === currentDevice)
+              ? device.find(d => d.key === currentDevice).height
+              : '未知'
           }
           size="small"
           style={{ width: 88 }}
           disabled
-        />{" "}
+        />{' '}
         px
       </p>
 
-      <hr style={{ borderTop: "1px solid #32a680" }} />
+      <hr style={{ borderTop: '1px solid #32a680' }} />
 
       <p style={{ marginTop: 12 }}>
-        {" "}
+        {' '}
         <span style={{ paddingRight: 20 }}>边缘边距</span>
         <Input value={options.padding} size="small" style={{ width: 88 }} /> px
       </p>
 
       <p style={{ marginTop: 12 }}>
-        {" "}
+        {' '}
         <span style={{ paddingRight: 20 }}>行内间距</span>
         <Input value={options.padding} size="small" style={{ width: 88 }} /> px
       </p>
@@ -243,22 +253,22 @@ export default (props) => {
       <Select
         mode="multiple"
         allowClear
-        style={{ width: "100%" }}
+        style={{ width: '100%' }}
         placeholder="启用的方案"
         value={usedLayout}
-        onChange={(e) => {
+        onChange={e => {
           if (e.indexOf(currentDevice) < 0) {
-            message.info("当前编辑的方案不能被删除");
+            message.info('当前编辑的方案不能被删除');
             return setUsedLayout([...e, currentDevice]);
           }
 
           if (e.length < 1) {
-            return message.info("不能删除所有布局方式");
+            return message.info('不能删除所有布局方式');
           }
           setUsedLayout(e);
         }}
       >
-        {device.map((item) => {
+        {device.map(item => {
           return (
             <Option value={item.key}>
               <Tag>

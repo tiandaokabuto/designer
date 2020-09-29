@@ -49,7 +49,7 @@ export const inputType = {
     width: 100,
     required: true,
   },
-  icon: <img src={require('../assets/input.svg')} className="pvc-btn-icon" />,
+  // icon: <img src={require('../assets/input.svg')} className="pvc-btn-icon" />,
 };
 
 export const imageType = {
@@ -64,7 +64,7 @@ export const imageType = {
     width: 25,
   },
   // 组件图标
-  icon: <img src={require('../assets/image.svg')} className="pvc-btn-icon" />,
+  // icon: <img src={require('../assets/image.svg')} className="pvc-btn-icon" />,
 };
 
 export const submitType = {
@@ -75,12 +75,12 @@ export const submitType = {
     label: '提交',
     width: 10,
   },
-  icon: <img src={require('../assets/btn.svg')} className="pvc-btn-icon" />,
+  // icon: <img src={require('../assets/btn.svg')} className="pvc-btn-icon" />,
 };
 
 export const cancelType = {
   type: CANCEL_COMPONENT,
-  icon: <img src={require('../assets/error.svg')} className="pvc-btn-icon" />,
+  // icon: <img src={require('../assets/error.svg')} className="pvc-btn-icon" />,
   label: '取消按钮',
   attribute: {
     type: CANCEL_COMPONENT,
@@ -99,13 +99,13 @@ export const uploadType = {
     value: "''",
     width: 10,
   },
-  icon: <img src={require('../assets/upload.svg')} className="pvc-btn-icon" />,
+  // icon: <img src={require('../assets/upload.svg')} className="pvc-btn-icon" />,
 };
 
 export const downloadType = {
-  icon: (
-    <img src={require('../assets/download.svg')} className="pvc-btn-icon" />
-  ),
+  // icon: (
+  //   <img src={require('../assets/download.svg')} className="pvc-btn-icon" />
+  // ),
   type: DOWNLOAD_COMPONENT,
   label: '文件下载',
   attribute: {
@@ -131,9 +131,9 @@ export const selectType = {
     width: 100,
     require: true,
   },
-  icon: (
-    <img src={require('../assets/selector.svg')} className="pvc-btn-icon" />
-  ),
+  // icon: (
+  //   <img src={require('../assets/selector.svg')} className="pvc-btn-icon" />
+  // ),
 };
 
 export const uploadImgsType = {
@@ -144,7 +144,7 @@ export const uploadImgsType = {
     value: '[]',
     width: 100,
   },
-  icon: <img src={require('../assets/imageUp.svg')} className="pvc-btn-icon" />,
+  // icon: <img src={require('../assets/imageUp.svg')} className="pvc-btn-icon" />,
 };
 
 // export const radioType = {
