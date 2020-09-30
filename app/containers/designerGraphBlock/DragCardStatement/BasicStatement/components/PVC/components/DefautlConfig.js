@@ -129,7 +129,7 @@ export const selectType = {
     dataSource: '数据源',
     selectedType: 'radio',
     width: 100,
-    require: true,
+    require: 'true',
   },
   // icon: (
   //   <img src={require('../assets/selector.svg')} className="pvc-btn-icon" />
