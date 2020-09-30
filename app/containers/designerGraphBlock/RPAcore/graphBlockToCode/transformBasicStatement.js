@@ -287,7 +287,7 @@ const transformBasicStatement = (
             if (formJson !== 'None') {
               // 返回值
               let temp = [];
-              if (dataStructure.PVCVersion) {
+              if (!dataStructure.layout.cols) {
                 temp = JSON.parse(formJson).map(item => item.attribute);
               } else {
                 temp = JSON.parse(formJson);

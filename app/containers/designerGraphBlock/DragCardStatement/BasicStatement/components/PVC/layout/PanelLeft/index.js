@@ -1,17 +1,25 @@
-import React, { useState } from "react";
-import { Tabs } from "antd";
-import ComponentPanel from "./ComponentPanel";
-import LayoutPanel from "./LayoutPanel";
+import React, { useState } from 'react';
+import { Tabs } from 'antd';
+import ComponentPanel from './ComponentPanel';
+import LayoutPanel from './LayoutPanel';
 
 const { TabPane } = Tabs;
 
-export default (props) => {
-  const { handleAddComponent, device, setDevice, layout, setLayout } = props;
+export default props => {
+  const {
+    handleAddComponent,
+    device,
+    setDevice,
+    layout,
+    setLayout,
+    usedLayout,
+    setUsedLayout,
+  } = props;
 
   return (
     <Tabs
       defaultActiveKey="1"
-      style={{ width: "100%" }}
+      style={{ width: '100%' }}
 
       // onChange={this.handleChangeTabs.bind(this)}
     >
@@ -25,6 +33,9 @@ export default (props) => {
           setCurrentDevice={setDevice}
           layout={layout}
           setLayout={setLayout}
+
+          usedLayout={usedLayout}
+          setUsedLayout={setUsedLayout}
         />
       </TabPane>
     </Tabs>

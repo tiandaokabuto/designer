@@ -63,6 +63,9 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
     },
   });
 
+  // 启用的布局方案
+  const [usedLayout, setUsedLayout] = useState([]);
+
   useEffect(() => {
     console.log(interactiveCard);
     const data = JSON.parse(interactiveCard.properties.required[1].value);
@@ -337,6 +340,13 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
             type="primary"
             onClick={() => {
               if (layout) {
+                Object.keys(layout).forEach(key => {
+                  console.log(Object.keys(layout), key, usedLayout);
+                  if (!usedLayout.find(useKey => key === useKey)) {
+                    console.log(key, layout[key]);
+                    delete layout[key];
+                  }
+                });
                 saveChange(layout, dataList);
               }
               interactiveCard.hasModified = true;
@@ -353,6 +363,8 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
         {/* <div className="panel-height">人机交互界面设计器</div> */}
         <div className="panel-left">
           <PanelLeft
+            usedLayout={usedLayout}
+            setUsedLayout={setUsedLayout}
             handleAddComponent={handleAddComponent}
             device={device}
             setDevice={setDevice}
@@ -455,7 +467,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
           )}
         </div>
 
-        <div class="pvc-slider">
+        <div className="pvc-slider">
           <div style={{ float: 'left', paddingRight: 30 }}>
             <span> 缩放比率 </span>
           </div>

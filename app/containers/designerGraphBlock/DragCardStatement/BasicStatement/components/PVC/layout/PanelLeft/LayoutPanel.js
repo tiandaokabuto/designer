@@ -16,13 +16,13 @@ export default props => {
     setCurrentDevice,
     layout,
     setLayout,
+
+    usedLayout,
+    setUsedLayout
   } = props;
 
   // 当前选中的设备
   //const [currentDevice, setCurrentDevice] = useState("device-mobile-iphone678");
-
-  // 启用的布局方案
-  const [usedLayout, setUsedLayout] = useState([]);
 
   useEffect(() => {
     setUsedLayout(Object.keys(layout));
@@ -36,15 +36,21 @@ export default props => {
     usedLayout.forEach(device => {
       if (!layout[device]) {
         layout[device] = cloneDeep(layout[Object.keys(layout)[0]]);
+        return setLayout(layout);
       }
-      setLayout(layout);
     });
 
     // // 假如移出了设备，清理多余layout
-    // let afterFilter = {};
-    // usedLayout.forEach(key => {
-    //   afterFilter[key] = cloneDeep(layout[key]);
+    // // let afterFilter = {};
+    // Object.keys(layout).forEach(key => {
+    //   console.log(Object.keys(layout), key , usedLayout)
+    //   if (!usedLayout.find(useKey => key === useKey)) {
+    //     console.log(key,layout[key])
+    //     delete layout[key];
+    //   }
     // });
+
+    setLayout(layout);
 
     // setLayout(afterFilter);
   }, [usedLayout]);
@@ -259,7 +265,7 @@ export default props => {
         onChange={e => {
           if (e.indexOf(currentDevice) < 0) {
             message.info('当前编辑的方案不能被删除');
-            return setUsedLayout([...e, currentDevice]);
+            return; //setUsedLayout([...e, currentDevice]);
           }
 
           if (e.length < 1) {
