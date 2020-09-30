@@ -137,6 +137,23 @@ const PanelRight = props => {
             <Radio.Button value="false">否</Radio.Button>
           </Radio.Group>
         );
+
+      case 'required':
+        return (
+          <Radio.Group
+            value={desc[item]}
+            onChange={e => {
+              desc[item] = e.target.value;
+              handleChange();
+            }}
+            optionType="button"
+            buttonStyle="solid"
+            size="small"
+          >
+            <Radio.Button value="true">是</Radio.Button>
+            <Radio.Button value="false">否</Radio.Button>
+          </Radio.Group>
+        );
       case 'dataSource':
         return (
           <Input

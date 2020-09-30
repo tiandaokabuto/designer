@@ -349,7 +349,7 @@ export default memo(({ readOnly = false }) => {
     // console.log(card);
     // interactiveCard.layout = layout;
     console.log('datalist', dataList);
-    interactiveCard.layout = layout;
+    interactiveCard.layout = cloneDeep(layout);
     interactiveCard.properties.required[1].value = JSON.stringify(dataList);
     // Object.assign(interactiveCard.properties.required[1].value, dataList);
     // card.properties.required[1].updateId = true;

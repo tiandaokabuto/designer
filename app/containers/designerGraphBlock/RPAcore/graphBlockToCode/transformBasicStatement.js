@@ -334,7 +334,7 @@ const transformBasicStatement = (
               });
               newTemp.push({
                 type: 'layout',
-                value: JSON.stringify(dataStructure.layout),
+                layout: JSON.stringify(dataStructure.layout),
               });
 
               params += `${item.enName} = ${JSON.stringify(newTemp)}`;

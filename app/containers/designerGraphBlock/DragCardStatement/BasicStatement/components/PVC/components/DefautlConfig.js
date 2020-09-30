@@ -47,7 +47,7 @@ export const inputType = {
     password: 'false',
     validRule: '',
     width: 100,
-    required: true,
+    required: 'true',
   },
   // icon: <img src={require('../assets/input.svg')} className="pvc-btn-icon" />,
 };

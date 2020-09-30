@@ -64,7 +64,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
   });
 
   // 启用的布局方案
-  const [usedLayout, setUsedLayout] = useState([]);
+  const [usedLayout, setUsedLayout] = useState(['device-pc-small']);
 
   useEffect(() => {
     console.log(interactiveCard);
@@ -78,6 +78,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
         }
       });
       setLayout(afterFilter);
+      setUsedLayout(Object.keys(afterFilter));
       setDevice(Object.keys(afterFilter)[0]);
     }
   }, [interactiveCard.layout]);
@@ -131,7 +132,9 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
   const handleAddComponent = itemData => {
     // 插入元素
     const newItem = cloneDeep(itemData);
-    newItem.id = getUniqueIdForPVC(device, 'col_');
+    let id = getUniqueIdForPVC(device, 'col_');
+    newItem.id = id
+    newItem.attribute.id = newItem.id;
     setDataList([...dataList, newItem]);
     // let newLayout = [];
     // if (device === 'device-mobile') {
@@ -224,7 +227,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
   // };
 
   const getLayoutGrid = () => {
-    return layout ? layout[device].grid : [];
+    return layout ? (layout[device] ? layout[device].grid : []) : [];
     // switch (device) {
     //   case 'device-mobile':
     //     return mobileLayout;
@@ -343,10 +346,12 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
                 Object.keys(layout).forEach(key => {
                   console.log(Object.keys(layout), key, usedLayout);
                   if (!usedLayout.find(useKey => key === useKey)) {
-                    console.log(key, layout[key]);
+                    console.log(`我要删除! layout[key]`, key, layout[key]);
+                    // temp[key] = cloneDeep(layout[key]);
                     delete layout[key];
                   }
                 });
+                // layout
                 saveChange(layout, dataList);
               }
               interactiveCard.hasModified = true;
@@ -400,7 +405,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
               ></Input>
             </div>
 
-            {getLayoutGrid().map((row, index) => {
+            {getLayoutGrid().length >0 ? getLayoutGrid().map((row, index) => {
               return (
                 <div
                   className="panel-content-row"
@@ -421,7 +426,9 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
                   })}
                 </div>
               );
-            })}
+            })
+            :""
+          }
 
             {/* <Divider style={{ margin: '12px 0px' }} /> */}
 
