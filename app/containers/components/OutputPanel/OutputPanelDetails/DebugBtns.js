@@ -24,6 +24,7 @@ export default ({
   debug_running,
   debug_oneRunning,
   debug_pause,
+  resetDebugIndex,
 }) => {
   const [disabledBtn, setDisabledBtn] = useState(false);
   const currentPagePosition = useSelector(

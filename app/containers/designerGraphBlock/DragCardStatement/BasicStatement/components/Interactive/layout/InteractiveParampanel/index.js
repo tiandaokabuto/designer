@@ -68,6 +68,7 @@ export default memo(
               style={{
                 flex: 1,
                 marginLeft: 12,
+                paddingLeft: 12,
               }}
             >
               <Option value="radio">单选</Option>

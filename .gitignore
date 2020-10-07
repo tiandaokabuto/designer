@@ -56,3 +56,4 @@ tokenTime.txt
 
 .idea
 npm-debug.log.*
+node_modules.zip

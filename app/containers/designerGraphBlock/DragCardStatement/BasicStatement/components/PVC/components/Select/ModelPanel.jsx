@@ -64,14 +64,13 @@ const SelectComponent = props => {
         </div>
 
         <Select
-          size="small"
           style={{ width: '100%' }}
           placeholder={item.attribute.desc}
           value={item.attribute.value}
           onChange={onChange}
           onFocus={onFocus}
         >
-          {/* 
+          {/*
             <Option value="tom">Tom</Option>;
             {item.attribute.dataSource
             ? item.attribute.dataSource.map((Subitem, index) => {

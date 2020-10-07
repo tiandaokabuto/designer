@@ -1256,6 +1256,7 @@ export default memo(
               debug_running={debug_running}
               debug_oneRunning={debug_oneRunning}
               debug_pause={debug_pause}
+              resetDebugIndex={resetDebugIndex}
             />
           </div>
           <div

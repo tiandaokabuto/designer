@@ -169,7 +169,7 @@ const PanelRight = props => {
       case 'selectedType':
         return (
           <Radio.Group
-            style={{ marginLeft: -13 }}
+            style={{ marginLeft: 0 }}
             value={desc[item]}
             onChange={e => {
               desc[item] = e.target.value;

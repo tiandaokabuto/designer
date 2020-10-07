@@ -27,6 +27,13 @@ const ImageComponent = (props) => {
     moveDown,
   } = props;
 
+  const getRealPath = (path) =>{
+    let realPath = '';
+    realPath += path;
+    realPath = realPath.replace(/'/g,'').replace(/"/g,'')
+    return realPath;
+  }
+
   return (
     <div style={{ flexBasis: width }} className="panel-content-row-col">
       <div
@@ -53,9 +60,10 @@ const ImageComponent = (props) => {
           {item.attribute.desc}
         </div>
         <div style={{ textAlign: "center" }}>
-          {/^http[s]*:/.test(item.attribute.value) ||
-          /^data:/.test(item.attribute.value) ? (
-            <img src={item.attribute.value} />
+          {/^['"]+http[s]*:/.test(item.attribute.value) ||
+          /^['"]+data:/.test(item.attribute.value)
+          ? (
+            <img src={/^['"]*/.test(item.attribute.value) ? getRealPath(item.attribute.value) : item.attribute.value} />
           ) : (
             <div className="demo-pic">
               示例图片
