@@ -32,7 +32,7 @@ import {
 
 const formComponentList = [inputType, selectType];
 const beautyComponentList = [imageType];
-const fileComponentList = [uploadType, downloadType, uploadImgsType];
+const fileComponentList = [downloadType, uploadImgsType]; //uploadType,
 const comandCompomentList = [submitType, cancelType];
 
 export default ({ handleAddComponent }) => {

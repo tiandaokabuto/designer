@@ -112,7 +112,7 @@ export const downloadType = {
     type: DOWNLOAD_COMPONENT,
     label: '文件下载',
     desc: '',
-    value: "''",
+    value: "'需要上传的文件路径'",
 
     width: 10,
   },
@@ -126,7 +126,7 @@ export const selectType = {
     desc: '',
     value: "''",
     key: '赋值的变量名',
-    dataSource: '数据源',
+    dataSource: "['A','B','C']",
     selectedType: 'radio',
     width: 100,
     require: 'true',
