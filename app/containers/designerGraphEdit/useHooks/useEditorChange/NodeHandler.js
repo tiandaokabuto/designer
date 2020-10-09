@@ -45,7 +45,7 @@ class NodeHandler {
           fs.readFile(
             PATH_CONFIG(
               'project',
-              `${currentProject}/${currentProject}_module/${movingModuleNode.title}.json`
+              `${currentProject}/${currentProject}_module/${movingModuleNode.title}_module.json`
             ),
             (err, data) => {
               if (!err) {

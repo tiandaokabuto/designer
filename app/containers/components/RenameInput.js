@@ -85,18 +85,18 @@ export default (
               fs.renameSync(
                 PATH_CONFIG(
                   'project',
-                  `${name}/${name}_module/${oldTitle}.json`
+                  `${name}/${name}_module/${oldTitle}_module.json`
                 ),
                 PATH_CONFIG(
                   'project',
-                  `${name}/${name}_module/${newTitle}.json`
+                  `${name}/${name}_module/${newTitle}_module.json`
                 )
               );
               // 把json文件里面的流程块名也改为最新
               fs.readFile(
                 PATH_CONFIG(
                   'project',
-                  `${name}/${name}_module/${newTitle}.json`
+                  `${name}/${name}_module/${newTitle}_module.json`
                 ),
                 (err, data) => {
                   if (!err) {
@@ -107,7 +107,7 @@ export default (
                     fs.writeFileSync(
                       PATH_CONFIG(
                         'project',
-                        `${name}/${name}_module/${newTitle}.json`
+                        `${name}/${name}_module/${newTitle}_module.json`
                       ),
                       encrypt.argEncryptByDES(JSON.stringify(description))
                     );

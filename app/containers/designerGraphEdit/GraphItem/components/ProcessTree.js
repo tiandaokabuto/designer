@@ -236,6 +236,9 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedKey, setSelectedKey] = useState('');
   const [expandedKeys, setExpandedKeys] = useState([]);
+
+  const [createItemTag, setCreateItemTag] = useState(0);
+
   const processTree = useSelector(state => state.grapheditor.processTree);
   const moduleTree = useSelector(state => state.grapheditor.moduleTree);
   const currentCheckedTreeNode = useSelector(
@@ -464,27 +467,28 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
   };
 
   const handleCreate = () => {
-    if (createItem) {
-      console.log('配置单个新添加的可拖拽');
-      const toolCells = document.querySelectorAll('.process-module-drag');
-      const elt = toolCells[toolCells.length - 1];
-      const cell = new MxCell(
-        `<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>${cell.innerText}</span></div>`,
-        new MxGeometry(0, 0, parseInt(186, 10), parseInt(50, 10)),
-        'label;whiteSpace=wrap;html=1;;resizable=0;'
-      );
-      cell.vertex = true;
-      createItem(
-        [cell],
-        186,
-        55,
-        // cell.geometry.width,
-        // cell.geometry.height,
-        'Shape Group',
-        null,
-        elt
-      );
-    }
+    setCreateItemTag(count => count + 1);
+    // if (createItem) {
+    //   console.log('配置单个新添加的可拖拽');
+    //   const toolCells = document.querySelectorAll('.process-module-drag');
+    //   const elt = toolCells[toolCells.length - 1];
+    //   const cell = new MxCell(
+    //     `<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>${cell.innerText}</span></div>`,
+    //     new MxGeometry(0, 0, parseInt(186, 10), parseInt(50, 10)),
+    //     'label;whiteSpace=wrap;html=1;;resizable=0;'
+    //   );
+    //   cell.vertex = true;
+    //   createItem(
+    //     [cell],
+    //     186,
+    //     55,
+    //     // cell.geometry.width,
+    //     // cell.geometry.height,
+    //     'Shape Group',
+    //     null,
+    //     elt
+    //   );
+    // }
   };
 
   const refreshGraph = key => {
@@ -494,16 +498,18 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
   };
 
   useEffect(() => {
-    if (type === 'processModule') {
-      event.addListener('create_module_drag', handleCreate);
-      console.log('监听');
-    }
+    event.addListener('create_module_drag', handleCreate);
+    console.log('监听');
+    // if (type === 'processModule') {
+
+    // }
 
     return () => {
-      if (type === 'processModule') {
-        console.log('移除监听');
-        event.removeListener('create_module_drag', handleCreate);
-      }
+      console.log('移除监听');
+      event.removeListener('create_module_drag', handleCreate);
+      // if (type === 'processModule') {
+
+      // }
     };
   }, []);
 
@@ -517,15 +523,15 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
         // const { label, style, width, height } = elt.dataset;
         cell = new MxCell(
           `<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>${elt.innerText}</span></div>`,
-          new MxGeometry(0, 0, parseInt(186, 10), parseInt(50, 10)),
-          'label;whiteSpace=wrap;html=1;;resizable=0;'
+          new MxGeometry(0, 0, parseInt(96, 10), parseInt(48, 10)),
+          'label;whiteSpace=wrap;html=1;resizable=0;shadow=1;rounded=1;fillColor=#F2FAF7;strokeColor=#32A67F;gradientColor=none;fontColor=#000000;'
         );
         cell.vertex = true;
 
         createItem(
           [cell],
-          186,
-          55,
+          96,
+          48,
           // cell.geometry.width,
           // cell.geometry.height,
           'Shape Group',
@@ -534,7 +540,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
         );
       }
     }
-  }, [type]);
+  }, [type, createItemTag]);
 
   const showTreeData = selectedKey => {
     const node = findNodeByKey(processTree, selectedKey[0]);

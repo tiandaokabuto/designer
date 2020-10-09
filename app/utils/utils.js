@@ -186,7 +186,10 @@ const deleteFileByKey = (target, name, type) => {
           );
         } else {
           fs.unlinkSync(
-            PATH_CONFIG('project', `${name}/${name}_module/${item.title}.json`)
+            PATH_CONFIG(
+              'project',
+              `${name}/${name}_module/${item.title}_module.json`
+            )
           );
         }
       }
@@ -195,7 +198,10 @@ const deleteFileByKey = (target, name, type) => {
     deleteFolderRecursive(PATH_CONFIG('project', `${name}/${target.title}`));
   } else {
     fs.unlinkSync(
-      PATH_CONFIG('project', `${name}/${name}_module/${target.title}.json`)
+      PATH_CONFIG(
+        'project',
+        `${name}/${name}_module/${target.title}_module.json`
+      )
     );
   }
 };
@@ -758,6 +764,7 @@ export const addToReuse = () => {
     return;
   }
   const { pythonCode, ...data } = graphDataMap.get(checkedGraphBlockId);
+  console.log(data);
   const title = data.properties[0].value; // 标题
   const files = fs.readdirSync(
     PATH_CONFIG('project', `${currentProject}/${currentProject}_module`)
@@ -768,7 +775,7 @@ export const addToReuse = () => {
     fs.writeFileSync(
       PATH_CONFIG(
         'project',
-        `${currentProject}/${currentProject}_module/${title}.json`
+        `${currentProject}/${currentProject}_module/${title}_module.json`
       ),
       encrypt.argEncryptByDES(
         JSON.stringify({
@@ -887,7 +894,7 @@ export const getChooseFilePath = (filePath, importType) => {
       fs.existsSync(
         PATH_CONFIG(
           'project',
-          `${currentProject}/${currentProject}_module/${fileName}.json`
+          `${currentProject}/${currentProject}_module/${fileName}_module.json`
         )
       )
     ) {
@@ -897,7 +904,7 @@ export const getChooseFilePath = (filePath, importType) => {
       fs.writeFileSync(
         PATH_CONFIG(
           'project',
-          `${currentProject}/${currentProject}_module/${fileName}.json`
+          `${currentProject}/${currentProject}_module/${fileName}_module.json`
         ),
         encrypt.argEncryptByDES(
           JSON.stringify({
