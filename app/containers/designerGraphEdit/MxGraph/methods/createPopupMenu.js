@@ -16,7 +16,7 @@ export default (
   evt,
   mxClipboard,
   changeSavingModuleData,
-  graphDataMapRef,
+  graphDataMap,
   setGraphDataMap,
   deleteGraphDataMap,
   changeCheckedGraphBlockId,
@@ -94,6 +94,7 @@ export default (
         setGraphDataMap,
         changeCheckedGraphBlockId,
         graphData,
+        graphDataMap,
         undoAndRedoRef,
       });
     };

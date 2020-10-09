@@ -307,7 +307,7 @@ const MxgraphContainer = useInjectContext(
           evt,
           mxClipboard,
           changeSavingModuleData,
-          graphDataMapRef,
+          graphDataMapRef.current,
           setGraphDataMap,
 
           deleteGraphDataMap,

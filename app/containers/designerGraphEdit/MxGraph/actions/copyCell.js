@@ -66,6 +66,7 @@ export function Action_PasteCell(graph, option, callback = {}) {
     setGraphDataMap,
     changeCheckedGraphBlockId,
     graphData,
+    graphDataMap,
     undoAndRedoRef,
   } = option;
   const {
@@ -89,7 +90,8 @@ export function Action_PasteCell(graph, option, callback = {}) {
       try {
         console.log(savingModuleData[index]);
         //newMap.set(item.getId(), savingModuleData[index]);
-        let tempId = getMxId(graphData);
+        let tempId = getMxId(graphData, graphDataMap);
+        console.log(tempId);
         item.setId(tempId);
         setGraphDataMap(tempId, savingModuleData[index]);
         changeCheckedGraphBlockId(tempId);
