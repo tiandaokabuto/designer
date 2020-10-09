@@ -12,7 +12,7 @@ import GraphItem from '../GraphItem';
 import GraphParamPanel from '../GraphParamPanel';
 import MxGraphHeader from './components/MxGraphHeader';
 import OutputPanel from '@/containers/components/OutputPanel/OutputPanel';
-import { isDirNode, changeModifyState } from '_utils/utils';
+import { isDirNode, changeModifyState, getDecryptOrNormal } from '_utils/utils';
 // import useSaveAsXML from '../../../common/DragEditorHeader/useHooks/useSaveAsXML';
 import {
   changeMxGraphData,
@@ -42,6 +42,7 @@ import {
 import { POINT_POSITION_EXIT, POINT_POSITION_ENTRY } from './PointPosition';
 import event from '@/containers/eventCenter';
 import { updateGraphDataAction, deleteCellAction } from './mxgraphAction';
+import PATH_CONFIG from '@/constants/localFilePath'; // '@/constants/localFilePath';
 
 import './index.scss';
 
@@ -94,6 +95,11 @@ const MxgraphContainer = useInjectContext(
     // 选中的块
     const checkedGraphBlockId = useSelector(
       state => state.grapheditor.checkedGraphBlockId
+    );
+
+    // 项目名
+    const currentProject = useSelector(
+      state => state.grapheditor.currentProject
     );
 
     // 左侧选中的节点
@@ -301,7 +307,7 @@ const MxgraphContainer = useInjectContext(
           evt,
           mxClipboard,
           changeSavingModuleData,
-          graphDataMapRef,
+          graphDataMapRef.current,
           setGraphDataMap,
 
           deleteGraphDataMap,
@@ -2192,36 +2198,49 @@ const MxgraphContainer = useInjectContext(
                       graphDataMapRef.current
                     );
                     if (item.value.indexOf("class='compoent-content'") > -1) {
-                      setGraphDataMap(item.id, {
-                        shape: 'processblock',
-                        properties: [
-                          {
-                            cnName: '标签名称',
-                            enName: 'label',
-                            value: item.value
-                              .replace(
-                                "<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>",
-                                ''
-                              )
-                              .replace('</span></div>', ''),
+                      console.log(item);
+                      // 流程块的名称
+                      const itemName = item.value
+                        .replace(
+                          "<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>",
+                          ''
+                        )
+                        .replace('</span></div>', '');
+                      // 路径
+                      const path = PATH_CONFIG(
+                        'project',
+                        `${currentProject}/${currentProject}_module/${itemName}_module.json`
+                      );
+                      if (fs.existsSync(path)) {
+                        const data = getDecryptOrNormal(fs.readFileSync(path));
+                        setGraphDataMap(item.id, data.graphDataMap);
+                      } else {
+                        setGraphDataMap(item.id, {
+                          shape: 'processblock',
+                          properties: [
+                            {
+                              cnName: '标签名称',
+                              enName: 'label',
+                              value: itemName,
 
-                            default: '',
-                          },
-                          {
-                            cnName: '输入参数',
-                            enName: 'param',
-                            value: [],
-                            default: '',
-                          },
-                          {
-                            cnName: '流程块返回',
-                            enName: 'output',
-                            value: [],
-                            default: '',
-                          },
-                        ],
-                        variable: [],
-                      });
+                              default: '',
+                            },
+                            {
+                              cnName: '输入参数',
+                              enName: 'param',
+                              value: [],
+                              default: '',
+                            },
+                            {
+                              cnName: '流程块返回',
+                              enName: 'output',
+                              value: [],
+                              default: '',
+                            },
+                          ],
+                          variable: [],
+                        });
+                      }
                     } else if (
                       item.value.indexOf("class='rcomponent-content'") > -1
                     ) {

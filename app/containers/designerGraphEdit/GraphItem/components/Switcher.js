@@ -7,7 +7,14 @@ export default ({ expandedKeys, level }) => {
   const [text, setText] = useState('plus');
   const iconRef = useRef(null);
   const getTitleNode = () => {
-    const offsetParent = iconRef.current.offsetParent; // ant-tree-switcher_open
+    if (level === 2) {
+      // 第二层
+      if (localStorage.getItem('secondLeftHide') === 'true') return;
+    }
+    const offsetParent = iconRef.current.offsetParent
+      ? iconRef.current.offsetParent
+      : undefined; // ant-tree-switcher_open
+
     const titleNode =
       level === 2
         ? offsetParent.childNodes[1].firstElementChild.firstElementChild // 第二层目录
@@ -32,14 +39,15 @@ export default ({ expandedKeys, level }) => {
           }
         }
       });
-    } else if (offsetParent) {
-      // 旧版的判断逻辑
-      if (offsetParent.classList.contains('ant-tree-switcher_open')) {
-        if (text === 'plus') {
-          setText('minus');
-        }
-      }
     }
+    // else if (offsetParent) {
+    //   // 旧版的判断逻辑
+    //   if (offsetParent.classList.contains('ant-tree-switcher_open')) {
+    //     if (text === 'plus') {
+    //       setText('minus');
+    //     }
+    //   }
+    // }
     event.addListener('click_without_icon', handleChangeIcon);
     return () => {
       event.removeListener('click_without_icon', handleChangeIcon);

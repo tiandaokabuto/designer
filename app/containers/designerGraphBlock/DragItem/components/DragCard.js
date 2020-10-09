@@ -48,7 +48,7 @@ export default ({
     const data = fs.readFileSync(
       PATH_CONFIG(
         'project',
-        `${currentProject}/${currentProject}_module/${titleRef.current}.json`
+        `${currentProject}/${currentProject}_module/${titleRef.current}_module.json`
       )
     );
     const { graphDataMap } = getDecryptOrNormal(data);
@@ -95,8 +95,13 @@ export default ({
   return (
     <div ref={ref} className="dragger-editor-item-statement">
       {tabType === 'atomic' ? (
-        <Tooltip placement="right" title={item.cmdDesc} overlayStyle={{paddingLeft:"18px",}}>
-          <span style={{minWidth:80,display:"block"}}
+        <Tooltip
+          placement="right"
+          title={item.cmdDesc}
+          overlayStyle={{ paddingLeft: '18px' }}
+        >
+          <span
+            style={{ minWidth: 80, display: 'block' }}
             dangerouslySetInnerHTML={{
               __html: filter ? transformText(item, filter, node) : item.text,
             }}
