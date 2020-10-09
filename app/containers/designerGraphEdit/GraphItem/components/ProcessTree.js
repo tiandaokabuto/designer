@@ -130,6 +130,7 @@ const TreeNodeTitle = ({
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
           }}
+          title={title}
         >
           {title}
         </div>
