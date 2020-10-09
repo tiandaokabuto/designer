@@ -120,7 +120,7 @@ export default ({ setShowLoadingLayer, createItem }) => {
       className: 'designergraph-item-tab',
     },
     {
-      key: 'module',
+      key: 'processModule',
       name: '流程块',
       className: 'designergraph-item-tab',
     },
@@ -185,15 +185,22 @@ export default ({ setShowLoadingLayer, createItem }) => {
           }}
         >
           <ProcessTree
-            type={showTree === 'process' ? 'process' : 'processModule'}
+            type={treeTab === 'process' ? 'process' : 'processModule'}
             setShowLoadingLayer={setShowLoadingLayer}
             createItem={createItem}
           />
         </div>
         <Tabs
           tabDatas={tabDatas}
-          variable={showTree}
-          onChangeFunction={setShowTree}
+          variable={treeTab}
+          onChangeFunction={value => {
+            // setShowTree(value);
+            if (value === 'process') {
+              changeTreeTab(value);
+            } else {
+              changeTreeTab('processModule');
+            }
+          }}
           wrapperClass={'designergraph-item-tabs'}
           linePosition={'top'}
         />

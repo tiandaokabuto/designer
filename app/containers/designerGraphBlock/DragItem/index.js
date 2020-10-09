@@ -483,7 +483,9 @@ export default useInjectContext(
           </div>
           <Tabs
             variable={blockTreeTab}
-            onChangeFunction={changeBlockTreeTab}
+            onChangeFunction={value => {
+              changeBlockTreeTab(value);
+            }}
             tabDatas={tabDatas}
             wrapperClass={'designergraph-item-tabs'}
             linePosition={'top'}

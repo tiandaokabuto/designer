@@ -387,7 +387,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
     }
   };
 
-  const handleDelete = (key, persistentStorage) => {
+  const handleDelete = (key, persistentStorageStorage) => {
     if (blockTreeTab === 'secondModule') {
       Modal.confirm({
         content: '请确认是否删除?',
@@ -396,7 +396,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
           changeCheckedModuleTreeNode(undefined);
           changeModuleTree([...moduleTree]);
           // resetGraphEditData();
-          persistentStorage();
+          persistentStorageStorage();
         },
       });
     } else if (type === 'process') {
@@ -406,10 +406,11 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
           deleteNodeByKey(type, processTree, currentProject, key);
           changeProcessTree([...processTree]);
           resetGraphEditData();
-          persistentStorage();
+          persistentStorageStorage();
         },
       });
     } else {
+      console.log('删除复用');
       Modal.confirm({
         content: '请确认是否删除?',
         onOk() {
@@ -417,7 +418,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
           changeCheckedModuleTreeNode(undefined);
           changeModuleTree([...moduleTree]);
           // resetGraphEditData();
-          persistentStorage();
+          persistentStorageStorage();
         },
       });
     }
