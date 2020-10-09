@@ -66,7 +66,7 @@ const SelectComponent = props => {
         <Select
           style={{ width: '100%' }}
           placeholder={item.attribute.desc}
-          value={item.attribute.value}
+          // value={item.attribute.value}
           onChange={onChange}
           onFocus={onFocus}
         >
