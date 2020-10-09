@@ -139,6 +139,7 @@ export const selectType = {
 export const uploadImgsType = {
   type: UPLOADIMAMGS_COMPONENT,
   attribute: {
+    type: UPLOADIMAMGS_COMPONENT,
     label: '多图上传',
     desc: `显示值填写需要进行展示的图片文件地址列表。例如 [r'D:\\1.png', r'D:\\1.png'] `,
     value: '[]',
