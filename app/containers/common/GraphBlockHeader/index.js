@@ -369,7 +369,7 @@ export default memo(({ history, tag }) => {
       )
     );
     let url = 'https://' + data.ip + ':44388/sd_rpa/login';
-    if (data.offLine === false) {
+    if (!data.offLine) {
       url =
         'https://' +
         data.ip +
