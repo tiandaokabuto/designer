@@ -112,7 +112,7 @@ export const downloadType = {
     type: DOWNLOAD_COMPONENT,
     label: '文件下载',
     desc: '',
-    value: "'需要上传的文件路径'",
+    value: "r'上传的单斜杆\\本地文件路径'",
 
     width: 10,
   },

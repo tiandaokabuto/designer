@@ -320,7 +320,7 @@ const MxgraphContainer = useInjectContext(
       // 允许框线选择
       new MxRubberband(graph);
 
-      new mxCellTracker(graph, '#fff');
+      new mxCellTracker(graph, '#ddd');
 
       // 启用辅助线
       mxGraphHandler.prototype.guidesEnabled = true;
@@ -827,6 +827,7 @@ const MxgraphContainer = useInjectContext(
             setGraphDataMap,
             changeCheckedGraphBlockId,
             graphData: graphDataRef.current,
+            graphDataMap: graphDataMapRef.current,
             undoAndRedoRef,
           });
           //undoAndRedoRef.current.undoSteps.pop()

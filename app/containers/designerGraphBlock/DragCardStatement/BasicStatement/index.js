@@ -405,7 +405,7 @@ const BasicStatement = useInjectContext(props => {
       if (localStorage.getItem('secondLeftHide') !== 'true') {
         return cardInfo.x - parseInt(left) - 15;
       } else {
-        return 0;
+        return cardInfo.x - 15;
       }
     } else {
       return 19;

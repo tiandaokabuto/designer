@@ -85,7 +85,7 @@ export function Action_PasteCell(graph, option, callback = {}) {
   console.log(graph.selectionModel.cells);
 
   graph.selectionModel.cells.forEach((item, index) => {
-    console.log(`\n\n!!!\n\n`, item.getId());
+    // console.log(`\n\n!!!\n\n`, item.getId());
     if (item.isVertex()) {
       try {
         console.log(savingModuleData[index]);
