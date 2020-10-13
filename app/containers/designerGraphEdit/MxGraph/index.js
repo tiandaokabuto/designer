@@ -2267,7 +2267,7 @@ const MxgraphContainer = useInjectContext(
                               { name: '大于等于', value: '>=' },
                               { name: '小于等于', value: '<=' },
                               { name: '空', value: 'is None' },
-                              { name: '非空', value: 'not None' },
+                              { name: '非空', value: 'is not None' },
                             ],
                             tag: 1,
                             valueList: [],
@@ -2327,7 +2327,7 @@ const MxgraphContainer = useInjectContext(
                               { name: '大于等于', value: '>=' },
                               { name: '小于等于', value: '<=' },
                               { name: '空', value: 'is None' },
-                              { name: '非空', value: 'not None' },
+                              { name: '非空', value: 'is not None' },
                             ],
                             for_list: [
                               {

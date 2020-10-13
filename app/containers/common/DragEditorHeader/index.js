@@ -372,7 +372,7 @@ export default memo(
     };
 
     useEffect(() => {
-      setTaskDataNames([1, 2, 3]);
+      // setTaskDataNames([1, 2, 3]);
       const timer = setInterval(() => {
         if (projectName && currentCheckedTreeNodeRef.current) {
           console.log('自动保存');

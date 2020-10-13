@@ -40,7 +40,7 @@ const COMPONENT_TYPE = {
 };
 
 const stopDeleteKeyDown = e => {
-  const matchKeyCode = [88];
+  const matchKeyCode = [67, 86, 88, 90];
   if (e.keyCode === 46 || (e.ctrlKey && matchKeyCode.includes(e.keyCode))) {
     e.nativeEvent.stopImmediatePropagation();
     e.stopPropagation();

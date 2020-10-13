@@ -22,11 +22,13 @@ const transformPrintStatement = (
   const main_func = dataStructure['properties']['optional'][0].value;
   const params = dataStructure['properties']['optional'][1].value;
   if (params) {
-    result.output += `logger.${level_string}("[${level_string.toLocaleUpperCase()}]--" + str(${template_string}).${
+    // "[${level_string.toLocaleUpperCase()}]--" +
+    result.output += `logger.${level_string}("-- " + str(${template_string}).${
       main_func || 'format'
     }(${params}))`;
   } else {
-    result.output += `logger.${level_string}("[${level_string.toLocaleUpperCase()}]--" + str(${template_string}))`;
+    // "[${level_string.toLocaleUpperCase()}]--" +
+    result.output += `logger.${level_string}("-- " + str(${template_string}))`;
   }
   return [result.output, new Map(moduleMap)];
 };

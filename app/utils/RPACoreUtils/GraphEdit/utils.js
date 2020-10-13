@@ -201,13 +201,13 @@ export const translateGroup = (blockData, type) => {
     valueConditionList.forEach((item, index) => {
       if (index === valueConditionList.length - 1) {
         // 最后一个，不把连接符填上
-        if (item.rule === 'is None' || item.rule === 'not None') {
+        if (item.rule === 'is None' || item.rule === 'is not None') {
           loopcondition += `(${item.v1} ${item.rule}) `;
         } else {
           loopcondition += `(${item.v1} ${item.rule} ${item.v2}) `;
         }
       } else {
-        if (item.rule === 'is None' || item.rule === 'not None') {
+        if (item.rule === 'is None' || item.rule === 'is not None') {
           loopcondition += `(${item.v1} ${item.rule}) ${item.connect} `;
         } else {
           loopcondition += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;

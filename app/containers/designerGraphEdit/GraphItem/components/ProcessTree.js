@@ -562,7 +562,6 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
 
   useEffect(() => {
     const handleAddExpanedKeys = keys => {
-      console.log('a');
       setExpandedKeys(expandedKeys => {
         if (expandedKeys.includes(keys)) return expandedKeys;
         return expandedKeys.concat(keys);

@@ -689,16 +689,17 @@ export const cardsRun_0_2_ver = async (
   let nowIndex = undefined;
 
   // 断点检查
-  if (!pointOfCard) {
-    if (nextCard.breakPoint === true) {
-      message.info('流程块第1条遇到断点');
-      setPause();
-      nextCard.breakPoint = false;
-      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
-      changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
-      return;
-    }
-  }
+  // if (!nextCard) {
+
+  // }
+  // if (nextCard.breakPoint === true) {
+  //   message.info('流程块第1条遇到断点');
+  //   setPause();
+  //   nextCard.breakPoint = false;
+  //   changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
+  //   changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
+  //   return;
+  // }
   if (nextCard) {
     const next_nextCard = getNextIndexCards(
       cards,
@@ -1180,13 +1181,13 @@ export const transformEditorProcess = (
         valueList.forEach((item, index) => {
           if (index === valueList.length - 1) {
             // 最后一个，不把连接符填上
-            if (item.rule === 'is None' || item.rule === 'not None') {
+            if (item.rule === 'is None' || item.rule === 'is not None') {
               condition += `(${item.v1} ${item.rule}) `;
             } else {
               condition += `(${item.v1} ${item.rule} ${item.v2}) `;
             }
           } else {
-            if (item.rule === 'is None' || item.rule === 'not None') {
+            if (item.rule === 'is None' || item.rule === 'is not None') {
               condition += `(${item.v1} ${item.rule}) ${item.connect} `;
             } else {
               condition += `(${item.v1} ${item.rule} ${item.v2}) ${item.connect} `;

@@ -24,8 +24,7 @@ import {
   getTempCenter,
   setPause,
   clearPause,
-
-  getMxgraphTempCenter
+  getMxgraphTempCenter,
 } from '../../designerGraphEdit/RPAcore';
 import { PYTHON_OUTPUT, PYTHON_OUTPUT_CLEAR } from '@/containers/eventCenter';
 import DebugBtns from './OutputPanelDetails/DebugBtns';
@@ -422,9 +421,9 @@ export default memo(
         if (currentPagePosition === 'editor') {
           try {
             // 找到对应流程块
-            const find = getMxgraphTempCenter()
+            const find = getMxgraphTempCenter();
 
-            console.log(find)
+            console.log(find);
 
             console.log(`debug_dataStore`, debug_dataStore);
             // 函数 转换到tree组件用的结构
@@ -432,7 +431,7 @@ export default memo(
               // 假如是原子能力，直接结束
               if (item.$$typeof === 0 || item.$$typeof === 1) {
                 return {
-                  title: item.currentNode.label,//item.userDesc ? item.userDesc : item.cmdName,
+                  title: item.currentNode.label, //item.userDesc ? item.userDesc : item.cmdName,
                   key: `${index}`,
                   item: item,
                   isLeaf: true,
@@ -452,7 +451,9 @@ export default memo(
                 if (item.$$typeof === 2) {
                   children = [
                     {
-                      title: item.tempLine ? item.tempLine : item.currentNode.label,
+                      title: item.tempLine
+                        ? item.tempLine
+                        : item.currentNode.label,
                       // transformLoopStatement(
                       //   '',
                       //   item,
@@ -480,10 +481,12 @@ export default memo(
                     },
                   ];
                 } else if (item.$$typeof === 4) {
-                  console.log(`这里的Item`,item)
+                  console.log(`这里的Item`, item);
                   children = [
                     {
-                      title: item.tempLine ? item.tempLine : item.currentNode.label,
+                      title: item.tempLine
+                        ? item.tempLine
+                        : item.currentNode.label,
                       // transformConditionalStatement(
                       //   '',
                       //   item,
@@ -492,7 +495,7 @@ export default memo(
                       // ),
                       key: `${index}0`,
                       item: item,
-                      showIcon:false,
+                      showIcon: false,
                       children: item.ifChildren.map((child, index2) => {
                         return {
                           ...callback(child, `${index}0${index2}`, callback),
@@ -620,7 +623,8 @@ export default memo(
                 console.log(`children`, children);
 
                 return {
-                  title: item.$$typeof === 4 ? '条件判断' :item.currentNode.label,//item.userDesc ? item.userDesc : item.cmdName,
+                  title:
+                    item.$$typeof === 4 ? '条件判断' : item.currentNode.label, //item.userDesc ? item.userDesc : item.cmdName,
                   key: `${index}`,
                   item: item,
                   children,
@@ -647,7 +651,7 @@ export default memo(
           }
           // if (debug_lastPointer < getDebugIndex().nowIndex)
           //   set_debug_lastPointer(getDebugIndex().nowIndex);
-         //set_debug_left_data(debug_dataStore.stepLog);
+          //set_debug_left_data(debug_dataStore.stepLog);
         } else if (currentPagePosition === 'block') {
           try {
             // 找到对应流程块
@@ -717,7 +721,7 @@ export default memo(
                       ),
                       key: `${index}0`,
                       item: item,
-                      showIcon:false,
+                      showIcon: false,
                       children: item.ifChildren.map((child, index2) => {
                         return {
                           ...callback(child, `${index}0${index2}`, callback),
@@ -877,23 +881,8 @@ export default memo(
 
       const getExpandedKeys = (data, callback) => {
         return data.reduce((pre, item) => {
-          // console.log(`item`, item);
           if (item.children) {
-            // console.log(`data.children`,item.children)
-            // console.log(`callback`,callback(item.children, callback))
-            // item.children.map(child => {
-            //   //console.log(`child`, child,child.key);
-            //   callback()
-            // })
-            return [
-              ...pre,
-              item.key,
-              ...callback(item.children, callback),
-              // ...item.children.map(child => {
-              //   console.log(`child`, child);
-              //   return callback(child, callback);
-              // }),
-            ];
+            return [...pre, item.key, ...callback(item.children, callback)];
           } else {
             return [...pre, item.key];
           }
@@ -1058,7 +1047,7 @@ export default memo(
         } else if (
           true
           //currentPagePosition === 'block'
-          ) {
+        ) {
           console.log(
             `block状态下的右侧面板`,
             debug_left_data,
@@ -1343,7 +1332,7 @@ export default memo(
                     变量
                   </p>
                   <DirectoryTree
-                  //expandedKeys={expandedKeysVariables}
+                    //expandedKeys={expandedKeysVariables}
                     multiple
                     defaultExpandAll
                     // onSelect={this.onSelect}
