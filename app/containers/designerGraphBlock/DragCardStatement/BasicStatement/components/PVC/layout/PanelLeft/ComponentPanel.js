@@ -32,7 +32,7 @@ import {
 
 const formComponentList = [inputType, selectType];
 const beautyComponentList = [imageType];
-const fileComponentList = [downloadType, uploadImgsType]; //uploadType,
+const fileComponentList = [uploadType, downloadType, uploadImgsType]; //uploadType,
 const comandCompomentList = [submitType, cancelType];
 
 export default ({ handleAddComponent }) => {
@@ -41,8 +41,7 @@ export default ({ handleAddComponent }) => {
       case INPUT_COMPONENT:
         return (
           <img
-            src={require('../../assets/input.svg')}
-            className="pvc-btn-icon"
+            src={require('../../assets/input.svg')}            className="pvc-btn-icon"
           />
         );
       case SELECT_COMPONENT:
