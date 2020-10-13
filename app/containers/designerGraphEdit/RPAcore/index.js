@@ -691,16 +691,17 @@ export const cardsRun_0_2_ver = async (
   let next_nextCard = undefined;
 
   // 断点检查
-  // if (!pointOfCard) {
-  //   if (nextCard.breakPoint === true) {
-  //     message.info('流程块第1条遇到断点');
-  //     setPause();
-  //     nextCard.breakPoint = false;
-  //     changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
-  //     changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
-  //     return;
-  //   }
-  // }
+  if (!pointOfCard) {
+    if (nextCard.breakPoint === true) {
+      message.info('流程块第1条遇到断点');
+      setPause();
+      nextCard.breakPoint = false;
+      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
+      changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
+      return;
+    }
+  }
+
   if (nextCard) {
     console.log(`【重点关注！当前运行的】`, nextPk, nextCard);
     if (nextPk.length % 2 === 0) {
