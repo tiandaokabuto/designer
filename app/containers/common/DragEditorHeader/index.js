@@ -312,6 +312,9 @@ export default memo(
     const handleExportModal = () => {
       console.log('弹出导出');
       if (isEffectProcess()) {
+        getProcessVersion(getProcessName());
+        getTaskDataNames();
+        getVariableNames();
         setIsExport(true);
         setModalVisible(true);
       } else {

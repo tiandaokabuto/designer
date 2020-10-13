@@ -12,6 +12,7 @@ import {
   changeCheckedModuleTreeNode,
   resetGraphEditData,
   changeMovingModuleNode,
+  changeExpandedKeys,
 } from '../../../reduxActions';
 
 import Switcher from './Switcher';
@@ -236,6 +237,10 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedKey, setSelectedKey] = useState('');
   const [expandedKeys, setExpandedKeys] = useState([]);
+
+  const expandedKeysFromRedux = useSelector(
+    state => state.grapheditor.expandedKeysFromRedux
+  );
 
   const [createItemTag, setCreateItemTag] = useState(0);
 
@@ -581,13 +586,13 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
             type === 'secondModule' ? 'atomicCList-tree' : 'draggable-tree'
           }
           // className="draggable-tree"
-          expandedKeys={expandedKeys}
+          expandedKeys={expandedKeysFromRedux}
           defaultExpandAll
           switcherIcon={
             type === 'secondModule' ? (
               false
             ) : (
-              <Switcher expandedKeys={expandedKeys} level={1} />
+              <Switcher expandedKeys={expandedKeysFromRedux} level={1} />
             )
           }
           showIcon={type === 'secondModule' ? false : true}
@@ -595,6 +600,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
           blockNode
           onExpand={expandKeys => {
             console.log(expandKeys);
+            changeExpandedKeys(expandKeys);
             setExpandedKeys(expandKeys);
           }}
           onRightClick={({ event, node }) => {

@@ -19,6 +19,7 @@ import {
   CHANGE_MOVING_MODULE_NODE_DATA,
   CHANGE_MXGRAPH_DATA,
   CHANGE_UNDO_AND_REDO,
+  CHANGE_EXPANDED_KEYS,
 } from '../../constants/actions/grapheditor';
 import {
   SYNCHRO_CODEBLOCK,
@@ -37,6 +38,13 @@ import {
 import store from '../../store';
 
 const { dispatch } = store || { dispatch: () => {} };
+
+export const changeExpandedKeys = keys => {
+  dispatch({
+    type: CHANGE_EXPANDED_KEYS,
+    payload: keys,
+  });
+};
 
 export const changeBlockTreeTab = tab => {
   dispatch({
@@ -295,12 +303,10 @@ export const changeUndoAndRedo = data => {
   });
 };
 
-
 // debug的参考数据
-export const changeDebugInfos = (debug_action_name ,data) => {
+export const changeDebugInfos = (debug_action_name, data) => {
   dispatch({
     type: debug_action_name,
     payload: data,
   });
 };
-

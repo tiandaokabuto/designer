@@ -10,7 +10,7 @@ import {
   getDecryptOrNormal,
   getChooseFilePath,
 } from '_utils/utils';
-import { changeTreeTab } from '../../reduxActions/index';
+import { changeTreeTab, changeExpandedKeys } from '../../reduxActions/index';
 import HelpModel from './HelpModel';
 import ShortcutModel from './ShortcutModel';
 import usePersistentStorage from '../DragEditorHeader/useHooks/usePersistentStorage';
@@ -172,6 +172,7 @@ export default memo(({ history, tag }) => {
         } else {
           jumpToProject();
         }
+        changeExpandedKeys([]);
         changeTreeTab('process');
       },
     },

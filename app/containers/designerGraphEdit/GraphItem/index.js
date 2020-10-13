@@ -5,7 +5,7 @@ import useThrottle from 'react-hook-easier/lib/useThrottle';
 
 import ProcessTree from './components/ProcessTree';
 import { useChangeProjectName } from '../useHooks';
-import { changeTreeTab } from '../../reduxActions';
+import { changeTreeTab, changeExpandedKeys } from '../../reduxActions';
 import Tabs from '../../components/Tabs';
 
 import './GraphContainer.scss';
@@ -17,6 +17,9 @@ const { TabPane } = Tabs;
 export default ({ setShowLoadingLayer, createItem }) => {
   const currentProject = useSelector(state => state.grapheditor.currentProject);
   const treeTab = useSelector(state => state.grapheditor.treeTab);
+  const expandedKeysFromRedux = useSelector(
+    state => state.grapheditor.expandedKeysFromRedux
+  );
   const changeProjectName = useChangeProjectName();
   const [editVisible, setEditVisible] = useState(false);
 
@@ -200,6 +203,7 @@ export default ({ setShowLoadingLayer, createItem }) => {
             } else {
               changeTreeTab('processModule');
             }
+            changeExpandedKeys([...expandedKeysFromRedux]);
           }}
           wrapperClass={'designergraph-item-tabs'}
           linePosition={'top'}

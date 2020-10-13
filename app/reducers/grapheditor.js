@@ -19,6 +19,7 @@ import {
   CHANGE_MOVING_MODULE_NODE,
   CHANGE_MOVING_MODULE_NODE_DATA,
   CHANGE_MXGRAPH_DATA,
+  CHANGE_EXPANDED_KEYS,
   // 第一层撤销重做
   CHANGE_UNDO_AND_REDO,
 } from '../constants/actions/grapheditor';
@@ -40,6 +41,7 @@ const defaultState = {
   savingModuleData: undefined,
   movingModuleNode: undefined,
   movingModuleNodeData: undefined,
+  expandedKeysFromRedux: [],
 
   undoAndRedo: {
     // 第一层撤销重做
@@ -223,6 +225,11 @@ export default (state = defaultState, action) => {
         currentCheckedTreeNode: undefined,
         graphData: {},
         graphDataMap: new Map(),
+      };
+    case CHANGE_EXPANDED_KEYS:
+      return {
+        ...state,
+        expandedKeysFromRedux: action.payload,
       };
     // 第一层撤销重做
     case CHANGE_UNDO_AND_REDO:
