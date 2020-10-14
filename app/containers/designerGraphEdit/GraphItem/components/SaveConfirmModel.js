@@ -3,7 +3,11 @@ import { useSelector } from 'react-redux';
 
 import { ConfirmModal } from '../../../components';
 import usePersistentStorage from '../../../common/DragEditorHeader/useHooks/usePersistentStorage';
-import { changeModifyState, setAllModifiedState } from '_utils/utils';
+import {
+  changeModifyState,
+  setAllModifiedState,
+  traverseTree,
+} from '_utils/utils';
 
 export default function SaveConfirmModel({
   modalVisible,
@@ -27,6 +31,15 @@ export default function SaveConfirmModel({
         setModalVisible(false);
       }}
       onCancelOk={() => {
+        console.log(currentCheckedTreeNode);
+        changeModifyState(processTree, currentCheckedTreeNode, false);
+        const data = localStorage.getItem('temporaryData');
+        console.log(JSON.parse(data));
+        traverseTree(processTree, item => {
+          if (item.key === currentCheckedTreeNode) {
+            item.data = data ? JSON.parse(data) : item.data;
+          }
+        });
         if (onCancelOk) {
           onCancelOk();
         }

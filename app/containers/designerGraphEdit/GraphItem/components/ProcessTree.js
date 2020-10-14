@@ -551,6 +551,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
   const showTreeData = selectedKey => {
     const node = findNodeByKey(processTree, selectedKey[0]);
     if (node.data && Object.keys(node.data).length === 0) {
+      console.log('未加载过的节点');
       let data = getProjectTreeData(currentProject, processTree, node);
       const maxLength = 470000;
       const isOverMaxLength = data[maxLength] !== undefined;
@@ -559,10 +560,15 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
         data = getDecryptOrNormal(data);
         node.getData = true;
         node.data = { ...data };
+        localStorage.setItem('temporaryData', JSON.stringify(data));
         changeCheckedTreeNode(selectedKey[0]);
         if (isOverMaxLength) setShowLoadingLayer(false);
       }, 0);
-    } else changeCheckedTreeNode(selectedKey[0]);
+    } else {
+      console.log(node);
+      localStorage.setItem('temporaryData', JSON.stringify(node.data));
+      changeCheckedTreeNode(selectedKey[0]);
+    }
   };
 
   useEffect(() => {
