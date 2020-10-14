@@ -353,6 +353,7 @@ const MxgraphContainer = useInjectContext(
 
       if (checkedGraphBlockId) {
         const id = checkedGraphBlockId;
+        console.log('重置');
         changeCheckedGraphBlockId(undefined);
         changeCheckedGraphBlockId(id);
       }
@@ -970,7 +971,6 @@ const MxgraphContainer = useInjectContext(
       });
 
       graph.addListener(mxEvent.CLICK, (sender, evt) => {
-        console.log('点击');
         const cell = evt.getProperty('cell');
         console.log(cell);
         if (cell != null) {
@@ -1037,6 +1037,7 @@ const MxgraphContainer = useInjectContext(
             // graph.removeCellOverlays(cell);
           }
         } else {
+          console.log('取消右侧面板');
           changeCheckedGraphBlockId('');
         }
       });
@@ -1163,9 +1164,13 @@ const MxgraphContainer = useInjectContext(
 
         // const previous = graphDataRef.current;
 
-        if (evt.properties.cells > 0) {
+        if (evt.properties.cells.length > 0) {
           if (!evt.properties.cells[0].id) {
             return '妈的，没有id';
+          } else {
+            setTimeout(() => {
+              changeCheckedGraphBlockId(evt.properties.cells[0].id);
+            }, 0);
           }
         }
 
