@@ -687,26 +687,42 @@ export const cardsRun_0_2_ver = async (
   let nextCard = getCardsByPk(cards, nextPk);
   let fatherCard = undefined;
   let nowIndex = undefined;
+  let prepareNext = undefined;
+  let next_nextCard = undefined;
 
   // 断点检查
-  // if (!nextCard) {
+  if (!pointOfCard) {
+    if (nextCard.breakPoint === true) {
+      message.info('流程块第1条遇到断点');
+      setPause();
+      nextCard.breakPoint = false;
+      changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
+      changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
+      return;
+    }
+  }
 
-  // }
-  // if (nextCard.breakPoint === true) {
-  //   message.info('流程块第1条遇到断点');
-  //   setPause();
-  //   nextCard.breakPoint = false;
-  //   changeDebugInfos(DEBUG_SET_BTN_CAN_BE_CONTINUE, {});
-  //   changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_PAUSED, {}); // 'cardsAll_pause'
-  //   return;
-  // }
   if (nextCard) {
-    const next_nextCard = getNextIndexCards(
-      cards,
-      getNextIndexCards(cards, nextPk)
-    );
+    console.log(`【重点关注！当前运行的】`, nextPk, nextCard);
+    if (nextPk.length % 2 === 0) {
+      // 假如现在是偶数位，则const
+      next_nextCard = getCardsByPk(cards, getNextIndexCards(cards, nextPk));
+    } else {
+      next_nextCard = getCardsByPk(
+        cards,
+        getNextIndexCards(cards, getNextIndexCards(cards, nextPk))
+      );
+    }
+
     if (next_nextCard) {
+      console.log(
+        `【重点关注！下一条】`,
+        getNextIndexCards(cards, nextPk),
+        next_nextCard,
+        next_nextCard.breakPoint
+      );
       // 他有下一条存在
+
       if (next_nextCard.breakPoint === true) {
         message.info('发现了1个断点');
         setPause();
@@ -754,16 +770,13 @@ export const cardsRun_0_2_ver = async (
         if (fatherCard.$$typeof === 2) {
           pointOfCard = [...nextPk.slice(0, -3), nextPk.slice(-3, -2)[0] + 1];
           console.log('errorPoint', pointOfCard);
-
           return callback(checkedGraphBlockId, cardsRun_0_2_ver, true);
         }
         // if 不通过的话，则跳转指针到[...xxx,1,0] 就是else指针上的第1个元素，同时
         // 重新取一下nextCard用于下面判断
         else if (fatherCard.$$typeof === 4) {
           pointOfCard = [...nextPk.slice(0, -2), 1, 0];
-
           console.log('errorPoint', pointOfCard);
-
           return callback(checkedGraphBlockId, cardsRun_0_2_ver, true);
         } else if (fatherCard.$$typeof === 7) {
         }
@@ -822,7 +835,10 @@ export const cardsRun_0_2_ver = async (
       // 05-2-2-2-1 假如已经到 if 或者 else 的底部
       if (nowIndex === 1 || nowIndex === 2) {
         // 跳出判断体
-        pointOfCard = [...nextPk.slice(0, -2), nextPk.slice(-2, -1) + 1];
+        pointOfCard = [
+          ...nextPk.slice(0, -2),
+          Number(nextPk.slice(-2, -1)) + 1,
+        ];
         // withoutNext 指针已经跳转到下一个了，不需要开始的时候再重新获取指针
         return callback(checkedGraphBlockId, cardsRun_0_2_ver, true);
       }

@@ -173,7 +173,7 @@ const transformBasicStatement = (
                           'cancel-btn',
                           'image',
                           'file-download',
-                          'file-upload',
+                          // 'file-upload',
                         ].includes(item.type) || item.key
                     )
                     .map(item => {
@@ -184,9 +184,12 @@ const transformBasicStatement = (
                 params += `variables = [${temp
                   .filter(
                     item =>
-                      !['submit-btn', 'cancel-btn', 'file-upload'].includes(
-                        item.type
-                      )
+                      ![
+                        'submit-btn',
+                        'cancel-btn',
+
+                        // 'file-upload'
+                      ].includes(item.type)
                   )
                   .map(item => {
                     if (item.type === 'drop-down') {
@@ -301,7 +304,7 @@ const transformBasicStatement = (
                         'cancel-btn',
                         'image',
                         'file-download',
-                        'file-upload',
+                        // 'file-upload',
                       ].includes(item.type) || item.key
                   )
                   .map(item => {
@@ -312,9 +315,11 @@ const transformBasicStatement = (
               params += `variables = [${temp
                 .filter(
                   item =>
-                    !['submit-btn', 'cancel-btn', 'file-upload'].includes(
-                      item.type
-                    )
+                    ![
+                      'submit-btn',
+                      'cancel-btn',
+                      //  'file-upload'
+                    ].includes(item.type)
                 )
                 .map(item => {
                   if (item.type === 'drop-down') {

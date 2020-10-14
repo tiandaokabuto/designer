@@ -95,9 +95,10 @@ export const uploadType = {
   attribute: {
     type: UPLOAD_COMPONENT,
     label: '文件上传',
-    desc: '',
+    key: '上传后的文件URL',
+    desc: '文件将上传到控制台中，流程可以通过“文件下载”原子能力获取',
     value: "''",
-    width: 10,
+    width: 100,
   },
   // icon: <img src={require('../assets/upload.svg')} className="pvc-btn-icon" />,
 };
