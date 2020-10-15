@@ -20,8 +20,6 @@ export function translateToGraphData(sender, graph) {
       // 根据style和value判断这个cell是什么类型的
       const shape = getShape(style, value);
 
-      console.log(shape);
-
       let label = '';
 
       if (shape === 'label') {

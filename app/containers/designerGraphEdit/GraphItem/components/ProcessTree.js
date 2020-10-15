@@ -80,11 +80,7 @@ const TreeNodeTitle = ({
   return (
     // mulu-${node.key.replace('key_', '')}
     <div
-      className={`${
-        dragModule
-          ? `treenode-title process-module-drag mulu-${node.key}`
-          : `treenode-title mulu-${node.key}`
-      }`}
+      className={`treenode-title mulu-${node.key}`}
       style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -124,6 +120,7 @@ const TreeNodeTitle = ({
         //   overlayStyle={{ paddingLeft: '68px' }}
         // >
         <div
+          className={dragModule ? `process-module-drag` : ``}
           style={{
             display: 'block',
             flexBasis: 150,
@@ -269,6 +266,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
   };
 
   const onDragStart = info => {
+    console.log(info);
     const dragKey = info.node.props.eventKey;
     traverseTree(moduleTree, item => {
       if (item.key === dragKey) {
@@ -474,27 +472,6 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
 
   const handleCreate = () => {
     setCreateItemTag(count => count + 1);
-    // if (createItem) {
-    //   console.log('配置单个新添加的可拖拽');
-    //   const toolCells = document.querySelectorAll('.process-module-drag');
-    //   const elt = toolCells[toolCells.length - 1];
-    //   const cell = new MxCell(
-    //     `<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>${cell.innerText}</span></div>`,
-    //     new MxGeometry(0, 0, parseInt(186, 10), parseInt(50, 10)),
-    //     'label;whiteSpace=wrap;html=1;;resizable=0;'
-    //   );
-    //   cell.vertex = true;
-    //   createItem(
-    //     [cell],
-    //     186,
-    //     55,
-    //     // cell.geometry.width,
-    //     // cell.geometry.height,
-    //     'Shape Group',
-    //     null,
-    //     elt
-    //   );
-    // }
   };
 
   const refreshGraph = key => {
@@ -506,16 +483,9 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
   useEffect(() => {
     event.addListener('create_module_drag', handleCreate);
     console.log('监听');
-    // if (type === 'processModule') {
-
-    // }
-
     return () => {
       console.log('移除监听');
       event.removeListener('create_module_drag', handleCreate);
-      // if (type === 'processModule') {
-
-      // }
     };
   }, []);
 
@@ -534,16 +504,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
         );
         cell.vertex = true;
 
-        createItem(
-          [cell],
-          96,
-          48,
-          // cell.geometry.width,
-          // cell.geometry.height,
-          'Shape Group',
-          null,
-          elt
-        );
+        createItem([cell], 96, 48, 'Shape Group', null, elt);
       }
     }
   }, [type, createItemTag]);
@@ -572,6 +533,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
   };
 
   useEffect(() => {
+    changeExpandedKeys([...expandedKeysFromRedux]);
     const handleAddExpanedKeys = keys => {
       setExpandedKeys(expandedKeys => {
         if (expandedKeys.includes(keys)) return expandedKeys;
