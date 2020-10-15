@@ -96,7 +96,7 @@
       visibility: hidden;
     }
     .ant-tree li {
-      position: relative;
+      position: relative !important;
       .ant-tree-switcher {
         position: static;
         .toggle_switcher {
