@@ -21,7 +21,14 @@ export default ({
         setTimeout(() => {
           setFlag(false);
         }, 50);
-        param.value = `r'${filePath[0].replace(/\//g, '\\\\')}'`;
+        const str = `r'${filePath[0].replace(/\//g, '\\\\')}'`;
+        if (str.charAt(str.length - 2) === '\\') {
+          console.log('以\\结尾');
+          param.value = str.slice(0, str.length - 2) + "'";
+        } else {
+          param.value = str;
+        }
+        // param.value = `r'${filePath[0].replace(/\//g, '\\\\')}'`;
         handleEmitCodeTransform();
       }
     },
