@@ -173,6 +173,7 @@ const transformBasicStatement = (
                           'cancel-btn',
                           'image',
                           'file-download',
+                          'images-upload',
                           // 'file-upload',
                         ].includes(item.type) || item.key
                     )
@@ -185,8 +186,8 @@ const transformBasicStatement = (
                   .filter(
                     item =>
                       ![
-                        'submit-btn',
-                        'cancel-btn',
+                        // 'submit-btn',
+                        // 'cancel-btn',
 
                         // 'file-upload'
                       ].includes(item.type)
@@ -195,7 +196,7 @@ const transformBasicStatement = (
                     if (item.type === 'drop-down') {
                       return `${item.value || ''},${item.dataSource || ''}`;
                     } else {
-                      return item.value || '';
+                      return item.value || `''`;
                     }
                   })
                   .join(',')}], `;
@@ -304,6 +305,7 @@ const transformBasicStatement = (
                         'cancel-btn',
                         'image',
                         'file-download',
+                        'images-upload'
                         // 'file-upload',
                       ].includes(item.type) || item.key
                   )
@@ -316,8 +318,8 @@ const transformBasicStatement = (
                 .filter(
                   item =>
                     ![
-                      'submit-btn',
-                      'cancel-btn',
+                      // 'submit-btn',
+                      // 'cancel-btn',
                       //  'file-upload'
                     ].includes(item.type)
                 )
@@ -325,7 +327,7 @@ const transformBasicStatement = (
                   if (item.type === 'drop-down') {
                     return `${item.value || ''},${item.dataSource || ''}`;
                   } else {
-                    return item.value || '';
+                    return item.value || `''`;
                   }
                 })
                 .join(',')}], `;

@@ -21,7 +21,9 @@ export default () => {
 
     const ls = spawn(`${process.cwd()}/../Python/python3_lib/python.exe`, [
       `${process.cwd()}/python/temp.py`,
-      `${uuid}`,
+      // `${uuid}`,
+      `--inputValues=""`,
+      `--uuid=${uuid}`
     ]);
 
     ls.stdout.on('data', data => {
