@@ -411,6 +411,7 @@ const createWindow = async () => {
     })
       .then(({ filePaths, canceled }) => {
         if (!canceled) {
+          console.log(filePaths);
           event.sender.send('chooseItem', filePaths);
         }
       })
