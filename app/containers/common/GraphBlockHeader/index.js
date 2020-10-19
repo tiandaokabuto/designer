@@ -233,7 +233,8 @@ export default memo(({ history, tag }) => {
             {
               title: '导入',
               disabled: currentPagePosition_ref.current === 'block',
-              onClick: () => {
+              onClick: e => {
+                if (currentPagePosition_ref.current === 'block') return;
                 ipcRenderer.removeAllListeners('chooseItem');
                 ipcRenderer.send(
                   'choose-directory-dialog',
@@ -250,6 +251,7 @@ export default memo(({ history, tag }) => {
               title: '导出',
               disabled: currentPagePosition_ref.current === 'block',
               onClick: () => {
+                if (currentPagePosition_ref.current === 'block') return;
                 event.emit(SHOW_EXPORT_MODAL);
               },
             },
@@ -259,6 +261,11 @@ export default memo(({ history, tag }) => {
                 globalUserName === '' ||
                 currentPagePosition_ref.current === 'block',
               onClick: () => {
+                if (
+                  globalUserName === '' ||
+                  currentPagePosition_ref.current === 'block'
+                )
+                  return;
                 event.emit(RELEASE_PROCESS_COMMAND);
               },
             },
