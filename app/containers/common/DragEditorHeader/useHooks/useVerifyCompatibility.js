@@ -24,6 +24,10 @@ const getAutoMicListMap = automicList => {
         ...getAutoMicListMap(child.children),
       };
     } else {
+      if (!child.item) {
+        console.log(child);
+        return result;
+      }
       result = {
         ...result,
         [child.item.pkg + child.item.main + child.item.module]: child.item,
