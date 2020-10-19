@@ -24,10 +24,18 @@ const getAutoMicListMap = automicList => {
         ...getAutoMicListMap(child.children),
       };
     } else {
+<<<<<<< HEAD
       if (!child.item) {
         console.log(child);
         return result;
       }
+=======
+      // 预防校验bug：原子能力排序有空目录的情况，假如是空目录，则不管
+      if (!child.item) {
+        return result;
+      }
+
+>>>>>>> 758187c60a9f2a8f1fad7e231032a6a2347bfe39
       result = {
         ...result,
         [child.item.pkg + child.item.main + child.item.module]: child.item,

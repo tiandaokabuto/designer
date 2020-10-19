@@ -325,7 +325,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
           <Button
             onClick={() => {
               setVisible(false);
-              setLayout(interactiveCard.layout);
+              // setLayout(interactiveCard.layout);
               setFocusItemId('');
             }}
           >
