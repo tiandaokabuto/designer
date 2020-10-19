@@ -63,10 +63,19 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
     },
   });
 
+  // const [backUp, setBackUp] = useState(null);
+  // useEffect(() => {
+  //   // if(!backUp) return;
+  //   // if(!visible) return;
+  //   console.log(interactiveCard.layout, layout)
+  //   setBackUp(cloneDeep(interactiveCard.layout));
+  // }, [visible]);
+
   // 启用的布局方案
   const [usedLayout, setUsedLayout] = useState(['device-pc-small']);
 
   useEffect(() => {
+    console.log("重新读取了")
     console.log(interactiveCard);
     const data = JSON.parse(interactiveCard.properties.required[1].value);
     setDataList(Array.isArray(data) ? data : []);
@@ -80,8 +89,14 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
       setLayout(afterFilter);
       setUsedLayout(Object.keys(afterFilter));
       setDevice(Object.keys(afterFilter)[0]);
+      // setBackUp(cloneDeep(afterFilter));
     }
-  }, [interactiveCard.layout]);
+
+    return ()=>{
+      console.log("我销毁了")
+    }
+  }, [visible]);
+  // [interactiveCard.layout]);
 
   const [deviceConfig, setDeviceConfig] = useState({});
 
@@ -133,7 +148,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
     // 插入元素
     const newItem = cloneDeep(itemData);
     let id = getUniqueIdForPVC(device, 'col_');
-    newItem.id = id
+    newItem.id = id;
     newItem.attribute.id = newItem.id;
     setDataList([...dataList, newItem]);
     // let newLayout = [];
@@ -325,7 +340,8 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
           <Button
             onClick={() => {
               setVisible(false);
-              // setLayout(interactiveCard.layout);
+              // setDataList([]);
+              // setLayout(backUp);
               setFocusItemId('');
             }}
           >
@@ -405,30 +421,30 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
               ></Input>
             </div>
 
-            {getLayoutGrid().length >0 ? getLayoutGrid().map((row, index) => {
-              return (
-                <div
-                  className="panel-content-row"
-                  key={`${device}_${index}_` + uniqueId()}
-                >
-                  {row.map(col => {
-                    return ComponentChoice({
-                      id: col.id,
-                      dataList,
-                      focusItemId,
-                      setFocusItemId,
-                      setDataList,
-                      deleteLayoutCellById,
-                      moveUp,
-                      moveDown,
-                      width: col.width,
-                    });
-                  })}
-                </div>
-              );
-            })
-            :""
-          }
+            {getLayoutGrid().length > 0
+              ? getLayoutGrid().map((row, index) => {
+                  return (
+                    <div
+                      className="panel-content-row"
+                      key={`${device}_${index}_` + uniqueId()}
+                    >
+                      {row.map(col => {
+                        return ComponentChoice({
+                          id: col.id,
+                          dataList,
+                          focusItemId,
+                          setFocusItemId,
+                          setDataList,
+                          deleteLayoutCellById,
+                          moveUp,
+                          moveDown,
+                          width: col.width,
+                        });
+                      })}
+                    </div>
+                  );
+                })
+              : ''}
 
             {/* <Divider style={{ margin: '12px 0px' }} /> */}
 

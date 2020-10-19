@@ -108,10 +108,10 @@ export const downloadType = {
   //   <img src={require('../assets/download.svg')} className="pvc-btn-icon" />
   // ),
   type: DOWNLOAD_COMPONENT,
-  label: '文件下载',
+  label: '文件转发',
   attribute: {
     type: DOWNLOAD_COMPONENT,
-    label: '文件下载',
+    label: '文件转发',
     desc: '',
     value: "r'上传的单斜杆\\本地文件路径'",
 
@@ -139,9 +139,10 @@ export const selectType = {
 
 export const uploadImgsType = {
   type: UPLOADIMAMGS_COMPONENT,
+  label: '多图转发',
   attribute: {
     type: UPLOADIMAMGS_COMPONENT,
-    label: '多图上传',
+    label: '多图转发',
     desc: `显示值填写需要进行展示的图片文件地址列表。例如 [r'D:\\1.png', r'D:\\1.png'] `,
     value: '[]',
     width: 100,

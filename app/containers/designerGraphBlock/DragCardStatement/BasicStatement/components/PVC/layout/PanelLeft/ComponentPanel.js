@@ -147,7 +147,7 @@ export default ({ handleAddComponent }) => {
               onClick={() => handleAddComponent(item)}
             >
               {getIcon(item.type)}
-              {item.attribute.label}
+              {item.label}
             </div>
           </List.Item>
         )}
