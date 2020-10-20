@@ -186,8 +186,8 @@ const transformBasicStatement = (
                   .filter(
                     item =>
                       ![
-                        // 'submit-btn',
-                        // 'cancel-btn',
+                        'submit-btn',
+                        'cancel-btn',
 
                         // 'file-upload'
                       ].includes(item.type)
@@ -318,8 +318,8 @@ const transformBasicStatement = (
                 .filter(
                   item =>
                     ![
-                      // 'submit-btn',
-                      // 'cancel-btn',
+                      'submit-btn',
+                      'cancel-btn',
                       //  'file-upload'
                     ].includes(item.type)
                 )
