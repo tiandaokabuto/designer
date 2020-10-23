@@ -59,7 +59,8 @@ const getComponentType = (
   cmdName,
   isWindowsAuto,
   dispatch,
-  forceUpdateTag
+  forceUpdateTag,
+  required
 ) => {
   const [inputValue, setInputValue] = useState(
     param.enName === 'sqlStr'
@@ -381,6 +382,7 @@ const getComponentType = (
           aiHintList={aiHintList}
           appendDataSource={appendDataSource}
           handleValidate={handleValidate}
+          required={required}
         />
       );
     case COMPONENT_TYPE.DIRECTORY:
@@ -482,7 +484,8 @@ const ParamItem = ({
             cmdName,
             isWindowsAuto,
             dispatch,
-            forceUpdateTag
+            forceUpdateTag,
+            required
           )}
         </div>
       </div>
