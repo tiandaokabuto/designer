@@ -173,12 +173,11 @@ const transformBasicStatement = (
                           'cancel-btn',
                           'image',
                           // 给个默认变量名
-                          // 'file-download',
-                          // 'images-upload',
+                          'file-download',
+                          'images-upload',
                           // 'file-upload',
-                        ].includes(item.type) ||
-                        item.key ||
-                        ['file-download', 'images-upload'].includes(item.type)
+                        ].includes(item.type) || item.key
+                      //  || ['file-download', 'images-upload'].includes(item.type)
                     )
                     .map(item => {
                       switch (item.type) {
@@ -333,12 +332,11 @@ const transformBasicStatement = (
                         'cancel-btn',
                         'image',
                         // 给个默认变量名
-                        // 'file-download',
-                        // 'images-upload',
+                        'file-download',
+                        'images-upload',
                         // 'file-upload',
-                      ].includes(item.type) ||
-                      item.key ||
-                      ['file-download', 'images-upload'].includes(item.type)
+                      ].includes(item.type) || item.key
+                    //  || ['file-download', 'images-upload'].includes(item.type)
                   )
                   .map(item => {
                     switch (item.type) {
