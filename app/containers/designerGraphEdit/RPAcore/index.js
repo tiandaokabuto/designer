@@ -702,7 +702,7 @@ export const cardsRun_0_2_ver = async (
     }
   }
 
-  if (nextCard) {
+  if (nextCard && nextCard.length>1) {
     console.log(`【重点关注！当前运行的】`, nextPk, nextCard);
     if (nextPk.length % 2 === 0) {
       // 假如现在是偶数位，则const
@@ -717,6 +717,22 @@ export const cardsRun_0_2_ver = async (
     if (next_nextCard) {
       console.log(
         `【重点关注！下一条】`,
+        getNextIndexCards(cards, nextPk),
+        next_nextCard,
+        next_nextCard.breakPoint
+      );
+      // 他有下一条存在
+
+      if (next_nextCard.breakPoint === true) {
+        message.info('发现了1个断点');
+        setPause();
+      }
+    }
+  }else{
+    next_nextCard = getCardsByPk(cards, getNextIndexCards(cards, nextPk));
+    if (next_nextCard) {
+      console.log(
+        `【重点关注单层元素的break】`,
         getNextIndexCards(cards, nextPk),
         next_nextCard,
         next_nextCard.breakPoint
