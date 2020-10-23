@@ -164,7 +164,7 @@ const transformBasicStatement = (
               if (formJson !== 'None') {
                 // 返回值
                 const temp = JSON.parse(formJson);
-                result.output +=
+                result.output += result.output +=
                   `[${temp
                     .filter(
                       item =>
@@ -172,15 +172,43 @@ const transformBasicStatement = (
                           'submit-btn',
                           'cancel-btn',
                           'image',
-                          'file-download',
-                          'images-upload',
+                          // 给个默认变量名
+                          // 'file-download',
+                          // 'images-upload',
                           // 'file-upload',
-                        ].includes(item.type) || item.key
+                        ].includes(item.type) ||
+                        item.key ||
+                        ['file-download', 'images-upload'].includes(item.type)
                     )
                     .map(item => {
-                      return item.key;
+                      switch (item.type) {
+                        case 'file-download':
+                          return '_RPA_UNUSED_DOWNLOAD_VAR';
+                        case 'images-upload':
+                          return '_RPA_UNUSED_IMAGES_VAR';
+                        default:
+                          return item.key;
+                      }
                     })
                     .join(',')}` + `] = `;
+                // 变量
+                params += `variables = [${temp
+                  .filter(
+                    item =>
+                      ![
+                        // 'submit-btn',
+                        // 'cancel-btn',
+                        //  'file-upload'
+                      ].includes(item.type)
+                  )
+                  .map(item => {
+                    if (item.type === 'drop-down') {
+                      return `${item.value || ''},${item.dataSource || ''}`;
+                    } else {
+                      return item.value || `'#placeholder#'`;
+                    }
+                  })
+                  .join(',')}], `;
                 // 变量
                 params += `variables = [${temp
                   .filter(
@@ -304,13 +332,23 @@ const transformBasicStatement = (
                         'submit-btn',
                         'cancel-btn',
                         'image',
-                        'file-download',
-                        'images-upload'
+                        // 给个默认变量名
+                        // 'file-download',
+                        // 'images-upload',
                         // 'file-upload',
-                      ].includes(item.type) || item.key
+                      ].includes(item.type) ||
+                      item.key ||
+                      ['file-download', 'images-upload'].includes(item.type)
                   )
                   .map(item => {
-                    return item.key;
+                    switch (item.type) {
+                      case 'file-download':
+                        return '_RPA_UNUSED_DOWNLOAD_VAR';
+                      case 'images-upload':
+                        return '_RPA_UNUSED_IMAGES_VAR';
+                      default:
+                        return item.key;
+                    }
                   })
                   .join(',')}` + `] = `;
               // 变量
@@ -318,8 +356,8 @@ const transformBasicStatement = (
                 .filter(
                   item =>
                     ![
-                      'submit-btn',
-                      'cancel-btn',
+                      // 'submit-btn',
+                      // 'cancel-btn',
                       //  'file-upload'
                     ].includes(item.type)
                 )
@@ -327,7 +365,7 @@ const transformBasicStatement = (
                   if (item.type === 'drop-down') {
                     return `${item.value || ''},${item.dataSource || ''}`;
                   } else {
-                    return item.value || `''`;
+                    return item.value || `'#placeholder#'`;
                   }
                 })
                 .join(',')}], `;

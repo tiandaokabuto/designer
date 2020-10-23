@@ -110,11 +110,11 @@ export const downloadType = {
   type: DOWNLOAD_COMPONENT,
   label: '文件转发',
   attribute: {
+    // key: '_UNUSED_IMAGES_VAR',
     type: DOWNLOAD_COMPONENT,
     label: '文件转发',
     desc: '',
     value: "r'上传的单斜杆\\本地文件路径'",
-
     width: 10,
   },
 };
@@ -141,6 +141,7 @@ export const uploadImgsType = {
   type: UPLOADIMAMGS_COMPONENT,
   label: '多图转发',
   attribute: {
+    // key: '_UNUSED_IMAGES_VAR',
     type: UPLOADIMAMGS_COMPONENT,
     label: '多图转发',
     desc: `显示值填写需要进行展示的图片文件地址列表。例如 [r'D:\\1.png', r'D:\\1.png'] `,
