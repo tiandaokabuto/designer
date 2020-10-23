@@ -12,6 +12,7 @@ export default ({
   aiHintList,
   appendDataSource,
   handleValidate,
+  required,
 }) => {
   const [tag, setTag] = useState(param.tag ? param.tag : 1);
 
@@ -52,7 +53,12 @@ export default ({
   return (
     <React.Fragment>
       <span className="param-title" title={param.desc}>
-        {param.cnName}
+        <span style={{ color: 'red' }}>{required ? '* ' : ''}</span>
+        <span>{param.cnName}</span>
+        <span style={{ color: 'rgba(204,204,204,1)', fontSize: 12 }}>
+          {' '}
+          ({param.desc})
+        </span>
       </span>
       <div
         style={{ flex: 1, overflow: 'hidden', marginTop: 4, marginBottom: 4 }}
