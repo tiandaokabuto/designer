@@ -466,7 +466,7 @@ export default withPropsAPI(
 
     const getLoop = blockNode => {
       if (blockNode) {
-        if (blockNode.properties) {
+        if (blockNode.properties.length) {
           if (blockNode.properties[1].cnName === '循环类型') {
             return blockNode.properties[1].value
               ? blockNode.properties[1].value
