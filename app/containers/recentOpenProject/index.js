@@ -25,6 +25,7 @@ import {
   changeCurrentProject,
   clearGrapheditorData,
   resetGraphEditData,
+  updateCurrentPagePosition,
 } from '../reduxActions';
 
 import './index.scss';
@@ -152,6 +153,7 @@ export default useInjectContext(({ history }) => {
       },
     });
     setTimeout(() => {
+      updateCurrentPagePosition('editor');
       newProject(name, () => {
         changeCurrentProject(name);
       });
@@ -216,6 +218,7 @@ export default useInjectContext(({ history }) => {
               return {
                 onClick: event => {
                   // 打开对应的项目
+                  updateCurrentPagePosition('editor');
                   openProject(record.name);
                   changeCurrentProject(record.name);
                   // clearGrapheditorData();
