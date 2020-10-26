@@ -212,7 +212,7 @@ export default function TaskDataName({
       ...col,
       onCell: record => ({
         record,
-        editable: col.editable,
+        editable: cmdName === '新增任务数据' ? false : col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
         handleSave,
@@ -360,7 +360,7 @@ export default function TaskDataName({
         <Table
           components={components}
           rowClassName={() => 'editable-row'}
-          rowSelection={rowSelection}
+          rowSelection={cmdName === '新增任务数据' ? undefined : rowSelection}
           dataSource={dataSource}
           columns={columns}
           loading={loading}
