@@ -82,7 +82,7 @@ import {
 } from '../../../constants/actions/debugInfos';
 import { changeDebugInfos } from '../../reduxActions';
 import { fetchCard } from '../../../utils/DebugUtils/fetchCard';
-
+import { isEffectProcess } from '../DragEditorHeader/useHooks/useGetProcessName';
 import { generateMenu, TOOLS } from './Menu/index';
 import { RELEASE_PROCESS } from '../../eventCenter/index';
 const { ipcRenderer, remote } = require('electron');
@@ -249,7 +249,9 @@ export default memo(({ history, tag }) => {
             },
             {
               title: '导出',
-              disabled: currentPagePosition_ref.current === 'block',
+              disabled:
+                currentPagePosition_ref.current === 'block' ||
+                !isEffectProcess(),
               onClick: () => {
                 if (currentPagePosition_ref.current === 'block') return;
                 event.emit(SHOW_EXPORT_MODAL);
@@ -259,8 +261,10 @@ export default memo(({ history, tag }) => {
               title: '发布',
               disabled:
                 globalUserName === '' ||
-                currentPagePosition_ref.current === 'block',
+                currentPagePosition_ref.current === 'block' ||
+                !isEffectProcess(),
               onClick: () => {
+                console.log('chakan', globalUserName);
                 if (
                   globalUserName === '' ||
                   currentPagePosition_ref.current === 'block'
