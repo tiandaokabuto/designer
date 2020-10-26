@@ -1,1 +1,1 @@
-export const designerVersion = '0.4.6.35';
+export const designerVersion = '1.4.6';
