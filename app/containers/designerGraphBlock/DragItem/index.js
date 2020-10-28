@@ -77,6 +77,14 @@ const canDisplay = (item, filter) => {
 
 export default useInjectContext(
   ({ updateAutomicList, updateCheckedBlockId }) => {
+    const stopDeleteKeyDown = e => {
+      const matchKeyCode = [67, 86, 88, 90];
+      if (e.keyCode === 46 || (e.ctrlKey && matchKeyCode.includes(e.keyCode))) {
+        e.nativeEvent.stopImmediatePropagation();
+        e.stopPropagation();
+      }
+    };
+
     const atomicCList = useSelector(state => state.blockcode.automicList);
 
     const blockTreeTab = useSelector(state => state.blockcode.blockTreeTab);
@@ -355,6 +363,7 @@ export default useInjectContext(
           isMouseDown = true;
           startOffset = e.pageX;
         }}
+        onKeyDown={e => stopDeleteKeyDown(e)}
       >
         <div
           onMouseDown={e => {

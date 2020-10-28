@@ -10,6 +10,14 @@ import {
 } from '../../../../useHooks';
 
 export default ({ visible, setVisible, interactiveCard }) => {
+  const stopDeleteKeyDown = e => {
+    const matchKeyCode = [67, 86, 88, 90];
+    if (e.keyCode === 46 || (e.ctrlKey && matchKeyCode.includes(e.keyCode))) {
+      e.nativeEvent.stopImmediatePropagation();
+      e.stopPropagation();
+    }
+  };
+
   const codeMirrorRef = useRef(null);
   const cards = useSelector(state => state.blockcode.cards);
   const noticyChange = useNoticyBlockCodeChange();
@@ -40,6 +48,7 @@ export default ({ visible, setVisible, interactiveCard }) => {
       closable={false}
     >
       <CodeMirrorEditor
+        onKeyDown={e => stopDeleteKeyDown(e)}
         readOnly={false}
         value={interactiveCard.codeValue || ''}
         id={interactiveCard.id}
