@@ -351,9 +351,13 @@ const BasicStatement = useInjectContext(props => {
     });
     ipcRenderer.on('updateClickImage', (e, { imageData, targetId }) => {
       if (targetId !== id) return;
-      card.properties.required[0].updateId = true;
+      console.log(card.properties.required);
+      const requiredImageData = card.properties.required.find(
+        item => item.cnName === '图片Base64'
+      );
+      requiredImageData.updateId = true;
       if (imageData) {
-        card.properties.required[0].value = `"${imageData}"`;
+        requiredImageData.value = `"${imageData}"`;
         card.targetImage = imageData;
         setTargetImage(imageData);
       }
@@ -397,10 +401,10 @@ const BasicStatement = useInjectContext(props => {
   // }, [ref.current]);
 
   const getDebugLeft = () => {
-    console.log(anotherRef.current);
+    // console.log(anotherRef.current);
     if (anotherRef.current) {
       const cardInfo = anotherRef.current.getBoundingClientRect();
-      console.log(cardInfo);
+      // console.log(cardInfo);
       const left = localStorage.getItem('secondLeft');
       if (localStorage.getItem('secondLeftHide') !== 'true') {
         return cardInfo.x - parseInt(left) - 15;
