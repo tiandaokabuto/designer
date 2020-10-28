@@ -28,6 +28,7 @@ export default ({
     forceUpdate();
   };
   const handleVariableDelete = index => {
+    console.log(variableList);
     variableList.splice(index, 1);
     noticyChange();
     forceUpdate();
@@ -46,6 +47,7 @@ export default ({
             className="variablePanel-btn"
             onClick={() => {
               handleVariableAdd();
+              // event.emit('refreshVariable');
             }}
           />
         )}
@@ -95,6 +97,7 @@ export default ({
                   type="delete"
                   className="variablePanel-btn variablePanel-btn__delete"
                   onClick={() => {
+                    console.log('ooo');
                     handleVariableDelete(index);
                     synchroGraphDataToProcessTree();
                     handleEmitCodeTransform && handleEmitCodeTransform();

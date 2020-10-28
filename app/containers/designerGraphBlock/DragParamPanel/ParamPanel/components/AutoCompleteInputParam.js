@@ -99,7 +99,6 @@ const AutoCompleteInputParam = React.forwardRef(
 
     dataSource = dataSource ? Array.from(new Set(dataSource)) : dataSource;
 
-    console.log(dataSource);
     // 待匹配的依赖项
     const depList =
       (hasParamType &&
@@ -107,7 +106,6 @@ const AutoCompleteInputParam = React.forwardRef(
           return prev.concat(aiHintList[next] || []);
         }, [])) ||
       [];
-    console.log(depList);
 
     const needTextArea =
       paramType === 0 ||
