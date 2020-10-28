@@ -42,6 +42,14 @@ import PanelLeft from './layout/PanelLeft';
 import './layout.less';
 
 const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
+  const stopDeleteKeyDown = e => {
+    const matchKeyCode = [67, 86, 88, 90];
+    if (e.keyCode === 46 || (e.ctrlKey && matchKeyCode.includes(e.keyCode))) {
+      e.nativeEvent.stopImmediatePropagation();
+      e.stopPropagation();
+    }
+  };
+
   // 表单元素数据
   const [dataList, setDataList] = useState([]);
 
@@ -75,7 +83,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
   const [usedLayout, setUsedLayout] = useState(['device-pc-small']);
 
   useEffect(() => {
-    console.log("重新读取了")
+    console.log('重新读取了');
     console.log(interactiveCard);
     const data = JSON.parse(interactiveCard.properties.required[1].value);
     setDataList(Array.isArray(data) ? data : []);
@@ -92,9 +100,9 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
       // setBackUp(cloneDeep(afterFilter));
     }
 
-    return ()=>{
-      console.log("我销毁了")
-    }
+    return () => {
+      console.log('我销毁了');
+    };
   }, [visible]);
   // [interactiveCard.layout]);
 
@@ -380,7 +388,7 @@ const PVC2 = ({ visible, setVisible, interactiveCard, saveChange }) => {
         </div>
       }
     >
-      <div className="pvc-designer">
+      <div className="pvc-designer" onKeyDown={e => stopDeleteKeyDown(e)}>
         {/* <div className="panel-height">人机交互界面设计器</div> */}
         <div className="panel-left">
           <PanelLeft

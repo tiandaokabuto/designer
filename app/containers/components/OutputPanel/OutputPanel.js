@@ -79,6 +79,14 @@ export default memo(
       zoomLevel,
       setZoomLevel,
     }) => {
+      const stopDeleteKeyDown = e => {
+        const matchKeyCode = [67, 86, 88, 90];
+        if (e.keyCode === 46 || (e.ctrlKey && matchKeyCode.includes(e.keyCode))) {
+          e.nativeEvent.stopImmediatePropagation();
+          e.stopPropagation();
+        }
+      };
+
       const executeOutput = useSelector(
         state => state.temporaryvariable.executeOutput
       );
@@ -1171,6 +1179,7 @@ export default memo(
             isMouseDown = true;
             startOffset = e.pageY;
           }}
+          onKeyDown={e => stopDeleteKeyDown(e)}
         >
           <div
             className="dragger-editor-container-output-title"

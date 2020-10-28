@@ -29,6 +29,14 @@ export default function HelpModel({ visible, handleCancel }) {
     });
   }; */
 
+  const stopDeleteKeyDown = e => {
+    const matchKeyCode = [67, 86, 88, 90];
+    if (e.keyCode === 46 || (e.ctrlKey && matchKeyCode.includes(e.keyCode))) {
+      e.nativeEvent.stopImmediatePropagation();
+      e.stopPropagation();
+    }
+  };
+
   return (
     <Modal
       visible={visible}
@@ -38,7 +46,7 @@ export default function HelpModel({ visible, handleCancel }) {
       wrapClassName="helpModel"
       width={480}
     >
-      <div className="help-model">
+      <div className="help-model" onKeyDown={e => stopDeleteKeyDown(e)}>
         <div className="help-model-title">
           <img
             src={SdIcon}

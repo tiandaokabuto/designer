@@ -67,6 +67,14 @@ const AutoCompleteInputParam = React.forwardRef(
       return value;
     };
 
+    const stopDeleteKeyDown = e => {
+      const matchKeyCode = [67, 86, 88, 90];
+      if (e.keyCode === 46 || (e.ctrlKey && matchKeyCode.includes(e.keyCode))) {
+        e.nativeEvent.stopImmediatePropagation();
+        e.stopPropagation();
+      }
+    };
+
     const [positionId, setPositionId] = useState('positon');
     const [inputValue, setInputValue] = useState(defaultValue());
 
@@ -175,6 +183,7 @@ const AutoCompleteInputParam = React.forwardRef(
 
     return (
       <AutoComplete
+        onKeyDown={e => stopDeleteKeyDown(e)}
         key={id}
         ref={ref}
         value={inputValue}
