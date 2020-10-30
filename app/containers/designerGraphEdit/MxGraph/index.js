@@ -184,11 +184,11 @@ const MxgraphContainer = useInjectContext(
     } = mxgraph;
 
     const handlePanMove = useDebounce((sender, evt) => {
-      changeModifyState(
-        processTreeRef.current,
-        currentCheckedTreeNodeRef.current,
-        true
-      );
+      // changeModifyState(
+      //   processTreeRef.current,
+      //   currentCheckedTreeNodeRef.current,
+      //   true
+      // );
       updateGraphDataAction(sender);
     }, 200);
 
@@ -1131,11 +1131,11 @@ const MxgraphContainer = useInjectContext(
         // 要区别2种move，假如没有target，则是正常move
         // 有target，则是新增
 
-        changeModifyState(
-          processTreeRef.current,
-          currentCheckedTreeNodeRef.current,
-          true
-        );
+        // changeModifyState(
+        //   processTreeRef.current,
+        //   currentCheckedTreeNodeRef.current,
+        //   true
+        // );
 
         let temp = undoAndRedoRef.current;
 
@@ -1894,21 +1894,21 @@ const MxgraphContainer = useInjectContext(
     // };
 
     const handleZoomIn = frequency => {
-      changeModifyState(
-        processTreeRef.current,
-        currentCheckedTreeNodeRef.current,
-        true
-      );
+      // changeModifyState(
+      //   processTreeRef.current,
+      //   currentCheckedTreeNodeRef.current,
+      //   true
+      // );
       zoomIn(frequency);
       updateGraphDataAction(graph);
     };
 
     const handleZoomOut = frequency => {
-      changeModifyState(
-        processTreeRef.current,
-        currentCheckedTreeNodeRef.current,
-        true
-      );
+      // changeModifyState(
+      //   processTreeRef.current,
+      //   currentCheckedTreeNodeRef.current,
+      //   true
+      // );
       zoomOut(frequency);
       updateGraphDataAction(graph);
     };

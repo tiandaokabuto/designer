@@ -35,16 +35,16 @@ const Zoom = ({ zoomIn, zoomOut, zoomLevel, setZoomLevel }) => {
       if (zoom >= 19) return;
       // event.emit(CANVAS_ZOOM_IN, frequency);
       if (zoomIn) {
-        zoomIn(frequency); // 设置缩放
         localStorage.setItem('zoom', zoom + frequency);
+        zoomIn(frequency); // 设置缩放
       }
       setZoomLevel(zoom + frequency);
     } else if (type === 'zoom-out') {
       if (zoom <= 1) return;
       // event.emit(CANVAS_ZOOM_OUT, frequency);
       if (zoomOut) {
-        zoomOut(frequency);
         localStorage.setItem('zoom', zoom - frequency);
+        zoomOut(frequency);
       }
       setZoomLevel(zoom - frequency);
     }

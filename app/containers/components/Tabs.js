@@ -18,7 +18,6 @@ const Tabs = ({
               color: variable === item.key ? 'rgba(50, 166, 127, 1)' : 'black',
             }}
             onClick={() => {
-              console.log('aaaa');
               onChangeFunction(item.key);
             }}
           >
