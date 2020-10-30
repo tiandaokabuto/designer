@@ -353,7 +353,7 @@ const BasicStatement = useInjectContext(props => {
       if (targetId !== id) return;
       console.log(card.properties.required);
       const requiredImageData = card.properties.required.find(
-        item => item.cnName === '图片Base64'
+        item => item.cnName === '图片Base64' || item.cnName === '目标元素'
       );
       requiredImageData.updateId = true;
       if (imageData) {
