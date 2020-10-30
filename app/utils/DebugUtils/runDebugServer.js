@@ -9,6 +9,10 @@ import { message } from 'antd';
 
 // *新DEBUG
 import {
+  // DEBUG_RUN_BLOCK_CHANGE_STATE_END,
+  // DEBUG_RUN_CARDS_CHANGE_STATE_END,
+  DEBUG_RUN_CARDS_CHANGE_STATE_END,
+
   DEBUG_OPEN_DEBUGSERVER,
   DEBUG_CLOSE_DEBUGSERVER,
   DEBUG_RUN_BLOCK_ALL_RUN,
@@ -28,7 +32,6 @@ import {
 } from '../../containers/designerGraphEdit/RPAcore';
 
 import { changeDebugInfos } from '../../containers/reduxActions';
-
 
 import { getUTF8 } from './getUTF8';
 import { words } from 'lodash';
@@ -102,21 +105,53 @@ export const runDebugServer = async () => {
   socket.on('data', msg => {
     console.log(msg);
     const log = getUTF8(msg);
+
+    const {
+      debug: { runningState },
+    } = store.getState();
+    // 当前的运行状态
+    const running = runningState;
+
     try {
       const getLogToJSON = JSON.parse(log);
       console.log('[收到soket—data]', getLogToJSON, getLogToJSON.pk);
+
       let temp = '';
 
       let spResult = get_spResult();
-      console.log(`spResult`,spResult, getLogToJSON.pk)
+      console.log(`spResult`, spResult, getLogToJSON.pk);
       if (getLogToJSON.pk && spResult && spResult.pk) {
         if (
-          spResult.pk.slice(0,-1).reduce((pre, index) => (pre += index.toString()), '') ===
+          spResult.pk
+            .slice(0, -1)
+            .reduce((pre, index) => (pre += index.toString()), '') ===
           getLogToJSON.pk.reduce((pre, index) => (pre += index.toString()), '')
-        ){
+        ) {
           set_spResult(getLogToJSON.is_continue);
-        }else{
-          console.log('pk不一致')
+        } else {
+          console.log('pk不一致');
+        }
+      }
+
+      // 假如是有错误的消息的话
+      if (getLogToJSON) {
+        if (getLogToJSON.outputs) {
+          if (getLogToJSON.outputs.stderr !== '') {
+            if (running === 'blockAll_running') {
+              changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
+            } else if (running === 'cardsAll_running') {
+              changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
+            } else if (
+              running === 'started_one' ||
+              running === 'cardsAll_one' ||
+              running === 'blockAll_one'
+            ) {
+              event.emit(DEBUG_ONE_STEP_FINISHED); // 单步跑完，通知结束
+            }
+
+
+            return message.warning('该语句执行出错');
+          }
         }
       }
 
@@ -132,7 +167,7 @@ export const runDebugServer = async () => {
       // });
       //event.emit(PYTHON_OUTPUT, log);
 
-      console.log("执行了",getLogToJSON.pk)
+      console.log('执行了', getLogToJSON.pk);
       event.emit(DEBUG_SOURCECODE_INSERT, {
         log: getLogToJSON,
         pk: getLogToJSON.pk ? getLogToJSON.pk : [],
@@ -146,11 +181,6 @@ export const runDebugServer = async () => {
     // event.emit(PYTHON_GO_NEXT_STEP, 'block');
 
     //const running = localStorage.getItem('running_mode');
-    const {
-      debug: { runningState },
-    } = store.getState();
-    // 当前的运行状态
-    const running = runningState;
 
     // if 现在的运行模式是
     if (running === 'blockAll_running') {

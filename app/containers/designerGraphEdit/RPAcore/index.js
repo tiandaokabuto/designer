@@ -86,6 +86,8 @@ export const claerTempCenter = () => {
 
 // 传入pk卡片指针值为 pointOfCard
 const getNextIndexCards = (cards, pk) => {
+  console.log("当前准备找下一个指针的",pk)
+
   let nextPk = [];
   let nowCard; // 单数层，卡片
   let nowCards; // 双数层，儿子组
@@ -549,7 +551,7 @@ export const blockRun_0_2_ver = async (callback, withoutNext = false) => {
       // 05-2-2-2-1 假如已经到 if 或者 else 的底部
       if (nowIndex === 1 || nowIndex === 2) {
         // 跳出判断体
-        pointOfBlock = [...nextPk.slice(0, -2), nextPk.slice(-2, -1) + 1];
+        pointOfBlock = [...nextPk.slice(0, -2), nextPk.slice(-2, -1)[0] + 1];
         // withoutNext 指针已经跳转到下一个了，不需要开始的时候再重新获取指针
         return callback(blockRun_0_2_ver, true);
       }
@@ -564,7 +566,7 @@ export const blockRun_0_2_ver = async (callback, withoutNext = false) => {
         return callback(blockRun_0_2_ver, true);
       } else if (nowIndex === 3) {
         // 跳出tryCatch体
-        pointOfBlock = [...nextPk.slice(0, -2), nextPk.slice(-2, -1) + 1];
+        pointOfBlock = [...nextPk.slice(0, -2), nextPk.slice(-2, -1)[0] + 1];
         // withoutNext 指针已经跳转到下一个了，不需要开始的时候再重新获取指针
         return callback(blockRun_0_2_ver, true);
       }
@@ -853,7 +855,7 @@ export const cardsRun_0_2_ver = async (
         // 跳出判断体
         pointOfCard = [
           ...nextPk.slice(0, -2),
-          Number(nextPk.slice(-2, -1)) + 1,
+          nextPk.slice(-2, -1)[0] + 1,
         ];
         // withoutNext 指针已经跳转到下一个了，不需要开始的时候再重新获取指针
         return callback(checkedGraphBlockId, cardsRun_0_2_ver, true);
@@ -869,7 +871,7 @@ export const cardsRun_0_2_ver = async (
         return callback(checkedGraphBlockId, cardsRun_0_2_ver, true);
       } else if (nowIndex === 3) {
         // 跳出tryCatch体
-        pointOfCard = [...nextPk.slice(0, -2), nextPk.slice(-2, -1) + 1];
+        pointOfCard = [...nextPk.slice(0, -2), nextPk.slice(-2, -1)[0] + 1];
         // withoutNext 指针已经跳转到下一个了，不需要开始的时候再重新获取指针
         return callback(checkedGraphBlockId, cardsRun_0_2_ver, true);
       }
