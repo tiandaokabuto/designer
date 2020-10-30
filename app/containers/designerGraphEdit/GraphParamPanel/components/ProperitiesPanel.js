@@ -41,6 +41,7 @@ const FormItem = ({
       const node = graphData.nodes.find(
         item => item.id === checkedGraphBlockId
       );
+      if(!node) return;
       node.label = chineseValue;
       blockData['properties'][0]['value'] = value;
       event.emit('resetGraph', chineseValue, checkedGraphBlockId);

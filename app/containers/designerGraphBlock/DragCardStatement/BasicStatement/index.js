@@ -274,6 +274,7 @@ const BasicStatement = useInjectContext(props => {
         console.log(e);
       }
     } else if (xpathCmdNameForBrowser === card.cmdName) {
+      ipcRenderer.send('start_server', id);
       ipcRenderer.send('start_browser_server', id);
       try {
         const browserXpathWorker = exec(`${PATH_CONFIG('getBrowserXpath')}`);
