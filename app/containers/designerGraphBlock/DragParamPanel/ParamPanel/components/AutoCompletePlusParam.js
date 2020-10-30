@@ -16,6 +16,14 @@ const AutoCompletePlusParam = ({
   isSelectEncty,
   cmdName,
 }) => {
+  const stopDeleteKeyDown = e => {
+    const matchKeyCode = [67, 86, 88, 90];
+    if (e.keyCode === 46 || (e.ctrlKey && matchKeyCode.includes(e.keyCode))) {
+      e.nativeEvent.stopImmediatePropagation();
+      e.stopPropagation();
+    }
+  };
+
   const inputEl = useRef(null);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState(String(param.value || param.default));
@@ -32,7 +40,10 @@ const AutoCompletePlusParam = ({
   };
 
   return (
-    <div className="parampanel-item-content">
+    <div
+      className="parampanel-item-content"
+      onKeyDown={e => stopDeleteKeyDown(e)}
+    >
       <div className="parampanel-item-content-adapt">
         <AutoCompleteInputParam
           ref={inputEl}
@@ -66,6 +77,7 @@ const AutoCompletePlusParam = ({
         onOk={() => handleOk(param)}
         onCancel={handleCancel}
         width="650px"
+        onKeyDown={e => stopDeleteKeyDown(e)}
       >
         <TextArea
           rows={17}
@@ -73,6 +85,7 @@ const AutoCompletePlusParam = ({
           onChange={e => {
             setValue(e.target.value);
           }}
+          onKeyDown={e => stopDeleteKeyDown(e)}
         />
       </Modal>
     </div>
