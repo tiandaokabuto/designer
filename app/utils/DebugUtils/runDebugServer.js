@@ -12,7 +12,6 @@ import {
   // DEBUG_RUN_BLOCK_CHANGE_STATE_END,
   // DEBUG_RUN_CARDS_CHANGE_STATE_END,
   DEBUG_RUN_CARDS_CHANGE_STATE_END,
-
   DEBUG_OPEN_DEBUGSERVER,
   DEBUG_CLOSE_DEBUGSERVER,
   DEBUG_RUN_BLOCK_ALL_RUN,
@@ -137,20 +136,21 @@ export const runDebugServer = async () => {
       if (getLogToJSON) {
         if (getLogToJSON.outputs) {
           if (getLogToJSON.outputs.stderr !== '') {
-            if (running === 'blockAll_running') {
-              changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
-            } else if (running === 'cardsAll_running') {
-              changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
-            } else if (
-              running === 'started_one' ||
-              running === 'cardsAll_one' ||
-              running === 'blockAll_one'
-            ) {
-              event.emit(DEBUG_ONE_STEP_FINISHED); // 单步跑完，通知结束
+            // if (running === 'blockAll_running') {
+            //   changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
+            // } else if (running === 'cardsAll_running') {
+            //   changeDebugInfos(DEBUG_RUN_CARDS_CHANGE_STATE_END, {});
+            // } else if (
+            //   running === 'started_one' ||
+            //   running === 'cardsAll_one' ||
+            //   running === 'blockAll_one'
+            // ) {
+            //   event.emit(DEBUG_ONE_STEP_FINISHED); // 单步跑完，通知结束
+            // }
+            if((getLogToJSON.outputs.stderr).indexOf("Error: 'return' outside function") === -1){
+              message.warning(`${getLogToJSON.pk}该语句执行出错`);
             }
 
-
-            return message.warning('该语句执行出错');
           }
         }
       }
