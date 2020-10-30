@@ -7,12 +7,14 @@ import { updateGraphDataAction } from '../mxgraphAction';
 
 // 复制Cell
 export function Action_CopyCell(graph, option = {}, callback = {}) {
-  //console.clear();
+  console.clear();
 
   const { mxClipboard, changeSavingModuleData } = option;
 
   let cells = new Array();
   cells = graph.getSelectionCells();
+
+  console.clear(`CELL`,cells[0]);
 
   if (cells.length > 1) return message.info('只能复制单个流程块');
   if (!cells[0].isVertex()) return message.info('线条不能复制');
@@ -20,8 +22,8 @@ export function Action_CopyCell(graph, option = {}, callback = {}) {
     cells[0].value === '异常捕获' ||
     cells[0].value === '异常处理' ||
     cells[0].value === '结束' ||
-    cells[0].value.search(`for`) >= 0 ||
-    cells[0].value.search(`while`) >= 0
+    // cells[0].value.search(`for`) >= 0 ||
+    cells[0].value.search(`group-content`) >= 0
   ) {
     return message.info('容器不能复制');
   }
