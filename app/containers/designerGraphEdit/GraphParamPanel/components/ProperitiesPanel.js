@@ -506,8 +506,10 @@ export default withPropsAPI(
             );
           }
           if (param.enName === 'output') {
+            // console.log(`让我干掉你blockNode`,blockNode)
             return (
               <VariablePanel
+                cards={blockNode.cards}
                 key={index}
                 blockNode={{
                   variable: param.value,
