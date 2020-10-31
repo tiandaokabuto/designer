@@ -14,16 +14,27 @@ export default ({
   label = '设置变量',
   disabled,
   handleEmitCodeTransform,
+  global = false,
 }) => {
+  console.log(global);
   const [flag, forceUpdate] = useForceUpdate();
   const noticyChange = useNoticyBlockCodeChange();
 
   const variableList = (blockNode && blockNode.variable) || null;
   const handleVariableAdd = () => {
-    variableList.push({
-      name: '',
-      value: '',
-    });
+    if (variableList) {
+      const id = variableList.length
+        ? variableList[variableList.length - 1].id
+          ? variableList[variableList.length - 1].id
+          : 0
+        : 0;
+      variableList.push({
+        id: id + 1,
+        name: '',
+        value: '',
+      });
+    }
+
     noticyChange();
     forceUpdate();
   };
