@@ -10,6 +10,7 @@ import event from '@/containers/eventCenter';
 import './VariablePanel.scss';
 
 export default ({
+  cards = undefined,
   blockNode,
   label = '设置变量',
   disabled,
@@ -27,8 +28,42 @@ export default ({
     noticyChange();
     forceUpdate();
   };
+
+  // 清洗遍历
+  const clearAll = (cards, arrayIndex, callback) => {
+    if (!cards) return; // 没有传卡片进来就不做清洗
+    cards.forEach(card => {
+      if (card.module === 'sendiRPA' && card.main === 'return') {
+        console.log("已经清除了一个return" , card)
+        if (!card.properties) return;
+        if (!card.properties.required) return;
+        if (!card.properties.required[0]) return;
+        if (!card.properties.required[0].value) return;
+        if (!card.properties.required[0].value[arrayIndex]) {
+          return;
+        } else {
+          // 清掉该项
+          card.properties.required[0].value.splice(arrayIndex, 1);
+        }
+      } else if (card.$$typeof === 2) {
+        callback(card.children, arrayIndex, clearAll);
+      } else if (card.$$typeof === 4) {
+        callback(card.ifChildren, arrayIndex, clearAll);
+        callback(card.elseChildren, arrayIndex, clearAll);
+      } else if (card.$$typeof === 7) {
+        callback(card.tryChildren, arrayIndex, clearAll);
+        callback(card.catchChildren, arrayIndex, clearAll);
+        callback(card.finallyChildren, arrayIndex, clearAll);
+      }
+    });
+  };
+
   const handleVariableDelete = index => {
     variableList.splice(index, 1);
+    // 遍历所有cards，干掉那个被删项
+    console.log(`blockNode`, blockNode, cards);
+    clearAll(cards, index, clearAll);
+
     noticyChange();
     forceUpdate();
   };
@@ -98,7 +133,7 @@ export default ({
                     handleVariableDelete(index);
                     synchroGraphDataToProcessTree();
                     handleEmitCodeTransform && handleEmitCodeTransform();
-                    event.emit('varibaleDelete', varibale);
+                    event.emit('varibaleDelete', varibale.id);
                   }}
                 />
               )}
