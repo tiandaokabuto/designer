@@ -130,7 +130,7 @@ export default useInjectContext(({ history }) => {
     }
 
     // const reg = /[?:<>|*"{}\[\]\/\\]/g;
-    const reg = /(^\s+)|(\s+$)|(\.+$)|[?:<>|*"{}\[\]\/\\]/g;
+    const reg = /(^\s+)|(\s+$)|(\.+$)|[?:@&=+,;<>\s*|*"{}\[\]\/\\]/g;
     if (reg.test(name)) {
       message.error('不能包含特殊字符，前后不能包含空格');
       return;
