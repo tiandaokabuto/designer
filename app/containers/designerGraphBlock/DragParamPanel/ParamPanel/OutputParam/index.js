@@ -22,10 +22,11 @@ export default ({ output, handleEmitCodeTransform, markBlockIsUpdated }) => {
     if (output[index] === undefined) {
       output.push({
         ...item,
+        name:""
       });
     } else {
       output[index].value = item.value;
-      output[index].name = item.name;
+      // output[index].name = item.name;
     }
   });
 
