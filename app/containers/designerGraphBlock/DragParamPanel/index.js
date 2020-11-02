@@ -151,6 +151,7 @@ export default ({ current }) => {
             disabled={true}
           />
           <VariablePanel
+            cards={cards}
             blockNode={{
               variable: outputParams,
             }}
