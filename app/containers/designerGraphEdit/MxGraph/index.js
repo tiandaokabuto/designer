@@ -1650,7 +1650,7 @@ const MxgraphContainer = useInjectContext(
         newNodes = nodes.map(item => {
           const obj = {};
           if (item.shape === 'processblock') {
-            const labelStr = PROCESS_NODE.label;
+            // const labelStr = PROCESS_NODE.label;
             obj._id = item.id;
             obj._parent = item.parent !== undefined ? item.parent : '1';
             obj._style = PROCESS_NODE.style;

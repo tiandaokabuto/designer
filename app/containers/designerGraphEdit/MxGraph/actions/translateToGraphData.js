@@ -31,11 +31,8 @@ export function translateToGraphData(sender, graph) {
           .replace('</span></div>', '');
       } else if (shape === 'rhombus') {
         label = value
-          .replace(
-            "<div class='rcomponent-content'><label class='rcomponent-content-icon'></label><span class='rcomponent-name' title='condition'>",
-            ''
-          )
-          .replace('</span></div>', '');
+          .replace("<div class='rcomponent-content'>", '')
+          .replace('</div>', '');
       } else if (shape === 'group') {
         label = value
           .replace("<span class='group-content'>", '')
