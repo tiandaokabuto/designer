@@ -12,6 +12,7 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
   const { deleteGraphDataMap, changeCheckedGraphBlockId, graphData } = opt;
 
   const cells = graph.getSelectionCells();
+  let sons = [];
 
   if (cells.length > 1) {
     return message.info('不能同时选中多个进行删除');
@@ -24,7 +25,11 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
     const checkSonsHasProcess = sons => {
       sons.forEach(son => {
         console.log(son);
-        if (son.shape === 'processblock') {
+        if (
+          son.shape === 'processblock' ||
+          son.shape === 'continue-node' ||
+          son.shape === 'break-node'
+        ) {
           return (error = true);
         } else {
           checkSonsHasProcess(findSameLevelCell(graphData, son.id));
@@ -37,7 +42,8 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
     }
 
     if (cells[0].value === '异常捕获') {
-      const sons = findSameLevelCell(graphData, cells[0].id);
+      sons = findSameLevelCell(graphData, cells[0].id);
+      console.log('异常捕获sons', sons);
       checkSonsHasProcess(sons);
       if (error)
         return message.info(
@@ -48,10 +54,11 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
     }
 
     if (
-      cells[0].value.search(`for`) >= 0 ||
-      cells[0].value.search(`while`) >= 0
+      cells[0].value.search(`group-content`) >= 0
+      // cells[0].value.search(`for`) >= 0 ||
+      // cells[0].value.search(`while`) >= 0
     ) {
-      const sons = findSameLevelCell(graphData, cells[0].id);
+      sons = findSameLevelCell(graphData, cells[0].id);
       checkSonsHasProcess(sons);
       if (error)
         return message.info(
@@ -77,16 +84,29 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
 
   tepmCellParent = cells[0].parent;
 
+  // 删掉这个元素，true代表确实通知删除，false为假删除，没有实际删掉那个对象
   graph.removeCells(cells, true);
+  let newSons = undefined;
 
-  cells.forEach(cell => {
-    for (const [key, item] of Object.entries(graph.getModel().cells)) {
-      if (cell.id === item.id) {
-        // deleteGraphDataMap(item.id);
-        delete graph.getModel().cells[key];
+
+  const clearAllSons = (sons, callback) => {
+    sons.forEach(cell => {
+      for (const [key, item] of Object.entries(graph.getModel().cells)) {
+        if (cell.id === item.id) {
+          // deleteGraphDataMap(item.id);
+          newSons = findSameLevelCell(graphData, cell.id);
+          if (newSons) {
+            newSons.forEach(son => {
+              clearAllSons([son], clearAllSons);
+            });
+          }
+
+          delete graph.getModel().cells[key];
+        }
       }
-    }
-  });
+    });
+  };
+  clearAllSons([...cells, ...sons], clearAllSons);
 
   changeCheckedGraphBlockId('');
 
