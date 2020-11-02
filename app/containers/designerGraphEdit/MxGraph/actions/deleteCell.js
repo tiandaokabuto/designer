@@ -12,7 +12,7 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
   const { deleteGraphDataMap, changeCheckedGraphBlockId, graphData } = opt;
 
   const cells = graph.getSelectionCells();
-  let sons = undefined;
+  let sons = [];
 
   if (cells.length > 1) {
     return message.info('不能同时选中多个进行删除');
@@ -84,10 +84,10 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
 
   tepmCellParent = cells[0].parent;
 
-  graph.removeCells(cells, false);
-  // graph.removeCells(sons, true);
-  // console.log(`cells sons`, sons);
+  // 删掉这个元素，true代表确实通知删除，false为假删除，没有实际删掉那个对象
+  graph.removeCells(cells, true);
   let newSons = undefined;
+
 
   const clearAllSons = (sons, callback) => {
     sons.forEach(cell => {
@@ -106,7 +106,6 @@ export function Action_DeleteCell(graph, opt = {}, callback = {}) {
       }
     });
   };
-
   clearAllSons([...cells, ...sons], clearAllSons);
 
   changeCheckedGraphBlockId('');
