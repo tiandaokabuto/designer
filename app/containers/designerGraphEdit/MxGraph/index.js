@@ -181,6 +181,8 @@ const MxgraphContainer = useInjectContext(
       mxClipboard,
       // 撤销重做
       mxUndoManager,
+      mxConstraintHandler,
+      mxConnectionHandler,
     } = mxgraph;
 
     const handlePanMove = useDebounce((sender, evt) => {
@@ -287,6 +289,15 @@ const MxgraphContainer = useInjectContext(
       graph.connectionHandler.getConnectImage = function (state) {
         return new MxImage(state.style[mxConstants.STYLE_IMAGE], 16, 16);
       };
+
+      if (graph.connectionHandler.connectImage == null) {
+        graph.connectionHandler.isConnectableCell = function (cell) {
+          return false;
+        };
+        mxEdgeHandler.prototype.isConnectableCell = function (cell) {
+          return graph.connectionHandler.isConnectableCell(cell);
+        };
+      }
 
       // 连线不允许悬空
       graph.setAllowDanglingEdges(false);
@@ -1131,11 +1142,11 @@ const MxgraphContainer = useInjectContext(
         // 要区别2种move，假如没有target，则是正常move
         // 有target，则是新增
 
-        // changeModifyState(
-        //   processTreeRef.current,
-        //   currentCheckedTreeNodeRef.current,
-        //   true
-        // );
+        changeModifyState(
+          processTreeRef.current,
+          currentCheckedTreeNodeRef.current,
+          true
+        );
 
         let temp = undoAndRedoRef.current;
 
@@ -1785,6 +1796,7 @@ const MxgraphContainer = useInjectContext(
           obj.mxGeometry = {};
           obj.mxGeometry._as = 'geometry';
           obj.mxGeometry._relative = '1';
+          // sourceAnchor，targetAnchor为旧流程图的点，此部分的代码是为了兼容
           switch (item.sourceAnchor) {
             case 0:
               point += POINT_POSITION_EXIT.TOP + POINT_POSITION_EXIT.NORMAL;
@@ -1818,7 +1830,8 @@ const MxgraphContainer = useInjectContext(
             default:
               break;
           }
-          obj._style = point;
+          // obj._style = point;
+          obj._style = point ? point : item.style;
           return obj;
         });
 

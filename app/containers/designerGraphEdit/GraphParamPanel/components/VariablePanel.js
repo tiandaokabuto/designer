@@ -15,16 +15,27 @@ export default ({
   label = '设置变量',
   disabled,
   handleEmitCodeTransform,
+  global = false,
 }) => {
+  console.log(global);
   const [flag, forceUpdate] = useForceUpdate();
   const noticyChange = useNoticyBlockCodeChange();
 
   const variableList = (blockNode && blockNode.variable) || null;
   const handleVariableAdd = () => {
+    // if (variableList) {
+    // const id = variableList.length
+    //   ? variableList[variableList.length - 1].id
+    //     ? variableList[variableList.length - 1].id
+    //     : 0
+    //   : 0;
     variableList.push({
+      // id: id + 1,
       name: '',
       value: '',
     });
+    // }
+
     noticyChange();
     forceUpdate();
   };
@@ -34,7 +45,7 @@ export default ({
     if (!cards) return; // 没有传卡片进来就不做清洗
     cards.forEach(card => {
       if (card.module === 'sendiRPA' && card.main === 'return') {
-        console.log("已经清除了一个return" , card)
+        console.log('已经清除了一个return', card);
         if (!card.properties) return;
         if (!card.properties.required) return;
         if (!card.properties.required[0]) return;

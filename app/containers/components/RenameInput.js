@@ -23,7 +23,7 @@ export default (
       defaultValue={node.title}
       onBlur={e => {
         const newTitle = e.target.value;
-        const reg = /(^\s+)|(\s+$)|(\.+$)|[?:<>\s*|*"{}\[\]\/\\]/g;
+        const reg = /(^\s+)|(\s+$)|(\.+$)|[?:@&=+,;<>\s*|*"{}\[\]\/\\]/g;
 
         if (reg.test(newTitle) || !newTitle) {
           message.error('不能包含特殊字符，前后不能包含空格');

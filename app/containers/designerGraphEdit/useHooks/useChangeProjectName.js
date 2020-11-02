@@ -12,7 +12,7 @@ export default () => {
   return useDebounce((current, change) => {
     const existFileList = readAllFileName() || [];
 
-    const reg = /(^\s+)|(\s+$)|(\.+$)|[?:<>|*"{}\[\]\/\\]/g;
+    const reg = /(^\s+)|(\s+$)|(\.+$)|[?:@&=+,;<>\s*|*"{}\[\]\/\\]/g;
     if (reg.test(change)) {
       message.error('不能包含特殊字符，前后不能包含空格');
       return;

@@ -22,17 +22,15 @@ export default ({ output, handleEmitCodeTransform, markBlockIsUpdated }) => {
     if (output[index] === undefined) {
       output.push({
         ...item,
-        name:""
+        name: '',
       });
     } else {
       output[index].value = item.value;
-      // output[index].name = item.name;
+      // output[index].name = item.name
     }
   });
 
   output.length = returnList.length;
-  // output = cloneDeep(returnList);
-
   return (
     <div className="outputPanel">
       <div className="outputPanel-container">
