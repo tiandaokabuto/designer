@@ -739,8 +739,8 @@ const MxgraphContainer = useInjectContext(
       // const oldMouseDown = mxGraphHandler.prototype.mouseDown;
       // const oldMouseUp = mxGraphHandler.prototype.mouseUp;
       mxGraphHandler.prototype.mouseMove = function(...args) {
-        oldMouseMove.apply(this, args);
-        // console.log('移动过程中的所有事件move', args[0].lastEvent.ctrlKey);
+
+        console.log('移动过程中的所有事件move', args[0]);
         const sender = args[0];
         const mouse = args[1];
         if(sender.lastEvent.ctrlKey === true){
@@ -749,13 +749,14 @@ const MxgraphContainer = useInjectContext(
         }
 
         if (sender.isMouseDown) {
+          console.log("发现",sender.getSelectionCell())
           if (
             sender.getSelectionCell() &&
             (sender.getSelectionCell().value === '异常处理' ||
               sender.getSelectionCell().value === '结束')
           ) {
             sender.isMouseDown = false;
-            graph.refresh();
+            return graph.refresh();
             // sender.isMouseDown = false;
             // const parent = sender.getSelectionCell().getParent();
             // const parentGeometry = parent.getGeometry();
@@ -780,6 +781,8 @@ const MxgraphContainer = useInjectContext(
             // console.log(parent)
           }
         }
+
+        oldMouseMove.apply(this, args);
       };
 
       // Object.keys(mxEvent).forEach(item => {
