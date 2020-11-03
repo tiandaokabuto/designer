@@ -740,7 +740,7 @@ const MxgraphContainer = useInjectContext(
       // const oldMouseUp = mxGraphHandler.prototype.mouseUp;
       mxGraphHandler.prototype.mouseMove = function(...args) {
 
-        console.log('移动过程中的所有事件move', args[0]);
+        // console.log('移动过程中的所有事件move', args[0]);
         const sender = args[0];
         const mouse = args[1];
         if(sender.lastEvent.ctrlKey === true){
@@ -749,7 +749,7 @@ const MxgraphContainer = useInjectContext(
         }
 
         if (sender.isMouseDown) {
-          console.log("发现",sender.getSelectionCell())
+          // console.log("发现",sender.getSelectionCell())
           if (
             sender.getSelectionCell() &&
             (sender.getSelectionCell().value === '异常处理' ||
