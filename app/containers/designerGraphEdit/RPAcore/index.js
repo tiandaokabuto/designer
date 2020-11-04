@@ -86,7 +86,7 @@ export const claerTempCenter = () => {
 
 // 传入pk卡片指针值为 pointOfCard
 const getNextIndexCards = (cards, pk) => {
-  console.log("当前准备找下一个指针的",pk)
+  console.log('当前准备找下一个指针的', pk);
 
   let nextPk = [];
   let nowCard; // 单数层，卡片
@@ -704,7 +704,7 @@ export const cardsRun_0_2_ver = async (
     }
   }
 
-  if (nextCard && nextCard.length>1) {
+  if (nextCard && nextCard.length > 1) {
     console.log(`【重点关注！当前运行的】`, nextPk, nextCard);
     if (nextPk.length % 2 === 0) {
       // 假如现在是偶数位，则const
@@ -730,7 +730,7 @@ export const cardsRun_0_2_ver = async (
         setPause();
       }
     }
-  }else{
+  } else {
     next_nextCard = getCardsByPk(cards, getNextIndexCards(cards, nextPk));
     if (next_nextCard) {
       console.log(
@@ -853,10 +853,7 @@ export const cardsRun_0_2_ver = async (
       // 05-2-2-2-1 假如已经到 if 或者 else 的底部
       if (nowIndex === 1 || nowIndex === 2) {
         // 跳出判断体
-        pointOfCard = [
-          ...nextPk.slice(0, -2),
-          nextPk.slice(-2, -1)[0] + 1,
-        ];
+        pointOfCard = [...nextPk.slice(0, -2), nextPk.slice(-2, -1)[0] + 1];
         // withoutNext 指针已经跳转到下一个了，不需要开始的时候再重新获取指针
         return callback(checkedGraphBlockId, cardsRun_0_2_ver, true);
       }
@@ -1016,6 +1013,10 @@ const convertEditorTree = data => {
 };
 
 let find = undefined;
+let existCircleCounter = [];
+export const clearCircleCounter = () => {
+  existCircleCounter = [];
+};
 
 /**
  *
@@ -1040,6 +1041,23 @@ export const transformEditorProcess = (
   const currentNode = findNodeById(graphData.nodes, currentId);
   // 在breakPoint处停止解析
   if (currentId === breakPoint) return;
+
+  console.log(`当前的`, currentId, existCircleCounter);
+  // 假如存在回环
+
+  if (existCircleCounter.includes(currentId)) {
+    if (
+      currentNode.shape === 'rhombus-node' ||
+      currentNode.shape === 'try' ||
+      currentNode.shape === 'group'
+    ) {
+    } else {
+      throw '流程图顺序连线不能产生回环，循环请拖入“循环”进行设计';
+    }
+  }
+  existCircleCounter.push(currentId);
+
+  console.log(`转译`, currentNode.shape, currentId);
 
   // 加入节点信息
   mxgraphTempCenter.push({
@@ -1067,7 +1085,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-          '\n'
+            '\n'
         }` + result.output;
       // 判断一下当前的流程块结点是否有两个入点，那么就是循环相关 就需要包括在 while True: 的循环结构下边。
       // 同时解析的深度要 +1
@@ -1075,8 +1093,9 @@ export const transformEditorProcess = (
         !notWhile &&
         hasTwoEntryPortInProcessBlock(graphData.edges, currentId)
       ) {
-        result.output += `${padding(depth)}while True:\n`;
-        depth = depth + 1;
+        // result.output += `${padding(depth)}while True:\n`;
+        // depth = depth + 1;
+        // result.output += 'pass\n'
       }
 
       // 如果跟循环没有关系的话就直接执行当前的代码块
@@ -1158,7 +1177,7 @@ export const transformEditorProcess = (
           .join(',')}):\n${
           // 调用转译流程块结点的函数
           transformBlockToCode(blockData.cards || [], 1, blockData).output ||
-          '\n'
+            '\n'
         }`,
         funcName: funcName,
         params: params,
@@ -1347,6 +1366,8 @@ export const transformEditorProcess = (
             null,
             true
           );
+      } else {
+        throw '流程图顺序连线不能产生回环，循环请拖入“循环”进行设计';
       }
       //  else if (hasTwoEntryPoint(graphData.edges, currentId)) {
       //   result.output += `${padding(depth)}while ( True ):\n`;
@@ -1740,7 +1761,7 @@ export default (graphData, graphDataMap, clickId, fromOrTo) => {
     writeFileRecursive(
       `${process.cwd()}/python/temp.py`,
       result.output,
-      function () {
+      function() {
         // console.log('保存成功');
       }
     );

@@ -175,6 +175,19 @@ export default memo(
         .catch(err => console.log(err));
     };
 
+    // 展示错误信息
+    const showTranslateError = e => {
+      console.log(e);
+      switch (e) {
+        case '流程图顺序连线不能产生回环，循环请拖入“循环”进行设计':
+          message.error('流程图顺序连线不能产生回环，循环请拖入“循环”进行设计');
+          break;
+        default:
+          console.log(e);
+          message.error('代码转换出错，请检查流程图');
+      }
+    };
+
     const hanldePublishModalOk = () => {
       if (versionTipVisible) {
         message.error('版本格式错误，请检查您的版本号');
@@ -194,10 +207,7 @@ export default memo(
             );
           }, 0);
         } catch (e) {
-          message.error(
-            '代码转换出错，请检查流程图（异常捕获容器必须3个容器均有流程块）'
-          );
-          console.log(e);
+          showTranslateError(e);  // 展示错误信息
         }
       }
     };
@@ -258,8 +268,8 @@ export default memo(
         message.loading({ content: '程序运行中', duration: 0, key });
       } catch (e) {
         setIsRunCode(false);
-        console.log(e);
-        message.error('代码转换出错，请检查流程图');
+        // 显示转译代码异常信息
+        showTranslateError(e)
       }
     };
 
@@ -701,8 +711,7 @@ export default memo(
                           versionText
                         );
                       } catch (e) {
-                        message.error('代码转换出错，请检查流程图');
-                        console.log(e);
+                        showTranslateError(e);  // 展示错误信息
                       }
                     } else {
                       getDownLoadPath(exportProcess, getProcessName());
