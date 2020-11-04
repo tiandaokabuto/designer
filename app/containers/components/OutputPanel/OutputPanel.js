@@ -81,7 +81,10 @@ export default memo(
     }) => {
       const stopDeleteKeyDown = e => {
         const matchKeyCode = [67, 86, 88, 90];
-        if (e.keyCode === 46 || (e.ctrlKey && matchKeyCode.includes(e.keyCode))) {
+        if (
+          e.keyCode === 46 ||
+          (e.ctrlKey && matchKeyCode.includes(e.keyCode))
+        ) {
           e.nativeEvent.stopImmediatePropagation();
           e.stopPropagation();
         }
@@ -967,6 +970,10 @@ export default memo(
             debug_left_data,
             debug_dataStore.stepLog
           );
+          debug_dataStore.stepLog.foreach((item, index) => {
+            console.log(`item,index`, item, index);
+          });
+
           const index = selectedTreeNode[0]; //parseInt(selectedTreeNode[0]);
 
           if (!debug_dataStore.stepLog) return;

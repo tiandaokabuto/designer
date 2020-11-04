@@ -4,10 +4,13 @@ import { useSelector } from 'react-redux';
 import transformEditorGraphData, {
   claerTempCenter,
   sortEditorTree,
+  clearCircleCounter,
 } from '../RPAcore';
 
 const transformProcessToPython = (graphDataRef, graphDataMapRef) => () => {
   claerTempCenter();
+  // 用于判断是否存在回环
+  clearCircleCounter();
   // 转化代码
   const temp = transformEditorGraphData(
     graphDataRef.current,
