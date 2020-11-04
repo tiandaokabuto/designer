@@ -67,6 +67,13 @@ export const Rule_checkConnection = (graph, option = {}, callback) => {
       returnData = { rule: '判断', type: '否' };
     }
   }
+  if (target.shape === 'group') {
+    if (target.edges.input.length >= 1) {
+      message.warning('循环块只能有一条输入线');
+      return false;
+    }
+  }
+
   if (target.shape === 'rhombus-node') {
     if (target.edges.input.length >= 1) {
       message.warning('判断块只能有一条输入线');
