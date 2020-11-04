@@ -25,6 +25,10 @@ export function translateToGraphData(sender, graph) {
       if (shape === 'label') {
         label = value
           .replace(
+            "<div class='compoent-content' data-type='type-module'><label class='component-icon'></label><span class='component-name' title='process'>",
+            ''
+          )
+          .replace(
             "<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>",
             ''
           )
