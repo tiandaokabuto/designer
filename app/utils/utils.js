@@ -769,7 +769,7 @@ export const addToReuse = () => {
   const files = fs.readdirSync(
     PATH_CONFIG('project', `${currentProject}/${currentProject}_module`)
   );
-  const item = files.find(item => item === `${title}.json`);
+  const item = files.find(item => item === `${title}_module.json`);
   if (!item) {
     // 把流程块数据写入文件
     fs.writeFileSync(

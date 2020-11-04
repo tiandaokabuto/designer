@@ -498,7 +498,7 @@ export default ({ type, setShowLoadingLayer, createItem }) => {
         const elt = toolCells[i];
         // const { label, style, width, height } = elt.dataset;
         cell = new MxCell(
-          `<div class='compoent-content'><label class='component-icon'></label><span class='component-name' title='process'>${elt.innerText}</span></div>`,
+          `<div class='compoent-content' data-type='type-module'><label class='component-icon'></label><span class='component-name' title='process'>${elt.innerText}</span></div>`,
           new MxGeometry(0, 0, parseInt(96, 10), parseInt(48, 10)),
           'label;whiteSpace=wrap;html=1;resizable=0;shadow=1;rounded=1;fillColor=#F2FAF7;strokeColor=#32A67F;gradientColor=none;fontColor=#000000;'
         );

@@ -129,6 +129,10 @@ export default ({ setShowLoadingLayer, createItem }) => {
     },
   ];
 
+  useEffect(() => {
+    changeTreeTab('process');
+  }, []);
+
   return (
     <div
       className="designergraph-item"

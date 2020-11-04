@@ -13,12 +13,13 @@ export default ({ expandedKeys, level }) => {
     }
     const offsetParent = iconRef.current.offsetParent
       ? iconRef.current.offsetParent
-      : undefined; // ant-tree-switcher_open
+      : null; // ant-tree-switcher_open
 
-    const titleNode =
-      level === 2
+    const titleNode = offsetParent
+      ? level === 2
         ? offsetParent.childNodes[1].firstElementChild.firstElementChild // 第二层目录
-        : offsetParent.childNodes[1].childNodes[1].firstElementChild; // 第一层目录
+        : offsetParent.childNodes[1].childNodes[1].firstElementChild // 第一层目录
+      : null;
     return titleNode;
   };
   const handleChangeIcon = key => {
