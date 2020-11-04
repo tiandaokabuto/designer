@@ -28,7 +28,13 @@ export const isCircleExist = (edges, id, anchor) => {
   let searchId = id;
   let flag = false;
   let targetId = null;
+
+  let limit = 0;
+
   while (((targetId = findTargetIdBySourceId(edges, searchId)), targetId)) {
+    limit += 1;
+    if (limit > 800) return;
+
     if (targetId === anchor) {
       flag = true;
       break;
@@ -46,11 +52,18 @@ export const findCommonTarget = (edges, labelTrue, labelFalse) => {
   const labelFalsePath = [labelFalse];
 
   const hasDumplate = (a1, a2) => a1.filter(item => a2.includes(item)).length;
+
+  let limit = 0;
+
   while (
     labelTrue !== labelFalse &&
     labelTrue !== null &&
     labelFalse !== null
   ) {
+
+    limit += 1;
+    if (limit > 800) return null;
+
     labelTrue = findTargetIdBySourceId(edges, labelTrue);
     labelFalse = findTargetIdBySourceId(edges, labelFalse);
     if (labelTrue) {
