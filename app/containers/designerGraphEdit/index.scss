@@ -26,14 +26,11 @@
   &-item {
     // flex-basis: 239px;
     width: 239px;
-    max-width: 500px;
+    max-width: 480px;
     // min-width: 130px;
     box-shadow: 1px 0 0 0 rgba(238, 238, 238, 1);
     border-right: 1px solid rgba(238, 238, 238, 1);
-    // min-width: 120px;
-    // max-width: 500px;
-    // min-width: 239px;
-    // max-width: 239px;
+
     // pointer-events: none;
     position: absolute;
     left: 0;
@@ -272,12 +269,9 @@
     }
   }
   &-parampanel {
-    width: 329;
-    max-width: 500px;
-    // min-width: 130px;
-    // min-width: 239px;
-    // max-width: 239px;
-    // flex-basis: 239px;
+    width: 239px;
+    max-width: 480px;
+
     border-left: 1px solid #eeeeee;
     position: absolute;
     background: white;

@@ -82,6 +82,8 @@
     position: absolute;
     right: 420px;
     top: 12px;
+    transition: all 0.4s;
+    opacity: 1;
     .ant-input {
       height: 20px;
       line-height: 20px;

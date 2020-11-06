@@ -30,6 +30,11 @@ export default () => {
     return parseFloat(window.getComputedStyle(rightDom).width);
   };
 
+  const getDesignergraphItemWidth = () => {
+    const leftDom = document.querySelector('.designergraph-item');
+    return parseFloat(window.getComputedStyle(leftDom).width);
+  };
+
   const setGraphParamWidth = () => {
     const rightDom = document.querySelector('.designergraph-parampanel');
     const rightWidth = localStorage.getItem('firstRight');
@@ -82,6 +87,18 @@ export default () => {
         );
         // 左侧面板
         const itemDom = document.querySelector('.designergraph-item');
+
+        // 处理搜索框
+        const searchDom = document.querySelector(
+          '.dragger-editor-container-output-search'
+        );
+        const searchInfo = searchDom.getBoundingClientRect();
+        const leftWidth = getDesignergraphItemWidth();
+        if (searchInfo.x - leftWidth < 140) {
+          searchDom.style.visibility = 'hidden';
+        } else {
+          searchDom.style.visibility = 'visible';
+        }
 
         // 输出面板宽度调整
         outputDom.style.width = `calc(100vw - ${rightDom.style.width} - ${itemDom.style.width})`;

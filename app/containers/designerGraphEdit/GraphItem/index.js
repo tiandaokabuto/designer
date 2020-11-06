@@ -45,6 +45,11 @@ export default ({ setShowLoadingLayer, createItem }) => {
 
   useEffect(() => {
     setGraphItemWidth();
+    console.log(
+      document
+        .querySelector('.dragger-editor-container-output-title')
+        .getBoundingClientRect().width
+    );
     const handleAnchorMouseMove = useThrottle(e => {
       if (isMouseDown) {
         let offset = e.pageX - startOffset; // 偏移量
@@ -53,6 +58,28 @@ export default ({ setShowLoadingLayer, createItem }) => {
         // if (e.clientX <= 239) return;
         const leftDom = document.querySelector('.designergraph-item');
         const originWidth = getDesignergraphItemWidth();
+
+        // 处理搜索框
+        const searchDom = document.querySelector(
+          '.dragger-editor-container-output-search'
+        );
+        const searchInfo = searchDom.getBoundingClientRect();
+        console.log('左侧与搜索框的距离', searchInfo.x - originWidth);
+        if (searchInfo.x - originWidth < 140) {
+          // searchDom.style.opacity = 0;
+          searchDom.style.visibility = 'hidden';
+        } else {
+          // searchDom.style.opacity = 1;
+          searchDom.style.visibility = 'visible';
+        }
+
+        // 处理日志过滤图标
+        const tagsDom = document.querySelector(
+          '.dragger-editor-container-output-tages'
+        );
+        const tagsInfo = searchDom.getBoundingClientRect();
+        console.log('左侧与图标的距离');
+
         const currentWidth = originWidth + offset;
         leftDom.style.width = currentWidth + 'px';
         // 工具栏

@@ -2583,6 +2583,11 @@ const MxgraphContainer = useInjectContext(
       }
     };
 
+    const getDesignergraphItemWidth = () => {
+      const leftDom = document.querySelector('.designergraph-item');
+      return parseFloat(window.getComputedStyle(leftDom).width);
+    };
+
     useEffect(() => {
       // 工具栏
       // const toolDom = document.querySelector('.designergraph-container-header');
@@ -2628,6 +2633,15 @@ const MxgraphContainer = useInjectContext(
                 localStorage.setItem('firstLeft', '288');
                 document.querySelector('.container-left').style.display =
                   'none';
+                const searchDom = document.querySelector(
+                  '.dragger-editor-container-output-search'
+                );
+                const searchInfo = searchDom.getBoundingClientRect();
+                if (searchInfo.x - 288 < 140) {
+                  searchDom.style.visibility = 'hidden';
+                } else {
+                  searchDom.style.visibility = 'visible';
+                }
                 setConLeft(n => n + 1);
                 setConRight(n => n + 1);
               }}
@@ -2646,6 +2660,20 @@ const MxgraphContainer = useInjectContext(
                 localStorage.setItem('firstRight', '288');
                 document.querySelector('.container-right').style.display =
                   'none';
+                setTimeout(() => {
+                  const searchDom = document.querySelector(
+                    '.dragger-editor-container-output-search'
+                  );
+                  const leftWidth = getDesignergraphItemWidth();
+                  const searchInfo = searchDom.getBoundingClientRect();
+                  console.log(searchInfo.x - leftWidth);
+                  if (searchInfo.x - leftWidth < 140) {
+                    searchDom.style.visibility = 'hidden';
+                  } else {
+                    searchDom.style.visibility = 'visible';
+                  }
+                }, 0);
+
                 setConLeft(n => n + 1);
                 setConRight(n => n + 1);
               }}
