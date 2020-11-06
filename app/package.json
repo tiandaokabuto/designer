@@ -1,13 +1,13 @@
 {
   "name": "electron-react-boilerplate",
-  "productName": "electron-react-boilerplate",
-  "version": "0.18.1",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "productName": "流程易设计器",
+  "version": "1.4.6",
+  "description": "广州市申迪计算机系统有限公司",
   "main": "./main.prod.js",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "广州市申迪计算机系统有限公司",
+    "email": "support@gzsendi.cn",
+    "url": "http://www.gzsendi.cn"
   },
   "scripts": {
     "electron-rebuild": "node -r ../internals/scripts/BabelRegister.js ../internals/scripts/ElectronRebuild.js",
