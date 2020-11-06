@@ -1045,16 +1045,17 @@ export const transformEditorProcess = (
   console.log(`当前的`, currentId, existCircleCounter);
   // 假如存在回环
 
-  if (existCircleCounter.includes(currentId)) {
-    if (
-      currentNode.shape === 'rhombus-node' ||
-      currentNode.shape === 'try' ||
-      currentNode.shape === 'group'
-    ) {
-    } else {
-      throw '流程图顺序连线不能产生回环，循环请拖入“循环”进行设计';
-    }
-  }
+  // if (existCircleCounter.includes(currentId)) {
+  //   if (
+  //     currentNode.shape === 'rhombus-node' //||
+  //     // currentNode.shape === 'try' ||
+  //     // currentNode.shape === 'group'
+  //   ) {
+
+  //   } else {
+  //     throw '流程图顺序连线不能产生回环，循环请拖入“循环”进行设计';
+  //   }
+  // }
   existCircleCounter.push(currentId);
 
   console.log(`转译`, currentNode.shape, currentId);
@@ -1077,6 +1078,7 @@ export const transformEditorProcess = (
       const variable = blockData.variable || [];
       // 在文件顶部添加该流程的函数模块, 并调用该函数。
       const funcName = `RPA_${currentId}`; //uniqueId('RPA_');
+
 
       result.output =
         `def ${funcName}(${params
@@ -1197,6 +1199,9 @@ export const transformEditorProcess = (
       });
 
       console.log(`tempCenter`, tempCenter);
+      if(tempCenter.length>800){
+       throw '流程图顺序连线不能产生回环，循环请拖入“循环”进行设计';
+      }
 
       /**
        * 实验田
@@ -1255,11 +1260,15 @@ export const transformEditorProcess = (
         currentId
       );
 
+      console.log("第1步",isYesCircleExist)
+
       const isNoCircleExist = isCircleExist(
         graphData.edges,
         findNodeByLabelAndId(graphData.edges, currentId, '否'),
         currentId
       );
+
+      console.log("第2步",isYesCircleExist)
 
       // 特殊标记
       mxgraphTempCenter.push({
@@ -1283,6 +1292,12 @@ export const transformEditorProcess = (
           findNodeByLabelAndId(graphData.edges, currentId, '是')
         )
       ) {
+
+        console.log("第3步",findCommonTarget(
+          graphData.edges,
+          findNodeByLabelAndId(graphData.edges, currentId, '否'),
+          findNodeByLabelAndId(graphData.edges, currentId, '是')
+        ))
         // 当找到两者共同的点时结束条件判断的转译
         // 找到两者共同的结束点
         const breakPoint = findCommonTarget(
