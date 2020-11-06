@@ -291,6 +291,7 @@ const createMainWindow = () => {
     frame: false,
     transparent: true,
     minWidth: 1144,
+    minHeight: 500,
     hasShadow: true,
     // movable: false, //可否移动
     webPreferences: {
