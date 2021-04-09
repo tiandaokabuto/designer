@@ -10,14 +10,14 @@ import {
   hex_sha1,
   readGlobalConfig,
   writeGlobalConfig,
+  getUserDay,
 } from './utils';
 import LoginFromInput from './components/LoginFromInput';
 
 const { ipcRenderer, remote } = require('electron');
 
-const validDay = '2020-12-31';
-const SERIAL_NUMBER_POSSWORK = encrypt.argEncryptByDES(validDay);
-console.log(SERIAL_NUMBER_POSSWORK);
+let userDay = getUserDay();
+console.log(encrypt.argEncryptByDES('2020-12-31'));
 
 const Login = () => {
   const [userName, setUserName] = useState('');
@@ -89,19 +89,21 @@ const Login = () => {
 
   const checkSerialNumberValid = userSerialNumber => {
     let decryptSerialNumber = encrypt.argDecryptByDES(userSerialNumber);
-    const validSystemDay = validDay.replace(/-/g, '');
+    // 用户电脑上的时间
+    const validSystemDay = userDay.replace(/-/g, '');
+    // 序列号的时间
     decryptSerialNumber = decryptSerialNumber.replace(/-/g, '');
     if (/[^0-9]/.test(decryptSerialNumber) || decryptSerialNumber === '') {
       return false;
     }
     if (decryptSerialNumber.length === 8) {
-      return decryptSerialNumber <= validSystemDay;
+      // 当序列号时间大于电脑时间时，返回true
+      return decryptSerialNumber >= validSystemDay;
     }
     return false;
   };
 
   const handleSignIn = () => {
-    //ipcRenderer.send('loginSuccess');
     if (offLine) {
       remote.getGlobal('sharedObject').userName = '';
       ipcRenderer.send('loginSuccess');
@@ -147,6 +149,7 @@ const Login = () => {
       password,
       serialNumber,
       offLine,
+      userDay,
     });
     handleSignIn();
   };
@@ -174,7 +177,8 @@ const Login = () => {
       userName,
       password,
       serialNumberFromFile,
-      OffLineFromFile
+      OffLineFromFile,
+      dateFromFile
     ) => {
       setIp(ip);
       setPort(port);
@@ -183,6 +187,10 @@ const Login = () => {
       if (serialNumberFromFile) setSerialNumber(serialNumberFromFile);
       const globalUserName = remote.getGlobal('sharedObject').userName;
       if (globalUserName === '') setOffLine(OffLineFromFile);
+      if (dateFromFile && dateFromFile > userDay) {
+        // 当上次登录时间大于电脑时间，证明电脑时间被篡改为更小的时间，取上次登录时间
+        userDay = dateFromFile;
+      }
     };
     readGlobalConfig(callback);
   }, []);
@@ -198,6 +206,7 @@ const Login = () => {
           password,
           serialNumber,
           offLine,
+          userDay,
         });
         handleSignIn();
       }
